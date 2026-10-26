@@ -1,0 +1,814 @@
+/* ========================================
+   Autonomia em Movimento — Estilos
+   Paleta UnB:
+     Verde #006633 → botões, seleções, ações principais
+     Azul  #003366 → títulos, textos, navegação
+   ======================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f0f2f5;
+  color: #333;
+}
+
+/* ---- Container do app (simula celular) ---- */
+.app {
+  max-width: 390px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: white;
+  position: relative;
+  overflow-x: hidden;
+  box-shadow: 0 0 15px rgba(0,0,0,0.08);
+}
+
+/* ---- Cabeçalho (header) ---- */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid #e0e0e0;
+  background: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.header-menu-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: bold;
+  color: #003366;
+  cursor: pointer;
+  padding: 6px 0;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.header-logo {
+  width: 26px;
+  height: 26px;
+  display: block;
+}
+
+.header-title {
+  font-size: 15px;
+  font-weight: bold;
+  color: #003366;
+}
+
+.header-perfil-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: bold;
+  color: #003366;
+  cursor: pointer;
+  padding: 6px 0;
+}
+
+/* ---- Conteúdo da página ---- */
+.page {
+  display: none;
+  padding: 20px 16px;
+}
+
+.page.active {
+  display: block;
+}
+
+/* ---- Tela de Login ---- */
+.login-wrapper {
+  padding: 30px 10px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.login-logo {
+  width: 90px;
+  height: 90px;
+  margin-bottom: 12px;
+}
+
+.login-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #003366;
+  margin-bottom: 4px;
+}
+
+.login-sub {
+  font-size: 13px;
+  color: #666;
+}
+
+.login-form {
+  width: 100%;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: bold;
+  color: #003366;
+  margin-bottom: 6px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  background: #fff;
+  color: #333;
+}
+
+.form-input:focus {
+  border-color: #006633;
+  box-shadow: 0 0 0 2px rgba(0, 102, 51, 0.15);
+}
+
+.form-remember {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 16px;
+}
+
+.form-remember input {
+  margin-right: 8px;
+  accent-color: #006633;
+}
+
+.login-help {
+  font-size: 11px;
+  color: #888;
+  text-align: center;
+  margin-top: 16px;
+}
+
+/* ---- Cards ---- */
+.card {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 16px;
+  background: white;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #003366;
+  margin-bottom: 8px;
+}
+
+.card-text {
+  font-size: 13px;
+  color: #333;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.card-text-small {
+  font-size: 11px;
+  color: #666;
+}
+
+.card-link {
+  font-size: 12px;
+  font-weight: bold;
+  color: #006633;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 4px;
+}
+
+/* ---- Títulos das páginas ---- */
+.page-title {
+  font-size: 19px;
+  font-weight: bold;
+  color: #003366;
+  margin-bottom: 4px;
+}
+
+.page-subtitle {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 16px;
+}
+
+/* ---- Botões principais (Verde UnB) ---- */
+.btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background: #006633;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: center;
+  margin-top: 12px;
+}
+
+.btn:hover {
+  background: #005528;
+}
+
+/* Botão de contorno (outline / sair) */
+.btn-outline {
+  background: white;
+  color: #cc0000;
+  border: 1px solid #cc0000;
+}
+
+.btn-outline:hover {
+  background: #fff5f5;
+}
+
+/* Botão de emergência (vermelho SAMU) */
+.btn-danger {
+  background: #cc0000;
+}
+
+.btn-danger:hover {
+  background: #aa0000;
+}
+
+/* Botão desabilitado */
+.btn:disabled {
+  background: #999;
+  cursor: not-allowed;
+}
+
+/* ---- Escala de dor (EVA) ---- */
+.pain-scale {
+  margin-bottom: 20px;
+}
+
+.pain-scale-label {
+  font-size: 13px;
+  font-weight: bold;
+  color: #003366;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.pain-scale-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pain-scale-btn {
+  width: 44px;
+  height: 44px;
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pain-scale-btn:hover {
+  background: #e0e0e0;
+}
+
+.pain-scale-bar {
+  flex: 1;
+  height: 6px;
+  background: #ddd;
+  border-radius: 3px;
+  position: relative;
+}
+
+.pain-scale-fill {
+  height: 100%;
+  background: #006633;
+  border-radius: 3px;
+}
+
+.pain-scale-thumb {
+  width: 18px;
+  height: 18px;
+  background: white;
+  border: 2px solid #006633;
+  border-radius: 50%;
+  position: absolute;
+  top: -6px;
+}
+
+.pain-scale-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #888;
+  margin-top: 4px;
+}
+
+/* ---- Opções de escolha (Choices) ---- */
+.choices {
+  margin-bottom: 20px;
+}
+
+.choices-label {
+  font-size: 13px;
+  font-weight: bold;
+  color: #003366;
+  margin-bottom: 8px;
+}
+
+.choices-options {
+  display: flex;
+  gap: 6px;
+}
+
+.choice-btn {
+  flex: 1;
+  padding: 10px 4px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.choice-btn.selected {
+  background: #e8f5e9;
+  border: 2px solid #006633;
+  font-weight: bold;
+  color: #006633;
+}
+
+/* ---- Humor (rostos) ---- */
+.mood-options {
+  display: flex;
+  gap: 8px;
+}
+
+.mood-btn {
+  flex: 1;
+  padding: 10px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.mood-btn.selected {
+  background: #e8f5e9;
+  border: 2px solid #006633;
+  font-weight: bold;
+}
+
+.mood-emoji {
+  font-size: 24px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.mood-label {
+  font-size: 11px;
+}
+
+/* ---- Bloqueio meteorológico ---- */
+.locked-card {
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.lock-icon {
+  font-size: 22px;
+  margin-bottom: 6px;
+}
+
+/* ---- Info meteorológica (desbloqueada) ---- */
+.weather-card {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.weather-title {
+  font-weight: bold;
+  color: #003366;
+  margin-bottom: 6px;
+}
+
+.weather-main {
+  font-size: 15px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.weather-detail {
+  font-size: 12px;
+  color: #666;
+}
+
+/* ---- Heatmap (meu histórico) ---- */
+.heatmap-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.month-nav-btn {
+  width: 40px;
+  height: 40px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.month-label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #003366;
+}
+
+.stats-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.stat-item {
+  flex: 1;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: bold;
+  color: #003366;
+}
+
+.stat-label {
+  font-size: 10px;
+  color: #888;
+}
+
+.heatmap-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.heatmap-weekday {
+  text-align: center;
+  font-size: 11px;
+  font-weight: bold;
+  color: #666;
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.heatmap-cell {
+  aspect-ratio: 1;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.heatmap-cell:hover {
+  border-color: #006633;
+  border-width: 2px;
+}
+
+.heatmap-cell-day {
+  font-size: 9px;
+  color: #555;
+}
+
+.heatmap-cell-value {
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.heatmap-legend {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+}
+
+.legend-color {
+  width: 14px;
+  height: 14px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+}
+
+/* ---- Menu lateral ---- */
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.3);
+  z-index: 20;
+  display: none;
+}
+
+.menu-overlay.open {
+  display: block;
+}
+
+.menu-drawer {
+  position: fixed;
+  top: 0;
+  left: -280px;
+  width: 280px;
+  height: 100%;
+  background: white;
+  z-index: 30;
+  padding: 20px 0;
+  transition: left 0.3s;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-drawer.open {
+  left: 0;
+}
+
+.menu-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 20px;
+  margin-bottom: 16px;
+}
+
+.menu-logo {
+  width: 30px;
+  height: 30px;
+}
+
+.menu-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #003366;
+}
+
+.menu-items-list {
+  flex: 1;
+}
+
+.menu-item {
+  display: block;
+  width: 100%;
+  padding: 15px 20px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background: #f5f5f5;
+}
+
+.menu-item.active {
+  background: #e8f5e9;
+  font-weight: bold;
+  color: #006633;
+  border-left: 3px solid #006633;
+}
+
+.menu-footer {
+  padding: 16px 20px;
+  border-top: 1px solid #eee;
+}
+
+.menu-logout-btn {
+  width: 100%;
+  padding: 10px;
+  background: white;
+  border: 1px solid #cc0000;
+  color: #cc0000;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.menu-logout-btn:hover {
+  background: #fff5f5;
+}
+
+/* ---- Card de exercício ---- */
+.exercise-visual {
+  width: 100%;
+  height: 140px;
+  background: #f2f7f4;
+  border: 1px solid #d4e6dc;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #006633;
+  margin: 12px 0;
+  padding: 12px;
+}
+
+.exercise-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 6px;
+}
+
+.exercise-visual-label {
+  font-size: 12px;
+  font-weight: bold;
+  color: #003366;
+}
+
+/* ---- Alerta de segurança ---- */
+.alert-box {
+  background: #fff3f3;
+  border: 2px solid #cc0000;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.alert-title {
+  font-weight: bold;
+  color: #cc0000;
+  margin-bottom: 8px;
+}
+
+.alert-text {
+  font-size: 13px;
+  color: #333;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+/* ---- Aviso (card com ⚠) ---- */
+.warning-card {
+  background: #fffbe6;
+  border: 1px solid #e6d600;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.warning-title {
+  font-weight: bold;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.warning-text {
+  font-size: 11px;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* ---- Rotina de exercícios (card na tela início) ---- */
+.routine-preview {
+  background: #f5f5f5;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.routine-label {
+  font-size: 11px;
+  font-weight: bold;
+  margin-bottom: 2px;
+  color: #003366;
+}
+
+.routine-value {
+  font-size: 13px;
+  color: #333;
+}
+
+/* ---- Lista de dados paciente / contatos ---- */
+.contact-info-item {
+  margin-bottom: 10px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.contact-info-label {
+  font-size: 11px;
+  font-weight: bold;
+  color: #003366;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: block;
+  margin-bottom: 2px;
+}
+
+/* ---- Painel inferior (bottom sheet) ---- */
+.bottom-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 390px;
+  width: 100%;
+  background: white;
+  border-top: 1px solid #ccc;
+  border-radius: 16px 16px 0 0;
+  padding: 20px;
+  z-index: 15;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+  display: none;
+}
+
+.bottom-sheet.open {
+  display: block;
+}
+
+.bottom-sheet-handle {
+  width: 40px;
+  height: 4px;
+  background: #ccc;
+  border-radius: 2px;
+  margin: 0 auto 16px;
+}
+
+.bottom-sheet-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: 1px solid #ccc;
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  font-size: 18px;
+  cursor: pointer;
+}

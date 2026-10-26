@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autonomia em Movimento — HUB / UnB</title>
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ===== CABEÇALHO (Oculto na tela de login) ===== -->
+  <div class="header" id="appHeader" style="display:none">
+    <button class="header-menu-btn" id="menuBtn">☰ Menu</button>
+    <div class="header-brand" onclick="navegarPara('inicio')">
+      <img src="logo.svg" alt="Logo Autonomia em Movimento" class="header-logo">
+      <span class="header-title">Autonomia</span>
+    </div>
+    <button class="header-perfil-btn" onclick="navegarPara('contatos')">Perfil</button>
+  </div>
+
+  <!-- ===== MENU LATERAL ===== -->
+  <div class="menu-overlay" id="menuOverlay"></div>
+  <div class="menu-drawer" id="menuDrawer">
+    <div class="menu-header">
+      <img src="logo.svg" alt="Logo" class="menu-logo">
+      <h2 class="menu-title">Autonomia em Movimento</h2>
+    </div>
+    <div class="menu-items-list">
+      <button class="menu-item active" onclick="navegarPara('inicio')">Início</button>
+      <button class="menu-item" onclick="navegarPara('sintomas')">Registro de sintomas</button>
+      <button class="menu-item" onclick="navegarPara('historico')">Meu histórico</button>
+      <button class="menu-item" onclick="navegarPara('orientacoes')">Orientações</button>
+      <button class="menu-item" onclick="navegarPara('exercicios')">Meus exercícios</button>
+      <button class="menu-item" onclick="navegarPara('contatos')">Contatos do HUB</button>
+    </div>
+    <div class="menu-footer">
+      <button class="menu-logout-btn" onclick="realizarLogout()">Sair da conta</button>
+    </div>
+  </div>
+
+  <!-- ===== TELA: LOGIN (Com Persistência) ===== -->
+  <div class="page active" id="page-login">
+    <div class="login-wrapper">
+      <div class="login-header">
+        <img src="logo.svg" alt="Autonomia em Movimento" class="login-logo">
+        <h1 class="login-title">Autonomia em Movimento</h1>
+        <p class="login-sub">HUB · Universidade de Brasília</p>
+      </div>
+
+      <form id="loginForm" class="login-form" onsubmit="realizarLogin(event)">
+        <div class="form-group">
+          <label for="loginNome" class="form-label">Nome ou Cartão SUS</label>
+          <input type="text" id="loginNome" class="form-input" placeholder="Ex: Maria Silva" required value="Maria Silva">
+        </div>
+
+        <div class="form-group">
+          <label for="loginSenha" class="form-label">Senha de acesso</label>
+          <input type="password" id="loginSenha" class="form-input" placeholder="••••••••" required value="123456">
+        </div>
+
+        <div class="form-remember">
+          <label>
+            <input type="checkbox" id="rememberMe" checked> Manter conectado neste dispositivo
+          </label>
+        </div>
+
+        <button type="submit" class="btn">Entrar</button>
+        <p class="login-help">Acompanhamento e reabilitação terapêutica</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== TELA 1.0 / 1.1: INÍCIO ===== -->
+  <div class="page" id="page-inicio">
+
+    <h1 class="page-title">Olá, <span id="userNameDisplay">Maria</span></h1>
+    <p class="page-subtitle" id="currentDateDisplay">Carregando data...</p>
+
+    <!-- Card: Registro diário -->
+    <div class="card">
+      <h3 class="card-title">Registro diário de sintomas</h3>
+      <p class="card-text">Como você se sente hoje?</p>
+      <button class="btn" onclick="navegarPara('sintomas')">Registrar sintomas</button>
+    </div>
+
+    <!-- Card: Clima bloqueado -->
+    <div class="locked-card" id="climaBloqueado">
+      <h3 class="card-title">Informações meteorológicas</h3>
+      <div class="lock-icon">🔒</div>
+      <p class="card-text" style="font-weight:bold">Bloqueado até registrar sintomas</p>
+      <p class="card-text-small">Disponível logo após preencher seu registro diário.</p>
+    </div>
+
+    <!-- Card: Clima liberado (exibido pós-registro) -->
+    <div class="weather-card" id="climaLiberado" style="display:none">
+      <h3 class="weather-title">Informações meteorológicas</h3>
+      <p class="weather-main">☀ Brasília · 24 °C · Céu limpo</p>
+      <p class="weather-detail">Umidade: 62% · Pressão: 1.014 hPa</p>
+      <p class="card-text-small">Atualizado para sua região após o registro diário.</p>
+    </div>
+
+    <!-- Card: Meus exercícios -->
+    <div class="card" id="homeExerciciosCard">
+      <h3 class="card-title">Meus exercícios</h3>
+      <div class="routine-preview" id="homeRoutineBox">
+        <p class="routine-label" id="homeRoutineLabel">Rotina recomendada:</p>
+        <p class="routine-value" id="homeRoutineValue">Mobilidade e Alongamento</p>
+        <p class="card-text-small" id="homeRoutineDesc" style="margin-top:4px">Exercícios de mobilidade ativa e alongamentos leves combinados a educação terapêutica.</p>
+      </div>
+      <button class="btn" id="homeBtnExercicios" onclick="navegarPara('exercicios')">Abrir meus exercícios</button>
+    </div>
+
+    <!-- Card: Aviso -->
+    <div class="warning-card">
+      <p class="warning-title">⚠ Aviso</p>
+      <p class="warning-text">Este aplicativo complementa seu tratamento e não substitui o acompanhamento profissional presencial.</p>
+    </div>
+
+  </div>
+
+  <!-- ===== TELA 2.0: REGISTRO DE SINTOMAS ===== -->
+  <div class="page" id="page-sintomas">
+
+    <h1 class="page-title">Meus sintomas</h1>
+    <p class="page-subtitle">Avalie como seu corpo está respondendo hoje</p>
+
+    <!-- Dor em repouso -->
+    <div class="pain-scale">
+      <div class="pain-scale-label">
+        <span>Dor em repouso</span>
+        <span id="restPainValue">2/10</span>
+      </div>
+      <div class="pain-scale-controls">
+        <button class="pain-scale-btn" onclick="alterarDor('rest', -1)">−</button>
+        <div class="pain-scale-bar">
+          <div class="pain-scale-fill" id="restPainFill" style="width:20%"></div>
+          <div class="pain-scale-thumb" id="restPainThumb" style="left:calc(20% - 9px)"></div>
+        </div>
+        <button class="pain-scale-btn" onclick="alterarDor('rest', 1)">+</button>
+      </div>
+      <div class="pain-scale-labels">
+        <span>0 — Sem dor</span>
+        <span>10 — Dor máxima</span>
+      </div>
+    </div>
+
+    <!-- Dor ao movimento -->
+    <div class="pain-scale">
+      <div class="pain-scale-label">
+        <span>Dor ao movimento</span>
+        <span id="movPainValue">5/10</span>
+      </div>
+      <div class="pain-scale-controls">
+        <button class="pain-scale-btn" onclick="alterarDor('mov', -1)">−</button>
+        <div class="pain-scale-bar">
+          <div class="pain-scale-fill" id="movPainFill" style="width:50%"></div>
+          <div class="pain-scale-thumb" id="movPainThumb" style="left:calc(50% - 9px)"></div>
+        </div>
+        <button class="pain-scale-btn" onclick="alterarDor('mov', 1)">+</button>
+      </div>
+      <div class="pain-scale-labels">
+        <span>0 — Sem dor</span>
+        <span>10 — Dor máxima</span>
+      </div>
+    </div>
+
+    <!-- Rigidez articular -->
+    <div class="choices">
+      <p class="choices-label">Rigidez articular</p>
+      <div class="choices-options" id="rigidezOptions">
+        <button class="choice-btn" onclick="selecionar('rigidezOptions', 0)">Nenhuma</button>
+        <button class="choice-btn selected" onclick="selecionar('rigidezOptions', 1)">Leve</button>
+        <button class="choice-btn" onclick="selecionar('rigidezOptions', 2)">Moderada</button>
+        <button class="choice-btn" onclick="selecionar('rigidezOptions', 3)">Intensa</button>
+      </div>
+    </div>
+
+    <!-- Fadiga -->
+    <div class="choices">
+      <p class="choices-label">Fadiga</p>
+      <div class="choices-options" id="fadigaOptions">
+        <button class="choice-btn" onclick="selecionar('fadigaOptions', 0)">Nenhuma</button>
+        <button class="choice-btn selected" onclick="selecionar('fadigaOptions', 1)">Leve</button>
+        <button class="choice-btn" onclick="selecionar('fadigaOptions', 2)">Moderada</button>
+        <button class="choice-btn" onclick="selecionar('fadigaOptions', 3)">Intensa</button>
+      </div>
+    </div>
+
+    <!-- Humor -->
+    <div class="choices">
+      <p class="choices-label">Humor</p>
+      <div class="mood-options" id="humorOptions">
+        <button class="mood-btn" onclick="selecionar('humorOptions', 0)">
+          <span class="mood-emoji">🙂</span>
+          <span class="mood-label">Bem</span>
+        </button>
+        <button class="mood-btn selected" onclick="selecionar('humorOptions', 1)">
+          <span class="mood-emoji">😐</span>
+          <span class="mood-label">Regular</span>
+        </button>
+        <button class="mood-btn" onclick="selecionar('humorOptions', 2)">
+          <span class="mood-emoji">😞</span>
+          <span class="mood-label">Desanimado</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Atividade física -->
+    <div class="choices">
+      <p class="choices-label">Atividade física realizada</p>
+      <div class="choices-options" id="atividadeOptions">
+        <button class="choice-btn" onclick="selecionar('atividadeOptions', 0)">Nenhuma</button>
+        <button class="choice-btn selected" onclick="selecionar('atividadeOptions', 1)">Leve</button>
+        <button class="choice-btn" onclick="selecionar('atividadeOptions', 2)">Moderada</button>
+        <button class="choice-btn" onclick="selecionar('atividadeOptions', 3)">Intensa</button>
+      </div>
+    </div>
+
+    <!-- Sinal atípico -->
+    <p style="font-size:13px; font-weight:bold; color:#003366; margin-bottom:4px">Apresenta algum sinal atípico hoje?</p>
+    <p style="font-size:11px; color:#666; margin-bottom:8px">Febre, inchaço súbito ou dor extrema fora do comum.</p>
+    <div class="choices">
+      <div class="choices-options" id="atipicoOptions">
+        <button class="choice-btn selected" onclick="selecionar('atipicoOptions', 0)">Não</button>
+        <button class="choice-btn" onclick="selecionar('atipicoOptions', 1)">Sim</button>
+      </div>
+    </div>
+
+    <button class="btn" onclick="concluirRegistro()">Concluir registro de sintomas</button>
+
+  </div>
+
+  <!-- ===== TELA 3.0: MEU HISTÓRICO ===== -->
+  <div class="page" id="page-historico">
+
+    <h1 class="page-title">Meu histórico</h1>
+    <p class="page-subtitle">Acompanhe a evolução da sua dor ao longo do mês</p>
+
+    <!-- Navegação de mês -->
+    <div class="heatmap-header">
+      <button class="month-nav-btn" onclick="mudarMes(-1)">‹</button>
+      <span class="month-label" id="mesLabel">maio 2025</span>
+      <button class="month-nav-btn" onclick="mudarMes(1)">›</button>
+    </div>
+
+    <!-- Visão global -->
+    <div class="card">
+      <h3 class="card-title">Visão global</h3>
+      <p class="card-text-small" id="historicoPeriodo">1–21 de mai. · Dor ao movimento</p>
+      <div class="stats-row">
+        <div class="stat-item">
+          <div class="stat-value">3,9/10</div>
+          <div class="stat-label">Média da dor</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">9/10</div>
+          <div class="stat-label">Pico de dor</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">21</div>
+          <div class="stat-label">Dias registrados</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtro dor -->
+    <div class="choices">
+      <p class="choices-label">Visualizar dor</p>
+      <div class="choices-options" id="filtDorOptions">
+        <button class="choice-btn" onclick="selecionar('filtDorOptions', 0)">Em repouso</button>
+        <button class="choice-btn selected" onclick="selecionar('filtDorOptions', 1)">Ao movimento</button>
+      </div>
+    </div>
+
+    <!-- Heatmap -->
+    <div class="card">
+      <p class="choices-label">Dor ao movimento por dia</p>
+
+      <div class="heatmap-weekdays">
+        <span class="heatmap-weekday">S</span>
+        <span class="heatmap-weekday">T</span>
+        <span class="heatmap-weekday">Q</span>
+        <span class="heatmap-weekday">Q</span>
+        <span class="heatmap-weekday">S</span>
+        <span class="heatmap-weekday">S</span>
+        <span class="heatmap-weekday">D</span>
+      </div>
+
+      <div class="heatmap-grid" id="heatmapGrid">
+        <!-- Preenchido pelo JS -->
+      </div>
+
+      <p class="choices-label" style="font-size:12px">Nível de dor</p>
+      <div class="heatmap-legend">
+        <div class="legend-item"><div class="legend-color" style="background:#f4f4f4"></div> 0 · Sem dor</div>
+        <div class="legend-item"><div class="legend-color" style="background:#ffe48a"></div> 1–3 · Leve</div>
+        <div class="legend-item"><div class="legend-color" style="background:#ffb464"></div> 4–6 · Moderada</div>
+        <div class="legend-item"><div class="legend-color" style="background:#f17b72"></div> 7–10 · Intensa</div>
+      </div>
+
+      <p style="font-size:11px; color:#666">Toque em qualquer dia registrado para consultar mais informações climáticas.</p>
+    </div>
+
+    <!-- Bottom sheet: Clima do dia selecionado -->
+    <div class="bottom-sheet" id="climaSheet">
+      <div class="bottom-sheet-handle"></div>
+      <button class="bottom-sheet-close" onclick="fecharClimaSheet()">×</button>
+      <h3 class="page-title" id="climaSheetTitle">Clima no dia selecionado</h3>
+      <p style="margin-top:12px; font-size:13px; line-height:1.4">Neste dia, a umidade relativa do ar atingiu 30% e a temperatura registrou queda acentuada.</p>
+      <p style="font-size:11px; color:#888; margin-top:16px; line-height:1.4">Clima e dor podem coincidir temporalmente, sem que isso comprove uma relação direta de causa e efeito.</p>
+    </div>
+
+  </div>
+
+  <!-- ===== TELA 4.0: ORIENTAÇÕES ===== -->
+  <div class="page" id="page-orientacoes">
+
+    <h1 class="page-title">Aprender a cuidar</h1>
+    <p class="page-subtitle">Educação Terapêutica do Paciente</p>
+
+    <div class="card">
+      <h3 class="card-title">Compreendendo a dor</h3>
+      <p class="card-text">A dor é um mecanismo de alarme do organismo que envolve aspectos biológicos, emocionais e do ambiente. Compreender como ela funciona ajuda a reduzir a sensibilidade do sistema nervoso e favorece a segurança nos movimentos.</p>
+      <a href="#" class="card-link" onclick="event.preventDefault(); alert('Em breve: leitura completa com orientações validadas pela equipe do HUB.');">Ler artigo completo →</a>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Meteoropatia: clima e sintomas</h3>
+      <p class="card-text">Variações bruscas de temperatura, umidade e pressão atmosférica podem alterar a percepção de rigidez articular em algumas pessoas. Manter o corpo aquecido e ativo atenua esses desconfortos.</p>
+      <a href="#" class="card-link" onclick="event.preventDefault(); alert('Em breve: leitura completa com orientações validadas pela equipe do HUB.');">Ler artigo completo →</a>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Autonomia no dia a dia</h3>
+      <p class="card-text">Estratégias práticas para adaptar suas tarefas domésticas e de trabalho, mantendo o movimento constante e o autocuidado após a alta hospitalar.</p>
+      <a href="#" class="card-link" onclick="event.preventDefault(); alert('Em breve: leitura completa com orientações validadas pela equipe do HUB.');">Ler artigo completo →</a>
+    </div>
+
+  </div>
+
+  <!-- ===== TELA 5.0: MEUS EXERCÍCIOS ===== -->
+  <div class="page" id="page-exercicios">
+
+    <h1 class="page-title">Meus exercícios</h1>
+    <p class="page-subtitle" id="exSubtitle">Plano individual de reabilitação e movimento</p>
+
+    <!-- Bloqueio de segurança (quando EVA 8 a 10 ou sinal atípico) -->
+    <div class="alert-box" id="exLockedCard" style="display:none">
+      <h3 class="alert-title">Rotina Suspensa — Trava de Segurança Ativada</h3>
+      <p class="alert-text">Diante de dor intensa ou relato de sinais de alarme, qualquer rotina de exercício é bloqueada automaticamente para sua segurança.</p>
+      <button class="btn btn-danger" onclick="navegarPara('alerta')" style="margin-top:12px">Ver Alerta de Segurança e Contatos</button>
+    </div>
+
+    <!-- Conteúdo normal dos exercícios (quando dor <= 7) -->
+    <div id="exNormalContainer">
+      <!-- Rotina recomendada -->
+      <div class="card">
+        <h3 class="card-title">Perfil de exercício recomendado</h3>
+        <p class="card-text" id="exRoutineName" style="font-weight:bold; color:#006633; font-size:15px">Mobilidade e Alongamento</p>
+        <p class="card-text-small" id="exRoutineGoal">Objetivo: Aliviar a rigidez e desensibilizar o medo do movimento.</p>
+      </div>
+
+      <!-- Exercício ativo -->
+      <div class="card">
+        <h3 class="card-title" id="exExerciseTitle">Exercício 1: Mobilidade suave e respiração diafragmática</h3>
+        
+        <!-- Visual ilustrativo do exercício com logo estilizado -->
+        <div class="exercise-visual">
+          <img src="logo.svg" alt="Exercício" class="exercise-icon">
+          <span class="exercise-visual-label" id="exVisualLabel">Mobilidade Ativa e Desensibilização</span>
+        </div>
+
+        <p class="card-text" id="exInstructions">Realize 3 séries de 30 segundos. Movimentos lentos e suaves até o ponto de conforto, sem forçar a articulação e sem prender o ar.</p>
+        <p class="card-text-small" id="exSubInstructions">Respeite os limites do seu corpo hoje. O foco é soltar a musculatura e aliviar a rigidez.</p>
+      </div>
+
+      <!-- Pílula Educativa (TPE) -->
+      <div class="card" id="exTpeCard" style="background:#f0f5fa; border-color:#c2d6eb">
+        <h3 class="card-title" style="color:#003366">💡 Pílula de Educação Terapêutica (TPE)</h3>
+        <p class="card-text" id="exTpeText" style="font-size:12.5px; line-height:1.4">Sentir um desconforto moderado e tolerável durante o movimento é normal e seguro. Mover-se com calma ensina o cérebro que o movimento não representa perigo.</p>
+      </div>
+
+      <!-- Antes de iniciar -->
+      <div class="card">
+        <h3 class="card-title">Antes de iniciar</h3>
+        <p class="card-text">Certifique-se de que está se sentindo apto para o treino. Não inicie se apresentar febre, inchaço súbito ou dor aguda fora do comum.</p>
+      </div>
+
+      <!-- Feedback -->
+      <div class="choices">
+        <p class="choices-label">Como se sentiu ao terminar o treino?</p>
+        <div class="choices-options" id="feedbackOptions">
+          <button class="choice-btn" onclick="selecionar('feedbackOptions', 0)">Fácil</button>
+          <button class="choice-btn selected" onclick="selecionar('feedbackOptions', 1)">Adequado</button>
+          <button class="choice-btn" onclick="selecionar('feedbackOptions', 2)">Muito difícil</button>
+        </div>
+      </div>
+
+      <button class="btn" id="btnConcluirTreino" onclick="concluirTreino()">Concluir treino</button>
+    </div>
+
+  </div>
+
+  <!-- ===== TELA 6.0: CONTATOS DO HUB ===== -->
+  <div class="page" id="page-contatos">
+
+    <h1 class="page-title">Contatos do HUB / UnB</h1>
+    <p class="page-subtitle">Hospital Universitário de Brasília</p>
+
+    <div class="card">
+      <h3 class="card-title">Meus dados</h3>
+      <div class="contact-info-item">
+        <span class="contact-info-label">Paciente</span>
+        <strong id="perfilNome">Maria Silva</strong>
+      </div>
+      <div class="contact-info-item">
+        <span class="contact-info-label">Prontuário Ambulatorial</span>
+        <span>HUB-2026/0418</span>
+      </div>
+      <div class="contact-info-item">
+        <span class="contact-info-label">Setor de Acompanhamento</span>
+        <span>Fisioterapia e Terapia Ocupacional</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Equipe de Fisioterapia</h3>
+      <p class="card-text" style="font-weight:bold; color:#003366">HUB / Universidade de Brasília</p>
+      
+      <div class="contact-info-item" style="margin-top:10px">
+        <span class="contact-info-label">Responsáveis</span>
+        <span>Equipe multiprofissional de reabilitação e residentes</span>
+      </div>
+      <div class="contact-info-item">
+        <span class="contact-info-label">Telefone institucional</span>
+        <span>(61) 2028-5000</span>
+      </div>
+      <div class="contact-info-item">
+        <span class="contact-info-label">Horários de atendimento</span>
+        <span>Segunda a sexta-feira, das 08h às 18h</span>
+      </div>
+
+      <a href="tel:6120285000" style="text-decoration:none">
+        <button class="btn">Ligar para a equipe</button>
+      </a>
+    </div>
+
+    <div class="card" style="border-color:#ffcccc; background:#fffafa">
+      <h3 class="card-title" style="color:#cc0000">Sessão</h3>
+      <p class="card-text-small">Você está conectado como paciente.</p>
+      <button class="btn btn-outline" onclick="realizarLogout()">Encerrar sessão</button>
+    </div>
+
+  </div>
+
+  <!-- ===== TELA 7.0: ALERTA DE SEGURANÇA ===== -->
+  <div class="page" id="page-alerta">
+
+    <h1 class="page-title" style="color:#cc0000">Suspenda a rotina</h1>
+    <p class="page-subtitle">Sinal de atenção detectado no seu registro</p>
+
+    <div class="alert-box">
+      <h3 class="alert-title">Sinal de alerta identificado</h3>
+      <p class="alert-text">Por medida de segurança preventiva, interrompa os exercícios físicos de hoje.</p>
+      <p class="alert-text">Procure uma avaliação presencial com a equipe de saúde responsável pelo seu acompanhamento.</p>
+      
+      <p class="alert-text" style="font-weight:bold; margin-top:10px; color:#cc0000">Motivo da pausa preventiva:</p>
+      <p class="alert-text" id="motivoBloqueio">Dor em intensidade elevada (EVA 9/10) ou sinal atípico relatado.</p>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Acesso rápido à equipe</h3>
+      <p class="card-text">Entre em contato com o ambulatório de fisioterapia para receber orientação.</p>
+      <a href="tel:6120285000" style="text-decoration:none">
+        <button class="btn">Ligar para o HUB</button>
+      </a>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Em caso de emergência médica</h3>
+      <p class="card-text">Se sentir dor no peito, falta de ar severa ou desmaio, ligue imediatamente para a rede de urgência.</p>
+      <a href="tel:192" style="text-decoration:none">
+        <button class="btn btn-danger">Ligar para SAMU · 192</button>
+      </a>
+      <p class="card-text-small" style="margin-top:8px">Atendimento público gratuito disponível 24 horas.</p>
+    </div>
+
+    <div class="warning-card">
+      <p class="warning-title">⚠ Rotina suspensa</p>
+      <p class="warning-text">A rotina de exercícios permanecerá pausada até sua avaliação pela equipe de saúde.</p>
+      <p class="warning-text">Este aviso é um mecanismo de segurança preventiva e não substitui o diagnóstico médico.</p>
+    </div>
+
+  </div>
+
+</div><!-- .app -->
+
+<script src="app.js"></script>
+</body>
+</html>
