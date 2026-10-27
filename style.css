@@ -432,6 +432,7 @@ body {
 }
 
 .weather-title {
+  font-size: 14px; /* Adicionado para igualar aos outros cards */
   font-weight: bold;
   color: #003366;
   margin-bottom: 6px;
