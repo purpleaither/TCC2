@@ -396,8 +396,10 @@ function aplicarPerfilExercicios(tipo) {
     btnTreino.style.background = '#006633';
   }
 }
-
-function concluirRegistro() {
+function concluirRegistro(event) {
+  if (event) {
+    event.preventDefault();
+  }
   // Obtém os valores informados no formulário.
   var maiorDor = Math.max(dorRepouso, dorMovimento);
 
