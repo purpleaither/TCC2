@@ -482,25 +482,6 @@ function concluirRegistro() {
     registro
   );
 }
-
-  // Desbloqueia previsão meteorológica no Início
-  var climaBloq = document.getElementById('climaBloqueado');
-  var climaLib = document.getElementById('climaLiberado');
-  if (climaBloq) climaBloq.style.display = 'none';
-  if (climaLib) climaLib.style.display = 'block';
-
-  // DECISÃO 2: Perfil de Fortalecimento e Manutenção (EVA de 0 a 3)
-  if (maiorDor <= 3) {
-    aplicarPerfilExercicios('fortalecimento');
-  } 
-  // DECISÃO 3: Perfil de Mobilidade e Alongamento (EVA de 4 a 7)
-  else {
-    aplicarPerfilExercicios('mobilidade');
-  }
-
-  navegarPara('inicio');
-}
-
 // ========================================
 // 8. CONCLUSÃO DO TREINO
 // ========================================
