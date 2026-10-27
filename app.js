@@ -462,6 +462,30 @@ function buscarClimaReal() {
     .catch(function(error) {
       console.error('Erro ao buscar clima:', error);
     });
+   function validarTcle() {
+  var aceite = document.getElementById('aceiteTcle').checked;
+  if (!aceite) {
+    alert('Deve aceitar os termos do consentimento para prosseguir.');
+    return;
+  }
+  navegarPara('questionario-inicial');
+}
+
+function concluirOnboarding() {
+  var nomeInput = document.getElementById('qNome');
+  var nome = (nomeInput && nomeInput.value.trim()) ? nomeInput.value.trim() : 'Maria Silva';
+
+  usuarioAtual = {
+    nome: nome,
+    dataLogin: new Date().toISOString()
+  };
+
+  localStorage.setItem(CHAVE_STORAGE, JSON.stringify(usuarioAtual));
+  aplicarUsuarioNaInterface(nome);
+  mostrarCabecalho(true);
+  navegarPara('inicio');
+}
+
 }
 
 atualizarDataAtual();
