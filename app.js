@@ -453,7 +453,6 @@ function concluirRegistro(event) {
 
   navegarPara('inicio');
 }
-
 // ========================================
 // 8. CONCLUSÃO DO TREINO
 // ========================================
@@ -462,10 +461,15 @@ function concluirTreino() {
   treinoConcluido = true;
   var btn = document.getElementById('btnConcluirTreino');
   if (btn) {
-    btn.textContent = 'Treino concluído · feedback registrado!';
+    btn.textContent = 'Treino concluído!';
     btn.disabled = true;
     btn.style.background = '#005528';
   }
+  
+  // Aguarda meio segundo (500ms) para o usuário ver o botão verde e volta para o Início
+  setTimeout(function() {
+    navegarPara('inicio');
+  }, 500);
 }
 
 // ========================================
