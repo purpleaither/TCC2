@@ -398,26 +398,90 @@ function aplicarPerfilExercicios(tipo) {
 }
 
 function concluirRegistro() {
+  // Obtém os valores informados no formulário.
   var maiorDor = Math.max(dorRepouso, dorMovimento);
 
-  // DECISÃO 1: Perfil de Segurança e Bloqueio (EVA de 8 a 10 ou Sinais Atípicos)
-  if (atipico === 1 || maiorDor >= 8) {
+  // Cria um registro temporário para demonstrar o funcionamento.
+  // Ele permanece apenas na memória enquanto a página está aberta.
+  var registro = {
+    data: new Date().toISOString(),
+    dorRepouso: dorRepouso,
+    dorMovimento: dorMovimento,
+    maiorDor: maiorDor,
+    rigidez: rigidezAtual,
+    fadiga: fadigaAtual,
+    humor: humorAtual,
+    atividade: atividadeAtual,
+    sinalAtipico: atipico === 1
+  };
+
+  registrosDemo.push(registro);
+  registroEnviadoHoje = true;
+
+  // Libera o card meteorológico após o envio do formulário.
+  // A integração com uma API real será feita na próxima etapa.
+  var climaBloq = document.getElementById('climaBloqueado');
+  var climaLib = document.getElementById('climaLiberado');
+
+  if (climaBloq) {
+    climaBloq.style.display = 'none';
+  }
+
+  if (climaLib) {
+    climaLib.style.display = 'block';
+  }
+
+  // REGRA 1: sinais atípicos ou dor de 8 a 10.
+  // A rotina de exercícios deve ser bloqueada.
+  if (registro.sinalAtipico || maiorDor >= 8) {
     var motivo = '';
-    if (maiorDor >= 8 && atipico === 1) {
-      motivo = 'Dor intensa em repouso/movimento (EVA ' + maiorDor + '/10) e relato de sinal atípico. A trava de segurança foi acionada.';
-    } else if (maiorDor >= 8) {
-      motivo = 'Dor intensa em repouso/movimento avaliada em EVA ' + maiorDor + '/10. A trava de segurança foi acionada.';
+
+    if (registro.sinalAtipico && maiorDor >= 8) {
+      motivo =
+        'Foi relatado um sinal atípico e dor intensa (' +
+        maiorDor +
+        '/10). Os exercícios foram bloqueados por segurança.';
+    } else if (registro.sinalAtipico) {
+      motivo =
+        'Foi relatado um sinal atípico. Os exercícios foram ' +
+        'bloqueados preventivamente.';
     } else {
-      motivo = 'Relato de sinal atípico (febre, inchaço súbito ou dor aguda fora do comum). A trava de segurança foi acionada.';
+      motivo =
+        'A dor informada foi de ' +
+        maiorDor +
+        '/10. Os exercícios foram bloqueados por segurança.';
     }
-    
+
     var elMotivo = document.getElementById('motivoBloqueio');
-    if (elMotivo) elMotivo.textContent = motivo;
+
+    if (elMotivo) {
+      elMotivo.textContent = motivo;
+    }
 
     aplicarPerfilExercicios('bloqueio');
     navegarPara('alerta');
+
     return;
   }
+
+  // REGRA 2: dor de 0 a 3.
+  if (maiorDor <= 3) {
+    aplicarPerfilExercicios('fortalecimento');
+  }
+
+  // REGRA 3: dor de 4 a 7.
+  else {
+    aplicarPerfilExercicios('mobilidade');
+  }
+
+  // Mostra a tela inicial com o resultado do registro.
+  navegarPara('inicio');
+
+  console.log(
+    'Registro demonstrativo concluído:',
+    registro
+  );
+}
 
   // Desbloqueia previsão meteorológica no Início
   var climaBloq = document.getElementById('climaBloqueado');
