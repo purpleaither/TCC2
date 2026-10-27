@@ -260,6 +260,7 @@ function aplicarPerfilExercicios(tipo) {
 
 function concluirRegistro(event) {
   if (event) event.preventDefault();
+  buscarClimaReal();
   var maiorDor = Math.max(dorRepouso, dorMovimento);
   var registro = { sinalAtipico: atipico === 1 };
 
@@ -435,6 +436,32 @@ function abrirClimaSheet(dia, dadosDia, valorDor) {
 function fecharClimaSheet() {
   var sheet = document.getElementById('climaSheet');
   if (sheet) sheet.classList.remove('open');
+}
+function buscarClimaReal() {
+  var latitude = -15.7801;
+  var longitude = -47.9292;
+  
+  var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + latitude + '&longitude=' + longitude + '&current=temperature_2m,relative_humidity_2m,surface_pressure';
+
+  fetch(url)
+    .then(function(response) { return response.json(); })
+    .then(function(data) {
+      var temp = data.current.temperature_2m;
+      var umidade = data.current.relative_humidity_2m;
+      var pressao = data.current.surface_pressure;
+
+      var cardClima = document.getElementById('climaLiberado');
+      if (cardClima) {
+        cardClima.innerHTML = 
+          '<h3 class="weather-title">Informações meteorológicas</h3>' +
+          '<p class="weather-main">☀ Brasília · ' + temp + ' °C</p>' +
+          '<p class="weather-detail">Umidade: ' + umidade + '% · Pressão: ' + pressao + ' hPa</p>' +
+          '<p class="card-text-small">Atualizado em tempo real para sua região após o registro diário.</p>';
+      }
+    })
+    .catch(function(error) {
+      console.error('Erro ao buscar clima:', error);
+    });
 }
 
 atualizarDataAtual();
