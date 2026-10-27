@@ -121,7 +121,7 @@ function realizarLogout() {
 function validarTcle() {
   var aceite = document.getElementById('aceiteTcle');
   if (!aceite || !aceite.checked) {
-    alert('Deve aceitar os termos do consentimento para prosseguir.');
+    alert('Você deve aceitar os termos do consentimento para prosseguir.');
     return;
   }
   navegarPara('questionario-inicial');
@@ -425,7 +425,7 @@ function abrirClimaSheet(dia, reg) {
   var nomesMes = ['jan.', 'fev.', 'mar.', 'abr.', 'mai.', 'jun.', 'jul.', 'ago.', 'set.', 'out.', 'nov.', 'dez.'];
   
   var elTitle = document.getElementById('climaSheetTitle');
-  if (elTitle) elTitle.textContent = 'Registo do dia ' + dia + ' de ' + nomesMes[mesAtual.getMonth()];
+  if (elTitle) elTitle.textContent = 'Registro do dia ' + dia + ' de ' + nomesMes[mesAtual.getMonth()];
 
   var sheet = document.getElementById('climaSheet');
   if (sheet) sheet.classList.add('open');
