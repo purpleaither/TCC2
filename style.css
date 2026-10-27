@@ -423,7 +423,6 @@ body {
 
 /* ---- Info meteorológica (desbloqueada) ---- */
 .weather-card {
-  .weather-card {
   background: transparent;
   border: 1px solid #ddd;
   border-radius: 6px;
