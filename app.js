@@ -20,7 +20,7 @@ var treinoConcluido = false;
 var registroEnviadoHoje = false;
 var registrosDemo = [];
 var perfilExercicioAtivo = 'mobilidade';
-var mesAtual = new Date(2025, 4, 1); // maio 2025
+var mesAtual = new Date(); 
 
 // ========================================
 // MATRIZ DE RECOMENDAÇÃO CLÍNICA DE EXERCÍCIOS
@@ -471,60 +471,109 @@ function concluirTreino() {
     navegarPara('inicio');
   }, 500);
 }
-
 // ========================================
-// 9. HEATMAP DO HISTÓRICO (Corrigido)
+// 9. HEATMAP DO HISTÓRICO (Calendário Real)
 // ========================================
 
-var valoresDor = [2, 3, 7, 5, 1, 0, 4, 3, 8, 6, 2, 1, 7, 4, 1, 2, 5, 9, 6, 3, 2];
+// Gera dores aleatórias fictícias no passado (até a data de hoje)
+function gerarDadosFicticios(mes, ano) {
+  var dados = [];
+  var hoje = new Date();
+  var numDias = new Date(ano, mes + 1, 0).getDate();
+  
+  for (var i = 1; i <= numDias; i++) {
+    // Se o dia for no futuro, deixa vazio (null)
+    if (ano > hoje.getFullYear() || 
+       (ano === hoje.getFullYear() && mes > hoje.getMonth()) || 
+       (ano === hoje.getFullYear() && mes === hoje.getMonth() && i > hoje.getDate())) {
+      dados.push(null); 
+    } else {
+      // Gera um nível de dor aleatório (0 a 10) para o protótipo do TCC
+      dados.push(Math.floor(Math.random() * 11));
+    }
+  }
+  return dados;
+}
 
 function gerarHeatmap() {
   var grid = document.getElementById('heatmapGrid');
   if (!grid) return;
-  grid.innerHTML = ''; // Limpa a grade antes de construir
+  grid.innerHTML = ''; 
 
-  for (var i = 0; i < valoresDor.length; i++) {
-    var v = valoresDor[i];
+  var ano = mesAtual.getFullYear();
+  var mes = mesAtual.getMonth();
+  var numDias = new Date(ano, mes + 1, 0).getDate();
+  
+  // Ajusta o calendário para começar na segunda-feira (S T Q Q S S D)
+  var primeiroDiaSemana = new Date(ano, mes, 1).getDay(); 
+  var offset = (primeiroDiaSemana === 0) ? 6 : primeiroDiaSemana - 1;
+
+  // Cria os espaços vazios do início do mês 
+  for (var i = 0; i < offset; i++) {
+    var emptyCell = document.createElement('div');
+    emptyCell.className = 'heatmap-cell';
+    emptyCell.style.border = 'none';
+    emptyCell.style.background = 'transparent';
+    emptyCell.style.cursor = 'default';
+    grid.appendChild(emptyCell);
+  }
+
+  var dadosMes = gerarDadosFicticios(mes, ano);
+
+  for (var i = 0; i < numDias; i++) {
+    var v = dadosMes[i];
     var cell = document.createElement('div');
     cell.className = 'heatmap-cell';
 
-    // Associa a cor correta dependendo do nível de dor
-    if (v === 0) {
-      cell.style.backgroundColor = '#f4f4f4';
-    } else if (v <= 3) {
-      cell.style.backgroundColor = '#ffe48a';
-    } else if (v <= 6) {
-      cell.style.backgroundColor = '#ffb464';
+    if (v === null) {
+      // Dias futuros (sem registro ficam em branco)
+      cell.style.backgroundColor = '#fafafa';
+      cell.style.borderColor = '#eee';
+      cell.style.cursor = 'default';
+      cell.innerHTML = `
+        <span class="heatmap-cell-day" style="color:#ccc">${i + 1}</span>
+        <span class="heatmap-cell-value" style="color:#ccc">-</span>
+      `;
     } else {
-      cell.style.backgroundColor = '#f17b72';
+      // Dias registrados com dor gerada (0 a 10)
+      if (v === 0) {
+        cell.style.backgroundColor = '#f4f4f4';
+      } else if (v <= 3) {
+        cell.style.backgroundColor = '#ffe48a';
+      } else if (v <= 6) {
+        cell.style.backgroundColor = '#ffb464';
+      } else {
+        cell.style.backgroundColor = '#f17b72';
+      }
+
+      cell.innerHTML = `
+        <span class="heatmap-cell-day">${i + 1}</span>
+        <span class="heatmap-cell-value">${v}/10</span>
+      `;
+
+      // Clique no dia abre o bottom-sheet do clima
+      (function(dia) {
+        cell.onclick = function() {
+          abrirClimaSheet(dia);
+        };
+      })(i + 1);
     }
 
-    // Isola o dia e a dor em linhas separadas para bater com o CSS
-    cell.innerHTML = `
-      <span class="heatmap-cell-day">${i + 1}</span>
-      <span class="heatmap-cell-value">${v}/10</span>
-    `;
-
-    // Isola o clique do dia usando closure
-    (function(dia) {
-      cell.onclick = function() {
-        abrirClimaSheet(dia);
-      };
-    })(i + 1);
-
     grid.appendChild(cell);
+  }
+
+  // Atualiza o texto do mês atual (ex: outubro 2026)
+  var nomes = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+               'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+  var elLabel = document.getElementById('mesLabel');
+  if (elLabel) {
+    elLabel.textContent = nomes[mes] + ' ' + ano;
   }
 }
 
 function mudarMes(delta) {
   mesAtual = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + delta, 1);
-  var nomes = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
-               'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
-  
-  var elLabel = document.getElementById('mesLabel');
-  if (elLabel) {
-    elLabel.textContent = nomes[mesAtual.getMonth()] + ' ' + mesAtual.getFullYear();
-  }
+  gerarHeatmap(); // Recarrega o grid com os dados quando clicar nas setas
 }
 
 function abrirClimaSheet(dia) {
