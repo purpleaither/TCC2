@@ -304,15 +304,27 @@
     </div>
 
     <!-- Bottom sheet: Clima do dia selecionado -->
+        <!-- Bottom sheet: Clima do dia selecionado -->
     <div class="bottom-sheet" id="climaSheet">
       <div class="bottom-sheet-handle"></div>
       <button class="bottom-sheet-close" onclick="fecharClimaSheet()">×</button>
-      <h3 class="page-title" id="climaSheetTitle">Clima no dia selecionado</h3>
-      <p style="margin-top:12px; font-size:13px; line-height:1.4">Neste dia, a umidade relativa do ar atingiu 30% e a temperatura registrou queda acentuada.</p>
+      <h3 class="page-title" id="climaSheetTitle">Dia selecionado</h3>
+      
+      <!-- Informações clínicas dinâmicas -->
+      <div style="margin-top: 16px; margin-bottom: 12px; background: #f9f9f9; padding: 12px; border-radius: 6px; border: 1px solid #eee;">
+        <p style="font-size: 14px; font-weight: bold; color: #003366; margin-bottom: 10px;" id="sheetDorNivel">Dor: 0/10</p>
+        <div style="display: flex; gap: 8px; font-size: 12px; color: #444;">
+          <div style="flex: 1;"><strong>Rigidez:</strong><br><span id="sheetRigidez">-</span></div>
+          <div style="flex: 1;"><strong>Fadiga:</strong><br><span id="sheetFadiga">-</span></div>
+          <div style="flex: 1;"><strong>Humor:</strong><br><span id="sheetHumor">-</span></div>
+        </div>
+      </div>
+
+      <h3 class="weather-title" style="font-size:13px">Resumo Meteorológico</h3>
+      <p style="font-size:13px; line-height:1.4; color:#333;" id="sheetClimaDesc">Neste dia, a umidade relativa do ar atingiu 30%...</p>
       <p style="font-size:11px; color:#888; margin-top:16px; line-height:1.4">Clima e dor podem coincidir temporalmente, sem que isso comprove uma relação direta de causa e efeito.</p>
     </div>
 
-  </div>
 
   <!-- ===== TELA 4.0: ORIENTAÇÕES ===== -->
   <div class="page" id="page-orientacoes">
