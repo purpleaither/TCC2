@@ -12,7 +12,13 @@ var usuarioAtual = null;
 var dorRepouso = 2;
 var dorMovimento = 5;
 var atipico = 0;
+var rigidezAtual = 1;
+var fadigaAtual = 1;
+var humorAtual = 1;
+var atividadeAtual = 1;
 var treinoConcluido = false;
+var registroEnviadoHoje = false;
+var registrosDemo = [];
 var perfilExercicioAtivo = 'mobilidade';
 var mesAtual = new Date(2025, 4, 1); // maio 2025
 
@@ -199,30 +205,32 @@ function navegarPara(pagina) {
 }
 
 // ========================================
-// 3. MENU LATERAL
+// 3. MENU LATERAL (Corrigido)
 // ========================================
 
-var menuBtn = document.getElementById('menuBtn');
-var menuOverlay = document.getElementById('menuOverlay');
-var menuDrawer = document.getElementById('menuDrawer');
-
-if (menuBtn) {
-  menuBtn.addEventListener('click', function() {
-    menuOverlay.classList.add('open');
-    menuDrawer.classList.add('open');
-  });
-}
-
-if (menuOverlay) {
-  menuOverlay.addEventListener('click', function() {
-    fecharMenu();
-  });
+function alternarMenu() {
+  var drawer = document.getElementById('menuDrawer');
+  var overlay = document.getElementById('menuOverlay');
+  if (drawer) drawer.classList.toggle('open');
+  if (overlay) overlay.classList.toggle('open');
 }
 
 function fecharMenu() {
-  if (menuOverlay) menuOverlay.classList.remove('open');
-  if (menuDrawer) menuDrawer.classList.remove('open');
+  var drawer = document.getElementById('menuDrawer');
+  var overlay = document.getElementById('menuOverlay');
+  if (drawer) drawer.classList.remove('open');
+  if (overlay) overlay.classList.remove('open');
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  fecharMenu(); // Força o menu a iniciar oculto e evita o bug da tela de login
+
+  var menuBtn = document.getElementById('menuBtn');
+  var menuOverlay = document.getElementById('menuOverlay');
+
+  if (menuBtn) menuBtn.onclick = alternarMenu;
+  if (menuOverlay) menuOverlay.onclick = fecharMenu;
+});
 
 // ========================================
 // 4. DATA ATUAL DINÂMICA
@@ -273,9 +281,7 @@ function selecionar(grupoId, indice) {
 
   if (!grupo) return;
 
-  var botoes = grupo.querySelectorAll(
-    '.choice-btn, .mood-btn'
-  );
+  var botoes = grupo.querySelectorAll('.choice-btn, .mood-btn');
 
   botoes.forEach(function(botao) {
     botao.classList.remove('selected');
@@ -290,19 +296,15 @@ function selecionar(grupoId, indice) {
     case 'rigidezOptions':
       rigidezAtual = indice;
       break;
-
     case 'fadigaOptions':
       fadigaAtual = indice;
       break;
-
     case 'humorOptions':
       humorAtual = indice;
       break;
-
     case 'atividadeOptions':
       atividadeAtual = indice;
       break;
-
     case 'atipicoOptions':
       atipico = indice;
       break;
@@ -396,15 +398,12 @@ function aplicarPerfilExercicios(tipo) {
     btnTreino.style.background = '#006633';
   }
 }
+
 function concluirRegistro(event) {
-  if (event) {
-    event.preventDefault();
-  }
-  // Obtém os valores informados no formulário.
+  if (event) event.preventDefault();
+
   var maiorDor = Math.max(dorRepouso, dorMovimento);
 
-  // Cria um registro temporário para demonstrar o funcionamento.
-  // Ele permanece apenas na memória enquanto a página está aberta.
   var registro = {
     data: new Date().toISOString(),
     dorRepouso: dorRepouso,
@@ -420,70 +419,41 @@ function concluirRegistro(event) {
   registrosDemo.push(registro);
   registroEnviadoHoje = true;
 
-  // Libera o card meteorológico após o envio do formulário.
-  // A integração com uma API real será feita na próxima etapa.
   var climaBloq = document.getElementById('climaBloqueado');
   var climaLib = document.getElementById('climaLiberado');
 
-  if (climaBloq) {
-    climaBloq.style.display = 'none';
-  }
-
-  if (climaLib) {
-    climaLib.style.display = 'block';
-  }
+  if (climaBloq) climaBloq.style.display = 'none';
+  if (climaLib) climaLib.style.display = 'block';
 
   // REGRA 1: sinais atípicos ou dor de 8 a 10.
-  // A rotina de exercícios deve ser bloqueada.
   if (registro.sinalAtipico || maiorDor >= 8) {
     var motivo = '';
-
     if (registro.sinalAtipico && maiorDor >= 8) {
-      motivo =
-        'Foi relatado um sinal atípico e dor intensa (' +
-        maiorDor +
-        '/10). Os exercícios foram bloqueados por segurança.';
+      motivo = 'Foi relatado um sinal atípico e dor intensa (' + maiorDor + '/10). Os exercícios foram bloqueados por segurança.';
     } else if (registro.sinalAtipico) {
-      motivo =
-        'Foi relatado um sinal atípico. Os exercícios foram ' +
-        'bloqueados preventivamente.';
+      motivo = 'Foi relatado um sinal atípico. Os exercícios foram bloqueados preventivamente.';
     } else {
-      motivo =
-        'A dor informada foi de ' +
-        maiorDor +
-        '/10. Os exercícios foram bloqueados por segurança.';
+      motivo = 'A dor informada foi de ' + maiorDor + '/10. Os exercícios foram bloqueados por segurança.';
     }
 
     var elMotivo = document.getElementById('motivoBloqueio');
-
-    if (elMotivo) {
-      elMotivo.textContent = motivo;
-    }
+    if (elMotivo) elMotivo.textContent = motivo;
 
     aplicarPerfilExercicios('bloqueio');
     navegarPara('alerta');
-
     return;
   }
 
-  // REGRA 2: dor de 0 a 3.
+  // REGRA 2 e 3
   if (maiorDor <= 3) {
     aplicarPerfilExercicios('fortalecimento');
-  }
-
-  // REGRA 3: dor de 4 a 7.
-  else {
+  } else {
     aplicarPerfilExercicios('mobilidade');
   }
 
-  // Mostra a tela inicial com o resultado do registro.
   navegarPara('inicio');
-
-  console.log(
-    'Registro demonstrativo concluído:',
-    registro
-  );
 }
+
 // ========================================
 // 8. CONCLUSÃO DO TREINO
 // ========================================
@@ -499,7 +469,7 @@ function concluirTreino() {
 }
 
 // ========================================
-// 9. HEATMAP DO HISTÓRICO
+// 9. HEATMAP DO HISTÓRICO (Corrigido)
 // ========================================
 
 var valoresDor = [2, 3, 7, 5, 1, 0, 4, 3, 8, 6, 2, 1, 7, 4, 1, 2, 5, 9, 6, 3, 2];
@@ -507,25 +477,35 @@ var valoresDor = [2, 3, 7, 5, 1, 0, 4, 3, 8, 6, 2, 1, 7, 4, 1, 2, 5, 9, 6, 3, 2]
 function gerarHeatmap() {
   var grid = document.getElementById('heatmapGrid');
   if (!grid) return;
-  grid.innerHTML = '';
+  grid.innerHTML = ''; // Limpa a grade antes de construir
 
   for (var i = 0; i < valoresDor.length; i++) {
     var v = valoresDor[i];
-    var cor;
-    if (v === 0) cor = '#f4f4f4';
-    else if (v <= 3) cor = '#ffe48a';
-    else if (v <= 6) cor = '#ffb464';
-    else cor = '#f17b72';
-
     var cell = document.createElement('div');
     cell.className = 'heatmap-cell';
-    cell.style.background = cor;
-    cell.innerHTML = '<span class="heatmap-cell-day">' + (i + 1) + '</span><span class="heatmap-cell-value">' + v + '/10</span>';
 
+    // Associa a cor correta dependendo do nível de dor
+    if (v === 0) {
+      cell.style.backgroundColor = '#f4f4f4';
+    } else if (v <= 3) {
+      cell.style.backgroundColor = '#ffe48a';
+    } else if (v <= 6) {
+      cell.style.backgroundColor = '#ffb464';
+    } else {
+      cell.style.backgroundColor = '#f17b72';
+    }
+
+    // Isola o dia e a dor em linhas separadas para bater com o CSS
+    cell.innerHTML = `
+      <span class="heatmap-cell-day">${i + 1}</span>
+      <span class="heatmap-cell-value">${v}/10</span>
+    `;
+
+    // Isola o clique do dia usando closure
     (function(dia) {
-      cell.addEventListener('click', function() {
+      cell.onclick = function() {
         abrirClimaSheet(dia);
-      });
+      };
     })(i + 1);
 
     grid.appendChild(cell);
