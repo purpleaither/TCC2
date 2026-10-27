@@ -5,6 +5,21 @@
 
 var CHAVE_STORAGE = 'autonomia_usuario_sessao';
 var CHAVE_PERFIL_EXERCICIO = 'autonomia_perfil_exercicio';
+var CHAVE_REGISTROS = 'autonomia_registros_historico';
+var registrosUsuario = [];
+
+// Carrega os registros salvos ao iniciar a aplicação
+function carregarRegistrosSalvos() {
+  var salvos = localStorage.getItem(CHAVE_REGISTROS);
+  if (salvos) {
+    try {
+      registrosUsuario = JSON.parse(salvos);
+    } catch (e) {
+      registrosUsuario = [];
+    }
+  }
+}
+carregarRegistrosSalvos();
 
 var usuarioAtual = null;
 var dorRepouso = 2;
@@ -263,6 +278,9 @@ function concluirRegistro(event) {
   buscarClimaReal();
   var maiorDor = Math.max(dorRepouso, dorMovimento);
   var registro = { sinalAtipico: atipico === 1 };
+   registrosUsuario.push(registro);
+  localStorage.setItem(CHAVE_REGISTROS, JSON.stringify(registrosUsuario));
+   gerarHeatmap();
 
   var climaBloq = document.getElementById('climaBloqueado');
   var climaLib = document.getElementById('climaLiberado');
@@ -327,23 +345,60 @@ function atualizarDadosDoMes() {
 function gerarHeatmap() {
   var grid = document.getElementById('heatmapGrid');
   if (!grid) return;
-  grid.innerHTML = ''; 
+  grid.innerHTML = '';
 
-  var ano = mesAtualObj.ano;
-  var mes = mesAtualObj.mes;
-  var numDias = mesAtualObj.dados.length;
-  
-  var primeiroDiaSemana = new Date(ano, mes, 1).getDay(); 
-  var offset = (primeiroDiaSemana === 0) ? 6 : primeiroDiaSemana - 1;
+  // Exibe os dias do mês atual (ex: 28 dias)
+  for (var i = 1; i <= 28; i++) {
+    var regDoDia = registrosUsuario.find(function(r) {
+      var d = new Date(r.data);
+      return d.getDate() === i;
+    });
 
-  for (var i = 0; i < offset; i++) {
-    var emptyCell = document.createElement('div');
-    emptyCell.className = 'heatmap-cell';
-    emptyCell.style.border = 'none';
-    emptyCell.style.background = 'transparent';
-    emptyCell.style.cursor = 'default';
-    grid.appendChild(emptyCell);
+    var v = regDoDia ? regDoDia.dorMovimento : 0;
+    var temRegistro = !!regDoDia;
+
+    var cor;
+    if (!temRegistro) {
+      cor = '#f9f9f9'; // Dias sem preenchimento
+    } else if (v === 0) {
+      cor = '#f4f4f4';
+    } else if (v <= 3) {
+      cor = '#ffe48a';
+    } else if (v <= 6) {
+      cor = '#ffb464';
+    } else {
+      cor = '#f17b72';
+    }
+
+    var cell = document.createElement('div');
+    cell.className = 'heatmap-cell';
+    cell.style.background = cor;
+    cell.innerHTML = '<span class="heatmap-cell-day">' + i + '</span><span class="heatmap-cell-value">' + (temRegistro ? v + '/10' : '-') + '</span>';
+
+    (function(dia, reg) {
+      cell.addEventListener('click', function() {
+        if (reg) {
+          abrirClimaSheetComDados(dia, reg);
+        } else {
+          alert('Nenhum registo efetuado para o dia ' + dia + '. Preencha o diário de sintomas.');
+        }
+      });
+    })(i, regDoDia);
+
+    grid.appendChild(cell);
   }
+}
+
+function abrirClimaSheetComDados(dia, reg) {
+  var elTitle = document.getElementById('climaSheetTitle');
+  if (elTitle) {
+    elTitle.textContent = 'Registo do dia ' + dia + ' · Dor: ' + reg.dorMovimento + '/10';
+  }
+  
+  var sheet = document.getElementById('climaSheet');
+  if (sheet) sheet.classList.add('open');
+}
+
 
   var totalDor = 0, maxDor = 0, diasComRegistro = 0;
 
