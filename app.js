@@ -270,18 +270,42 @@ function alterarDor(tipo, delta) {
 
 function selecionar(grupoId, indice) {
   var grupo = document.getElementById(grupoId);
+
   if (!grupo) return;
 
-  var botoes = grupo.querySelectorAll('.choice-btn, .mood-btn');
-  for (var i = 0; i < botoes.length; i++) {
-    botoes[i].classList.remove('selected');
-  }
+  var botoes = grupo.querySelectorAll(
+    '.choice-btn, .mood-btn'
+  );
+
+  botoes.forEach(function(botao) {
+    botao.classList.remove('selected');
+  });
+
   if (botoes[indice]) {
     botoes[indice].classList.add('selected');
   }
 
-  if (grupoId === 'atipicoOptions') {
-    atipico = indice;
+  // Atualiza o valor correspondente à opção selecionada.
+  switch (grupoId) {
+    case 'rigidezOptions':
+      rigidezAtual = indice;
+      break;
+
+    case 'fadigaOptions':
+      fadigaAtual = indice;
+      break;
+
+    case 'humorOptions':
+      humorAtual = indice;
+      break;
+
+    case 'atividadeOptions':
+      atividadeAtual = indice;
+      break;
+
+    case 'atipicoOptions':
+      atipico = indice;
+      break;
   }
 }
 
