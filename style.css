@@ -818,3 +818,14 @@ body {
   font-size: 18px;
   cursor: pointer;
 }
+/* Ícone do título da Pílula TPE */
+.tpe-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tpe-title .icon {
+  width: 18px;
+  height: 18px;
+}
