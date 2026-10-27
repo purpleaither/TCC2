@@ -93,7 +93,6 @@
   <div class="page" id="page-tcle">
     <div class="login-wrapper">
       <h1 class="page-title">Termo de Consentimento</h1>
-      <p class="page-subtitle">TCLE · Aspectos éticos e informacionais</p>
       <div class="card" style="max-height: 220px; overflow-y: auto; text-align: left; width: 100%;">
         <p class="card-text">
           Este protótipo simula a apresentação da finalidade do aplicativo e a coleta do aceite formal. No escopo atual de MVP, atua estritamente como protótipo estrutural para validação da arquitetura de informação, sem armazenamento de dados humanos em ambiente de produção nesta fase.
@@ -140,11 +139,11 @@
     <p class="page-subtitle" id="currentDateDisplay">Carregando data...</p>
 
     <!-- Card: Registro diário -->
-    <div class="card">
-      <h3 class="card-title">Registro diário de sintomas</h3>
-      <p class="card-text">Como você se sente hoje?</p>
-      <button class="btn" onclick="navegarPara('sintomas')">Registrar sintomas</button>
-    </div>
+<div class="card" id="cardRegistroDiario">
+  <h3 class="card-title">Registro diário de sintomas</h3>
+  <p class="card-text">Como você se sente hoje?</p>
+  <button class="btn" id="btnRegistrarSintomas" onclick="navegarPara('sintomas')">Registrar sintomas</button>
+</div>
 
     <!-- Card: Clima bloqueado -->
     <div class="locked-card" id="climaBloqueado">
