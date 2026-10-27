@@ -829,3 +829,11 @@ body {
   width: 18px;
   height: 18px;
 }
+.icon {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  display: inline-block;
+  object-fit: contain;
+}
+
