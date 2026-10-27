@@ -67,7 +67,9 @@
         </div>
 
         <button type="submit" class="btn">Entrar</button>
-        <p class="login-help">Acompanhamento e reabilitação terapêutica</p>
+<button type="button" class="btn btn-outline" onclick="navegarPara('boas-vindas')" style="margin-top: 8px;">Primeiro Acesso / Cadastrar-se</button>
+<p class="login-help">Acompanhamento e reabilitação terapêutica</p>
+
       </form>
     </div>
   </div>
@@ -508,6 +510,61 @@
       <p class="warning-text">Este aviso é um mecanismo de segurança preventiva e não substitui o diagnóstico médico.</p>
     </div>
 
+  </div>
+  <!-- ===== TELA: BOAS-VINDAS (Onboarding) ===== -->
+  <div class="page" id="page-boas-vindas">
+    <div class="login-wrapper">
+      <div class="login-header">
+        <img src="logo.svg" alt="Autonomia em Movimento" class="login-logo">
+        <h1 class="login-title">Bem-vindo(a)</h1>
+        <p class="login-sub">Autonomia em Movimento · HUB / UnB</p>
+      </div>
+      <p class="card-text" style="text-align: center; margin-bottom: 20px;">
+        Esta aplicação foi desenvolvida para apoiar a continuidade do cuidado, combinando educação terapêutica e registo sintomático[span_6](start_span)[span_6](end_span).
+      </p>
+      <button class="btn" onclick="navegarPara('tcle')">Avançar para o Consentimento</button>
+      <button class="btn btn-outline" onclick="navegarPara('login')" style="margin-top: 8px;">Voltar ao Login</button>
+    </div>
+  </div>
+
+  <!-- ===== TELA: TCLE (Termo de Consentimento) ===== -->
+  <div class="page" id="page-tcle">
+    <h1 class="page-title">Termo de Consentimento</h1>
+    <p class="page-subtitle">TCLE · Aspectos éticos e informacionais</p>
+    <div class="card" style="max-height: 220px; overflow-y: auto;">
+      <p class="card-text">
+        Este protótipo simula a apresentação da finalidade do aplicativo e a recolha do aceite formal. No escopo atual de MVP, atua estritamente como protótipo estrutural para validação da arquitetura de informação, sem armazenamento de dados humanos em ambiente de produção nesta fase[span_7](start_span)[span_7](end_span)[span_8](start_span)[span_8](end_span).
+      </p>
+    </div>
+    <div class="form-remember" style="margin: 15px 0;">
+      <label>
+        <input type="checkbox" id="aceiteTcle"> Li e compreendi os termos de participação no protótipo.
+      </label>
+    </div>
+    <button class="btn" onclick="validarTcle()">Continuar para o Questionário</button>
+    <button class="btn btn-outline" onclick="navegarPara('boas-vindas')" style="margin-top: 8px;">Voltar</button>
+  </div>
+
+  <!-- ===== TELA: QUESTIONÁRIO INICIAL ===== -->
+  <div class="page" id="page-questionario-inicial">
+    <h1 class="page-title">Questionário Inicial</h1>
+    <p class="page-subtitle">Perfil de saúde e crenças iniciais</p>
+    
+    <div class="card">
+      <div class="form-group">
+        <label class="form-label" for="qNome">Nome Completo</label>
+        <input type="text" id="qNome" class="form-input" placeholder="Ex: Maria Silva" value="Maria Silva">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="qCrencas">Crenças ou receios em relação ao movimento</label>
+        <input type="text" id="qCrencas" class="form-input" placeholder="Ex: Tenho receio de que o movimento agrave a dor">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="qHistorico">Histórico Clínico de Dor</label>
+        <input type="text" id="qHistorico" class="form-input" placeholder="Ex: Dor musculoesquelética crónica">
+      </div>
+      <button class="btn" onclick="concluirOnboarding()">Concluir Registo e Entrar</button>
+    </div>
   </div>
 
 </div><!-- .app -->
