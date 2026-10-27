@@ -462,6 +462,86 @@ function buscarClimaReal() {
       console.error('Erro ao buscar clima:', error);
     });
 }
+// --- CORREÇÃO DO HISTÓRICO (Preenche rigidez, fadiga e humor salvos) ---
+function abrirClimaSheet(dia, reg) {
+  var nomesMes = ['jan.', 'fev.', 'mar.', 'abr.', 'mai.', 'jun.', 'jul.', 'ago.', 'set.', 'out.', 'nov.', 'dez.'];
+  
+  var elTitle = document.getElementById('climaSheetTitle');
+  if (elTitle) elTitle.textContent = 'Registro do dia ' + dia + ' de ' + nomesMes[mesAtual.getMonth()];
+
+  var elDor = document.getElementById('sheetDorNivel');
+  if (elDor) elDor.textContent = 'Dor ao movimento: ' + reg.dorMovimento + '/10 (Repouso: ' + reg.dorRepouso + '/10)';
+
+  var textosIntensidade = ['Nenhuma', 'Leve', 'Moderada', 'Intensa'];
+  var textosHumor = ['Bem', 'Regular', 'Desanimado'];
+
+  var elRigidez = document.getElementById('sheetRigidez');
+  if (elRigidez) elRigidez.textContent = textosIntensidade[reg.rigidez] !== undefined ? textosIntensidade[reg.rigidez] : 'Leve';
+
+  var elFadiga = document.getElementById('sheetFadiga');
+  if (elFadiga) elFadiga.textContent = textosIntensidade[reg.fadiga] !== undefined ? textosIntensidade[reg.fadiga] : 'Leve';
+
+  var elHumor = document.getElementById('sheetHumor');
+  if (elHumor) elHumor.textContent = textosHumor[reg.humor] !== undefined ? textosHumor[reg.humor] : 'Regular';
+  
+  var sheet = document.getElementById('climaSheet');
+  if (sheet) sheet.classList.add('open');
+}
+
+// --- FEEDBACK VISUAL NA HOME (Sintomas e Treino Concluídos) ---
+function verificarRegistroHoje() {
+  var hojeStr = new Date().toDateString();
+  var jaRegistrou = registrosUsuario.some(function(r) {
+    return new Date(r.data).toDateString() === hojeStr;
+  });
+
+  var btnRegistro = document.getElementById('btnRegistrarSintomas');
+  var climaBloq = document.getElementById('climaBloqueado');
+  var climaLib = document.getElementById('climaLiberado');
+
+  if (jaRegistrou) {
+    registroEnviadoHoje = true;
+    if (btnRegistro) {
+      btnRegistro.textContent = 'Sintomas já registrados hoje ✓';
+      btnRegistro.style.background = '#4a7c59';
+    }
+    if (climaBloq) climaBloq.style.display = 'none';
+    if (climaLib) climaLib.style.display = 'block';
+  }
+
+  // Verifica treino do dia
+  var treinoSalvo = localStorage.getItem('autonomia_treino_concluido_hoje');
+  if (treinoSalvo === hojeStr) {
+    treinoConcluido = true;
+    var btnTreinoHome = document.getElementById('homeBtnExercicios');
+    if (btnTreinoHome) {
+      btnTreinoHome.textContent = 'Treino concluído hoje ✓';
+      btnTreinoHome.style.background = '#4a7c59';
+    }
+  }
+}
+
+// Atualize também a função concluirTreino para salvar o status de hoje:
+function concluirTreino() {
+  treinoConcluido = true;
+  var hojeStr = new Date().toDateString();
+  localStorage.setItem('autonomia_treino_concluido_hoje', hojeStr);
+
+  var btn = document.getElementById('btnConcluirTreino');
+  if (btn) {
+    btn.textContent = 'Treino concluído!';
+    btn.disabled = true;
+    btn.style.background = '#005528';
+  }
+
+  var btnTreinoHome = document.getElementById('homeBtnExercicios');
+  if (btnTreinoHome) {
+    btnTreinoHome.textContent = 'Treino concluído hoje ✓';
+    btnTreinoHome.style.background = '#4a7c59';
+  }
+
+  setTimeout(function() { navegarPara('inicio'); }, 500);
+}
 
 atualizarDataAtual();
 gerarHeatmap();
