@@ -208,6 +208,7 @@ async function loadPatientData() {
       }));
       gerarHeatmap();
       verificarRegistroHoje();
+      if(records.some(r=>new Date(r.recorded_at).toDateString()===new Date().toDateString())) buscarClimaReal();
       renderPatientPlans();
     }
   } catch(err) {
@@ -227,7 +228,7 @@ function renderPatientPlans(){
     return;
   }
   for(const p of plans){
-    const card=el("div",undefined,"card");
+    const card=el("div",undefined,"demo-detalhe");
     card.append(el("h3",p.title,"card-title"));
     if(p.notes)card.append(el("p",p.notes,"card-text"));
     const ordered=el("ol");
