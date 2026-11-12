@@ -467,6 +467,10 @@
             <label><input type="checkbox" id="exercisebankHomeOnly" checked> Apenas exercícios sem aparelhos de academia (peso corporal ou material simples)</label>
           </div>
           <button type="button" id="exercisebankRefresh" class="btn btn-outline">Carregar os 50 exercícios</button>
+          <button type="button" id="exercisebankAudit" class="btn btn-outline">Verificar os vídeos dos 50 exercícios</button>
+          <p id="exercisebankAuditStatus" class="card-text-small" role="status" aria-live="polite">A verificação consulta os links liberados pela ExerciseBank e não reproduz os vídeos automaticamente.</p>
+          <button type="button" id="exercisebankExport" class="btn btn-outline" hidden>Baixar relação dos exercícios (CSV)</button>
+          <div id="exercisebankAuditResults"></div>
           <p id="exercisebankStatus" class="card-text-small" role="status" aria-live="polite">A lista será consultada no Sandbox, sem mostrar exercícios com vídeo bloqueado.</p>
           <div id="exercisebankResults"></div>
         </div>
