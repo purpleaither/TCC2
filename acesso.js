@@ -22,6 +22,7 @@ let records = [];
 let editingPlan = null;
 let busy = false;
 let loginReady = false;
+let weatherColumnsAvailable = true;
 
 function el(tag, content, cls) {
   const n = document.createElement(tag);
@@ -176,6 +177,46 @@ async function selectPatient(id) {
   updatePatientSelectors();
   await loadPatientData();
 }
+async function obterClimaBrasilia() {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 7500);
+  try {
+    const endpoint = "https://api.open-meteo.com/v1/forecast?latitude=-15.7801&longitude=-47.9292&current=temperature_2m,relative_humidity_2m,surface_pressure&timezone=America%2FSao_Paulo";
+    const response = await fetch(endpoint,{signal:controller.signal,cache:"no-store"});
+    if (!response.ok) throw Error("Serviço meteorológico indisponível");
+    const payload = await response.json();
+    const current = payload.current;
+    if (!current || ![current.temperature_2m,current.relative_humidity_2m,current.surface_pressure].every(Number.isFinite)) {
+      throw Error("Medições meteorológicas inválidas");
+    }
+    return {
+      weather_city:"Brasília",
+      weather_temperature:current.temperature_2m,
+      weather_humidity:Math.round(current.relative_humidity_2m),
+      weather_pressure:current.surface_pressure,
+      weather_observed_at:current.time ? new Date(current.time + (payload.utc_offset_seconds===-10800?"-03:00":"Z")).toISOString() : new Date().toISOString()
+    };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+function isMissingWeatherColumns(error) {
+  const code = error && error.code;
+  return code === "42703" || code === "PGRST204";
+}
+
+function mapWeather(registro) {
+  if (registro.weather_temperature == null || registro.weather_humidity == null || registro.weather_pressure == null) return null;
+  return {
+    cidade:registro.weather_city || "Brasília",
+    temperatura:registro.weather_temperature,
+    umidade:registro.weather_humidity,
+    pressao:registro.weather_pressure,
+    observadoEm:registro.weather_observed_at || registro.recorded_at
+  };
+}
+
 async function loadPatientData() {
   plans=[];
   records=[];
@@ -188,9 +229,17 @@ async function loadPatientData() {
     plans=result(await supabase.from("care_plans")
       .select("id,title,notes,created_at,updated_at,plan_exercises(id,exercise_name,exercise_source,external_id,series,repetitions,duration,frequency,instructions,position)")
       .eq("patient_id",patientId).order("created_at",{ascending:false}))||[];
-    records=result(await supabase.from("symptom_records")
-      .select("id,recorded_at,pain_rest,pain_movement,stiffness,fatigue")
-      .eq("patient_id",patientId).order("recorded_at",{ascending:false}).limit(500))||[];
+    const baseFields="id,recorded_at,pain_rest,pain_movement,stiffness,fatigue";
+    const weatherFields=",weather_city,weather_temperature,weather_humidity,weather_pressure,weather_observed_at";
+    let symptomsResponse=await supabase.from("symptom_records")
+      .select(baseFields+(weatherColumnsAvailable?weatherFields:""))
+      .eq("patient_id",patientId).order("recorded_at",{ascending:false}).limit(500);
+    if (symptomsResponse.error && weatherColumnsAvailable && isMissingWeatherColumns(symptomsResponse.error)) {
+      weatherColumnsAvailable=false;
+      symptomsResponse=await supabase.from("symptom_records").select(baseFields)
+        .eq("patient_id",patientId).order("recorded_at",{ascending:false}).limit(500);
+    }
+    records=result(symptomsResponse)||[];
     if(isProfessional()){
       renderProfessionalPlans();
       renderProfessionalRecords();
@@ -204,11 +253,11 @@ async function loadPatientData() {
         fadiga:Math.max(0,levels.indexOf(r.fatigue)),
         humor:1,
         atividade:0,
-        sinalAtipico:false
+        sinalAtipico:false,
+        clima:mapWeather(r)
       }));
       gerarHeatmap();
       verificarRegistroHoje();
-      if(records.some(r=>new Date(r.recorded_at).toDateString()===new Date().toDateString())) buscarClimaReal();
       renderPatientPlans();
     }
   } catch(err) {
@@ -286,6 +335,8 @@ function renderProfessionalRecords(){
     card.append(el("h3",date(r.recorded_at),"card-title"));
     card.append(el("p","Dor em repouso: "+r.pain_rest+"/10 · Dor ao movimento: "+r.pain_movement+"/10","card-text"));
     card.append(el("p","Rigidez: "+r.stiffness+" · Fadiga: "+r.fatigue,"card-text-small"));
+    const clima=mapWeather(r);
+    if(clima)card.append(el("p","Clima registrado em "+date(clima.observadoEm)+": "+clima.temperatura+" °C · "+clima.umidade+"% · "+clima.pressao+" hPa ("+clima.cidade+")","card-text-small"));
     root.append(card);
   }
 }
@@ -424,15 +475,33 @@ async function saveSymptoms(){
   busy=true;
   const painRest=dorRepouso,painMove=dorMovimento;
   try{
-    result(await supabase.from("symptom_records").insert({
+    let clima=null;
+    try {
+      clima=await obterClimaBrasilia();
+    } catch(err) {
+      clima=null;
+    }
+    const registro={
       patient_id:user.id,pain_rest:painRest,pain_movement:painMove,
       stiffness:levels[rigidezAtual]||"Leve",
       fatigue:levels[fadigaAtual]||"Leve"
-    }));
+    };
+    if(clima && weatherColumnsAvailable)Object.assign(registro,clima);
+    let saved=await supabase.from("symptom_records").insert(registro);
+    if(saved.error && clima && isMissingWeatherColumns(saved.error)) {
+      weatherColumnsAvailable=false;
+      saved=await supabase.from("symptom_records").insert({
+        patient_id:user.id,pain_rest:painRest,pain_movement:painMove,
+        stiffness:levels[rigidezAtual]||"Leve",
+        fatigue:levels[fadigaAtual]||"Leve"
+      });
+    }
+    result(saved);
     await loadPatientData();
-    buscarClimaReal();
     navigate("inicio");
-    message("Sintomas registrados. O plano permanece inalterado.");
+    message(clima&&weatherColumnsAvailable
+      ? "Sintomas e condições meteorológicas registrados. O plano permanece inalterado."
+      : "Sintomas registrados. Clima indisponível ou atualização do banco pendente; nenhuma medição foi associada a este registro.", !(clima&&weatherColumnsAvailable));
     if(atipico===1||Math.max(painRest,painMove)>=8)
       alert("Se os sintomas forem intensos ou inesperados, procure orientação profissional. Este aplicativo não realiza triagem clínica.");
   }catch(err){message("Não foi possível salvar os sintomas. Confira a conexão.",true);}
