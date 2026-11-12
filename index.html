@@ -49,6 +49,7 @@
     <nav class="nav-list" aria-label="Módulos">
       <button type="button" class="nav-item" data-nav="inicio"><span aria-hidden="true">⌂</span> Visão geral</button>
       <button type="button" class="nav-item" data-nav="planos"><span aria-hidden="true">▤</span> <span class="profOnly">Gerenciar planos</span><span class="patientOnly">Meus planos</span></button>
+      <button type="button" class="nav-item profOnly" data-nav="biblioteca"><span aria-hidden="true">▦</span> Biblioteca ExerciseBank</button>
       <button type="button" class="nav-item patientOnly" data-nav="sintomas"><span aria-hidden="true">＋</span> Registrar sintomas</button>
       <button type="button" class="nav-item patientOnly" data-nav="historico"><span aria-hidden="true">◴</span> Meu histórico</button>
       <button type="button" class="nav-item profOnly" data-nav="registrosProf"><span aria-hidden="true">◴</span> Registros dos pacientes</button>
@@ -75,12 +76,19 @@
             <label>Orientações gerais <textarea class="field-input" id="planNotes" rows="3" maxlength="500" placeholder="Orientações prescritas pelo fisioterapeuta"></textarea></label>
             <div class="form-divider"><strong>Exercícios do plano</strong><button class="btn btn-plain" id="btnAddExercise" type="button">＋ Adicionar exercício</button></div>
             <div id="exerciseRows"></div>
+          <button type="button" class="btn btn-secondary" id="btnBrowseFromPlan">Buscar exercícios na ExerciseBank</button>
             <select id="planExerciseSelect" hidden aria-hidden="true"></select>
             <div class="actions"><button class="btn btn-primary" type="submit">Salvar plano</button><button class="btn btn-plain" id="btnCancelPlan" type="button">Cancelar</button></div>
           </form>
         </div>
         <div id="plansContent" class="stack"></div>
       </section>
+<section data-view="biblioteca" hidden>
+<div class="section-header"><div><span class="eyebrow dark">EXERCISEBANK</span><h1>Biblioteca visual de exercícios</h1><p class="subhead">Vídeos com pessoas reais e múltiplos ângulos. Seleção exclusiva do fisioterapeuta.</p></div></div>
+<form id="catalogForm" class="surface weather-form"><label for="catalogQuery">Buscar por nome (catálogo em inglês)</label><div class="inline-form"><input id="catalogQuery" class="field-input" placeholder="Ex.: bridge, squat, shoulder" maxlength="90"><button class="btn btn-primary" type="submit">Buscar</button></div></form>
+<p id="catalogStatus" class="muted" aria-live="polite">Consulte o catálogo de exercícios.</p><div id="catalogResults" class="catalog-grid"></div>
+<div id="catalogPagination" class="actions" hidden><button id="catalogMore" class="btn btn-secondary" type="button">Mais exercícios</button></div>
+</section>
       <section data-view="sintomas" hidden>
         <div class="section-header"><div><span class="eyebrow dark">AUTORRELATO</span><h1>Registro de sintomas</h1><p class="subhead">Registre o que sentiu. O preenchimento não altera automaticamente o plano prescrito.</p></div></div>
         <form id="symptomForm" class="surface form-stack">
