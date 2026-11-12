@@ -32,6 +32,13 @@
       <button class="menu-item" data-perfil="fisioterapeuta" onclick="navegarPara('profissional')">Painel profissional</button>
       <button class="menu-item" data-perfil="fisioterapeuta" onclick="navegarPara('planos-prof')">Gerenciar planos</button>
       <button class="menu-item" data-perfil="fisioterapeuta" onclick="navegarPara('registros-prof')">Registros dos pacientes</button>
+      <button class="menu-item" data-perfil="auth-fisioterapeuta" onclick="navegarPara('auth-profissional')">Painel profissional</button>
+      <button class="menu-item" data-perfil="auth-fisioterapeuta" onclick="navegarPara('auth-planos')">Gerenciar planos</button>
+      <button class="menu-item" data-perfil="auth-fisioterapeuta" onclick="navegarPara('auth-registros')">Registros dos pacientes</button>
+      <button class="menu-item" data-perfil="auth-paciente" onclick="navegarPara('auth-inicio')">Início</button>
+      <button class="menu-item" data-perfil="auth-paciente" onclick="navegarPara('auth-exercicios')">Meus exercícios</button>
+      <button class="menu-item" data-perfil="auth-paciente" onclick="navegarPara('auth-sintomas')">Registrar sintomas</button>
+      <button class="menu-item" data-perfil="auth-paciente" onclick="navegarPara('auth-historico')">Meu histórico</button>
       <button class="menu-item" data-perfil="paciente" onclick="navegarPara('sintomas')">Registro de sintomas</button>
       <button class="menu-item" data-perfil="paciente" onclick="navegarPara('historico')">Meu histórico</button>
       <button class="menu-item" data-perfil="paciente" onclick="navegarPara('orientacoes')">Orientações</button>
@@ -71,9 +78,29 @@
           <p class="card-text" style="margin:0"><strong>Modo de demonstração:</strong> não há autenticação real nem banco compartilhado. Utilize somente dados fictícios. Os planos e registros ficam neste navegador.</p>
         </div>
         <button type="submit" class="btn">Entrar no protótipo</button>
-        <a href="conta.html" class="btn btn-outline" style="margin-top:8px;text-decoration:none;display:block;text-align:center">Acesso com conta autenticada</a>
+        <button type="button" class="btn btn-outline" onclick="navegarPara('login-auth')" style="margin-top:8px">Entrar com conta Supabase</button>
         <p class="login-help">Projeto acadêmico independente, sem uso clínico.</p>
       </form>
+    </div>
+  </div>
+
+  <div class="page" id="page-login-auth">
+    <div class="login-wrapper">
+      <div class="login-header">
+        <img src="logo.svg" alt="Autonomia em Movimento" class="login-logo">
+        <h1 class="login-title">Autonomia em Movimento</h1>
+        <p class="login-sub">Acesso autenticado · Contas de teste</p>
+      </div>
+      <form id="loginPortalForm" class="login-form">
+        <div class="form-group"><label for="emailPortal" class="form-label">E-mail</label><input type="email" class="form-input" id="emailPortal" autocomplete="username" required></div>
+        <div class="form-group"><label for="passwordPortal" class="form-label">Senha</label><input type="password" class="form-input" id="passwordPortal" autocomplete="current-password" required></div>
+        <button type="submit" class="btn">Entrar</button>
+        <button type="button" class="btn btn-outline" onclick="navegarPara('login')" style="margin-top:8px">Voltar à demonstração</button>
+      </form>
+      <p class="card-text-small" id="portalStatus" role="status" aria-live="polite" style="margin-top:20px;text-align:center">Verificando a conexão...</p>
+      <div class="card" style="margin-top:18px;background:#f3f8f4;border-color:#cde1d2">
+        <p class="card-text-small">Somente contas e dados fictícios. Esta versão não foi validada para uso clínico.</p>
+      </div>
     </div>
   </div>
 
@@ -542,9 +569,102 @@
     <div id="listaRegistrosProf"></div>
   </div>
 
+  <div class="page" id="page-auth-profissional">
+    <h1 class="page-title" id="authProfessionalTitle">Painel do fisioterapeuta</h1>
+    <p class="page-subtitle">Planos individualizados e acompanhamento</p>
+    <div class="card">
+      <h3 class="card-title">Paciente vinculado</h3>
+      <label class="form-label" for="patientPortal">Selecionar paciente</label>
+      <select class="form-input" id="patientPortal"></select>
+    </div>
+    <div class="card">
+      <h3 class="card-title">Planos terapêuticos</h3>
+      <p class="card-text">Configure os exercícios do paciente e consulte os planos disponíveis.</p>
+      <button type="button" class="btn" onclick="navegarPara('auth-planos')">Gerenciar planos</button>
+    </div>
+    <div class="card">
+      <h3 class="card-title">Registros de sintomas</h3>
+      <p class="card-text">Consulte os registros do paciente vinculado.</p>
+      <button type="button" class="btn" onclick="navegarPara('auth-registros')">Consultar registros</button>
+    </div>
+  </div>
+
+  <div class="page" id="page-auth-planos">
+    <h1 class="page-title">Gerenciar planos</h1>
+    <p class="page-subtitle" id="authPlanSubtitle">Exercícios individualizados</p>
+    <div class="card">
+      <h3 class="card-title">Planos atribuídos</h3>
+      <div id="plansPortal"></div>
+    </div>
+    <div class="card">
+      <h3 class="card-title">Criar plano terapêutico</h3>
+      <form id="planPortalForm">
+        <div class="form-group"><label for="planTitlePortal" class="form-label">Nome do plano</label><input type="text" id="planTitlePortal" class="form-input" maxlength="120" required></div>
+        <div class="form-group"><label for="planNotesPortal" class="form-label">Orientações gerais</label><textarea id="planNotesPortal" class="form-input" rows="3" maxlength="1000"></textarea></div>
+        <div id="exercisePortalRows"></div>
+        <button id="addExercisePortal" type="button" class="btn btn-outline">Adicionar exercício</button>
+        <button type="submit" class="btn">Salvar plano</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="page" id="page-auth-registros">
+    <h1 class="page-title">Registros dos pacientes</h1>
+    <p class="page-subtitle" id="authRecordsSubtitle">Histórico de sintomas</p>
+    <div class="card" id="authProfessionalRecords"><div id="symptomsPortal"></div></div>
+  </div>
+
+  <div class="page" id="page-auth-inicio">
+    <h1 class="page-title">Olá, <span id="authPatientName">Paciente</span></h1>
+    <p class="page-subtitle">Seu acompanhamento fisioterapêutico</p>
+    <div class="card">
+      <h3 class="card-title">Meus exercícios</h3>
+      <p class="card-text" id="authHomePlanSummary">Consulte os planos atribuídos pelo fisioterapeuta.</p>
+      <button class="btn" type="button" onclick="navegarPara('auth-exercicios')">Abrir meus exercícios</button>
+    </div>
+    <div class="card">
+      <h3 class="card-title">Registro de sintomas</h3>
+      <p class="card-text">O registro não altera automaticamente os exercícios prescritos.</p>
+      <button class="btn" type="button" onclick="navegarPara('auth-sintomas')">Registrar sintomas</button>
+    </div>
+    <div class="card">
+      <h3 class="card-title">Meu histórico</h3>
+      <button class="btn" type="button" onclick="navegarPara('auth-historico')">Consultar histórico</button>
+    </div>
+  </div>
+
+  <div class="page" id="page-auth-exercicios">
+    <h1 class="page-title">Meus exercícios</h1>
+    <p class="page-subtitle">Planos atribuídos pelo fisioterapeuta</p>
+    <div id="patientPlansPortal"></div>
+    <div class="warning-card"><p class="warning-text">Nenhuma recomendação é alterada automaticamente com base no registro de sintomas. Não utilize esta versão com dados reais.</p></div>
+  </div>
+
+  <div class="page" id="page-auth-sintomas">
+    <h1 class="page-title">Registro de sintomas</h1>
+    <p class="page-subtitle">Acompanhamento individualizado</p>
+    <div class="card">
+      <form id="symptomsPortalForm">
+        <div class="form-group"><label class="form-label" for="restPortal">Dor em repouso (0 a 10)</label><input type="number" id="restPortal" class="form-input" min="0" max="10" required></div>
+        <div class="form-group"><label class="form-label" for="movePortal">Dor ao movimento (0 a 10)</label><input type="number" id="movePortal" class="form-input" min="0" max="10" required></div>
+        <div class="form-group"><label class="form-label" for="stiffPortal">Rigidez</label><select id="stiffPortal" class="form-input"><option>Nenhuma</option><option>Leve</option><option>Moderada</option><option>Intensa</option></select></div>
+        <div class="form-group"><label class="form-label" for="fatiguePortal">Fadiga</label><select id="fatiguePortal" class="form-input"><option>Nenhuma</option><option>Leve</option><option>Moderada</option><option>Intensa</option></select></div>
+        <button type="submit" class="btn">Salvar registro</button>
+      </form>
+    </div>
+    <div class="warning-card"><p class="warning-text">O registro não constitui avaliação clínica e não altera o plano individualizado.</p></div>
+  </div>
+
+  <div class="page" id="page-auth-historico">
+    <h1 class="page-title">Meu histórico</h1>
+    <p class="page-subtitle">Registros de sintomas</p>
+    <div class="card" id="patientSymptomsPortal"></div>
+  </div>
+
 </div><!-- Fim de .app -->
 
 <script src="app.js"></script>
 <script src="fase2.js"></script>
+<script type="module" src="auth-integrado.js"></script>
 </body>
 </html>
