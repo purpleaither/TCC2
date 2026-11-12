@@ -33,6 +33,16 @@ function normalize(ex){
 }
 export default async function handler(req,res){
   if(req.method!=="GET"){res.setHeader("Allow","GET");return send(res,405,{error:"Método não permitido."})}
+  const id=String(req.query.id||"").trim();
+  if(id){
+    if(!/^[0-9]{1,10}$/.test(id))return send(res,400,{error:"Identificador inválido."});
+    try{
+      const response=await fetch(BASE+id+"/?format=json",{headers:{Accept:"application/json"},signal:AbortSignal.timeout(10000)});
+      if(!response.ok)return send(res,502,{error:"Não foi possível consultar o exercício."});
+      const data=normalize(await response.json());
+      return send(res,200,{item:data});
+    }catch{return send(res,502,{error:"Não foi possível carregar o vídeo."})}
+  }
   const q=String(req.query.q||"").trim().slice(0,80);
   const offset=Math.max(0,Math.min(900,Number.parseInt(req.query.offset,10)||0));
   const onlyHome=req.query.home!=="false";
