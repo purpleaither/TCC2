@@ -601,6 +601,89 @@ function renderSample(){
     row.append(preview,pick);card.append(row,media);root.append(card);
   });
 }
+let sandboxAudit=null;
+let auditRunning=false;
+async function auditSandboxVideos(){
+  if(!isProfessional()||auditRunning)return;
+  auditRunning=true;
+  const button=$("exercisebankAudit");
+  button.disabled=true;
+  $("exercisebankExport").hidden=true;
+  text("exercisebankAuditStatus","Verificando a disponibilidade dos vídeos da amostra Sandbox...");
+  try{
+    const result=await ebCall({
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({action:"audit"})
+    });
+    sandboxAudit=result;
+    const rows=Array.isArray(result.rows)?result.rows:[];
+    const totals=result.totals||{};
+    const table=el("table",undefined);
+    table.style.width="100%";
+    const header=el("thead");
+    const headRow=el("tr");
+    for(const name of ["Exercício","Equipamentos","Vídeo","Domiciliar"]){
+      headRow.append(el("th",name));
+    }
+    header.append(headRow);
+    const body=el("tbody");
+    for(const item of rows){
+      const tr=el("tr");
+      const status=item.videoStatus==="liberado"?"Liberado":item.videoStatus==="bloqueado"?"Bloqueado":"Sem link";
+      for(const value of [
+        item.name+" ("+item.id+")",
+        Array.isArray(item.equipment)&&item.equipment.length?item.equipment.join(", "):"Não informado",
+        status,
+        item.home?"Sim":"Não"
+      ]){
+        const td=el("td",String(value));
+        td.style.padding="8px";
+        tr.append(td);
+      }
+      body.append(tr);
+    }
+    table.append(header,body);
+    const wrap=el("div");
+    wrap.style.overflowX="auto";
+    wrap.append(table);
+    $("exercisebankAuditResults").replaceChildren(wrap);
+    text("exercisebankAuditStatus",
+      "Amostra: "+(totals.sample??rows.length)+
+      " · Vídeos liberados: "+(totals.liberated??0)+
+      " · Bloqueados: "+(totals.blocked??0)+
+      " · Sem link: "+(totals.noLink??0)+
+      " · Domiciliares com link: "+(totals.homeWithVideo??0)+
+      ". Verificação de URLs, não da reprodução efetiva.");
+    $("exercisebankExport").hidden=!rows.length;
+  }catch(e){
+    sandboxAudit=null;
+    $("exercisebankAuditResults").replaceChildren();
+    text("exercisebankAuditStatus",e.message);
+  }finally{
+    auditRunning=false;
+    button.disabled=false;
+  }
+}
+function exportSandboxAudit(){
+  const rows=Array.isArray(sandboxAudit?.rows)?sandboxAudit.rows:[];
+  if(!rows.length)return;
+  const encode=value=>'"'+String(value??"").replace(/"/g,'""')+'"';
+  const data=[
+    ["ID","Nome","Equipamentos","Vídeo","Domiciliar"],
+    ...rows.map(item=>[
+      item.id,item.name,Array.isArray(item.equipment)?item.equipment.join("; "):"",
+      item.videoStatus,item.home?"Sim":"Não"
+    ])
+  ];
+  const csv="\uFEFF"+data.map(row=>row.map(encode).join(",")).join("\r\n");
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement("a");
+  link.href=url;link.download="exercisebank_sandbox_verificacao.csv";
+  document.body.append(link);link.click();link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
 async function loadExerciseMedia(id,target,button,source="ExerciseBank"){
   button.disabled=true;target.replaceChildren(el("p","Carregando demonstração...","card-text-small"));
   try{
@@ -625,6 +708,8 @@ async function loadExerciseMedia(id,target,button,source="ExerciseBank"){
 async function init(){
   menu();navigate("login");
   $("exercisebankRefresh")?.addEventListener("click",()=>loadSample(true));
+  $("exercisebankAudit")?.addEventListener("click",auditSandboxVideos);
+  $("exercisebankExport")?.addEventListener("click",exportSandboxAudit);
   $("exercisebankQuery")?.addEventListener("input",renderSample);
   $("exercisebankHomeOnly")?.addEventListener("change",renderSample);
   try{
