@@ -62,7 +62,7 @@ function normalize(ex){
     difficulty:ex.difficulty??null,
     primaryMuscles:Array.isArray(ex.primaryMuscles)?ex.primaryMuscles:[],
     movementPattern:ex.movementPattern||null,
-    hasVideo:ex.media?.mp4===true,
+    hasVideo:Boolean(ex.media?.mp4),
     home:homeExercise(ex)
   };
 }
@@ -79,6 +79,42 @@ export default async function handler(req,res){
     if(!meta.ok)return respond(res,meta.status===429?429:502,{error:safeError(meta)});
     const sample=sampleIds(meta.data);
     if(!sample.length)return respond(res,502,{error:"A ExerciseBank não retornou a lista de amostra do Sandbox."});
+
+    if(req.method==="POST"&&req.body?.action==="audit"){
+      if(session.role!=="fisioterapeuta")return respond(res,403,{error:"Auditoria disponível apenas para o fisioterapeuta."});
+      const params=new URLSearchParams({ids:sample.join(","),limit:String(LIMIT)});
+      const catalog=await request(API+"/exercises?"+params,ebHeaders);
+      if(!catalog.ok)return respond(res,catalog.status===429?429:502,{error:safeError(catalog)});
+      const catalogItems=Array.isArray(catalog.data?.data)?catalog.data.data:[];
+      const catalogue=new Map(catalogItems.filter(ex=>sample.includes(ex.id)).map(ex=>[ex.id,normalize(ex)]));
+      const viewer="tcc_"+createHash("sha256").update(session.id).digest("hex").slice(0,32);
+      const media=await request(API+"/media/urls",ebHeaders,{
+        method:"POST",
+        headers:{"Content-Type":"application/json","X-End-User":viewer,"X-End-User-Role":"coach"},
+        body:JSON.stringify({ids:sample,kinds:["mp4"],ttl:900})
+      });
+      if(!media.ok)return respond(res,media.status===429?429:502,{error:safeError(media)});
+      const mediaMap=media.data?.data||{};
+      const rows=sample.map(id=>{
+        const ex=catalogue.get(id);
+        const mediaItem=mediaMap[id];
+        const videoAvailable=mediaItem?.signed===true&&typeof mediaItem.mp4==="string"&&/^https:\/\//.test(mediaItem.mp4);
+        return {
+          id,name:ex?.name||"Nome não retornado pelo catálogo",
+          equipment:ex?.equipment||[],home:ex?.home===true,
+          catalogHasVideo:ex?.hasVideo===true,
+          videoStatus:videoAvailable?"liberado":mediaItem?.signed===false?"bloqueado":"sem_link"
+        };
+      });
+      const totals={
+        sample:sample.length,
+        liberated:rows.filter(x=>x.videoStatus==="liberado").length,
+        blocked:rows.filter(x=>x.videoStatus==="bloqueado").length,
+        noLink:rows.filter(x=>x.videoStatus==="sem_link").length,
+        homeWithVideo:rows.filter(x=>x.home&&x.videoStatus==="liberado").length
+      };
+      return respond(res,200,{rows,totals,method:"Verificação dos links temporários fornecidos pela ExerciseBank; não testa reprodução no navegador."});
+    }
 
     if(req.method==="GET"){
       if(session.role!=="fisioterapeuta")return respond(res,403,{error:"A seleção de exercícios é exclusiva do fisioterapeuta."});
