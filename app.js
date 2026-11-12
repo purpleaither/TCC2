@@ -4,7 +4,6 @@
    ======================================== */
 
 var CHAVE_STORAGE = 'autonomia_usuario_sessao';
-var CHAVE_PERFIL_EXERCICIO = 'autonomia_perfil_exercicio';
 var CHAVE_REGISTROS = 'autonomia_registros_historico';
 var registrosUsuario = [];
 
@@ -31,56 +30,11 @@ var humorAtual = 1;
 var atividadeAtual = 1;
 var treinoConcluido = false;
 var registroEnviadoHoje = false;
-var perfilExercicioAtivo = 'mobilidade';
 var mesAtual = new Date(); 
 var filtroDorVisualizacao = 1; // 0 = Repouso, 1 = Movimento
 
-var PERFIS_EXERCICIOS = {
-  fortalecimento: {
-    chave: 'fortalecimento',
-    nome: 'Fortalecimento e Manutenção',
-    evaRange: 'EVA de 0 a 3',
-    badge: 'Dor leve ou ausente',
-    descCurta: 'Exercícios de controle motor e fortalecimento com carga para dor leve ou ausente.',
-    objetivo: 'Manter a capacidade funcional e os ganhos obtidos no atendimento presencial no HUB/UnB.',
-    exercicioTitulo: 'Exercício 1: Ponte com ativação de glúteos e controle motor',
-    visualLabel: 'Controle Motor e Carga Corporal',
-    instrucoes: 'Realize 3 séries de 10 a 12 repetições. Movimentos controlados com sustentação de 2 segundos no topo, focando na estabilidade do tronco.',
-    subInstrucoes: 'Mantenha a respiração constante durante todo o movimento.',
-    mostrarTpe: false,
-    tpeTexto: 'Dica HUB: Manter os músculos ativos nos dias de dor leve consolida sua autonomia e pode prevenir crises.'
-  },
-  mobilidade: {
-    chave: 'mobilidade',
-    nome: 'Mobilidade e Alongamento',
-    evaRange: 'EVA de 4 a 7',
-    badge: 'Dor moderada',
-    descCurta: 'Exercícios de mobilidade ativa e alongamentos combinados a pílulas educativas.',
-    objetivo: 'Aliviar a rigidez e desensibilizar o medo do movimento.',
-    exercicioTitulo: 'Exercício 1: Mobilidade e respiração diafragmática',
-    visualLabel: 'Mobilidade Ativa e Desensibilização',
-    instrucoes: 'Realize 3 séries de 30 segundos. Movimentos lentos e suaves até o ponto de conforto, sem forçar a articulação.',
-    subInstrucoes: 'Respeite os limites do seu corpo hoje.',
-    mostrarTpe: true,
-    tpeTexto: 'Sentir um desconforto moderado e tolerável durante o movimento é normal e seguro. Mover-se com calma ensina o cérebro que o movimento não representa perigo.'
-  },
-  bloqueio: {
-    chave: 'bloqueio',
-    nome: 'Rotina Suspensa (Trava de Segurança)',
-    evaRange: 'EVA 8 a 10 ou Atípicos',
-    badge: 'Alerta de Segurança',
-    descCurta: 'Bloqueio automático de qualquer rotina de exercício diante de dor intensa ou relato de sinais de alarme.',
-    objetivo: 'Interrupção preventiva e direcionamento para atendimento presencial.'
-  }
-};
-
 function verificarSessao() {
-  var perfilSalvo = localStorage.getItem(CHAVE_PERFIL_EXERCICIO);
-  if (perfilSalvo && PERFIS_EXERCICIOS[perfilSalvo]) {
-    aplicarPerfilExercicios(perfilSalvo);
-  } else {
-    aplicarPerfilExercicios('mobilidade');
-  }
+  // Sem atribuição automática de exercícios. A prescrição caberá ao fisioterapeuta.
   var dadosSalvos = localStorage.getItem(CHAVE_STORAGE) || sessionStorage.getItem(CHAVE_STORAGE);
   if (dadosSalvos) {
     try {
@@ -243,62 +197,6 @@ function selecionar(grupoId, indice) {
   }
 }
 
-function aplicarPerfilExercicios(tipo) {
-  var perfil = PERFIS_EXERCICIOS[tipo];
-  if (!perfil) return;
-  perfilExercicioAtivo = tipo;
-  localStorage.setItem(CHAVE_PERFIL_EXERCICIO, tipo);
-
-  var homeLabel = document.getElementById('homeRoutineLabel');
-  var homeValue = document.getElementById('homeRoutineValue');
-  var homeDesc = document.getElementById('homeRoutineDesc');
-  var homeBtn = document.getElementById('homeBtnExercicios');
-
-  if (tipo === 'bloqueio') {
-    if (homeLabel) homeLabel.textContent = 'Status da rotina:';
-    if (homeValue) { homeValue.textContent = '⚠ Rotina Suspensa'; homeValue.style.color = '#cc0000'; }
-    if (homeDesc) homeDesc.textContent = perfil.descCurta;
-    if (homeBtn) { homeBtn.textContent = 'Ver alerta de segurança'; homeBtn.className = 'btn btn-danger'; homeBtn.onclick = function() { navegarPara('alerta'); }; }
-  } else {
-    if (homeLabel) homeLabel.textContent = 'Rotina recomendada (' + perfil.evaRange + '):';
-    if (homeValue) { homeValue.textContent = perfil.nome; homeValue.style.color = '#006633'; }
-    if (homeDesc) homeDesc.textContent = perfil.descCurta;
-    if (homeBtn) { homeBtn.textContent = 'Abrir meus exercícios'; homeBtn.className = 'btn'; homeBtn.onclick = function() { navegarPara('exercicios'); }; }
-  }
-
-  var lockedCard = document.getElementById('exLockedCard');
-  var normalContainer = document.getElementById('exNormalContainer');
-  var exName = document.getElementById('exRoutineName');
-  var exGoal = document.getElementById('exRoutineGoal');
-  var exTitle = document.getElementById('exExerciseTitle');
-  var exVisualLabel = document.getElementById('exVisualLabel');
-  var exInstructions = document.getElementById('exInstructions');
-  var exSubInstructions = document.getElementById('exSubInstructions');
-  var exTpeCard = document.getElementById('exTpeCard');
-  var exTpeText = document.getElementById('exTpeText');
-
-  if (tipo === 'bloqueio') {
-    if (lockedCard) lockedCard.style.display = 'block';
-    if (normalContainer) normalContainer.style.display = 'none';
-  } else {
-    if (lockedCard) lockedCard.style.display = 'none';
-    if (normalContainer) normalContainer.style.display = 'block';
-    if (exName) exName.textContent = perfil.nome + ' (' + perfil.evaRange + ')';
-    if (exGoal) exGoal.textContent = 'Objetivo: ' + perfil.objetivo;
-    if (exTitle) exTitle.textContent = perfil.exercicioTitulo;
-    if (exVisualLabel) exVisualLabel.textContent = perfil.visualLabel;
-    if (exInstructions) exInstructions.textContent = perfil.instrucoes;
-    if (exSubInstructions) exSubInstructions.textContent = perfil.subInstrucoes;
-    if (exTpeCard) {
-      if (perfil.mostrarTpe) { exTpeCard.style.display = 'block'; if (exTpeText) exTpeText.textContent = perfil.tpeTexto; } 
-      else { exTpeCard.style.display = 'none'; }
-    }
-  }
-
-  var btnTreino = document.getElementById('btnConcluirTreino');
-  if (btnTreino) { btnTreino.textContent = 'Concluir treino'; btnTreino.disabled = false; btnTreino.style.background = '#006633'; }
-}
-
 function concluirRegistro(event) {
   if (event) event.preventDefault();
   buscarClimaReal();
@@ -325,13 +223,10 @@ function concluirRegistro(event) {
   if (climaBloq) climaBloq.style.display = 'none';
   if (climaLib) climaLib.style.display = 'block';
 
+  // Registrar sintomas não modifica nem bloqueia exercícios prescritos.
   if (registro.sinalAtipico || maiorDor >= 8) {
-    aplicarPerfilExercicios('bloqueio');
-    navegarPara('alerta');
-    return;
+    alert('Registro salvo. Para sintomas intensos ou inesperados, procure orientação profissional. Esta plataforma não faz triagem clínica nem altera exercícios automaticamente.');
   }
-  if (maiorDor <= 3) aplicarPerfilExercicios('fortalecimento');
-  else aplicarPerfilExercicios('mobilidade');
   navegarPara('inicio');
 }
 
