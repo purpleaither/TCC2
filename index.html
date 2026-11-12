@@ -456,19 +456,20 @@
           <input class="form-input" id="nomePlanoProf" maxlength="100" required placeholder="Ex.: Mobilidade domiciliar"></div>
         <div class="form-group"><label class="form-label" for="orientacoesPlanoProf">Orientações do profissional</label>
           <textarea class="form-input" id="orientacoesPlanoProf" maxlength="700" rows="3" placeholder="Orientações individualizadas"></textarea></div>
-        <div class="card" id="exercisebankPanel">
-          <h3 class="card-title">Biblioteca de exercícios</h3>
-          <p class="card-text-small">Consulte os exercícios com demonstrações filmadas. A seleção e os parâmetros são definidos pelo fisioterapeuta.</p>
-          <div id="exercisebankSearch">
-            <div class="form-group">
-              <label class="form-label" for="exercisebankQuery">Pesquisar na ExerciseBank</label>
-              <input id="exercisebankQuery" class="form-input" type="search" maxlength="90" placeholder="Ex.: bridge, shoulder, squat">
-            </div>
-            <button type="button" id="exercisebankSearchButton" type="button" class="btn btn-outline">Buscar exercícios</button>
+        <div class="card" id="wgerPanel">
+          <h3 class="card-title">Biblioteca de exercícios — wger</h3>
+          <p class="card-text-small">Exercícios com arquivo de vídeo na API pública. A disponibilidade de filmagens reais e a licença de cada vídeo devem ser verificadas antes da prescrição.</p>
+          <div class="form-group">
+            <label class="form-label" for="wgerQuery">Pesquisar exercícios</label>
+            <input id="wgerQuery" class="form-input" type="search" maxlength="80" placeholder="Ex.: squat, plank, bridge">
           </div>
-          <p class="card-text-small" id="exercisebankStatus" role="status" aria-live="polite">Pesquise exercícios por nome. Os resultados podem estar em inglês.</p>
-          <div id="exercisebankResults"></div>
-          <button type="button" id="exercisebankMore" class="btn btn-outline" hidden>Mais resultados</button>
+          <div class="form-remember">
+            <label><input type="checkbox" id="wgerHomeOnly" checked> Priorizar exercícios sem aparelhos de academia</label>
+          </div>
+          <button type="button" id="wgerSearchButton" class="btn btn-outline">Buscar exercícios com vídeo</button>
+          <p id="wgerStatus" class="card-text-small" role="status" aria-live="polite">Pesquise por nome, preferencialmente em inglês. Apenas exercícios com vídeo cadastrado serão mostrados.</p>
+          <div id="wgerResults"></div>
+          <button type="button" id="wgerMore" class="btn btn-outline" hidden>Ver mais resultados</button>
         </div>
         <div id="itensPlanoProf"></div>
         <button type="button" class="btn btn-outline" onclick="adicionarExercicioPlano()">+ Adicionar exercício</button>
