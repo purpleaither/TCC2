@@ -32,6 +32,8 @@ function verificarSessao(){f2Session=f2ReadSession();f2ApplySession()}
 function f2IsProf(){return !!f2Session&&f2Session.role==="fisioterapeuta"}
 function f2ApplySession(){
 document.querySelectorAll("[data-perfil]").forEach(function(n){n.style.display=f2Session&&n.dataset.perfil===f2Session.role?"":"none"});
+var btn=document.getElementById("menuBtn");
+if(btn){btn.setAttribute("aria-label",f2IsProf()?"Abrir menu do fisioterapeuta":"Abrir menu do paciente");btn.setAttribute("aria-controls","menuDrawer");btn.setAttribute("aria-expanded","false")}
 if(!f2Session){mostrarCabecalho(false);navegarPara("login");return}
 if(f2IsProf()){usuarioAtual={nome:"Fisioterapeuta demonstrativo"};f2Text("headerPerfilBtn","Profissional");f2SyncSelectors();navegarPara("profissional")}
 else{usuarioAtual={nome:f2PatientName(f2Session.patientId)};f2Text("headerPerfilBtn","Perfil");f2LoadRecords();aplicarUsuarioNaInterface(usuarioAtual.nome);gerarHeatmap();verificarRegistroHoje();f2RenderPatientPlans();navegarPara("inicio")}
@@ -44,7 +46,7 @@ if(!f2IsProf()&&!pac.includes(page))page="inicio"
 }else if(!["login","boas-vindas","tcle","questionario-inicial"].includes(page))page="login";
 document.querySelectorAll(".page").forEach(function(n){n.classList.toggle("active",n.id==="page-"+page)});
 mostrarCabecalho(!["login","boas-vindas","tcle","questionario-inicial"].includes(page));
-document.querySelectorAll(".menu-item").forEach(function(n){n.classList.toggle("active",n.getAttribute("onclick")==="navegarPara('"+page+"')")});
+document.querySelectorAll(".menu-item").forEach(function(n){var active=n.getAttribute("onclick")==="navegarPara('"+page+"')";n.classList.toggle("active",active);if(active)n.setAttribute("aria-current","page");else n.removeAttribute("aria-current")});
 fecharMenu();fecharClimaSheet();
 if(page==="planos-prof")f2RenderProfPlans();
 if(page==="registros-prof")f2RenderProfRecords();
