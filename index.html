@@ -456,6 +456,20 @@
           <input class="form-input" id="nomePlanoProf" maxlength="100" required placeholder="Ex.: Mobilidade domiciliar"></div>
         <div class="form-group"><label class="form-label" for="orientacoesPlanoProf">Orientações do profissional</label>
           <textarea class="form-input" id="orientacoesPlanoProf" maxlength="700" rows="3" placeholder="Orientações individualizadas"></textarea></div>
+        <div class="card" id="exercisebankPanel">
+          <h3 class="card-title">Biblioteca de exercícios</h3>
+          <p class="card-text-small">Consulte os exercícios com demonstrações filmadas. A seleção e os parâmetros são definidos pelo fisioterapeuta.</p>
+          <form id="exercisebankSearch" onsubmit="return false">
+            <div class="form-group">
+              <label class="form-label" for="exercisebankQuery">Pesquisar na ExerciseBank</label>
+              <input id="exercisebankQuery" class="form-input" type="search" maxlength="90" placeholder="Ex.: bridge, shoulder, squat">
+            </div>
+            <button type="submit" id="exercisebankSearchButton" class="btn btn-outline">Buscar exercícios</button>
+          </form>
+          <p class="card-text-small" id="exercisebankStatus" role="status" aria-live="polite">Pesquise exercícios por nome. Os resultados podem estar em inglês.</p>
+          <div id="exercisebankResults"></div>
+          <button type="button" id="exercisebankMore" class="btn btn-outline" hidden>Mais resultados</button>
+        </div>
         <div id="itensPlanoProf"></div>
         <button type="button" class="btn btn-outline" onclick="adicionarExercicioPlano()">+ Adicionar exercício</button>
         <button type="submit" class="btn">Salvar plano</button>
