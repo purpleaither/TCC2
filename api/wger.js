@@ -16,19 +16,42 @@ function translate(exercise){
 function cleanText(value){
   return String(value||"").replace(/<[^>]*>/g," ").replace(/&nbsp;/g," ").replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/\s+/g," ").trim();
 }
+const HOME_EQUIPMENT_IDS=new Set([7,4]);
+const HOME_EQUIPMENT_NAMES=new Set([
+  "none (bodyweight)","none","bodyweight","body weight","no equipment",
+  "gym mat","exercise mat","yoga mat","mat","sem equipamento",
+  "peso corporal","colchonete"
+]);
+const EQUIPMENT_LABELS=new Map([[7,"Sem equipamento (peso corporal)"],[4,"Colchonete"]]);
+function equipmentId(e){
+  if(typeof e==="number"&&Number.isInteger(e))return e;
+  if(typeof e==="string"&&/^\d+$/.test(e.trim()))return Number(e.trim());
+  if(e&&typeof e==="object"&&Number.isInteger(e.id))return e.id;
+  return null;
+}
+function equipmentName(e){
+  if(typeof e==="string")return e.trim().toLowerCase();
+  return e&&typeof e==="object"&&typeof e.name==="string"?e.name.trim().toLowerCase():"";
+}
 function isHomeEquipment(items){
-  if(!Array.isArray(items)||!items.length)return true;
+  if(!Array.isArray(items)||!items.length)return false;
   return items.every(e=>{
-    const name=String(typeof e==="string"?e:e.name||"").toLowerCase();
-    return /bodyweight|body weight|none|no equipment|mat|exercise mat|yoga mat|chair|resistance band|elastic band|sem equipamento|peso corporal|colchonete|cadeira|faixa elástica/.test(name);
+    const id=equipmentId(e);
+    if(id!==null)return HOME_EQUIPMENT_IDS.has(id);
+    return HOME_EQUIPMENT_NAMES.has(equipmentName(e));
   });
+}
+function describeEquipment(e){
+  const id=equipmentId(e);
+  if(id!==null)return EQUIPMENT_LABELS.get(id)||"Equipamento de academia ou não permitido (ID "+id+")";
+  return typeof e==="string"?e:String(e?.name||"Equipamento não identificado");
 }
 function normalize(ex){
   const t=translate(ex);
   const raw=Array.isArray(ex.videos)?ex.videos:[];
   const videos=raw.map(v=>({url:mediaUrl(v.video||v.url||v.file),license:v.license?.short_name||v.license?.full_name||v.license?.name||null,author:v.license_author||null}))
     .filter(v=>v.url);
-  const equipment=Array.isArray(ex.equipment)?ex.equipment.map(e=>typeof e==="string"?e:e.name||"").filter(Boolean):[];
+  const equipment=Array.isArray(ex.equipment)?ex.equipment.map(describeEquipment):[];
   return {id:String(ex.id),name:cleanText(t.name||ex.name||"Exercício"),description:cleanText(t.description||"").slice(0,500),equipment,videos,home:isHomeEquipment(ex.equipment)};
 }
 export default async function handler(req,res){
