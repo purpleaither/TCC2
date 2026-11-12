@@ -135,7 +135,7 @@ function gerarHeatmap() {
   var numDias = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + 1, 0).getDate();
 
   for (var i = 1; i <= numDias; i++) {
-    var regDoDia = registrosUsuario.find(function(r) {
+    var regDoDia = registrosUsuario.slice().reverse().find(function(r) {
       var d = new Date(r.data);
       return d.getDate() === i && d.getMonth() === mesAtual.getMonth() && d.getFullYear() === mesAtual.getFullYear();
     });
@@ -197,74 +197,72 @@ function mudarMes(delta) {
   gerarHeatmap();
 }
 
-function abrirClimaSheet(dia, reg) {
-  var nomesMes = ['jan.', 'fev.', 'mar.', 'abr.', 'mai.', 'jun.', 'jul.', 'ago.', 'set.', 'out.', 'nov.', 'dez.'];
-  
-  var elTitle = document.getElementById('climaSheetTitle');
-  if (elTitle) elTitle.textContent = 'Registro do dia ' + dia + ' de ' + nomesMes[mesAtual.getMonth()];
-
-  var sheet = document.getElementById('climaSheet');
-  if (sheet) sheet.classList.add('open');
-}
-
 function fecharClimaSheet() {
   var sheet = document.getElementById('climaSheet');
   if (sheet) sheet.classList.remove('open');
 }
 
-function buscarClimaReal() {
-  var latitude = -15.7801;
-  var longitude = -47.9292;
-  
-  var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + latitude + '&longitude=' + longitude + '&current=temperature_2m,relative_humidity_2m,surface_pressure';
+function apresentarClimaNoPainel(registro) {
+  var card = document.getElementById('climaLiberado');
+  if (!card) return;
+  card.replaceChildren();
+  var titulo = document.createElement('h3');
+  titulo.className = 'weather-title';
+  titulo.textContent = 'Informações meteorológicas';
+  card.append(titulo);
 
-  fetch(url)
-    .then(function(response) { return response.json(); })
-    .then(function(data) {
-      var temp = data.current.temperature_2m;
-      var umidade = data.current.relative_humidity_2m;
-      var pressao = data.current.surface_pressure;
+  var main = document.createElement('p');
+  main.className = 'weather-main';
+  var detalhe = document.createElement('p');
+  detalhe.className = 'weather-detail';
+  var observacao = document.createElement('p');
+  observacao.className = 'card-text-small';
 
-      var cardClima = document.getElementById('climaLiberado');
-      if (cardClima) {
-        cardClima.innerHTML = 
-          '<h3 class="weather-title">Informações meteorológicas</h3>' +
-          '<p class="weather-main">☀ Brasília · ' + temp + ' °C</p>' +
-          '<p class="weather-detail">Umidade: ' + umidade + '% · Pressão: ' + pressao + ' hPa</p>' +
-          '<p class="card-text-small">Atualizado em tempo real para sua região após o registro diário.</p>';
-      }
-    })
-    .catch(function(error) {
-      console.error('Erro ao buscar clima:', error);
-    });
+  var clima = registro && registro.clima;
+  if (clima && clima.temperatura != null && clima.umidade != null && clima.pressao != null) {
+    main.textContent = '☀ ' + (clima.cidade || 'Brasília') + ' · ' + clima.temperatura + ' °C';
+    detalhe.textContent = 'Umidade: ' + clima.umidade + '% · Pressão: ' + clima.pressao + ' hPa';
+    observacao.textContent = 'Condições registradas em ' + new Date(clima.observadoEm || registro.data).toLocaleString('pt-BR') + '. Fonte: Open-Meteo.';
+  } else {
+    main.textContent = 'Dados meteorológicos não disponíveis';
+    detalhe.textContent = 'Não foi possível associar informações meteorológicas a este registro.';
+    observacao.textContent = 'Os sintomas permanecem salvos. O clima não será substituído por uma medição de outra data.';
+  }
+  card.append(main, detalhe, observacao);
 }
-// --- CORREÇÃO DO HISTÓRICO (Preenche rigidez, fadiga e humor salvos) ---
+
 function abrirClimaSheet(dia, reg) {
   var nomesMes = ['jan.', 'fev.', 'mar.', 'abr.', 'mai.', 'jun.', 'jul.', 'ago.', 'set.', 'out.', 'nov.', 'dez.'];
-  
-  var elTitle = document.getElementById('climaSheetTitle');
-  if (elTitle) elTitle.textContent = 'Registro do dia ' + dia + ' de ' + nomesMes[mesAtual.getMonth()];
+  var titulo = document.getElementById('climaSheetTitle');
+  if (titulo) titulo.textContent = 'Registro do dia ' + dia + ' de ' + nomesMes[mesAtual.getMonth()];
 
-  var elDor = document.getElementById('sheetDorNivel');
-  if (elDor) elDor.textContent = 'Dor ao movimento: ' + reg.dorMovimento + '/10 (Repouso: ' + reg.dorRepouso + '/10)';
+  var dor = document.getElementById('sheetDorNivel');
+  if (dor) dor.textContent = 'Dor ao movimento: ' + reg.dorMovimento + '/10 (Repouso: ' + reg.dorRepouso + '/10)';
 
-  var textosIntensidade = ['Nenhuma', 'Leve', 'Moderada', 'Intensa'];
-  var textosHumor = ['Bem', 'Regular', 'Desanimado'];
+  var intensidade = ['Nenhuma', 'Leve', 'Moderada', 'Intensa'];
+  var rigidez = document.getElementById('sheetRigidez');
+  var fadiga = document.getElementById('sheetFadiga');
+  var humor = document.getElementById('sheetHumor');
+  if (rigidez) rigidez.textContent = intensidade[reg.rigidez] || 'Não registrado';
+  if (fadiga) fadiga.textContent = intensidade[reg.fadiga] || 'Não registrado';
+  if (humor) humor.textContent = 'Não registrado';
 
-  var elRigidez = document.getElementById('sheetRigidez');
-  if (elRigidez) elRigidez.textContent = textosIntensidade[reg.rigidez] !== undefined ? textosIntensidade[reg.rigidez] : 'Leve';
-
-  var elFadiga = document.getElementById('sheetFadiga');
-  if (elFadiga) elFadiga.textContent = textosIntensidade[reg.fadiga] !== undefined ? textosIntensidade[reg.fadiga] : 'Leve';
-
-  var elHumor = document.getElementById('sheetHumor');
-  if (elHumor) elHumor.textContent = textosHumor[reg.humor] !== undefined ? textosHumor[reg.humor] : 'Regular';
-  
+  var resumo = document.getElementById('sheetClimaDesc');
+  if (resumo) {
+    var clima = reg.clima;
+    if (clima && clima.temperatura != null && clima.umidade != null && clima.pressao != null) {
+      resumo.textContent = (clima.cidade || 'Brasília') + ': ' +
+        clima.temperatura + ' °C, umidade ' + clima.umidade + '% e pressão ' + clima.pressao +
+        ' hPa. Observado em ' + new Date(clima.observadoEm || reg.data).toLocaleString('pt-BR') +
+        ' (Open-Meteo).';
+    } else {
+      resumo.textContent = 'Não há dados meteorológicos salvos para este registro.';
+    }
+  }
   var sheet = document.getElementById('climaSheet');
   if (sheet) sheet.classList.add('open');
 }
 
-// --- FEEDBACK VISUAL NA HOME (Sintomas e Treino Concluídos) ---
 function verificarRegistroHoje() {
   var hoje = new Date().toDateString();
   var existe = registrosUsuario.some(function(r) {
@@ -279,6 +277,12 @@ function verificarRegistroHoje() {
   }
   if (bloqueado) bloqueado.style.display = existe ? 'none' : 'block';
   if (liberado) liberado.style.display = existe ? 'block' : 'none';
+  if (existe) {
+    var hojeRegistro = registrosUsuario.slice().reverse().find(function(r) {
+      return new Date(r.data).toDateString() === hoje;
+    });
+    apresentarClimaNoPainel(hojeRegistro);
+  }
 }
 
 atualizarDataAtual();
