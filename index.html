@@ -14,10 +14,10 @@
   <!-- ===== CABEÇALHO (Oculto na tela de login) ===== -->
   <div class="header" id="appHeader" style="display:none">
     <button class="header-menu-btn" id="menuBtn">☰ Menu</button>
-    <div class="header-brand" onclick="navegarPara('inicio')">
+    <div class="header-brand" onclick="navegarPara(f2IsProf() ? 'profissional' : 'inicio')">
       <img src="logo.svg" alt="Logo Autonomia em Movimento" class="header-logo">
     </div>
-    <button class="header-perfil-btn" id="headerPerfilBtn" onclick="navegarPara('contatos')">Perfil</button>
+    <button class="header-perfil-btn" id="headerPerfilBtn" onclick="navegarPara(f2IsProf() ? 'profissional' : 'contatos')">Perfil</button>
   </div>
 
   <!-- ===== MENU LATERAL ===== -->
@@ -28,7 +28,10 @@
       <h2 class="menu-title">Autonomia em Movimento</h2>
     </div>
     <div class="menu-items-list">
-      <button class="menu-item active" onclick="navegarPara('inicio')">Início</button>
+      <button class="menu-item active" data-perfil="paciente" onclick="navegarPara('inicio')">Início</button>
+      <button class="menu-item" data-perfil="fisioterapeuta" onclick="navegarPara('profissional')">Painel profissional</button>
+      <button class="menu-item" data-perfil="fisioterapeuta" onclick="navegarPara('planos-prof')">Gerenciar planos</button>
+      <button class="menu-item" data-perfil="fisioterapeuta" onclick="navegarPara('registros-prof')">Registros dos pacientes</button>
       <button class="menu-item" data-perfil="paciente" onclick="navegarPara('sintomas')">Registro de sintomas</button>
       <button class="menu-item" data-perfil="paciente" onclick="navegarPara('historico')">Meu histórico</button>
       <button class="menu-item" data-perfil="paciente" onclick="navegarPara('orientacoes')">Orientações</button>
