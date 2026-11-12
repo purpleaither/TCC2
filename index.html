@@ -17,7 +17,7 @@
     <div class="header-brand" onclick="navegarPara('inicio')">
       <img src="logo.svg" alt="Logo Autonomia em Movimento" class="header-logo">
     </div>
-    <button class="header-perfil-btn" onclick="navegarPara('contatos')">Perfil</button>
+    <button class="header-perfil-btn" id="headerPerfilBtn" onclick="navegarPara('contatos')">Perfil</button>
   </div>
 
   <!-- ===== MENU LATERAL ===== -->
@@ -29,11 +29,11 @@
     </div>
     <div class="menu-items-list">
       <button class="menu-item active" onclick="navegarPara('inicio')">Início</button>
-      <button class="menu-item" onclick="navegarPara('sintomas')">Registro de sintomas</button>
-      <button class="menu-item" onclick="navegarPara('historico')">Meu histórico</button>
-      <button class="menu-item" onclick="navegarPara('orientacoes')">Orientações</button>
-      <button class="menu-item" onclick="navegarPara('exercicios')">Meus exercícios</button>
-      <button class="menu-item" onclick="navegarPara('contatos')">Contatos do HUB</button>
+      <button class="menu-item" data-perfil="paciente" onclick="navegarPara('sintomas')">Registro de sintomas</button>
+      <button class="menu-item" data-perfil="paciente" onclick="navegarPara('historico')">Meu histórico</button>
+      <button class="menu-item" data-perfil="paciente" onclick="navegarPara('orientacoes')">Orientações</button>
+      <button class="menu-item" data-perfil="paciente" onclick="navegarPara('exercicios')">Meus exercícios</button>
+      <button class="menu-item" data-perfil="paciente" onclick="navegarPara('contatos')">Contatos do HUB</button>
     </div>
     <div class="menu-footer">
       <button class="menu-logout-btn" onclick="realizarLogout()">Sair da conta</button>
@@ -46,29 +46,29 @@
       <div class="login-header">
         <img src="logo.svg" alt="Autonomia em Movimento" class="login-logo">
         <h1 class="login-title">Autonomia em Movimento</h1>
-        <p class="login-sub">HUB · Universidade de Brasília</p>
+        <p class="login-sub">Protótipo acadêmico · Dados fictícios</p>
       </div>
 
       <form id="loginForm" class="login-form" onsubmit="realizarLogin(event)">
         <div class="form-group">
-          <label for="loginNome" class="form-label">Nome ou Cartão SUS</label>
-          <input type="text" id="loginNome" class="form-input" placeholder="Ex: Maria Silva" required value="Maria Silva">
+          <label class="form-label" for="loginTipo">Perfil demonstrativo</label>
+          <select id="loginTipo" class="form-input" onchange="alternarPerfilLogin()">
+            <option value="paciente">Paciente</option>
+            <option value="fisioterapeuta">Fisioterapeuta</option>
+          </select>
         </div>
-
-        <div class="form-group">
-          <label for="loginSenha" class="form-label">Senha de acesso</label>
-          <input type="password" id="loginSenha" class="form-input" placeholder="••••••••" required value="123456">
+        <div class="form-group" id="loginPacienteGrupo">
+          <label for="loginPaciente" class="form-label">Paciente fictício</label>
+          <select id="loginPaciente" class="form-input">
+            <option value="p1">Maria Silva (fictícia)</option>
+            <option value="p2">João Oliveira (fictício)</option>
+          </select>
         </div>
-
-        <div class="form-remember">
-          <label>
-            <input type="checkbox" id="rememberMe" checked> Manter conectado neste dispositivo
-          </label>
+        <div class="card" style="background:#f3f8f4;border-color:#cde1d2">
+          <p class="card-text" style="margin:0"><strong>Modo de demonstração:</strong> não há autenticação real nem banco compartilhado. Utilize somente dados fictícios. Os planos e registros ficam neste navegador.</p>
         </div>
-
-        <button type="submit" class="btn">Entrar</button>
-        <button type="button" class="btn btn-outline" onclick="navegarPara('boas-vindas')" style="margin-top: 8px;">Primeiro Acesso / Cadastrar-se</button>
-        <p class="login-help">Acompanhamento e reabilitação terapêutica</p>
+        <button type="submit" class="btn">Entrar no protótipo</button>
+        <p class="login-help">Projeto acadêmico independente, sem uso clínico.</p>
       </form>
     </div>
   </div>
@@ -471,14 +471,76 @@
 
     <div class="card" style="border-color:#ffcccc; background:#fffafa">
       <h3 class="card-title" style="color:#cc0000">Sessão</h3>
-      <p class="card-text-small">Você está conectado como paciente.</p>
+      <p class="card-text-small">Perfil demonstrativo, sem autenticação clínica.</p>
       <button class="btn btn-outline" onclick="realizarLogout()">Encerrar sessão</button>
     </div>
 
   </div>
 
+  <!-- ===== PAINEL PROFISSIONAL DEMONSTRATIVO ===== -->
+  <div class="page" id="page-profissional">
+    <h1 class="page-title">Painel do fisioterapeuta</h1>
+    <p class="page-subtitle">Ambiente demonstrativo com pacientes fictícios</p>
+    <div class="card">
+      <h3 class="card-title">Bem-vindo(a), fisioterapeuta</h3>
+      <p class="card-text">Selecione o paciente fictício para consultar registros e configurar planos terapêuticos individualizados.</p>
+      <label class="form-label" for="pacienteProf">Paciente fictício</label>
+      <select class="form-input" id="pacienteProf" onchange="atualizarPacienteProfissional()"><option value="p1">Maria Silva</option><option value="p2">João Oliveira</option></select>
+    </div>
+    <div class="card">
+      <h3 class="card-title">Planos terapêuticos</h3>
+      <p class="card-text">Crie e organize exercícios prescritos, com séries, repetições, duração e frequência.</p>
+      <button class="btn" onclick="navegarPara('planos-prof')">Gerenciar planos</button>
+    </div>
+    <div class="card">
+      <h3 class="card-title">Registros de sintomas</h3>
+      <p class="card-text">Consulte registros inseridos por perfis fictícios neste navegador.</p>
+      <button class="btn" onclick="navegarPara('registros-prof')">Consultar registros</button>
+    </div>
+  </div>
+
+  <!-- ===== PLANOS DO FISIOTERAPEUTA ===== -->
+  <div class="page" id="page-planos-prof">
+    <h1 class="page-title">Gerenciar planos</h1>
+    <p class="page-subtitle" id="profPlanosDescricao">Planos individualizados - ambiente demonstrativo</p>
+    <div class="card">
+      <label class="form-label" for="pacientePlanoProf">Paciente fictício</label>
+      <select id="pacientePlanoProf" class="form-input" onchange="trocarPacientePlanoProf()">
+        <option value="p1">Maria Silva</option><option value="p2">João Oliveira</option>
+      </select>
+    </div>
+    <div id="listaPlanosProf"></div>
+    <div class="card">
+      <h3 class="card-title" id="tituloFormularioPlano">Criar plano terapêutico</h3>
+      <form id="formPlanoProf" onsubmit="salvarPlanoProf(event)">
+        <div class="form-group"><label class="form-label" for="nomePlanoProf">Nome do plano</label>
+          <input class="form-input" id="nomePlanoProf" maxlength="100" required placeholder="Ex.: Mobilidade domiciliar"></div>
+        <div class="form-group"><label class="form-label" for="orientacoesPlanoProf">Orientações do profissional</label>
+          <textarea class="form-input" id="orientacoesPlanoProf" maxlength="700" rows="3" placeholder="Orientações individualizadas demonstrativas"></textarea></div>
+        <div id="itensPlanoProf"></div>
+        <button type="button" class="btn btn-outline" onclick="adicionarExercicioPlano()">+ Adicionar exercício</button>
+        <button type="submit" class="btn">Salvar plano fictício</button>
+        <button type="button" class="btn btn-outline" onclick="limparFormularioPlano()">Cancelar edição</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== REGISTROS DE SINTOMAS DO PROFISSIONAL ===== -->
+  <div class="page" id="page-registros-prof">
+    <h1 class="page-title">Registros dos pacientes</h1>
+    <p class="page-subtitle">Consulta de informações fictícias, sem avaliação automática</p>
+    <div class="card">
+      <label class="form-label" for="pacienteRegistrosProf">Paciente fictício</label>
+      <select id="pacienteRegistrosProf" class="form-input" onchange="trocarPacienteRegistrosProf()">
+        <option value="p1">Maria Silva</option><option value="p2">João Oliveira</option>
+      </select>
+    </div>
+    <div id="listaRegistrosProf"></div>
+  </div>
+
 </div><!-- Fim de .app -->
 
 <script src="app.js"></script>
+<script src="fase2.js"></script>
 </body>
 </html>
