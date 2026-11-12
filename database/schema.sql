@@ -46,7 +46,12 @@ create table if not exists public.symptom_records (
  pain_rest smallint not null check (pain_rest between 0 and 10),
  pain_movement smallint not null check (pain_movement between 0 and 10),
  stiffness text not null check (stiffness in ('Nenhuma','Leve','Moderada','Intensa')),
- fatigue text not null check (fatigue in ('Nenhuma','Leve','Moderada','Intensa'))
+ fatigue text not null check (fatigue in ('Nenhuma','Leve','Moderada','Intensa')),
+ weather_city text,
+ weather_temperature numeric(5,2),
+ weather_humidity smallint check (weather_humidity is null or weather_humidity between 0 and 100),
+ weather_pressure numeric(7,2) check (weather_pressure is null or weather_pressure between 800 and 1200),
+ weather_observed_at timestamptz
 );
 
 create index if not exists idx_care_links_patient on public.care_links(patient_id);
