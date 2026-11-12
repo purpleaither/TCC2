@@ -459,13 +459,13 @@
         <div class="card" id="exercisebankPanel">
           <h3 class="card-title">Biblioteca de exercícios</h3>
           <p class="card-text-small">Consulte os exercícios com demonstrações filmadas. A seleção e os parâmetros são definidos pelo fisioterapeuta.</p>
-          <form id="exercisebankSearch" onsubmit="return false">
+          <div id="exercisebankSearch">
             <div class="form-group">
               <label class="form-label" for="exercisebankQuery">Pesquisar na ExerciseBank</label>
               <input id="exercisebankQuery" class="form-input" type="search" maxlength="90" placeholder="Ex.: bridge, shoulder, squat">
             </div>
-            <button type="submit" id="exercisebankSearchButton" class="btn btn-outline">Buscar exercícios</button>
-          </form>
+            <button type="button" id="exercisebankSearchButton" type="button" class="btn btn-outline">Buscar exercícios</button>
+          </div>
           <p class="card-text-small" id="exercisebankStatus" role="status" aria-live="polite">Pesquise exercícios por nome. Os resultados podem estar em inglês.</p>
           <div id="exercisebankResults"></div>
           <button type="button" id="exercisebankMore" class="btn btn-outline" hidden>Mais resultados</button>
