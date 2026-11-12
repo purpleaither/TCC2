@@ -27,9 +27,9 @@ function realizarLogin(event){if(event)event.preventDefault();var role=document.
 if(role!=="paciente"&&role!=="fisioterapeuta")return;
 f2Session=role==="paciente"?{role:"paciente",patientId:pid}:{role:"fisioterapeuta"};
 f2StoreSession();f2ApplySession()}
-function realizarLogout(){f2Session=null;usuarioAtual=null;f2StoreSession();try{localStorage.removeItem(CHAVE_STORAGE);sessionStorage.removeItem(CHAVE_STORAGE)}catch(e){}f2ApplySession()}
+function realizarLogout(){if(window.AuthPortal&&window.AuthPortal.isLoggedIn()){window.AuthPortal.signOut();return}f2Session=null;usuarioAtual=null;f2StoreSession();try{localStorage.removeItem(CHAVE_STORAGE);sessionStorage.removeItem(CHAVE_STORAGE)}catch(e){}f2ApplySession()}
 function verificarSessao(){f2Session=f2ReadSession();f2ApplySession()}
-function f2IsProf(){return !!f2Session&&f2Session.role==="fisioterapeuta"}
+function f2IsProf(){return window.AuthPortal&&window.AuthPortal.isLoggedIn()?window.AuthPortal.isProfessional():!!f2Session&&f2Session.role==="fisioterapeuta"}
 function f2ApplySession(){
 document.querySelectorAll("[data-perfil]").forEach(function(n){n.style.display=f2Session&&n.dataset.perfil===f2Session.role?"":"none"});
 var btn=document.getElementById("menuBtn");
@@ -39,13 +39,14 @@ if(f2IsProf()){usuarioAtual={nome:"Fisioterapeuta demonstrativo"};f2Text("header
 else{usuarioAtual={nome:f2PatientName(f2Session.patientId)};f2Text("headerPerfilBtn","Perfil");f2LoadRecords();aplicarUsuarioNaInterface(usuarioAtual.nome);gerarHeatmap();verificarRegistroHoje();f2RenderPatientPlans();navegarPara("inicio")}
 }
 function navegarPara(page){
+if(window.AuthPortal&&window.AuthPortal.isLoggedIn()){window.AuthPortal.navigate(page);return}
 if(f2Session){
 var prof=["profissional","planos-prof","registros-prof"],pac=["inicio","sintomas","historico","orientacoes","exercicios","contatos"];
 if(f2IsProf()&&!prof.includes(page))page="profissional";
 if(!f2IsProf()&&!pac.includes(page))page="inicio"
-}else if(!["login","boas-vindas","tcle","questionario-inicial"].includes(page))page="login";
+}else if(!["login","login-auth","boas-vindas","tcle","questionario-inicial"].includes(page))page="login";
 document.querySelectorAll(".page").forEach(function(n){n.classList.toggle("active",n.id==="page-"+page)});
-mostrarCabecalho(!["login","boas-vindas","tcle","questionario-inicial"].includes(page));
+mostrarCabecalho(!["login","login-auth","boas-vindas","tcle","questionario-inicial"].includes(page));
 document.querySelectorAll(".menu-item").forEach(function(n){var active=n.getAttribute("onclick")==="navegarPara('"+page+"')";n.classList.toggle("active",active);if(active)n.setAttribute("aria-current","page");else n.removeAttribute("aria-current")});
 fecharMenu();fecharClimaSheet();
 if(page==="planos-prof")f2RenderProfPlans();
