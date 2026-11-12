@@ -440,4 +440,3 @@ function concluirTreino() {
 
 atualizarDataAtual();
 gerarHeatmap();
-verificarSessao();
