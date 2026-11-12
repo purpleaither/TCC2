@@ -837,3 +837,15 @@ body {
   object-fit: contain;
 }
 
+
+/* Fase 2: componentes mantêm a paleta e linguagem visual originais. */
+.demo-exercicio-item{border:1px solid #dfe7e2;border-radius:6px;padding:12px;margin-bottom:12px;background:#fafcfa}
+.demo-exercicio-item .form-group{margin-bottom:10px}
+.demo-exercicio-item .form-input{min-width:0}
+.demo-grid-parametros{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.demo-acoes{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.demo-acoes .btn{width:auto;margin-top:0;flex:1}
+.demo-detalhe{background:#f6faf7;border-left:3px solid #006633;padding:10px;margin:9px 0;line-height:1.5;font-size:12px}
+.demo-vazio{color:#69756e;font-size:13px;padding:12px 0}
+#page-profissional select,#page-planos-prof select,#page-registros-prof select{background:#fff}
+@media(max-width:340px){.demo-grid-parametros{grid-template-columns:1fr}.demo-acoes{flex-direction:column}}
