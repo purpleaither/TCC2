@@ -3,22 +3,7 @@
    HUB / Universidade de Brasília
    ======================================== */
 
-var CHAVE_STORAGE = 'autonomia_usuario_sessao';
-var CHAVE_REGISTROS = 'autonomia_registros_historico';
 var registrosUsuario = [];
-
-// Carrega os registros salvos ao iniciar a aplicação
-function carregarRegistrosSalvos() {
-  var salvos = localStorage.getItem(CHAVE_REGISTROS);
-  if (salvos) {
-    try {
-      registrosUsuario = JSON.parse(salvos);
-    } catch (e) {
-      registrosUsuario = [];
-    }
-  }
-}
-carregarRegistrosSalvos();
 
 var usuarioAtual = null;
 var dorRepouso = 2;
@@ -33,67 +18,17 @@ var registroEnviadoHoje = false;
 var mesAtual = new Date(); 
 var filtroDorVisualizacao = 1; // 0 = Repouso, 1 = Movimento
 
-function verificarSessao() {
-  // Sem atribuição automática de exercícios. A prescrição caberá ao fisioterapeuta.
-  var dadosSalvos = localStorage.getItem(CHAVE_STORAGE) || sessionStorage.getItem(CHAVE_STORAGE);
-  if (dadosSalvos) {
-    try {
-      usuarioAtual = JSON.parse(dadosSalvos);
-      aplicarUsuarioNaInterface(usuarioAtual.nome);
-      mostrarCabecalho(true);
-      navegarPara('inicio');
-      return;
-    } catch (e) {}
-  }
-  mostrarCabecalho(false);
-  navegarPara('login');
+function appPaginaInicial() {
+  return window.AppAuth && window.AppAuth.isProfessional() ? 'profissional' : 'inicio';
 }
 
 function realizarLogin(event) {
   if (event) event.preventDefault();
-  var nomeInput = document.getElementById('loginNome');
-  var lembrar = document.getElementById('rememberMe').checked;
-  var nome = (nomeInput && nomeInput.value.trim()) ? nomeInput.value.trim() : 'Maria Silva';
-  usuarioAtual = { nome: nome, dataLogin: new Date().toISOString() };
-  var dadosJson = JSON.stringify(usuarioAtual);
-  if (lembrar) localStorage.setItem(CHAVE_STORAGE, dadosJson);
-  else sessionStorage.setItem(CHAVE_STORAGE, dadosJson);
-  aplicarUsuarioNaInterface(nome);
-  mostrarCabecalho(true);
-  navegarPara('inicio');
+  if (window.AppAuth) return window.AppAuth.login();
 }
 
 function realizarLogout() {
-  localStorage.removeItem(CHAVE_STORAGE);
-  sessionStorage.removeItem(CHAVE_STORAGE);
-  usuarioAtual = null;
-  fecharMenu();
-  mostrarCabecalho(false);
-  navegarPara('login');
-}
-
-function validarTcle() {
-  var aceite = document.getElementById('aceiteTcle');
-  if (!aceite || !aceite.checked) {
-    alert('Você deve aceitar os termos do consentimento para prosseguir.');
-    return;
-  }
-  navegarPara('questionario-inicial');
-}
-
-function concluirOnboarding() {
-  var nomeInput = document.getElementById('qNome');
-  var nome = (nomeInput && nomeInput.value.trim()) ? nomeInput.value.trim() : 'Maria Silva';
-
-  usuarioAtual = {
-    nome: nome,
-    dataLogin: new Date().toISOString()
-  };
-
-  localStorage.setItem(CHAVE_STORAGE, JSON.stringify(usuarioAtual));
-  aplicarUsuarioNaInterface(nome);
-  mostrarCabecalho(true);
-  navegarPara('inicio');
+  if (window.AppAuth) return window.AppAuth.logout();
 }
 
 function aplicarUsuarioNaInterface(nome) {
@@ -109,25 +44,10 @@ function mostrarCabecalho(visivel) {
 }
 
 function navegarPara(pagina) {
+  if (window.AppAuth) return window.AppAuth.navigate(pagina);
   var paginas = document.querySelectorAll('.page');
-  for (var i = 0; i < paginas.length; i++) paginas[i].classList.remove('active');
-  var destino = document.getElementById('page-' + pagina);
-  if (destino) destino.classList.add('active');
-  
-  if (pagina === 'login' || pagina === 'boas-vindas' || pagina === 'tcle' || pagina === 'questionario-inicial') {
-    mostrarCabecalho(false);
-  } else {
-    mostrarCabecalho(true);
-  }
-  
-  var itens = document.querySelectorAll('.menu-item');
-  for (var i = 0; i < itens.length; i++) itens[i].classList.remove('active');
-  var mapaMenu = { 'inicio': 0, 'sintomas': 1, 'historico': 2, 'orientacoes': 3, 'exercicios': 4, 'contatos': 5 };
-  if (mapaMenu[pagina] !== undefined && itens[mapaMenu[pagina]]) itens[mapaMenu[pagina]].classList.add('active');
-  
-  fecharMenu();
-  fecharClimaSheet();
-  window.scrollTo(0, 0);
+  paginas.forEach(function(p) { p.classList.toggle('active', p.id === 'page-login'); });
+  mostrarCabecalho(false);
 }
 
 function alternarMenu() {
@@ -199,46 +119,7 @@ function selecionar(grupoId, indice) {
 
 function concluirRegistro(event) {
   if (event) event.preventDefault();
-  buscarClimaReal();
-  var maiorDor = Math.max(dorRepouso, dorMovimento);
-  
-  var registro = {
-    data: new Date().toISOString(),
-    dorRepouso: dorRepouso,
-    dorMovimento: dorMovimento,
-    maiorDor: maiorDor,
-    rigidez: rigidezAtual,
-    fadiga: fadigaAtual,
-    humor: humorAtual,
-    atividade: atividadeAtual,
-    sinalAtipico: atipico === 1
-  };
-
-  registrosUsuario.push(registro);
-  localStorage.setItem(CHAVE_REGISTROS, JSON.stringify(registrosUsuario));
-  gerarHeatmap();
-
-  var climaBloq = document.getElementById('climaBloqueado');
-  var climaLib = document.getElementById('climaLiberado');
-  if (climaBloq) climaBloq.style.display = 'none';
-  if (climaLib) climaLib.style.display = 'block';
-
-  // Registrar sintomas não modifica nem bloqueia exercícios prescritos.
-  if (registro.sinalAtipico || maiorDor >= 8) {
-    alert('Registro salvo. Para sintomas intensos ou inesperados, procure orientação profissional. Esta plataforma não faz triagem clínica nem altera exercícios automaticamente.');
-  }
-  navegarPara('inicio');
-}
-
-function concluirTreino() {
-  treinoConcluido = true;
-  var btn = document.getElementById('btnConcluirTreino');
-  if (btn) {
-    btn.textContent = 'Treino concluído!';
-    btn.disabled = true;
-    btn.style.background = '#005528';
-  }
-  setTimeout(function() { navegarPara('inicio'); }, 500);
+  if (window.AppAuth) return window.AppAuth.saveSymptoms();
 }
 
 // ========================================
@@ -385,57 +266,19 @@ function abrirClimaSheet(dia, reg) {
 
 // --- FEEDBACK VISUAL NA HOME (Sintomas e Treino Concluídos) ---
 function verificarRegistroHoje() {
-  var hojeStr = new Date().toDateString();
-  var jaRegistrou = registrosUsuario.some(function(r) {
-    return new Date(r.data).toDateString() === hojeStr;
+  var hoje = new Date().toDateString();
+  var existe = registrosUsuario.some(function(r) {
+    return new Date(r.data).toDateString() === hoje;
   });
-
-  var btnRegistro = document.getElementById('btnRegistrarSintomas');
-  var climaBloq = document.getElementById('climaBloqueado');
-  var climaLib = document.getElementById('climaLiberado');
-
-  if (jaRegistrou) {
-    registroEnviadoHoje = true;
-    if (btnRegistro) {
-      btnRegistro.textContent = 'Sintomas já registrados hoje ✓';
-      btnRegistro.style.background = '#4a7c59';
-    }
-    if (climaBloq) climaBloq.style.display = 'none';
-    if (climaLib) climaLib.style.display = 'block';
+  var botao = document.getElementById('btnRegistrarSintomas');
+  var bloqueado = document.getElementById('climaBloqueado');
+  var liberado = document.getElementById('climaLiberado');
+  if (botao) {
+    botao.textContent = existe ? 'Sintomas já registrados hoje ✓' : 'Registrar sintomas';
+    botao.style.background = existe ? '#4a7c59' : '';
   }
-
-  // Verifica treino do dia
-  var treinoSalvo = localStorage.getItem('autonomia_treino_concluido_hoje');
-  if (treinoSalvo === hojeStr) {
-    treinoConcluido = true;
-    var btnTreinoHome = document.getElementById('homeBtnExercicios');
-    if (btnTreinoHome) {
-      btnTreinoHome.textContent = 'Treino concluído hoje ✓';
-      btnTreinoHome.style.background = '#4a7c59';
-    }
-  }
-}
-
-// Atualize também a função concluirTreino para salvar o status de hoje:
-function concluirTreino() {
-  treinoConcluido = true;
-  var hojeStr = new Date().toDateString();
-  localStorage.setItem('autonomia_treino_concluido_hoje', hojeStr);
-
-  var btn = document.getElementById('btnConcluirTreino');
-  if (btn) {
-    btn.textContent = 'Treino concluído!';
-    btn.disabled = true;
-    btn.style.background = '#005528';
-  }
-
-  var btnTreinoHome = document.getElementById('homeBtnExercicios');
-  if (btnTreinoHome) {
-    btnTreinoHome.textContent = 'Treino concluído hoje ✓';
-    btnTreinoHome.style.background = '#4a7c59';
-  }
-
-  setTimeout(function() { navegarPara('inicio'); }, 500);
+  if (bloqueado) bloqueado.style.display = existe ? 'none' : 'block';
+  if (liberado) liberado.style.display = existe ? 'block' : 'none';
 }
 
 atualizarDataAtual();
