@@ -165,11 +165,11 @@
     <div class="card" id="homeExerciciosCard">
       <h3 class="card-title">Meus exercícios</h3>
       <div class="routine-preview" id="homeRoutineBox">
-        <p class="routine-label" id="homeRoutineLabel">Rotina recomendada:</p>
-        <p class="routine-value" id="homeRoutineValue">Mobilidade e Alongamento</p>
-        <p class="card-text-small" id="homeRoutineDesc" style="margin-top:4px">Exercícios de mobilidade ativa e alongamentos leves combinados a educação terapêutica.</p>
+        <p class="routine-label" id="homeRoutineLabel">Plano fisioterapêutico</p>
+        <p class="routine-value" id="homeRoutineValue">Aguardando atribuição</p>
+        <p class="card-text-small" id="homeRoutineDesc" style="margin-top:4px">Os exercícios serão definidos pelo fisioterapeuta. Ainda não existe um plano atribuído neste protótipo.</p>
       </div>
-      <button class="btn" id="homeBtnExercicios" onclick="navegarPara('exercicios')">Abrir meus exercícios</button>
+      <button class="btn" id="homeBtnExercicios" onclick="navegarPara('exercicios')">Ver meus exercícios</button>
     </div>
 
     <!-- Card: Aviso -->
@@ -412,68 +412,17 @@
 
   <!-- ===== TELA 5.0: MEUS EXERCÍCIOS ===== -->
   <div class="page" id="page-exercicios">
-
     <h1 class="page-title">Meus exercícios</h1>
-    <p class="page-subtitle" id="exSubtitle">Plano individual de reabilitação e movimento</p>
-
-    <!-- Bloqueio de segurança (quando EVA 8 a 10 ou sinal atípico) -->
-    <div class="alert-box" id="exLockedCard" style="display:none">
-      <h3 class="alert-title">Rotina Suspensa — Trava de Segurança Ativada</h3>
-      <p class="alert-text">Diante de dor intensa ou relato de sinais de alarme, qualquer rotina de exercício é bloqueada automaticamente para sua segurança.</p>
-      <button class="btn btn-danger" onclick="navegarPara('alerta')" style="margin-top:12px">Ver Alerta de Segurança e Contatos</button>
+    <p class="page-subtitle">Planos individualizados definidos pelo fisioterapeuta</p>
+    <div class="card" id="exNormalContainer">
+      <h3 class="card-title">Nenhum plano atribuído</h3>
+      <p class="card-text">Quando o fisioterapeuta selecionar e configurar os exercícios, eles serão disponibilizados nesta área.</p>
+      <p class="card-text-small">Esta versão ainda utiliza dados fictícios. O perfil profissional e o banco de dados serão implementados nas próximas etapas.</p>
     </div>
-
-    <!-- Conteúdo normal dos exercícios (quando dor <= 7) -->
-    <div id="exNormalContainer">
-      <!-- Rotina recomendada -->
-      <div class="card">
-        <h3 class="card-title">Perfil de exercício recomendado</h3>
-        <p class="card-text" id="exRoutineName" style="font-weight:bold; color:#006633; font-size:15px">Mobilidade e Alongamento</p>
-        <p class="card-text-small" id="exRoutineGoal">Objetivo: Aliviar a rigidez e desensibilizar o medo do movimento.</p>
-      </div>
-
-      <!-- Exercício ativo -->
-      <div class="card">
-        <h3 class="card-title" id="exExerciseTitle">Exercício 1: Mobilidade suave e respiração diafragmática</h3>
-        
-        <!-- Visual ilustrativo do exercício com logo estilizado -->
-        <div class="exercise-visual">
-          <img src="logo.svg" alt="Exercício" class="exercise-icon">
-          <span class="exercise-visual-label" id="exVisualLabel">Mobilidade Ativa e Desensibilização</span>
-        </div>
-
-        <p class="card-text" id="exInstructions">Realize 3 séries de 30 segundos. Movimentos lentos e suaves até o ponto de conforto, sem forçar a articulação e sem prender o ar.</p>
-        <p class="card-text-small" id="exSubInstructions">Respeite os limites do seu corpo hoje. O foco é soltar a musculatura e aliviar a rigidez.</p>
-      </div>
-
-      <!-- Pílula Educativa (TPE) -->
-      <div class="card" id="exTpeCard" style="background:transparent; border-color:#ddd">
-        <h3 class="card-title tpe-title" style="color:#003366">
-          <img src="Icones/bulb.svg" alt="" class="icon"> 
-          Pílula de Educação Terapêutica (TPE)
-        </h3>
-        <p class="card-text" id="exTpeText" style="font-size:12.5px; line-height:1.4">Sentir um desconforto moderado e tolerável durante o movimento é normal e seguro. Mover-se com calma ensina o cérebro que o movimento não representa perigo.</p>
-      </div>
-
-      <!-- Antes de iniciar -->
-      <div class="card">
-        <h3 class="card-title">Antes de iniciar</h3>
-        <p class="card-text">Certifique-se de que está se sentindo apto para o treino. Não inicie se apresentar febre, inchaço súbito ou dor aguda fora do comum.</p>
-      </div>
-
-      <!-- Feedback -->
-      <div class="choices">
-        <p class="choices-label">Como se sentiu ao terminar o treino?</p>
-        <div class="choices-options" id="feedbackOptions">
-          <button class="choice-btn" onclick="selecionar('feedbackOptions', 0)">Fácil</button>
-          <button class="choice-btn selected" onclick="selecionar('feedbackOptions', 1)">Adequado</button>
-          <button class="choice-btn" onclick="selecionar('feedbackOptions', 2)">Muito difícil</button>
-        </div>
-      </div>
-
-      <button class="btn" id="btnConcluirTreino" onclick="concluirTreino()">Concluir treino</button>
+    <div class="warning-card">
+      <p class="warning-title"><img src="Icones/alert-triangle.svg" alt="" class="icon">Orientação geral</p>
+      <p class="warning-text">Não utilize exercícios demonstrativos como prescrição. Em caso de sintomas intensos ou inesperados, procure orientação profissional.</p>
     </div>
-
   </div>
 
   <!-- ===== TELA 6.0: CONTATOS DO HUB ===== -->
@@ -524,46 +473,6 @@
       <h3 class="card-title" style="color:#cc0000">Sessão</h3>
       <p class="card-text-small">Você está conectado como paciente.</p>
       <button class="btn btn-outline" onclick="realizarLogout()">Encerrar sessão</button>
-    </div>
-
-  </div>
-
-  <!-- ===== TELA 7.0: ALERTA DE SEGURANÇA ===== -->
-  <div class="page" id="page-alerta">
-
-    <h1 class="page-title" style="color:#cc0000">Suspenda a rotina</h1>
-    <p class="page-subtitle">Sinal de atenção detectado no seu registro</p>
-
-    <div class="alert-box">
-      <h3 class="alert-title">Sinal de alerta identificado</h3>
-      <p class="alert-text">Por medida de segurança preventiva, interrompa os exercícios físicos de hoje.</p>
-      <p class="alert-text">Procure uma avaliação presencial com a equipe de saúde responsável pelo seu acompanhamento.</p>
-      
-      <p class="alert-text" style="font-weight:bold; margin-top:10px; color:#cc0000">Motivo da pausa preventiva:</p>
-      <p class="alert-text" id="motivoBloqueio">Dor em intensidade elevada (EVA 9/10) ou sinal atípico relatado.</p>
-    </div>
-
-    <div class="card">
-      <h3 class="card-title">Acesso rápido à equipe</h3>
-      <p class="card-text">Entre em contato com o ambulatório de fisioterapia para receber orientação.</p>
-      <a href="tel:6120285000" style="text-decoration:none">
-        <button class="btn">Ligar para o HUB</button>
-      </a>
-    </div>
-
-    <div class="card">
-      <h3 class="card-title">Em caso de emergência médica</h3>
-      <p class="card-text">Se sentir dor no peito, falta de ar severa ou desmaio, ligue imediatamente para a rede de urgência.</p>
-      <a href="tel:192" style="text-decoration:none">
-        <button class="btn btn-danger">Ligar para SAMU · 192</button>
-      </a>
-      <p class="card-text-small" style="margin-top:8px">Atendimento público gratuito disponível 24 horas.</p>
-    </div>
-
-    <div class="warning-card">
-      <p class="warning-title"><img src="Icones/alert-triangle.svg" alt="" class="icon"> Rotina Suspensa</p>
-      <p class="warning-text">A rotina de exercícios permanecerá pausada até sua avaliação pela equipe de saúde.</p>
-      <p class="warning-text">Este aviso é um mecanismo de segurança preventiva e não substitui o diagnóstico médico.</p>
     </div>
 
   </div>
