@@ -295,7 +295,7 @@ function renderPatientPlans(){
         "Frequência: "+x.frequency
       ].join(" · "),"card-text-small"));
       if(x.instructions)item.append(el("p",x.instructions,"card-text-small"));
-      if(x.exercise_source==="ExerciseBank" && x.external_id){
+      if(x.exercise_source==="wger" && x.external_id){
         const view=el("button","Ver demonstração em vídeo","btn btn-outline");
         view.type="button";
         const media=el("div",undefined,"bank-media");
@@ -323,7 +323,7 @@ function renderProfessionalPlans(){
     for(const x of [...(p.plan_exercises||[])].sort((a,b)=>a.position-b.position)){
       const line=el("div",undefined,"demo-detalhe");
       line.append(el("p",x.exercise_name+" · "+(x.series||"–")+" série(s) · "+(x.repetitions||"–")+" repetições · "+(x.duration||"–")+" duração · "+x.frequency));
-      if(x.exercise_source==="ExerciseBank" && x.external_id){
+      if(x.exercise_source==="wger" && x.external_id){
         const view=el("button","Ver demonstração","btn btn-outline");
         view.type="button";
         const media=el("div",undefined,"bank-media");
@@ -421,16 +421,16 @@ function addExercise(entry){
   row.append(remove);
   $("itensPlanoProf").append(row);
   if(entry){
-    const existing=entry.exercise_source==="ExerciseBank"?null:exercises.find(x=>x.name===entry.exercise_name);
+    const existing=entry.exercise_source==="wger"?null:exercises.find(x=>x.name===entry.exercise_name);
     select.value=existing?existing.id:"other";
     customName.value=entry.exercise_name;
     customName.hidden=!!existing;
     customName.required=!existing;
-    if(entry.exercise_source==="ExerciseBank"&&entry.external_id){
+    if(entry.exercise_source==="wger"&&entry.external_id){
       externalId.value=entry.external_id;
       externalInstructions.value=entry.instructions||"";
       externalName.value=entry.exercise_name;
-      const sourceLabel=el("p","ExerciseBank · demonstração disponível conforme licença","card-text-small");
+      const sourceLabel=el("p","wger · vídeo sujeito à disponibilidade e licença","card-text-small");
       row.prepend(sourceLabel);
     }
     for(const k of ["series","repetitions","duration","frequency"])
@@ -462,7 +462,7 @@ function readExercises(){
     const name=selected?selected.name:v("customName");
     return {
       exercise_name:name,
-      exercise_source:bankId?"ExerciseBank":"manual",
+      exercise_source:bankId?"wger":"manual",
       external_id:bankId||null,
       series:Number(v("series")),
       repetitions:v("repetitions"),
@@ -551,144 +551,77 @@ async function saveSymptoms(){
   finally{busy=false;}
 }
 
-async function bankRequest(path,options={}) {
-  if(!supabase||!isAuthenticated())throw Error("É necessário entrar com uma conta.");
-  const session=await supabase.auth.getSession();
-  const token=session.data?.session?.access_token;
-  if(session.error||!token)throw Error("Sessão expirada. Entre novamente.");
-  const response=await fetch("/api/exercisebank"+path,{
-    ...options,
-    headers:{Authorization:"Bearer "+token,...(options.headers||{})},
-    cache:"no-store"
-  });
+
+let wgerOffset=0;
+let wgerFound=0;
+let wgerBusy=false;
+
+async function wgerRequest(query){
+  const response=await fetch("/api/wger"+query,{cache:"no-store"});
   const data=await response.json().catch(()=>({}));
-  if(!response.ok)throw Error(data.error||"A biblioteca está indisponível.");
+  if(!response.ok)throw Error(data.error||"Não foi possível consultar a wger.");
   return data;
 }
-
-function bankStatus(value) {
-  const target=$("exercisebankStatus");
-  if(target)target.textContent=value;
-}
-
-async function searchBank(reset=true) {
-  if(!isProfessional()||bankBusy)return;
-  bankBusy=true;
-  const btn=$("exercisebankSearchButton");
-  if(btn)btn.disabled=true;
-  if(reset){
-    bankQuery=$("exercisebankQuery").value.trim();
-    bankOffset=0;
-    bankItems=[];
-    $("exercisebankResults").replaceChildren();
-  }
-  bankStatus("Consultando biblioteca...");
+async function searchWger(reset=true){
+  if(!isProfessional()||wgerBusy)return;
+  if(reset){wgerOffset=0;wgerFound=0;$("wgerResults").replaceChildren();}
+  wgerBusy=true;
+  $("wgerSearchButton").disabled=true;
+  text("wgerStatus","Consultando vídeos na wger...");
   try{
-    const data=await bankRequest("?q="+encodeURIComponent(bankQuery)+"&offset="+bankOffset);
-    const items=Array.isArray(data.data)?data.data:[];
-    bankItems.push(...items);
-    bankOffset+=items.length;
-    for(const item of items)renderBankItem(item);
-    $("exercisebankMore").hidden=!data.next && items.length<12;
-    bankStatus(bankItems.length+" exercício(s) localizado(s). Os vídeos dependem da licença da ExerciseBank.");
-    if(!bankItems.length)bankStatus("Nenhum exercício encontrado. Tente pesquisar em inglês.");
-  }catch(err){
-    bankStatus(err.message);
-    $("exercisebankMore").hidden=true;
-  }finally{
-    bankBusy=false;
-    if(btn)btn.disabled=false;
-  }
+    const q=$("wgerQuery").value.trim(),home=$("wgerHomeOnly").checked;
+    const data=await wgerRequest("?q="+encodeURIComponent(q)+"&home="+home+"&offset="+wgerOffset);
+    const found=Array.isArray(data.items)?data.items:[];
+    found.forEach(renderWgerExercise);
+    wgerFound+=found.length;
+    wgerOffset=data.nextOffset??0;
+    $("wgerMore").hidden=data.nextOffset==null;
+    text("wgerStatus",wgerFound?"Encontrados "+wgerFound+" exercícios com vídeos cadastrados. Confirme se são filmagens reais e verifique a licença de cada um.":data.nextOffset==null?"Nenhum vídeo encontrado. Tente outro nome ou retire o filtro de equipamentos.":"Nenhum vídeo nesta página. Clique em Ver mais resultados.");
+  }catch(e){text("wgerStatus",e.message);$("wgerMore").hidden=true;}
+  finally{wgerBusy=false;$("wgerSearchButton").disabled=false;}
 }
-
-function addBankExercise(exercise) {
-  if(!isProfessional())return;
-  const id=String(exercise.id||"");
-  if(!/^[A-Za-z0-9_-]{2,80}$/.test(id))return;
-  const name=String(exercise.name||exercise.variant||id).slice(0,160);
-  const description=String(exercise.description||"").slice(0,500);
-  addExercise({
-    exercise_name:name,
-    exercise_source:"ExerciseBank",
-    external_id:id,
-    instructions:description,
-    series:2,
-    repetitions:"10",
-    duration:"",
-    frequency:"3 vezes por semana"
-  });
-  message("Exercício adicionado ao formulário. Revise séries, repetições, duração e frequência antes de salvar.");
-  $("itensPlanoProf").lastElementChild?.scrollIntoView({behavior:"smooth",block:"nearest"});
-}
-
-function renderBankItem(exercise) {
-  if(!exercise || typeof exercise.id!=="string")return;
+function renderWgerExercise(e){
+  if(!e||!/^\d+$/.test(String(e.id))||!e.videos?.length)return;
   const card=el("div",undefined,"demo-exercicio-item bank-result");
-  card.append(el("h4",String(exercise.name||exercise.variant||exercise.id),"card-title"));
-  const details=[
-    exercise.equipment?.length?"Equipamento: "+exercise.equipment.join(", "):"",
-    exercise.difficulty?"Dificuldade: "+exercise.difficulty+"/5":"",
-    exercise.primaryMuscles?.length?"Músculos: "+exercise.primaryMuscles.join(", "):""
-  ].filter(Boolean).join(" · ");
-  if(details)card.append(el("p",details,"card-text-small"));
-  if(exercise.description)card.append(el("p",exercise.description,"card-text-small"));
+  card.append(el("h4",e.name,"card-title"));
+  if(e.description)card.append(el("p",e.description,"card-text-small"));
+  if(e.equipment?.length)card.append(el("p","Equipamentos: "+e.equipment.join(", "),"card-text-small"));
+  card.append(el("p","Fonte: wger · "+(e.videos[0].license||"Licença individual não informada"),"card-text-small"));
   const media=el("div",undefined,"bank-media");
-  const row=el("div",undefined,"demo-acoes");
-  const preview=el("button","Ver vídeo","btn btn-outline");
+  const actions=el("div",undefined,"demo-acoes");
+  const preview=el("button","Ver demonstração","btn btn-outline");
   preview.type="button";
-  preview.addEventListener("click",()=>loadExerciseMedia(exercise.id,media,preview));
-  const pick=el("button","Selecionar exercício","btn");
-  pick.type="button";
-  pick.addEventListener("click",()=>addBankExercise(exercise));
-  row.append(preview,pick);
-  card.append(row,media);
-  $("exercisebankResults").append(card);
+  preview.addEventListener("click",()=>loadExerciseMedia(e.id,media,preview));
+  const select=el("button","Selecionar exercício","btn");
+  select.type="button";
+  select.addEventListener("click",()=>{
+    addExercise({exercise_name:e.name,exercise_source:"wger",external_id:String(e.id),instructions:e.description||"",series:2,repetitions:"10",duration:"",frequency:"3 vezes por semana"});
+    message("Exercício adicionado. Confira a demonstração e os parâmetros antes de salvar.");
+    $("itensPlanoProf").lastElementChild?.scrollIntoView({behavior:"smooth",block:"nearest"});
+  });
+  actions.append(preview,select);card.append(actions,media);$("wgerResults").append(card);
 }
-
-async function loadExerciseMedia(exerciseId,target,button) {
-  if(!/^[A-Za-z0-9_-]{2,80}$/.test(exerciseId))return;
-  button.disabled=true;
-  target.replaceChildren(el("p","Carregando demonstração...","card-text-small"));
+async function loadExerciseMedia(id,target,button){
+  if(!/^\d+$/.test(String(id)))return;
+  button.disabled=true;target.replaceChildren(el("p","Carregando vídeo...","card-text-small"));
   try{
-    const media=await bankRequest("",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({ids:[exerciseId]})
-    });
-    const item=media.data?.[exerciseId];
+    const data=await wgerRequest("?id="+encodeURIComponent(id));
+    const media=data.item?.videos?.[0];
     target.replaceChildren();
-    if(item?.mp4){
-      const video=el("video");
-      video.controls=true;
-      video.playsInline=true;
-      video.preload="metadata";
-      video.setAttribute("aria-label","Demonstração do exercício");
-      video.src=item.mp4;
-      if(item.still)video.poster=item.still;
-      target.append(video);
-    }else if(item?.still){
-      const img=el("img");
-      img.src=item.still;
-      img.alt="Posições inicial e final do exercício";
-      img.loading="lazy";
-      target.append(img);
-    }else{
-      target.append(el("p","Vídeo não liberado para este exercício no plano gratuito. A prescrição continua disponível.","card-text-small"));
-    }
-  }catch(err){
-    target.replaceChildren(el("p",err.message,"card-text-small"));
-  }finally{
-    button.disabled=false;
-  }
+    if(!media?.url){target.append(el("p","Vídeo indisponível para este exercício.","card-text-small"));return;}
+    const video=el("video");video.controls=true;video.playsInline=true;video.preload="metadata";video.src=media.url;
+    video.setAttribute("aria-label","Demonstração da wger");
+    target.append(video,el("p","Fonte: wger · "+(media.license||"Licença individual não informada")+". Verifique a autoria e a licença do arquivo.","card-text-small"));
+  }catch(e){target.replaceChildren(el("p",e.message,"card-text-small"));}
+  finally{button.disabled=false;}
 }
 
 async function init(){
   menu();navigate("login");
-  $("exercisebankSearchButton")?.addEventListener("click",()=>searchBank(true));
-  $("exercisebankMore")?.addEventListener("click",()=>searchBank(false));
-  $("exercisebankQuery")?.addEventListener("keydown",event=>{
-    if(event.key==="Enter"){event.preventDefault();searchBank(true);}
-  });
+  $("wgerSearchButton")?.addEventListener("click",()=>searchWger(true));
+  $("wgerMore")?.addEventListener("click",()=>searchWger(false));
+  $("wgerQuery")?.addEventListener("keydown",event=>{if(event.key==="Enter"){event.preventDefault();searchWger(true);}});
+  $("wgerHomeOnly")?.addEventListener("change",()=>{wgerOffset=0;wgerFound=0;$("wgerResults").replaceChildren();$("wgerMore").hidden=true;});
   try{
     const response=await fetch("/api/database-config",{cache:"no-store"});
     const config=await response.json();
