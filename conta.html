@@ -3,79 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Autonomia em Movimento - Acesso autenticado</title>
-<link rel="icon" href="logo.svg" type="image/svg+xml">
+<meta http-equiv="refresh" content="0;url=/index.html#conta">
+<title>Autonomia em Movimento</title>
 <link rel="stylesheet" href="style.css">
-<style>
-.portal-bar{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;gap:8px;border-bottom:1px solid #eee}
-.portal-bar img{width:28px;height:28px}
-.portal-stack{padding:20px 16px}
-.portal-select{width:100%;padding:12px;border:1px solid #ccc;border-radius:6px;background:white;color:#333}
-.portal-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
-.portal-activity{margin-top:15px;border:1px solid #ddd;border-radius:6px;padding:13px;background:#fbfcfb}
-.portal-activity p{line-height:1.5}
-.portal-activity small{color:#69776e}
-.portal-note{background:#edf7ef;border:1px solid #cfe6d5;border-radius:6px;padding:12px;margin:13px 0;font-size:12px;line-height:1.6}
-.portal-error{background:#fff0f0;border-color:#f1cccc}
-.portal-logout{background:none;border:0;color:#003366;font-weight:bold;cursor:pointer}
-.portal-exercise{border:1px solid #ddd;border-radius:6px;margin-top:12px;padding:12px}
-.portal-exercise label{display:block;margin:8px 0}
-.portal-exercise button{margin-top:10px}
-@media(max-width:355px){.portal-row{grid-template-columns:1fr}}
-</style>
-<script type="module" src="conta.js"></script>
+<script>window.location.replace("/index.html#conta");</script>
 </head>
 <body>
 <div class="app">
-<header class="portal-bar"><a href="index.html" aria-label="Voltar ao protótipo"><img src="logo.svg" alt=""></a><strong style="color:#003366">Autonomia em Movimento</strong><button id="logoutPortal" class="portal-logout" hidden>Sair</button></header>
-<main class="portal-stack">
-<p class="page-subtitle">Área com autenticação e armazenamento compartilhado</p>
-<div class="portal-note"><strong>Ambiente acadêmico em preparação.</strong> Utilize somente contas e dados fictícios. Não insira dados reais de pacientes até a conclusão dos testes de segurança, privacidade e das autorizações necessárias.</div>
-<p id="portalStatus" class="card-text" role="status" aria-live="polite">Verificando a conexão...</p>
-<section id="loginPortal" hidden>
-<h1 class="page-title">Entrar com conta</h1>
-<p class="page-subtitle">Contas de teste criadas pela administração do projeto.</p>
-<form id="loginPortalForm" class="card">
-<div class="form-group"><label for="emailPortal" class="form-label">E-mail</label><input id="emailPortal" type="email" autocomplete="username" class="form-input" required></div>
-<div class="form-group"><label for="passwordPortal" class="form-label">Senha</label><input id="passwordPortal" type="password" autocomplete="current-password" class="form-input" required></div>
-<button class="btn" type="submit">Entrar</button>
-</form>
-</section>
-<section id="contentPortal" hidden>
-<h1 class="page-title" id="welcomePortal">Bem-vindo(a)</h1>
-<p id="rolePortal" class="page-subtitle"></p>
-<div id="professionalPortal" hidden>
-<div class="card"><label class="form-label" for="patientPortal">Paciente vinculado</label><select id="patientPortal" class="portal-select"></select></div>
-<div class="card">
-<h3 class="card-title">Criar plano terapêutico</h3>
-<form id="planPortalForm">
-<div class="form-group"><label class="form-label" for="planTitlePortal">Nome do plano</label><input id="planTitlePortal" class="form-input" required maxlength="120"></div>
-<div class="form-group"><label class="form-label" for="planNotesPortal">Orientações gerais</label><textarea id="planNotesPortal" class="form-input" rows="3" maxlength="1000"></textarea></div>
-<div id="exercisePortalRows"></div>
-<button id="addExercisePortal" class="btn btn-outline" type="button">Adicionar exercício</button>
-<button class="btn" type="submit">Salvar plano</button>
-</form>
+<main class="page active">
+<div class="login-wrapper">
+<img src="logo.svg" class="login-logo" alt="Autonomia em Movimento">
+<h1 class="login-title">Autonomia em Movimento</h1>
+<p class="login-sub">O acesso autenticado está integrado à plataforma principal.</p>
+<a class="btn" href="/index.html#conta">Abrir aplicativo</a>
 </div>
+</main>
 </div>
-<div id="patientPortalSection" hidden>
-<div class="card">
-<h3 class="card-title">Registrar sintomas</h3>
-<form id="symptomsPortalForm">
-<div class="portal-row">
-<div><label class="form-label" for="restPortal">Dor em repouso (0–10)</label><input id="restPortal" type="number" class="form-input" min="0" max="10" required></div>
-<div><label class="form-label" for="movePortal">Dor ao movimento (0–10)</label><input id="movePortal" type="number" class="form-input" min="0" max="10" required></div>
-</div>
-<div class="portal-row">
-<div><label class="form-label" for="stiffPortal">Rigidez</label><select id="stiffPortal" class="portal-select"><option>Nenhuma</option><option>Leve</option><option>Moderada</option><option>Intensa</option></select></div>
-<div><label class="form-label" for="fatiguePortal">Fadiga</label><select id="fatiguePortal" class="portal-select"><option>Nenhuma</option><option>Leve</option><option>Moderada</option><option>Intensa</option></select></div>
-</div>
-<button class="btn" type="submit">Salvar registro</button>
-</form>
-</div>
-</div>
-<div class="card"><h3 class="card-title">Planos individualizados</h3><div id="plansPortal"></div></div>
-<div class="card"><h3 class="card-title">Histórico de sintomas</h3><div id="symptomsPortal"></div></div>
-</section>
-<div class="card"><p class="card-text">O protótipo demonstrativo original continua disponível, sem depender desta conexão.</p><a class="card-link" href="index.html">Voltar à demonstração</a></div>
-</main></div>
-</body></html>
+</body>
+</html>
