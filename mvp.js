@@ -14,6 +14,7 @@ const EXERCICIOS=[
 {id:"e9",nome:"Marcha estacionária",area:"Funcional",descricao:"Marchar sem deslocamento, mantendo apoio próximo quando necessário.",cuidados:"Prescrever somente com condições de segurança e tolerância adequadas."},
 {id:"e10",nome:"Sentar e levantar",area:"Funcional",descricao:"Levantar e sentar em cadeira estável com técnica orientada.",cuidados:"Adequar altura da cadeira e necessidade de apoio."}
 ];
+let catalogResults=[],catalogOffset=0,catalogQuery="",catalogLoading=false;
 const PACIENTES=[
 {id:"p1",nome:"Maria Silva",descricao:"Perfil fictício · musculoesquelético"},
 {id:"p2",nome:"João Oliveira",descricao:"Perfil fictício · respiratório"}
@@ -24,7 +25,8 @@ const initial=()=>({
  p2:[{id:"pl2",nome:"Rotina respiratória orientada",orientacoes:"Seguir a intensidade e duração definidas pelo fisioterapeuta.",itens:[{exercicioId:"e6",series:2,repeticoes:"",duracao:"2 minutos",frequencia:"Diariamente"}],atualizadoEm:new Date().toISOString()}]
  },
  registros:{p1:[],p2:[]},
- conclusoes:{p1:[],p2:[]}
+ conclusoes:{p1:[],p2:[]},
+ catalogo:{}
 });
 let db=loadDb();
 let sessao=loadSession();
@@ -45,21 +47,21 @@ function formatDate(v){const d=new Date(v);return Number.isNaN(d.valueOf())?"Sem
 function today(){return new Date().toLocaleDateString("en-CA")}
 function notify(message,type="info"){const box=$("#feedback");box.textContent=message;box.className="feedback visible "+type;clearTimeout(feedbackTimer);feedbackTimer=setTimeout(()=>box.classList.remove("visible"),5500)}
 function patientName(id){return PACIENTES.find(p=>p.id===id)?.nome||"Paciente demonstrativo"}
-function exercicio(id){return EXERCICIOS.find(e=>e.id===id)}
+function exercicio(id){return EXERCICIOS.find(e=>e.id===id)||(db.catalogo||{})[id]}
 function isProf(){return sessao?.role==="prof"}
 function currentPid(){return isProf()?selectedPatient:sessao?.patientId}
 function setView(view){$$("[data-view]").forEach(n=>n.hidden=n.dataset.view!==view);$$("[data-nav]").forEach(n=>{const on=n.dataset.nav===view;n.classList.toggle("active",on);if(on)n.setAttribute("aria-current","page");else n.removeAttribute("aria-current")});window.scrollTo({top:0,behavior:"instant"});}
-function init(){const login=$("#loginForm"), patientSelect=$("#loginPatient");PACIENTES.forEach(p=>patientSelect.append(el("option",{value:p.id,text:p.nome+" - fictício"})));login.addEventListener("submit",onLogin);$("#loginRole").addEventListener("change",roleLogin);$("#logout").addEventListener("click",()=>{sessao=null;saveSession();renderApp()});$$("[data-nav]").forEach(btn=>btn.addEventListener("click",()=>{setView(btn.dataset.nav);if(btn.dataset.nav==="historico")renderHistory();if(btn.dataset.nav==="planos")renderPlans();if(btn.dataset.nav==="registrosProf")renderProfRecords();}));$("#profilePatient").addEventListener("change",e=>{selectedPatient=e.target.value;renderPlans();renderProfRecords()});$("#planForm").addEventListener("submit",savePlan);$("#btnNewPlan").addEventListener("click",()=>openEditor());$("#btnCancelPlan").addEventListener("click",closeEditor);$("#btnAddExercise").addEventListener("click",()=>addExerciseRow());$("#symptomForm").addEventListener("submit",saveSymptoms);$("#weatherForm").addEventListener("submit",e=>{e.preventDefault();fetchWeather($("#weatherCity").value.trim())});$("#demoReset").addEventListener("click",()=>{if(confirm("Restaurar apenas os dados fictícios deste navegador?")){db=initial();saveDb();notify("Dados demonstrativos restaurados.");renderApp()}});$("#exportDemo").addEventListener("click",exportDemo);$("#planExerciseSelect").replaceChildren(...EXERCICIOS.map(x=>el("option",{value:x.id,text:x.nome+" · "+x.area})));PACIENTES.forEach(p=>$("#profilePatient").append(el("option",{value:p.id,text:p.nome})));$("#profilePatient").value=selectedPatient;roleLogin();renderApp()}
+function init(){const login=$("#loginForm"), patientSelect=$("#loginPatient");PACIENTES.forEach(p=>patientSelect.append(el("option",{value:p.id,text:p.nome+" - fictício"})));login.addEventListener("submit",onLogin);$("#loginRole").addEventListener("change",roleLogin);$("#logout").addEventListener("click",()=>{sessao=null;saveSession();renderApp()});$$("[data-nav]").forEach(btn=>btn.addEventListener("click",()=>{setView(btn.dataset.nav);if(btn.dataset.nav==="historico")renderHistory();if(btn.dataset.nav==="planos")renderPlans();if(btn.dataset.nav==="biblioteca"&&!catalogResults.length)searchCatalog("",true);if(btn.dataset.nav==="registrosProf")renderProfRecords();}));$("#profilePatient").addEventListener("change",e=>{selectedPatient=e.target.value;renderPlans();renderProfRecords()});$("#planForm").addEventListener("submit",savePlan);$("#btnNewPlan").addEventListener("click",()=>openEditor());$("#btnCancelPlan").addEventListener("click",closeEditor);$("#btnAddExercise").addEventListener("click",()=>addExerciseRow());$("#symptomForm").addEventListener("submit",saveSymptoms);$("#weatherForm").addEventListener("submit",e=>{e.preventDefault();fetchWeather($("#weatherCity").value.trim())});$("#demoReset").addEventListener("click",()=>{if(confirm("Restaurar apenas os dados fictícios deste navegador?")){db=initial();saveDb();notify("Dados demonstrativos restaurados.");renderApp()}});$("#exportDemo").addEventListener("click",exportDemo);$("#catalogForm").addEventListener("submit",e=>{e.preventDefault();searchCatalog($("#catalogQuery").value.trim(),true)});$("#catalogMore").addEventListener("click",()=>searchCatalog(catalogQuery,false));$("#btnBrowseFromPlan").addEventListener("click",()=>{setView("biblioteca");searchCatalog("",true)});$("#planExerciseSelect").replaceChildren(...EXERCICIOS.map(x=>el("option",{value:x.id,text:x.nome+" · "+x.area})));PACIENTES.forEach(p=>$("#profilePatient").append(el("option",{value:p.id,text:p.nome})));$("#profilePatient").value=selectedPatient;roleLogin();renderApp()}
 function roleLogin(){const role=$("#loginRole").value;$("#loginPatientWrap").hidden=role!=="paciente";}
 function onLogin(e){e.preventDefault();const role=$("#loginRole").value;sessao=role==="prof"?{role:"prof"}:{role:"paciente",patientId:$("#loginPatient").value};saveSession();renderApp();notify("Modo demonstração: não utilize dados reais.","info")}
 function renderApp(){const logged=!!sessao;$("#loginScreen").hidden=logged;$("#appShell").hidden=!logged;if(!logged){setView("inicio");return}$("#whoami").textContent=isProf()?"Fisioterapeuta · demonstração":patientName(sessao.patientId)+" · demonstração";$$(".profOnly").forEach(x=>x.hidden=!isProf());$$(".patientOnly").forEach(x=>x.hidden=isProf());$("#profilePatient").value=selectedPatient;renderHome();renderPlans();renderHistory();renderProfRecords();renderWeather();setView("inicio")}
 function card(title,subtitle,cta,handler){return el("article",{class:"feature-card"},[el("h3",{text:title}),el("p",{text:subtitle}),el("button",{class:"btn btn-secondary",text:cta,onclick:handler})])}
-function go(view){setView(view);if(view==="historico")renderHistory();if(view==="planos")renderPlans();if(view==="registrosProf")renderProfRecords();}
+function go(view){setView(view);if(view==="historico")renderHistory();if(view==="planos")renderPlans();if(view==="biblioteca"&&!catalogResults.length)searchCatalog("",true);if(view==="registrosProf")renderProfRecords();}
 function renderHome(){const root=$("#homeContent");root.replaceChildren();if(isProf()){root.append(card("Planos individualizados","Selecione exercícios, defina séries, repetições, duração e frequência.","Gerenciar planos",()=>go("planos")),card("Registros de sintomas","Consulte os registros fictícios vinculados ao paciente selecionado.","Consultar registros",()=>go("registrosProf")));}else{const pid=currentPid();const plans=db.planos[pid]||[];root.append(card("Meus planos",plans.length?plans.length+" plano(s) disponíveis, configurados no ambiente de demonstração.":"Nenhum plano disponível.","Consultar exercícios",()=>go("planos")),card("Registro de sintomas","Registre dor em repouso, dor ao movimento e outros sintomas.","Registrar sintomas",()=>go("sintomas")),card("Meu histórico",String((db.registros[pid]||[]).length)+" registro(s) neste navegador.","Ver histórico",()=>go("historico")));}root.append(card("Dados meteorológicos","Temperatura, umidade e pressão como contexto, sem modificar condutas.","Consultar clima",()=>go("clima")))}
-function renderPlans(){const pid=currentPid(),root=$("#plansContent");root.replaceChildren();$("#plansContext").textContent=isProf()?"Planos de "+patientName(pid):"Planos disponibilizados ao perfil fictício "+patientName(pid);(db.planos[pid]||[]).forEach(p=>{const box=el("article",{class:"plan-card"});box.append(el("div",{class:"card-heading"},[el("h3",{text:p.nome}),el("small",{text:"Atualizado: "+formatDate(p.atualizadoEm)})]));if(p.orientacoes)box.append(el("p",{class:"note",text:p.orientacoes}));const list=el("ol",{class:"exercise-list"});p.itens.forEach(i=>{const ex=exercicio(i.exercicioId);if(!ex)return;const item=el("li");item.append(el("strong",{text:ex.nome}),el("p",{text:ex.descricao}),el("p",{class:"muted",text:[i.series?"Séries: "+i.series:"",i.repeticoes?"Repetições: "+i.repeticoes:"",i.duracao?"Duração: "+i.duracao:"",i.frequencia?"Frequência: "+i.frequencia:""].filter(Boolean).join(" · ")}),el("p",{class:"small",text:ex.cuidados}));list.append(item)});box.append(list);if(isProf()){const actions=el("div",{class:"actions"});actions.append(el("button",{class:"btn btn-secondary",text:"Editar",onclick:()=>openEditor(p)}),el("button",{class:"btn btn-plain",text:"Excluir",onclick:()=>deletePlan(p.id)}));box.append(actions)}else{box.append(el("button",{class:"btn btn-secondary",text:"Registrar realização demonstrativa",onclick:()=>completePlan(p)}))}root.append(box)});if(!root.children.length)root.append(el("p",{class:"empty",text:"Nenhum plano foi criado para este perfil."}));}
+function renderPlans(){const pid=currentPid(),root=$("#plansContent");root.replaceChildren();$("#plansContext").textContent=isProf()?"Planos de "+patientName(pid):"Planos disponibilizados ao perfil fictício "+patientName(pid);(db.planos[pid]||[]).forEach(p=>{const box=el("article",{class:"plan-card"});box.append(el("div",{class:"card-heading"},[el("h3",{text:p.nome}),el("small",{text:"Atualizado: "+formatDate(p.atualizadoEm)})]));if(p.orientacoes)box.append(el("p",{class:"note",text:p.orientacoes}));const list=el("ol",{class:"exercise-list"});p.itens.forEach(i=>{const ex=exercicio(i.exercicioId);if(!ex)return;const item=el("li");item.append(el("strong",{text:ex.nome}),el("p",{text:ex.descricao}),el("p",{class:"muted",text:[i.series?"Séries: "+i.series:"",i.repeticoes?"Repetições: "+i.repeticoes:"",i.duracao?"Duração: "+i.duracao:"",i.frequencia?"Frequência: "+i.frequencia:""].filter(Boolean).join(" · ")}),el("p",{class:"small",text:ex.cuidados}));if(ex.source==="ExerciseBank")item.append(el("button",{class:"btn btn-secondary",text:"Ver vídeo do exercício",onclick:()=>loadMedia(ex.id,item,isProf())}));list.append(item)});box.append(list);if(isProf()){const actions=el("div",{class:"actions"});actions.append(el("button",{class:"btn btn-secondary",text:"Editar",onclick:()=>openEditor(p)}),el("button",{class:"btn btn-plain",text:"Excluir",onclick:()=>deletePlan(p.id)}));box.append(actions)}else{box.append(el("button",{class:"btn btn-secondary",text:"Registrar realização demonstrativa",onclick:()=>completePlan(p)}))}root.append(box)});if(!root.children.length)root.append(el("p",{class:"empty",text:"Nenhum plano foi criado para este perfil."}));}
 function openEditor(p){editingPlan=p?.id||null;$("#editor").hidden=false;$("#planName").value=p?.nome||"";$("#planNotes").value=p?.orientacoes||"";$("#exerciseRows").replaceChildren();(p?.itens||[]).forEach(i=>addExerciseRow(i));if(!p)addExerciseRow();$("#editorTitle").textContent=p?"Editar plano":"Novo plano";$("#editor").scrollIntoView({behavior:"smooth",block:"start"})}
 function closeEditor(){$("#editor").hidden=true;editingPlan=null}
-function addExerciseRow(i={}){const row=el("div",{class:"exercise-row"}),sel=el("select",{class:"field-input",name:"exercicio",required:"required","aria-label":"Exercício"});EXERCICIOS.forEach(x=>sel.append(el("option",{value:x.id,text:x.nome+" · "+x.area})));sel.value=i.exercicioId||"e1";const fields=[["series","Séries","number",i.series??2],["repeticoes","Repetições","text",i.repeticoes??"10"],["duracao","Duração","text",i.duracao??""],["frequencia","Frequência","text",i.frequencia??"3 vezes/semana"]];row.append(el("label",{class:"full"},[text("Exercício"),sel]));fields.forEach(([key,label,type,value])=>{const attrs={class:"field-input",name:key,type,value:String(value),"aria-label":label};if(type==="number"){attrs.min="1";attrs.max="20"}if(key==="repeticoes")attrs.placeholder="Ex.: 10";if(key==="duracao")attrs.placeholder="Ex.: 2 minutos";row.append(el("label",{},[text(label),el("input",attrs)]))});row.append(el("button",{type:"button",class:"btn btn-plain full",text:"Remover exercício",onclick:()=>row.remove()}));$("#exerciseRows").append(row)}
+function addExerciseRow(i={}){const row=el("div",{class:"exercise-row"}),sel=el("select",{class:"field-input",name:"exercicio",required:"required","aria-label":"Exercício"});[...EXERCICIOS,...Object.values(db.catalogo||{})].forEach(x=>sel.append(el("option",{value:x.id,text:x.nome+" · "+x.area})));sel.value=i.exercicioId||"e1";const fields=[["series","Séries","number",i.series??2],["repeticoes","Repetições","text",i.repeticoes??"10"],["duracao","Duração","text",i.duracao??""],["frequencia","Frequência","text",i.frequencia??"3 vezes/semana"]];row.append(el("label",{class:"full"},[text("Exercício"),sel]));fields.forEach(([key,label,type,value])=>{const attrs={class:"field-input",name:key,type,value:String(value),"aria-label":label};if(type==="number"){attrs.min="1";attrs.max="20"}if(key==="repeticoes")attrs.placeholder="Ex.: 10";if(key==="duracao")attrs.placeholder="Ex.: 2 minutos";row.append(el("label",{},[text(label),el("input",attrs)]))});row.append(el("button",{type:"button",class:"btn btn-plain full",text:"Remover exercício",onclick:()=>row.remove()}));$("#exerciseRows").append(row)}
 function savePlan(e){e.preventDefault();if(!isProf())return notify("Operação exclusiva do perfil demonstrativo profissional.","error");const pid=selectedPatient,rows=$$("#exerciseRows .exercise-row");if(!rows.length)return notify("Inclua pelo menos um exercício.","error");const itens=rows.map(row=>{const get=n=>row.querySelector('[name="'+n+'"]').value.trim();return {exercicioId:get("exercicio"),series:Number(get("series"))||1,repeticoes:get("repeticoes"),duracao:get("duracao"),frequencia:get("frequencia")}});if(itens.some(x=>!x.repeticoes&&!x.duracao))return notify("Informe repetições ou duração para cada exercício.","error");const plano={id:editingPlan||"pl"+Date.now().toString(36),nome:$("#planName").value.trim(),orientacoes:$("#planNotes").value.trim(),itens,atualizadoEm:new Date().toISOString()};const arr=db.planos[pid]||(db.planos[pid]=[]),idx=arr.findIndex(p=>p.id===editingPlan);if(idx>=0)arr[idx]=plano;else arr.push(plano);if(saveDb()){closeEditor();renderPlans();renderHome();notify("Plano demonstrativo salvo neste navegador.")}}
 function deletePlan(id){if(!isProf()||!confirm("Excluir este plano fictício?"))return;db.planos[selectedPatient]=db.planos[selectedPatient].filter(p=>p.id!==id);saveDb();renderPlans();renderHome();notify("Plano excluído.")}
 function completePlan(plan){const pid=currentPid(),arr=db.conclusoes[pid]||(db.conclusoes[pid]=[]);arr.push({id:plan.id,nome:plan.nome,data:new Date().toISOString()});saveDb();renderHistory();notify("Realização demonstrativa registrada.")}
@@ -71,3 +73,65 @@ function weatherMetric(label,value){return el("div",{class:"weather-metric"},[el
 async function fetchWeather(city){if(!city)return notify("Informe um município.","error");$("#weatherStatus").textContent="Consultando…";const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);try{const geo=await fetch("https://geocoding-api.open-meteo.com/v1/search?name="+encodeURIComponent(city)+"&count=10&language=pt&format=json",{signal:controller.signal});if(!geo.ok)throw Error("Falha na busca de município");const gj=await geo.json();const place=(gj.results||[]).find(x=>x.country_code==="BR")||(gj.results||[])[0];if(!place)throw Error("Município não encontrado");const url="https://api.open-meteo.com/v1/forecast?latitude="+encodeURIComponent(place.latitude)+"&longitude="+encodeURIComponent(place.longitude)+"&current=temperature_2m,relative_humidity_2m,surface_pressure&timezone=auto";const res=await fetch(url,{signal:controller.signal});if(!res.ok)throw Error("Serviço meteorológico indisponível");const d=await res.json();if(!d.current)throw Error("Dados meteorológicos indisponíveis");weather={temperatura:d.current.temperature_2m,umidade:d.current.relative_humidity_2m,pressao:d.current.surface_pressure,observadoEm:new Date().toISOString()};weatherCity=place.name+" - "+(place.admin1||place.country);$("#weatherStatus").textContent="Consulta concluída.";renderWeather()}catch(e){$("#weatherStatus").textContent="Não foi possível consultar os dados meteorológicos.";notify(e.name==="AbortError"?"A consulta excedeu o tempo limite.":"Falha ao consultar clima: "+e.message,"error");}finally{clearTimeout(timer)}}
 function exportDemo(){const blob=new Blob([JSON.stringify({aviso:"Dados fictícios do ambiente demonstrativo",exportadoEm:new Date().toISOString(),dados:db},null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="tcc-dados-ficticios.json";a.click();URL.revokeObjectURL(url)}
 document.addEventListener("DOMContentLoaded",init);
+/* ExerciseBank: chave exclusiva do servidor. O catálogo não determina condutas. */
+async function catalogCall(query,options){
+ const resp=await fetch("/api/exercisebank"+query,options);
+ const body=await resp.json().catch(()=>({}));
+ if(!resp.ok)throw Error(body.error||"Serviço de exercícios indisponível.");
+ return body;
+}
+function rememberExternalExercise(x){
+ db.catalogo=db.catalogo||{};
+ const record={id:String(x.id),nome:String(x.name||x.variant||x.id),area:"ExerciseBank",descricao:String(x.description||"Visualizar vídeo e orientações da biblioteca."),cuidados:Array.isArray(x.cues)?x.cues.join(" · "):"A seleção exige avaliação profissional.",source:"ExerciseBank"};
+ db.catalogo[record.id]=record;saveDb();return record;
+}
+async function searchCatalog(q,reset){
+ if(!isProf())return;
+ if(catalogLoading)return;
+ catalogLoading=true;
+ if(reset){catalogQuery=q;catalogResults=[];catalogOffset=0;$("#catalogResults").replaceChildren()}
+ $("#catalogStatus").textContent="Consultando exercícios...";
+ try{
+  const data=await catalogCall("?q="+encodeURIComponent(catalogQuery)+"&limit=12&offset="+catalogOffset);
+  const items=Array.isArray(data.data)?data.data:(Array.isArray(data.exercises)?data.exercises:[]);
+  items.forEach(x=>{catalogResults.push(x);renderCatalogItem(x)});
+  catalogOffset+=items.length;
+  $("#catalogPagination").hidden=items.length<12;
+  $("#catalogStatus").textContent=catalogResults.length+" exercício(s) encontrados. Vídeos sujeitos aos limites do plano.";
+ }catch(e){$("#catalogStatus").textContent=e.message+" A biblioteca demonstrativa local continua disponível."}
+ finally{catalogLoading=false}
+}
+function renderCatalogItem(x){
+ if(!x||typeof x.id!=="string")return;
+ const card=el("article",{class:"catalog-card"});
+ card.append(el("span",{class:"chip",text:"ExerciseBank · "+(x.difficulty?"Nível "+x.difficulty:"vídeo")}));
+ card.append(el("h3",{text:String(x.name||x.variant||x.id)}));
+ card.append(el("p",{class:"muted",text:String(x.description||"Exercício do catálogo.").slice(0,200)}));
+ if(Array.isArray(x.equipment))card.append(el("p",{class:"muted",text:"Equipamentos: "+x.equipment.join(", ")}));
+ const slot=el("div",{class:"video-preview",hidden:"hidden"});
+ const actions=el("div",{class:"actions"});
+ actions.append(el("button",{class:"btn btn-secondary",text:"Ver vídeo",onclick:()=>loadMedia(x.id,card,true,slot)}));
+ actions.append(el("button",{class:"btn btn-primary",text:"Adicionar ao plano",onclick:()=>{
+  const ex=rememberExternalExercise(x);
+  if($("#editor").hidden)openEditor();
+  addExerciseRow({exercicioId:ex.id,series:2,repeticoes:"10",frequencia:"3 vezes/semana"});
+  go("planos");$("#editor").scrollIntoView({behavior:"smooth"});
+  notify("Adicionado ao formulário. Revise os parâmetros e salve o plano.");
+ }}));
+ card.append(slot,actions);$("#catalogResults").append(card);
+}
+async function loadMedia(id,container,coach,provided){
+ const target=provided||el("div",{class:"video-preview"});
+ if(!provided)container.append(target);
+ target.hidden=false;target.replaceChildren(el("p",{text:"Carregando vídeo..."}));
+ try{
+  const userId=coach?"tcc_demo_coach_2026":"tcc_demo_"+String(currentPid()||"paciente");
+  const response=await catalogCall("",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({ids:[id],endUser:userId,role:coach?"coach":"patient"})});
+  const entry=(response.data&&response.data[id])||(response.media&&response.media[id])||response[id];
+  if(entry&&entry.mp4){
+   const video=el("video",{controls:"controls",playsinline:"playsinline",preload:"metadata","aria-label":"Vídeo do exercício"});
+   video.src=entry.mp4;if(entry.still)video.poster=entry.still;target.replaceChildren(video);
+  }else if(entry&&entry.still)target.replaceChildren(el("img",{src:entry.still,alt:"Imagem do exercício",style:"max-width:100%;height:auto"}));
+  else target.replaceChildren(el("p",{text:"Vídeo não disponível para este exercício no plano atual."}));
+ }catch(err){target.replaceChildren(el("p",{text:err.message}))}
+}
