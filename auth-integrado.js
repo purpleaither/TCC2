@@ -13,6 +13,13 @@ function setStatus(message, error = false) {
   const el = byId("portalStatus");
   el.textContent = message;
   el.style.color = error ? "#b3261e" : "#555";
+  const flash = byId("authFlash");
+  if (flash) {
+    flash.hidden = !isAuthenticated();
+    flash.textContent = message;
+    flash.style.background = error ? "#fff0f0" : "#e8f5e9";
+    flash.style.color = error ? "#b3261e" : "#003366";
+  }
 }
 
 function makeNode(tag, content, className = "") {
@@ -75,6 +82,8 @@ function clearSessionUI() {
   linkedPatients = [];
   patientId = null;
   showNavigation();
+  const flash = byId("authFlash");
+  if (flash) flash.hidden = true;
   const password = byId("passwordPortal");
   if (password) password.value = "";
   mostrarCabecalho(false);
