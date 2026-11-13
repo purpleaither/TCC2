@@ -596,8 +596,7 @@ let pendingExercisePlaceholder=null;
 function exerciseNameFromRow(row){
   const selected=row.querySelector('[name="exercise"]');
   const custom=row.querySelector('[name="customName"]');
-  const external=row.querySelector('[name="externalName"]');
-  return external?.value||(
+  return (
     selected?.value==="other" ? custom?.value.trim() : exercises.find(x=>x.id===selected?.value)?.name
   )||"Exercício sem nome";
 }
@@ -1127,7 +1126,93 @@ const EXERCISE_NAMES_PT={
   "supine spinal twist":"Rotação da coluna em decúbito dorsal",
   "downward dog to side plank":"Transição da postura do cachorro olhando para baixo para prancha lateral",
   "downward dog to lateral plank":"Transição da postura do cachorro olhando para baixo para prancha lateral",
-  "blast-off push-up":"Flexão de braços com deslocamento posterior do quadril"
+  "blast-off push-up":"Flexão de braços com deslocamento posterior do quadril",
+  "alternating decline dumbbell chest press":"Supino declinado alternado com halteres",
+  "dumbbell decline alternating chest press":"Supino declinado alternado com halteres",
+  "alternating decline dumbbell bench press":"Supino declinado alternado com halteres",
+  "prone swimmers":"Movimentos alternados dos braços em decúbito ventral",
+  "dumbbell bent over row to bicep curl":"Remada curvada seguida de rosca bíceps com halteres",
+  "alternating dumbbell shoulder flexion on an inclined bench":"Flexão alternada de ombros com halteres em banco inclinado",
+  "alternating dumbbell shoulder flexion incline bench":"Flexão alternada de ombros com halteres em banco inclinado",
+  "one leg elbow plank":"Prancha sobre antebraços com uma perna elevada",
+  "single leg elbow plank":"Prancha sobre antebraços com uma perna elevada",
+  "single leg forearm plank":"Prancha sobre antebraços com uma perna elevada",
+  "band alternating upright row":"Remada alta alternada com faixa elástica",
+  "resistance band upright row":"Remada alta com faixa elástica",
+  "alternating resistance band upright row":"Remada alta alternada com faixa elástica",
+  "alternating arm dumbbell king kong":"Sequência King Kong com halteres e braços alternados",
+  "alternating dumbbell king kong":"Sequência King Kong com halteres e braços alternados",
+  "dumbbell pull complex":"Sequência de movimentos de puxada com halteres",
+  "dumbbell pulling complex":"Sequência de movimentos de puxada com halteres",
+  "alternating seated arnold shoulder press":"Desenvolvimento Arnold sentado e alternado",
+  "alternating seated arnold presses":"Desenvolvimento Arnold sentado e alternado",
+  "forearm plank lateral elbow walking":"Deslocamento lateral na prancha sobre antebraços",
+  "forearm lateral elbow plank walk":"Deslocamento lateral na prancha sobre antebraços",
+  "side to side lateral mountain climber":"Escalador lateral alternado",
+  "side to lateral mountain climber":"Escalador lateral alternado",
+  "quickstep two feet on and off frontal and back":"Passos rápidos com os dois pés à frente e atrás",
+  "quickstep two feet on and off front and back":"Passos rápidos com os dois pés à frente e atrás",
+  "quickstep both feet on and off front and back":"Passos rápidos com os dois pés à frente e atrás",
+  "quickstep lateral to lateral both feet together":"Deslocamento lateral rápido com os pés unidos",
+  "quickstep side to side both feet together":"Deslocamento lateral rápido com os pés unidos",
+  "hip bridge with leg extension":"Ponte de quadril com extensão de um joelho",
+  "hip bridge with leg lift":"Ponte de quadril com elevação de uma perna",
+  "supine spinal rotation":"Rotação da coluna em decúbito dorsal",
+  "supine spine twist":"Rotação da coluna em decúbito dorsal",
+  "downward dog to lateral plank":"Transição do cachorro olhando para baixo para prancha lateral",
+  "downward facing dog to side plank":"Transição do cachorro olhando para baixo para prancha lateral",
+  "blast off push up":"Flexão de braços com deslocamento posterior do quadril",
+  "cross body jumping jack":"Polichinelo cruzado",
+  "split stance sprinter arms":"Movimento alternado dos braços de corrida em posição de afundo",
+  "split stance sprint arm swing":"Movimento alternado dos braços de corrida em posição de afundo",
+  "alternating forward lunge with lateral arm raise":"Avanço à frente alternado com elevação lateral dos braços",
+  "alternating reverse lunge with lateral arm raise":"Avanço para trás alternado com elevação lateral dos braços",
+  "split squat with lateral arm raise":"Agachamento em base alternada com elevação lateral dos braços",
+  "battle rope side plank waves":"Ondulações de corda naval na prancha lateral",
+  "battle rope side plank circles":"Círculos com corda naval na prancha lateral",
+  "single leg heel drop banded inward pull":"Descida do calcanhar unilateral com tração elástica para dentro",
+  "single leg heel drop banded outward pull":"Descida do calcanhar unilateral com tração elástica para fora",
+  "single leg romanian deadlift with dumbbells":"Levantamento terra romeno unilateral com halteres",
+  "alternating single leg romanian deadlift":"Levantamento terra romeno unilateral alternado",
+  "alternating single leg romanian deadlift with dumbbells":"Levantamento terra romeno unilateral alternado com halteres",
+  "skier arm swings":"Balanço de braços do esquiador",
+  "wind relieving pose single knee":"Postura de liberação dos ventos com um joelho ao peito",
+  "wind relieving pose one knee":"Postura de liberação dos ventos com um joelho ao peito",
+  "quick punches":"Sequência de socos rápidos",
+  "alternating fast feet":"Passos rápidos alternados",
+  "alternating fast footwork":"Passos rápidos alternados",
+  "seated alternating arnold press":"Desenvolvimento Arnold sentado e alternado",
+  "alternating seated arnold press":"Desenvolvimento Arnold sentado e alternado",
+  "alternating arm dumbbell floor press":"Supino no solo alternado com halteres",
+  "prone superman shoulder retraction":"Extensão de tronco em decúbito ventral com retração escapular",
+  "arnold press on stability ball":"Desenvolvimento Arnold sentado na bola suíça",
+  "seal jumping jack":"Polichinelo com abertura horizontal dos braços",
+  "single leg swing hop":"Salto unilateral com balanço da perna",
+  "alternating-arm dumbbell king kong":"Sequência King Kong com halteres e braços alternados",
+  "alternado declinado halter empurrada":"Supino declinado alternado com halteres",
+  "em decubito ventral swimmer":"Movimentos alternados dos braços em decúbito ventral",
+  "halter bent over remada to biceps rosca":"Remada curvada seguida de rosca bíceps com halteres",
+  "alternado halter ombro flexao on an inclinado banco":"Flexão alternada de ombros com halteres em banco inclinado",
+  "one leg cotovelo prancha":"Prancha sobre antebraços com uma perna elevada",
+  "em decubito dorsal spinal torcao":"Rotação da coluna em decúbito dorsal",
+  "downward dog to lateral prancha":"Transição do cachorro olhando para baixo para prancha lateral",
+  "quadril ponte with perna extensao":"Ponte de quadril com extensão de um joelho",
+  "alternado upright remada faixa elastica":"Remada alta alternada com faixa elástica",
+  "upright remada faixa elastica":"Remada alta com faixa elástica",
+  "alternado inverse avanco with lateral elevacao":"Avanço para trás alternado com elevação lateral dos braços",
+  "alternado forward avanco with lateral elevacao":"Avanço à frente alternado com elevação lateral dos braços",
+  "forearm prancha cotovelo lateral caminhada":"Deslocamento lateral na prancha sobre antebraços",
+  "alternado fast pes":"Passos rápidos alternados",
+  "alternado single leg romanian deadlift":"Levantamento terra romeno unilateral alternado",
+  "alternado sentado arnold empurrada":"Desenvolvimento Arnold sentado e alternado",
+  "alterando sentado arnold empurrada":"Desenvolvimento Arnold sentado e alternado",
+  "halter king kong":"Sequência King Kong com halteres",
+  "alterando halter solo empurrada":"Supino no solo alternado com halteres",
+  "alternado halter solo empurrada":"Supino no solo alternado com halteres",
+  "halter pull complex":"Sequência de movimentos de puxada com halteres",
+  "barra pull complex":"Sequência de movimentos de puxada com barra",
+  "alterando halter king kong":"Sequência King Kong com halteres e braços alternados",
+  "alternating arm halter king kong":"Sequência King Kong com halteres e braços alternados"
 };
 function normalizeExerciseName(name){
   return String(name||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"")
@@ -1182,6 +1267,9 @@ function renderSample(){
     const card=el("div",undefined,"demo-exercicio-item bank-result");
     const translated=translateExerciseName(x.name);
     card.append(el("h4",translated,"card-title"));
+    if(!isExerciseNameTranslated(x.name)){
+      card.append(el("p","Nome original — confira a nomenclatura ao selecionar.","card-text-small"));
+    }
     const row=el("div",undefined,"demo-acoes");
     const preview=el("button","Ver vídeo","btn btn-outline");
     const pick=el("button","Selecionar exercício","btn");
