@@ -750,10 +750,6 @@ function cancelPlanEditor(){
   navigate("planos-prof");
   message("Edição cancelada. Nenhuma alteração foi salva.");
 }
-function backFromPlanEditor(){
-  if(!isProfessional())return;
-  navigate("planos-prof");
-}
 function clearPlanForm(){
   editingPlan=null;
   if(pendingExerciseRow)pendingExerciseRow.remove();
@@ -1164,7 +1160,6 @@ window.trocarPacienteRegistrosProf=()=>selectPatient($("pacienteRegistrosProf").
 window.adicionarExercicioPlano=()=>addExercise();
 window.limparFormularioPlano=clearPlanForm;
 window.cancelarFormularioPlano=cancelPlanEditor;
-window.voltarDoFormularioPlano=backFromPlanEditor;
 window.criarPlanoProfissional=createPlanFromScratch;
 window.abrirOpcoesExercicios=openExerciseSourceOptions;
 window.escolherPlanoParaExercicios=choosePlanForExerciseAddition;
