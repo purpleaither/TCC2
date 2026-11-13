@@ -929,3 +929,9 @@ body {
 #planMainActions #addExerciseEntryHint{font-size:13px;line-height:1.5;margin-top:8px}
 #page-exercise-target-prof .card{margin-bottom:12px}
 #page-exercise-target-prof .card .btn{margin-top:12px}
+
+/* Ações dos planos sempre logo abaixo de Editar e Excluir. */
+#planMainActions[hidden]{display:none}
+#page-planos-prof .plan-card-add-actions{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 0;padding-top:12px;border-top:1px solid #dfe7e2}
+#page-planos-prof .plan-card-add-actions .btn{flex:1 1 180px;min-height:46px;width:auto;margin:0}
+@media(max-width:390px){#page-planos-prof .plan-card-add-actions{flex-direction:column}#page-planos-prof .plan-card-add-actions .btn{flex:auto;width:100%}}
