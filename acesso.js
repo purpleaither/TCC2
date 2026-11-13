@@ -69,14 +69,14 @@ function navigate(page) {
   if(!isAuthenticated()) page="login";
   else {
     const allowed = isProfessional()
-      ? ["profissional","planos-prof","registros-prof"]
+      ? ["profissional","planos-prof","editor-prof","registros-prof"]
       : ["inicio","sintomas","historico","orientacoes","exercicios","contatos"];
     if(!allowed.includes(page)) page=homePage();
   }
   document.querySelectorAll(".page").forEach(n=>n.classList.toggle("active",n.id==="page-"+page));
   mostrarCabecalho(page!=="login");
   document.querySelectorAll(".menu-item").forEach(item=>{
-    const selected=item.getAttribute("onclick")==="navegarPara('"+page+"')";
+    const selected=item.getAttribute("onclick")==="navegarPara('"+(page==="editor-prof"?"planos-prof":page)+"')";
     item.classList.toggle("active",selected);
     if(selected)item.setAttribute("aria-current","page");
     else item.removeAttribute("aria-current");
@@ -84,6 +84,7 @@ function navigate(page) {
   fecharMenu();
   fecharClimaSheet();
   if(page==="planos-prof"){renderProfessionalPlans();loadSample();}
+  if(page==="editor-prof")updatePlanEditorSummary();
   if(page==="registros-prof")renderProfessionalRecords();
   if(page==="exercicios")renderPatientPlans();
   if(page==="historico")gerarHeatmap();
@@ -418,9 +419,10 @@ function addExercise(entry){
   row.append(params);
   const remove=el("button","Remover exercício","btn btn-outline");
   remove.type="button";
-  remove.addEventListener("click",()=>row.remove());
+  remove.addEventListener("click",()=>{row.remove();updatePlanEditorSummary();});
   row.append(remove);
   $("itensPlanoProf").append(row);
+  updatePlanEditorSummary();
   if(entry){
     const existing=["ExerciseBank","wger"].includes(entry.exercise_source)?null:exercises.find(x=>x.name===entry.exercise_name);
     select.value=existing?existing.id:"other";
@@ -438,10 +440,27 @@ function addExercise(entry){
       row.querySelector('[name="'+k+'"]').value=entry[k]??"";
   }
 }
+function updatePlanEditorSummary(){
+  const count=$("itensPlanoProf")?.children.length||0;
+  const label=$("resumoEtapaPlano");
+  if(label)label.textContent=count
+    ?count+" exercício(s) selecionado(s). Configure séries, repetições, duração e frequência."
+    :"Nenhum exercício selecionado. Você pode escolher na biblioteca ou adicionar manualmente.";
+}
+function createPlanFromScratch(){
+  if(!isProfessional())return;
+  clearPlanForm();
+  navigate("editor-prof");
+}
+function cancelPlanEditor(){
+  clearPlanForm();
+  navigate("planos-prof");
+}
 function clearPlanForm(){
   editingPlan=null;
   $("formPlanoProf").reset();
   $("itensPlanoProf").replaceChildren();
+  updatePlanEditorSummary();
   text("tituloFormularioPlano","Criar plano terapêutico");
 }
 function editPlan(id){
@@ -453,7 +472,7 @@ function editPlan(id){
   $("orientacoesPlanoProf").value=plan.notes||"";
   for(const x of [...(plan.plan_exercises||[])].sort((a,b)=>a.position-b.position))addExercise(x);
   text("tituloFormularioPlano","Editar plano terapêutico");
-  $("formPlanoProf").scrollIntoView({behavior:"smooth"});
+  navigate("editor-prof");
 }
 function readExercises(){
   return Array.from($("itensPlanoProf").children).map((row,i)=>{
@@ -497,6 +516,7 @@ async function savePlan(event){
     }
     clearPlanForm();
     await loadPatientData();
+    navigate("planos-prof");
     message("Plano salvo para o paciente vinculado.");
   }catch(err){
     if(insertedId)await supabase.from("care_plans").delete().eq("id",insertedId);
@@ -596,7 +616,8 @@ function renderSample(){
     pick.addEventListener("click",()=>{
       addExercise({exercise_name:x.name,exercise_source:"ExerciseBank",external_id:x.id,instructions:x.description||"",series:2,repetitions:"10",duration:"",frequency:"3 vezes por semana"});
       message("Exercício adicionado. Configure os parâmetros e salve o plano.");
-      $("itensPlanoProf").lastElementChild?.scrollIntoView({behavior:"smooth",block:"nearest"});
+      updatePlanEditorSummary();
+      navigate("editor-prof");
     });
     row.append(preview,pick);card.append(row,media);root.append(card);
   });
@@ -742,5 +763,7 @@ window.trocarPacientePlanoProf=()=>selectPatient($("pacientePlanoProf").value);
 window.trocarPacienteRegistrosProf=()=>selectPatient($("pacienteRegistrosProf").value);
 window.adicionarExercicioPlano=()=>addExercise();
 window.limparFormularioPlano=clearPlanForm;
+window.cancelarFormularioPlano=cancelPlanEditor;
+window.criarPlanoProfissional=createPlanFromScratch;
 window.salvarPlanoProf=savePlan;
 document.addEventListener("DOMContentLoaded",init);
