@@ -270,6 +270,11 @@ async function loadPatientData() {
     message("Não foi possível consultar os dados do paciente. Verifique a conexão e as permissões.",true);
   }
 }
+const patientTpeAdvice=[
+  {title:"Compreendendo a dor",body:"A dor envolve aspectos físicos, emocionais e do ambiente. Entender esses fatores pode ajudar no autocuidado e na confiança para se movimentar."},
+  {title:"Clima e sintomas",body:"Algumas pessoas percebem mudanças no conforto e na rigidez quando o clima varia. Observe como você se sente e respeite as orientações da sua equipe."},
+  {title:"Autonomia no dia a dia",body:"Pequenas adaptações nas atividades de casa e do trabalho podem ajudar a manter o movimento e favorecer o autocuidado."}
+];
 let currentPatientExercise=0;
 function renderPatientPlans(){
   if(!isAuthenticated()||isProfessional())return;
@@ -321,6 +326,19 @@ function renderPatientPlans(){
     metrics.append(tile);
   }
   card.append(metrics);
+  const advice=patientTpeAdvice[currentPatientExercise%patientTpeAdvice.length];
+  const adviceBox=el("aside",undefined,"patient-tpe-advice");
+  adviceBox.setAttribute("aria-label","Conselho de educação terapêutica");
+  adviceBox.append(
+    el("span","Conselho","patient-tpe-label"),
+    el("h3",advice.title,"patient-tpe-heading"),
+    el("p",advice.body,"patient-tpe-text")
+  );
+  const moreAdvice=el("button","Saiba mais em Aprender a cuidar","patient-tpe-link");
+  moreAdvice.type="button";
+  moreAdvice.addEventListener("click",()=>navigate("orientacoes"));
+  adviceBox.append(moreAdvice);
+  card.append(adviceBox);
   // Instruções clínicas individuais continuam disponíveis; descrições automáticas
   // em inglês do banco de vídeos não são apresentadas como orientação ao paciente.
   if(exercise.instructions && exercise.exercise_source!=="ExerciseBank")
