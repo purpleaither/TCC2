@@ -284,11 +284,49 @@ async function loadPatientData() {
     message("Não foi possível consultar os dados do paciente. Verifique a conexão e as permissões.",true);
   }
 }
-const patientTpeAdvice=[
-  {title:"Compreendendo a dor",body:"A dor envolve aspectos físicos, emocionais e do ambiente. Entender esses fatores pode ajudar no autocuidado e na confiança para se movimentar."},
-  {title:"Clima e sintomas",body:"Algumas pessoas percebem mudanças no conforto e na rigidez quando o clima varia. Observe como você se sente e respeite as orientações da sua equipe."},
-  {title:"Autonomia no dia a dia",body:"Pequenas adaptações nas atividades de casa e do trabalho podem ajudar a manter o movimento e favorecer o autocuidado."}
-];
+// Conselho educativo por sintomas do dia, sem diagnóstico nem mudança da prescrição.
+function localDateKey(value){
+  const day=new Date(value);
+  if(Number.isNaN(day.getTime()))return "";
+  return [day.getFullYear(),String(day.getMonth()+1).padStart(2,"0"),String(day.getDate()).padStart(2,"0")].join("-");
+}
+function todaysPatientSymptoms(){
+  if(isProfessional()||!records.length)return null;
+  const today=localDateKey(new Date());
+  return records.filter(r=>localDateKey(r.recorded_at)===today)
+    .sort((a,b)=>new Date(b.recorded_at)-new Date(a.recorded_at))[0]||null;
+}
+function patientTpeAdviceForToday(){
+  const record=todaysPatientSymptoms();
+  if(!record)return {
+    title:"Conselho geral",
+    body:"O registro de sintomas de hoje ainda não foi realizado. Observe como você se sente e siga o plano combinado com seu fisioterapeuta; o conselho será ajustado após o registro."
+  };
+  const rest=Number(record.pain_rest), movement=Number(record.pain_movement);
+  const intensity=Math.max(Number.isFinite(rest)?rest:0,Number.isFinite(movement)?movement:0);
+  const stiffness=String(record.stiffness||"").toLowerCase();
+  const fatigue=String(record.fatigue||"").toLowerCase();
+  if(intensity>=8)return {
+    title:"Atenção aos sintomas de hoje",
+    body:"Você registrou dor intensa hoje. Não force os movimentos nem aumente a intensidade por conta própria. Entre em contato com o fisioterapeuta para orientar a continuidade do plano. Se a dor for súbita, muito diferente da habitual ou acompanhada de sinais preocupantes, procure atendimento de saúde."
+  };
+  if(intensity>=5)return {
+    title:"Dor e movimento",
+    body:"Hoje você registrou dor moderada ou elevada. A intensidade da dor pode variar de um dia para outro e não indica, sozinha, dano aos tecidos. Respeite os limites orientados pelo fisioterapeuta e converse com ele caso os exercícios piorem os sintomas."
+  };
+  if(fatigue==="intensa"||fatigue==="moderada")return {
+    title:"Fadiga e organização das atividades",
+    body:"Você relatou fadiga hoje. Planejar pausas e distribuir as atividades ao longo do dia pode ajudar no autocuidado. Mantenha as orientações do fisioterapeuta e informe caso a fadiga limite a execução do plano."
+  };
+  if(stiffness==="intensa"||stiffness==="moderada")return {
+    title:"Rigidez e movimento",
+    body:"Você relatou rigidez hoje. Movimentos confortáveis, realizados conforme o plano prescrito, podem ajudar a explorar a mobilidade sem forçar amplitudes. Se a rigidez for incomum ou piorar, converse com o fisioterapeuta."
+  };
+  return {
+    title:"Autonomia no dia a dia",
+    body:"Seu registro de hoje indica sintomas menos intensos. Continue observando como se sente e siga o ritmo e os exercícios indicados pelo fisioterapeuta, sem aumentar a carga por conta própria."
+  };
+}
 let currentPatientExercise=0;
 let workoutCompletedInView=false;
 function patientExerciseAssignments(){
@@ -398,7 +436,7 @@ function renderPatientPlans(){
     metrics.append(tile);
   }
   card.append(metrics);
-  const advice=patientTpeAdvice[currentPatientExercise%patientTpeAdvice.length];
+  const advice=patientTpeAdviceForToday();
   const adviceBox=el("aside",undefined,"patient-tpe-advice");
   adviceBox.setAttribute("aria-label","Conselho de educação terapêutica");
   adviceBox.append(
@@ -416,21 +454,23 @@ function renderPatientPlans(){
   if(exercise.instructions && exercise.exercise_source!=="ExerciseBank")
     card.append(el("p",exercise.instructions,"patient-exercise-instructions"));
 
-  const actions=el("div",undefined,"demo-acoes");
-  const previous=el("button","Anterior","btn btn-outline");
-  previous.type="button";
-  previous.disabled=currentPatientExercise===0;
-  previous.addEventListener("click",()=>{
-    if(currentPatientExercise>0){currentPatientExercise--;renderPatientPlans();}
-  });
-  const next=el("button","Próximo","btn");
-  next.type="button";
-  next.disabled=currentPatientExercise===assigned.length-1;
-  next.addEventListener("click",()=>{
-    if(currentPatientExercise<assigned.length-1){currentPatientExercise++;renderPatientPlans();}
-  });
-  actions.append(previous,next);
-  card.append(actions);
+  if(assigned.length>1){
+    const actions=el("div",undefined,"demo-acoes");
+    const previous=el("button","Anterior","btn btn-outline");
+    previous.type="button";
+    previous.disabled=currentPatientExercise===0;
+    previous.addEventListener("click",()=>{
+      if(currentPatientExercise>0){currentPatientExercise--;renderPatientPlans();}
+    });
+    const next=el("button","Próximo","btn");
+    next.type="button";
+    next.disabled=currentPatientExercise===assigned.length-1;
+    next.addEventListener("click",()=>{
+      if(currentPatientExercise<assigned.length-1){currentPatientExercise++;renderPatientPlans();}
+    });
+    actions.append(previous,next);
+    card.append(actions);
+  }
   if(currentPatientExercise===assigned.length-1){
     const finish=el("button",workoutCompletedInView?"Treino concluído ✓":"Treino concluído","btn patient-workout-finish");
     finish.id="finishPatientWorkout";
