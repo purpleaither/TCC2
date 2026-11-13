@@ -909,3 +909,16 @@ body {
 .exercise-source-choice{margin-top:14px;padding-top:14px;border-top:1px solid #dfe7e2}
 .exercise-source-choice .card-title{font-size:16px;margin-bottom:10px}
 .exercise-source-choice .demo-acoes{margin-bottom:0}
+
+/* Inserção em páginas separadas: seleção, configuração e resumo. */
+#page-exercise-source-prof .card{max-width:620px}
+#page-exercise-source-prof .card>.btn{display:block;width:100%;min-height:46px;margin:12px 0}
+#page-exercise-config-prof .card{max-width:740px}
+#page-exercise-config-prof #exerciseConfigRow>.demo-exercicio-item{margin-bottom:16px}
+#page-exercise-config-prof .card>.btn{min-height:46px}
+#page-exercise-bank-prof>.btn{margin-bottom:12px}
+#page-editor-prof .exercise-summary-item{border:1px solid #dfe7e2;background:#fafcfa;border-radius:8px;padding:12px;margin:10px 0}
+#page-editor-prof .exercise-summary-name{font-size:16px;line-height:1.4;display:block;color:#003366}
+#page-editor-prof .exercise-summary-item .card-text-small{font-size:13px;line-height:1.5;margin:6px 0}
+#page-editor-prof .exercise-summary-item .demo-acoes{margin:8px 0 0}
+#page-editor-prof #itensPlanoProf[hidden]{display:none}
