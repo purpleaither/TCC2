@@ -459,7 +459,8 @@ function renderProfessionalPlans(){
     if(p.notes)card.append(el("p",p.notes,"card-text"));
     for(const x of [...(p.plan_exercises||[])].sort((a,b)=>a.position-b.position)){
       const line=el("div",undefined,"demo-detalhe");
-      line.append(el("p",x.exercise_name+" · "+(x.series||"–")+" série(s) · "+(x.repetitions||"–")+" repetições · "+(x.duration||"–")+" duração · "+x.frequency));
+      line.append(el("strong",x.exercise_name,"plan-exercise-name"));
+      line.append(el("p",(x.series||"–")+" série(s) · "+(x.repetitions||"–")+" repetições · "+(x.duration||"–")+" duração · "+x.frequency,"plan-exercise-prescription"));
       if(["ExerciseBank","wger"].includes(x.exercise_source) && x.external_id){
         const view=el("button","Ver demonstração","btn btn-outline");
         view.type="button";
