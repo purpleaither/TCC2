@@ -858,3 +858,24 @@ body {
 .bank-media .card-text-small{padding:8px 0}
 #exercisebankPanel .demo-acoes{display:flex;flex-wrap:wrap}
 #exercisebankMore{margin-top:10px}
+
+
+/* Prescrição individual: leitura prioritária para o paciente. */
+#page-exercicios .patient-exercise-card{background:#fff;border:1px solid #dce9e0;border-radius:12px;padding:16px;min-width:0}
+#page-exercicios .patient-plan-title{font-size:13px;color:#466654;font-weight:600;margin:0 0 6px}
+#page-exercicios .patient-exercise-progress{font-size:14px;color:#006633;font-weight:700;margin:0 0 10px}
+#page-exercicios .patient-exercise-title{font-size:clamp(21px,5vw,27px);line-height:1.25;color:#003366;margin:0 0 14px}
+#page-exercicios .patient-exercise-video{margin:0 0 16px}
+#page-exercicios .patient-exercise-video video{width:100%;max-height:320px;aspect-ratio:16 / 9;background:#f2f5f3;border-radius:10px;object-fit:contain}
+#page-exercicios .patient-exercise-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0 16px}
+#page-exercicios .patient-exercise-metric{padding:14px 12px;background:#f0f8f3;border:1px solid #cfe2d5;border-radius:10px;min-width:0}
+#page-exercicios .patient-exercise-metric-label{display:block;font-size:13px;font-weight:600;color:#375946;margin-bottom:5px}
+#page-exercicios .patient-exercise-metric-value{display:block;font-size:clamp(19px,5vw,26px);line-height:1.15;font-weight:800;color:#003366;overflow-wrap:anywhere}
+#page-exercicios .patient-exercise-instructions{font-size:15px;line-height:1.6;margin:0 0 14px}
+#page-exercicios .patient-exercise-card .demo-acoes{margin-top:14px}
+#page-exercicios .patient-exercise-card .demo-acoes .btn{min-height:44px}
+@media(max-width:340px){
+  #page-exercicios .patient-exercise-card{padding:12px}
+  #page-exercicios .patient-exercise-metrics{gap:7px}
+  #page-exercicios .patient-exercise-metric{padding:11px 9px}
+}
