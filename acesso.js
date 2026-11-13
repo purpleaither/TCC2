@@ -87,7 +87,10 @@ function navigate(page) {
   fecharClimaSheet();
   if(page==="planos-prof")renderProfessionalPlans();
   if(page==="editor-prof")updatePlanEditorSummary();
-  if(page==="exercise-bank-prof")loadSample();
+  if(page==="exercise-bank-prof"){
+    $("exercisebankResults").replaceChildren();
+    text("exercisebankStatus","Selecione os filtros e clique em Buscar.");
+  }
   if(page==="registros-prof")renderProfessionalRecords();
   if(page==="exercicios")renderPatientPlans();
   if(page==="historico")gerarHeatmap();
@@ -1055,10 +1058,7 @@ async function loadExerciseMedia(id,target,button,source="ExerciseBank",autoPlay
 
 async function init(){
   menu();navigate("login");
-  $("exercisebankRefresh")?.addEventListener("click",()=>loadSample(true));
-  $("exercisebankQuery")?.addEventListener("input",renderSample);
-  $("exercisebankHomeOnly")?.addEventListener("change",renderSample);
-  $("exercisebankRegion")?.addEventListener("change",renderSample);
+  $("exercisebankRefresh")?.addEventListener("click",()=>loadSample());
   try{
     const response=await fetch("/api/database-config",{cache:"no-store"});
     const config=await response.json();
