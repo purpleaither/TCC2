@@ -461,13 +461,27 @@
             <label class="form-label" for="exercisebankQuery">Pesquisar nos exercícios liberados</label>
             <input id="exercisebankQuery" class="form-input" type="search" maxlength="90" placeholder="Nome do exercício ou músculo">
           </div>
+          <div class="form-group">
+            <label class="form-label" for="exercisebankRegion">Região do corpo</label>
+            <select id="exercisebankRegion" class="form-input">
+              <option value="todas">Todas as regiões</option>
+              <option value="ombros">Ombros</option>
+              <option value="bracos">Braços e antebraços</option>
+              <option value="peito">Peito</option>
+              <option value="costas">Costas</option>
+              <option value="abdomen">Abdômen e tronco</option>
+              <option value="quadril">Quadril e glúteos</option>
+              <option value="coxas">Coxas</option>
+              <option value="pernas">Panturrilhas e pernas</option>
+              <option value="nao-classificados">Não classificados</option>
+            </select>
+          </div>
           <div class="form-remember">
             <label><input type="checkbox" id="exercisebankHomeOnly" checked> Apenas exercícios sem aparelhos de academia (peso corporal ou material simples)</label>
           </div>
           <button type="button" id="exercisebankRefresh" class="btn btn-outline">Carregar os 50 exercícios</button>
           <button type="button" id="exercisebankAudit" class="btn btn-outline">Verificar os vídeos dos 50 exercícios</button>
           <p id="exercisebankAuditStatus" class="card-text-small" role="status" aria-live="polite">A verificação consulta os links liberados pela ExerciseBank e não reproduz os vídeos automaticamente.</p>
-          <button type="button" id="exercisebankExport" class="btn btn-outline" hidden>Baixar relação dos exercícios (CSV)</button>
           <div id="exercisebankAuditResults"></div>
           <p id="exercisebankStatus" class="card-text-small" role="status" aria-live="polite">A lista será consultada no Sandbox, sem mostrar exercícios com vídeo bloqueado.</p>
           <div id="exercisebankResults"></div>
