@@ -447,16 +447,26 @@
     </div>
     <div id="listaPlanosProf"></div>
     <div class="card">
-      <button type="button" id="addExerciseEntry" class="btn" onclick="abrirOpcoesExercicios()" aria-expanded="false" aria-controls="exerciseChoice">+ Adicionar exercícios</button>
-      <div id="exerciseChoice" class="exercise-source-choice" hidden>
-        <h3 class="card-title">Como deseja adicionar?</h3>
-        <div class="demo-acoes">
-          <button type="button" class="btn btn-outline" onclick="adicionarExercicioManual()">Adicionar manualmente</button>
-          <button type="button" class="btn btn-outline" onclick="abrirBibliotecaExerciseBank()">Escolher na ExerciseBank</button>
-        </div>
-      </div>
+      <button type="button" id="addExerciseEntry" class="btn" onclick="abrirOpcoesExercicios()">+ Adicionar exercícios</button>
     </div>
-        <div class="card" id="exercisebankPanel" hidden>
+  </div>
+
+  <!-- ===== ESCOLHA DO TIPO DE EXERCÍCIO ===== -->
+  <div class="page" id="page-exercise-source-prof">
+    <h1 class="page-title">Adicionar exercícios</h1>
+    <div class="card">
+      <h3 class="card-title">Como deseja adicionar?</h3>
+      <button type="button" class="btn" onclick="adicionarExercicioManual()">Adicionar manualmente</button>
+      <button type="button" class="btn btn-outline" onclick="abrirBibliotecaExerciseBank()">Escolher na ExerciseBank</button>
+      <button type="button" class="btn btn-outline" onclick="voltarDaEscolhaExercicios()">Voltar</button>
+    </div>
+  </div>
+
+  <!-- ===== CATÁLOGO EXERCISEBANK ===== -->
+  <div class="page" id="page-exercise-bank-prof">
+    <h1 class="page-title">Biblioteca ExerciseBank</h1>
+    <button type="button" class="btn btn-outline" onclick="navegarPara('exercise-source-prof')">Voltar</button>
+        <div class="card" id="exercisebankPanel">
           <h3 class="card-title">Exercícios com vídeo — Sandbox ExerciseBank</h3>
           <p class="card-text-small">Catálogo dos 50 exercícios com vídeo liberado no Sandbox. O fisioterapeuta seleciona e configura cada exercício.</p>
           <div class="form-group">
@@ -491,6 +501,17 @@
 
   </div>
 
+  <!-- ===== INSERÇÃO DO EXERCÍCIO ===== -->
+  <div class="page" id="page-exercise-config-prof">
+    <h1 class="page-title">Configurar exercício</h1>
+    <p class="page-subtitle">Defina as séries, repetições, duração e frequência.</p>
+    <div class="card">
+      <div id="exerciseConfigRow"></div>
+      <button type="button" class="btn" onclick="concluirInsercaoExercicio()">Concluir inserção</button>
+      <button type="button" class="btn btn-outline" onclick="voltarDaConfiguracaoExercicio()">Voltar</button>
+    </div>
+  </div>
+
   <!-- ===== CONFIGURAÇÃO DO PLANO ===== -->
   <div class="page" id="page-editor-prof">
     <h1 class="page-title">Configurar plano</h1>
@@ -502,8 +523,9 @@
           <input class="form-input" id="nomePlanoProf" maxlength="100" required placeholder="Ex.: Mobilidade domiciliar"></div>
         <div class="form-group"><label class="form-label" for="orientacoesPlanoProf">Orientações do profissional</label>
           <textarea class="form-input" id="orientacoesPlanoProf" maxlength="700" rows="3" placeholder="Orientações individualizadas"></textarea></div>
-        <p class="card-text-small" id="resumoEtapaPlano">Configure os exercícios selecionados e salve o plano.</p>
-        <div id="itensPlanoProf"></div>
+        <p class="card-text-small" id="resumoEtapaPlano">Nenhum exercício adicionado.</p>
+        <div id="resumoExerciciosPlano" class="exercise-plan-summary"></div>
+        <div id="itensPlanoProf" hidden></div>
         <button type="button" class="btn btn-outline" onclick="abrirOpcoesExercicios()">+ Adicionar exercícios</button>
         <button type="submit" class="btn">Salvar plano</button>
         <button type="button" class="btn btn-outline" onclick="cancelarFormularioPlano()">Cancelar edição</button>
