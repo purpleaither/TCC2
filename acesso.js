@@ -468,7 +468,7 @@ function renderProfessionalPlans(){
         const view=el("button","Ver demonstração","btn btn-outline");
         view.type="button";
         const media=el("div",undefined,"bank-media");
-        view.addEventListener("click",()=>loadExerciseMedia(x.external_id,media,view,x.exercise_source));
+        view.addEventListener("click",()=>loadExerciseMedia(x.external_id,media,view,x.exercise_source,true));
         line.append(view,media);
       }
       card.append(line);
@@ -1007,7 +1007,7 @@ function renderSample(){
     const pick=el("button","Selecionar exercício","btn");
     const media=el("div",undefined,"bank-media");
     preview.type=pick.type="button";
-    preview.addEventListener("click",()=>loadExerciseMedia(x.id,media,preview,"ExerciseBank"));
+    preview.addEventListener("click",()=>loadExerciseMedia(x.id,media,preview,"ExerciseBank",true));
     pick.addEventListener("click",()=>{
       addExercise({exercise_name:translated,exercise_source:"ExerciseBank",
         external_id:x.id,instructions:x.description||"",series:2,
