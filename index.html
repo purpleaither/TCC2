@@ -299,7 +299,7 @@
         <div class="legend-item"><div class="legend-color" style="background:#f17b72"></div> 7–10 · Intensa</div>
       </div>
 
-      <p style="font-size:11px; color:#666">Toque em qualquer dia registrado para consultar mais informações climáticas.</p>
+      <p style="font-size:11px; color:#666">Toque em um dia com registro ou treino concluído para consultar os detalhes e a ficha realizada.</p>
     </div>
 
     <!-- Bottom sheet: Clima do dia selecionado -->
@@ -319,6 +319,7 @@
       <h3 class="weather-title" style="font-size:13px">Resumo Meteorológico</h3>
       <p style="font-size:13px; line-height:1.4; color:#333;" id="sheetClimaDesc">Não há dados meteorológicos salvos para este registro.</p>
       <p style="font-size:11px; color:#888; margin-top:16px; line-height:1.4">Clima e dor podem coincidir temporalmente, sem que isso comprove uma relação direta de causa e efeito.</p>
+      <section id="sheetWorkoutHistory" class="workout-history-details" aria-label="Ficha dos treinos concluídos"></section>
     </div>
 
   </div>
@@ -419,7 +420,7 @@
     <div class="card">
       <h3 class="card-title" id="profGreeting">Bem-vindo(a), fisioterapeuta</h3>
       <p class="card-text">Selecione um paciente vinculado para consultar registros e configurar planos terapêuticos individualizados.</p>
-      <label class="form-label" for="pacienteProf">Paciente fictício</label>
+      <label class="form-label" for="pacienteProf">Paciente</label>
       <select class="form-input" id="pacienteProf" onchange="atualizarPacienteProfissional()"><option value="p1">Maria Silva</option><option value="p2">João Oliveira</option></select>
     </div>
     <div class="card">
@@ -439,7 +440,7 @@
     <h1 class="page-title">Gerenciar planos</h1>
     <p class="page-subtitle" id="profPlanosDescricao">Planos individualizados</p>
     <div class="card">
-      <label class="form-label" for="pacientePlanoProf">Paciente fictício</label>
+      <label class="form-label" for="pacientePlanoProf">Paciente</label>
       <select id="pacientePlanoProf" class="form-input" onchange="trocarPacientePlanoProf()">
         <option value="p1">Maria Silva</option><option value="p2">João Oliveira</option>
       </select>
@@ -511,7 +512,7 @@
     <h1 class="page-title">Registros dos pacientes</h1>
     <p class="page-subtitle">Consulta de informações fictícias, sem avaliação automática</p>
     <div class="card">
-      <label class="form-label" for="pacienteRegistrosProf">Paciente fictício</label>
+      <label class="form-label" for="pacienteRegistrosProf">Paciente</label>
       <select id="pacienteRegistrosProf" class="form-input" onchange="trocarPacienteRegistrosProf()">
         <option value="p1">Maria Silva</option><option value="p2">João Oliveira</option>
       </select>
