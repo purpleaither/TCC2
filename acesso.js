@@ -125,6 +125,7 @@ function reset() {
   plans=[];
   records=[];
   editingPlan=null;
+  currentPatientExercise=0;
   registrosUsuario=[];
   menu();
   $("loginSenha").value="";
@@ -269,45 +270,75 @@ async function loadPatientData() {
     message("Não foi possível consultar os dados do paciente. Verifique a conexão e as permissões.",true);
   }
 }
+let currentPatientExercise=0;
 function renderPatientPlans(){
-  if(!isAuthenticated() || isProfessional())return;
+  if(!isAuthenticated()||isProfessional())return;
   const root=$("exNormalContainer");
   if(!root)return;
   root.replaceChildren();
   text("homeRoutineValue",plans.length?plans.length+" plano(s) atribuído(s)":"Aguardando atribuição");
   text("homeRoutineLabel","Plano fisioterapêutico");
-  text("homeRoutineDesc",plans.length?"Visualize os exercícios individualizados disponibilizados pelo fisioterapeuta.":"Nenhum plano foi atribuído a esta conta.");
-  if(!plans.length) {
-    root.append(el("h3","Nenhum plano atribuído","card-title"),el("p","Os exercícios aparecerão aqui após a prescrição profissional.","card-text"));
+  text("homeRoutineDesc",plans.length?"Acompanhe um exercício por vez, conforme a prescrição do fisioterapeuta.":"Nenhum plano foi atribuído a esta conta.");
+
+  const assigned=plans.flatMap(plan=>
+    [...(plan.plan_exercises||[])]
+      .sort((a,b)=>(a.position??0)-(b.position??0))
+      .map(exercise=>({plan,exercise}))
+  );
+  if(!assigned.length){
+    root.append(
+      el("h3","Nenhum exercício atribuído","card-title"),
+      el("p","Os exercícios aparecerão aqui após a prescrição profissional.","card-text")
+    );
     return;
   }
-  for(const p of plans){
-    const card=el("div",undefined,"demo-detalhe");
-    card.append(el("h3",p.title,"card-title"));
-    if(p.notes)card.append(el("p",p.notes,"card-text"));
-    const ordered=el("ol");
-    for(const x of [...(p.plan_exercises||[])].sort((a,b)=>a.position-b.position)){
-      const item=el("li");
-      item.append(el("strong",x.exercise_name));
-      item.append(el("p",[
-        "Séries: "+(x.series||"–"),
-        "Repetições: "+(x.repetitions||"–"),
-        "Duração: "+(x.duration||"–"),
-        "Frequência: "+x.frequency
-      ].join(" · "),"card-text-small"));
-      if(x.instructions)item.append(el("p",x.instructions,"card-text-small"));
-      if(["ExerciseBank","wger"].includes(x.exercise_source) && x.external_id){
-        const view=el("button","Ver demonstração em vídeo","btn btn-outline");
-        view.type="button";
-        const media=el("div",undefined,"bank-media");
-        view.addEventListener("click",()=>loadExerciseMedia(x.external_id,media,view,x.exercise_source));
-        item.append(view,media);
-      }
-      ordered.append(item);
-    }
-    card.append(ordered);
-    root.append(card);
+  currentPatientExercise=Math.max(0,Math.min(currentPatientExercise,assigned.length-1));
+  const {plan,exercise}=assigned[currentPatientExercise];
+  const card=el("div",undefined,"demo-detalhe");
+  card.append(el("h3",plan.title,"card-title"));
+  if(plan.notes)card.append(el("p",plan.notes,"card-text"));
+  const progress=el("p","Exercício "+(currentPatientExercise+1)+" de "+assigned.length,"card-text-small");
+  progress.setAttribute("role","status");
+  progress.setAttribute("aria-live","polite");
+  card.append(progress);
+  card.append(el("h3",exercise.exercise_name,"card-title"));
+  const details=[
+    "Séries: "+(exercise.series||"–"),
+    "Repetições: "+(exercise.repetitions||"–"),
+    "Duração: "+(exercise.duration||"–"),
+    "Frequência: "+(exercise.frequency||"–")
+  ];
+  card.append(el("p",details.join(" · "),"card-text-small"));
+  if(exercise.instructions)card.append(el("p",exercise.instructions,"card-text-small"));
+  if(["ExerciseBank","wger"].includes(exercise.exercise_source)&&exercise.external_id){
+    const view=el("button","Ver demonstração em vídeo","btn btn-outline");
+    view.type="button";
+    const media=el("div",undefined,"bank-media");
+    view.addEventListener("click",()=>loadExerciseMedia(exercise.external_id,media,view,exercise.exercise_source));
+    card.append(view,media);
   }
+  const actions=el("div",undefined,"demo-acoes");
+  const previous=el("button","Anterior","btn btn-outline");
+  previous.type="button";
+  previous.disabled=currentPatientExercise===0;
+  previous.addEventListener("click",()=>{
+    if(currentPatientExercise>0){
+      currentPatientExercise--;
+      renderPatientPlans();
+    }
+  });
+  const next=el("button","Próximo","btn");
+  next.type="button";
+  next.disabled=currentPatientExercise===assigned.length-1;
+  next.addEventListener("click",()=>{
+    if(currentPatientExercise<assigned.length-1){
+      currentPatientExercise++;
+      renderPatientPlans();
+    }
+  });
+  actions.append(previous,next);
+  card.append(actions);
+  root.append(card);
 }
 function renderProfessionalPlans(){
   if(!isProfessional())return;
