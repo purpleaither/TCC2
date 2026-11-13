@@ -61,6 +61,7 @@ function normalize(ex){
     equipment:Array.isArray(ex.equipment)?ex.equipment:[],
     difficulty:ex.difficulty??null,
     primaryMuscles:Array.isArray(ex.primaryMuscles)?ex.primaryMuscles:[],
+    secondaryMuscles:Array.isArray(ex.secondaryMuscles)?ex.secondaryMuscles:[],
     movementPattern:ex.movementPattern||null,
     hasVideo:Boolean(ex.media?.mp4),
     home:homeExercise(ex)
