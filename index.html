@@ -447,11 +447,16 @@
     </div>
     <div id="listaPlanosProf"></div>
     <div class="card">
-      <h3 class="card-title">Selecionar exercícios</h3>
-      <p class="card-text-small">Etapa 1 de 2 · Selecione o exercício para abrir a página de configuração da prescrição.</p>
-      <button type="button" class="btn" onclick="criarPlanoProfissional()">Criar plano sem biblioteca</button>
+      <button type="button" id="addExerciseEntry" class="btn" onclick="abrirOpcoesExercicios()" aria-expanded="false" aria-controls="exerciseChoice">+ Adicionar exercícios</button>
+      <div id="exerciseChoice" class="exercise-source-choice" hidden>
+        <h3 class="card-title">Como deseja adicionar?</h3>
+        <div class="demo-acoes">
+          <button type="button" class="btn btn-outline" onclick="adicionarExercicioManual()">Adicionar manualmente</button>
+          <button type="button" class="btn btn-outline" onclick="abrirBibliotecaExerciseBank()">Escolher na ExerciseBank</button>
+        </div>
+      </div>
     </div>
-        <div class="card" id="exercisebankPanel">
+        <div class="card" id="exercisebankPanel" hidden>
           <h3 class="card-title">Exercícios com vídeo — Sandbox ExerciseBank</h3>
           <p class="card-text-small">Catálogo dos 50 exercícios com vídeo liberado no Sandbox. O fisioterapeuta seleciona e configura cada exercício.</p>
           <div class="form-group">
@@ -489,7 +494,7 @@
   <!-- ===== CONFIGURAÇÃO DO PLANO ===== -->
   <div class="page" id="page-editor-prof">
     <h1 class="page-title">Configurar plano</h1>
-    <p class="page-subtitle">Etapa 2 de 2 · Ajuste a prescrição individualizada.</p>
+    <p class="page-subtitle">Personalize os exercícios e os parâmetros prescritos.</p>
     <div class="card">
       <h3 class="card-title" id="tituloFormularioPlano">Criar plano terapêutico</h3>
       <form id="formPlanoProf" onsubmit="salvarPlanoProf(event)">
@@ -499,8 +504,7 @@
           <textarea class="form-input" id="orientacoesPlanoProf" maxlength="700" rows="3" placeholder="Orientações individualizadas"></textarea></div>
         <p class="card-text-small" id="resumoEtapaPlano">Configure os exercícios selecionados e salve o plano.</p>
         <div id="itensPlanoProf"></div>
-        <button type="button" class="btn btn-outline" onclick="adicionarExercicioPlano()">+ Adicionar exercício manual</button>
-        <button type="button" class="btn btn-outline" onclick="navegarPara('planos-prof')">Escolher mais exercícios na biblioteca</button>
+        <button type="button" class="btn btn-outline" onclick="abrirOpcoesExercicios()">+ Adicionar exercícios</button>
         <button type="submit" class="btn">Salvar plano</button>
         <button type="button" class="btn btn-outline" onclick="cancelarFormularioPlano()">Cancelar edição</button>
       </form>
