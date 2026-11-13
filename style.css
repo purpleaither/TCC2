@@ -879,3 +879,11 @@ body {
   #page-exercicios .patient-exercise-metrics{gap:7px}
   #page-exercicios .patient-exercise-metric{padding:11px 9px}
 }
+
+/* Conselhos curtos de educação terapêutica na tela do exercício. */
+#page-exercicios .patient-tpe-advice{margin:8px 0 18px;padding:14px 15px;border-left:4px solid #006633;border-radius:8px;background:#f0f8f3}
+#page-exercicios .patient-tpe-label{display:inline-block;color:#006633;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+#page-exercicios .patient-tpe-heading{font-size:16px;line-height:1.4;color:#003366;margin:0 0 6px}
+#page-exercicios .patient-tpe-text{font-size:14px;line-height:1.6;color:#2c4539;margin:0 0 8px}
+#page-exercicios .patient-tpe-link{background:none;border:0;padding:5px 0;color:#006633;text-align:left;text-decoration:underline;cursor:pointer;font-size:13px;font-weight:700}
+#page-exercicios .patient-tpe-link:focus-visible{outline:2px solid #003366;outline-offset:3px}
