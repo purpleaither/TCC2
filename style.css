@@ -940,3 +940,48 @@ body {
 #page-planos-prof #listaPlanosProf .demo-detalhe{font-size:16px;line-height:1.6;padding:14px;margin:12px 0}
 #page-planos-prof #listaPlanosProf .plan-exercise-name{display:block;color:#003366;font-size:18px;line-height:1.4;font-weight:750;overflow-wrap:anywhere;margin-bottom:6px}
 #page-planos-prof #listaPlanosProf .plan-exercise-prescription{font-size:16px;line-height:1.6;margin:0;color:#253c30;overflow-wrap:anywhere}
+
+/* Ajuste responsivo: a biblioteca deve caber na largura disponível do dispositivo. */
+#page-exercise-bank-prof,
+#page-exercise-bank-prof #exercisebankPanel,
+#page-exercise-bank-prof #exercisebankResults,
+#page-exercise-bank-prof .bank-result,
+#page-exercise-bank-prof .bank-media{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
+#page-exercise-bank-prof #exercisebankPanel,
+#page-exercise-bank-prof .bank-result{overflow-wrap:anywhere}
+#page-exercise-bank-prof .form-input{
+  display:block;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
+#page-exercise-bank-prof .bank-media video,
+#page-exercise-bank-prof .bank-media img{
+  display:block;
+  width:100%;
+  max-width:100%;
+  height:auto;
+  object-fit:contain;
+}
+#page-exercise-bank-prof .bank-result .demo-acoes{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+#page-exercise-bank-prof .bank-result .demo-acoes .btn{
+  width:100%;
+  min-width:0;
+  min-height:44px;
+  margin:0;
+  white-space:normal;
+  overflow-wrap:anywhere;
+}
+@media(max-width:380px){
+  #page-exercise-bank-prof{padding:16px 12px}
+  #page-exercise-bank-prof #exercisebankPanel{padding:12px}
+  #page-exercise-bank-prof .bank-result .demo-acoes{grid-template-columns:minmax(0,1fr)}
+}
