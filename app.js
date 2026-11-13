@@ -4,6 +4,7 @@
    ======================================== */
 
 var registrosUsuario = [];
+var treinosConcluidos = [];
 
 var usuarioAtual = null;
 var dorRepouso = 2;
@@ -140,13 +141,17 @@ function gerarHeatmap() {
       return d.getDate() === i && d.getMonth() === mesAtual.getMonth() && d.getFullYear() === mesAtual.getFullYear();
     });
 
+    var treinosDoDia = treinosConcluidos.filter(function(t) {
+      var d = new Date(t.completed_at);
+      return d.getDate() === i && d.getMonth() === mesAtual.getMonth() && d.getFullYear() === mesAtual.getFullYear();
+    });
     var cell = document.createElement('div');
     cell.className = 'heatmap-cell';
 
     if (!regDoDia) {
       cell.style.backgroundColor = '#f9f9f9';
       cell.style.borderColor = '#ddd';
-      cell.innerHTML = '<span class="heatmap-cell-day" style="color:#888">' + i + '</span><span class="heatmap-cell-value" style="color:#888">-</span>';
+      cell.innerHTML = '<span class="heatmap-cell-day" style="color:#888">' + i + '</span><span class="heatmap-cell-value" style="color:#888">' + (treinosDoDia.length ? '✓' : '-') + '</span>';
     } else {
       var v = (filtroDorVisualizacao === 0) ? regDoDia.dorRepouso : regDoDia.dorMovimento;
       totalDor += v;
@@ -162,6 +167,30 @@ function gerarHeatmap() {
       
       (function(dia, reg) {
         cell.onclick = function() { abrirClimaSheet(dia, reg); };
+      })(i, regDoDia);
+    }
+    if (treinosDoDia.length) {
+      cell.classList.add('heatmap-workout-day');
+      cell.title = treinosDoDia.length + ' treino(s) concluído(s)';
+      if (regDoDia) {
+        var marker = document.createElement('span');
+        marker.className = 'heatmap-workout-marker';
+        marker.textContent = '✓';
+        cell.appendChild(marker);
+      }
+    }
+    if (regDoDia || treinosDoDia.length) {
+      (function(dia, registro) {
+        cell.onclick = function() { abrirClimaSheet(dia, registro || null); };
+        cell.tabIndex = 0;
+        cell.setAttribute('role', 'button');
+        cell.setAttribute('aria-label', 'Ver registros do dia ' + dia + (treinosDoDia.length ? ' e treinos concluídos' : ''));
+        cell.onkeydown = function(event) {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            abrirClimaSheet(dia, registro || null);
+          }
+        };
       })(i, regDoDia);
     }
     grid.appendChild(cell);
@@ -237,19 +266,19 @@ function abrirClimaSheet(dia, reg) {
   if (titulo) titulo.textContent = 'Registro do dia ' + dia + ' de ' + nomesMes[mesAtual.getMonth()];
 
   var dor = document.getElementById('sheetDorNivel');
-  if (dor) dor.textContent = 'Dor ao movimento: ' + reg.dorMovimento + '/10 (Repouso: ' + reg.dorRepouso + '/10)';
+  if (dor) dor.textContent = 'Dor ao movimento: ' + (reg ? reg.dorMovimento + '/10 (Repouso: ' + reg.dorRepouso + '/10)' : 'Nenhum registro de dor neste dia');
 
   var intensidade = ['Nenhuma', 'Leve', 'Moderada', 'Intensa'];
   var rigidez = document.getElementById('sheetRigidez');
   var fadiga = document.getElementById('sheetFadiga');
   var humor = document.getElementById('sheetHumor');
-  if (rigidez) rigidez.textContent = intensidade[reg.rigidez] || 'Não registrado';
-  if (fadiga) fadiga.textContent = intensidade[reg.fadiga] || 'Não registrado';
+  if (rigidez) rigidez.textContent = (reg ? intensidade[reg.rigidez] : null) || 'Não registrado';
+  if (fadiga) fadiga.textContent = (reg ? intensidade[reg.fadiga] : null) || 'Não registrado';
   if (humor) humor.textContent = 'Não registrado';
 
   var resumo = document.getElementById('sheetClimaDesc');
   if (resumo) {
-    var clima = reg.clima;
+    var clima = reg && reg.clima;
     if (clima && clima.temperatura != null && clima.umidade != null && clima.pressao != null) {
       resumo.textContent = (clima.cidade || 'Brasília') + ': ' +
         clima.temperatura + ' °C, umidade ' + clima.umidade + '% e pressão ' + clima.pressao +
@@ -259,6 +288,7 @@ function abrirClimaSheet(dia, reg) {
       resumo.textContent = 'Não há dados meteorológicos salvos para este registro.';
     }
   }
+  if (window.AppAuth && window.AppAuth.renderWorkoutDay) window.AppAuth.renderWorkoutDay(mesAtual.getFullYear(), mesAtual.getMonth(), dia);
   var sheet = document.getElementById('climaSheet');
   if (sheet) sheet.classList.add('open');
 }
