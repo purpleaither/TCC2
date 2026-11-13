@@ -1252,6 +1252,8 @@ function renderSample(){
   const region=$("exercisebankRegion").value;
   const all=Array.isArray(sampleList.items)?sampleList.items:[];
   const filtered=all.filter(x=>{
+    // Exibir somente exercícios com equivalência explícita em português no glossário.
+    if(!isExerciseNameTranslated(x.name))return false;
     if(home&&x.home!==true)return false;
     if(region!=="todas"&&!exerciseRegions(x).includes(region))return false;
     if(!q)return true;
@@ -1262,14 +1264,11 @@ function renderSample(){
   });
   const root=$("exercisebankResults");root.replaceChildren();
   text("exercisebankStatus",filtered.length+" exercício(s)");
-  if(!filtered.length)root.append(el("p","Nenhum exercício encontrado. Altere a região, o termo de busca ou o filtro domiciliar.","card-text-small"));
+  if(!filtered.length)root.append(el("p","Nenhum exercício com nome em português encontrado para esses filtros.","card-text-small"));
   filtered.forEach(x=>{
     const card=el("div",undefined,"demo-exercicio-item bank-result");
     const translated=translateExerciseName(x.name);
     card.append(el("h4",translated,"card-title"));
-    if(!isExerciseNameTranslated(x.name)){
-      card.append(el("p","Nome original — confira a nomenclatura ao selecionar.","card-text-small"));
-    }
     const row=el("div",undefined,"demo-acoes");
     const preview=el("button","Ver vídeo","btn btn-outline");
     const pick=el("button","Selecionar exercício","btn");
