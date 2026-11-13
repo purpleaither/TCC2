@@ -279,66 +279,72 @@ function renderPatientPlans(){
   text("homeRoutineValue",plans.length?plans.length+" plano(s) atribuído(s)":"Aguardando atribuição");
   text("homeRoutineLabel","Plano fisioterapêutico");
   text("homeRoutineDesc",plans.length?"Acompanhe um exercício por vez, conforme a prescrição do fisioterapeuta.":"Nenhum plano foi atribuído a esta conta.");
-
   const assigned=plans.flatMap(plan=>
     [...(plan.plan_exercises||[])]
       .sort((a,b)=>(a.position??0)-(b.position??0))
       .map(exercise=>({plan,exercise}))
   );
   if(!assigned.length){
-    root.append(
-      el("h3","Nenhum exercício atribuído","card-title"),
-      el("p","Os exercícios aparecerão aqui após a prescrição profissional.","card-text")
-    );
+    root.append(el("h3","Nenhum exercício atribuído","card-title"),
+      el("p","Os exercícios aparecerão aqui após a prescrição profissional.","card-text"));
     return;
   }
   currentPatientExercise=Math.max(0,Math.min(currentPatientExercise,assigned.length-1));
   const {plan,exercise}=assigned[currentPatientExercise];
-  const card=el("div",undefined,"demo-detalhe");
-  card.append(el("h3",plan.title,"card-title"));
-  if(plan.notes)card.append(el("p",plan.notes,"card-text"));
-  const progress=el("p","Exercício "+(currentPatientExercise+1)+" de "+assigned.length,"card-text-small");
+  const card=el("div",undefined,"patient-exercise-card");
+  card.append(el("p",plan.title,"patient-plan-title"));
+  const progress=el("p","Exercício "+(currentPatientExercise+1)+" de "+assigned.length,"patient-exercise-progress");
   progress.setAttribute("role","status");
   progress.setAttribute("aria-live","polite");
   card.append(progress);
-  card.append(el("h3",exercise.exercise_name,"card-title"));
-  const details=[
-    "Séries: "+(exercise.series||"–"),
-    "Repetições: "+(exercise.repetitions||"–"),
-    "Duração: "+(exercise.duration||"–"),
-    "Frequência: "+(exercise.frequency||"–")
-  ];
-  card.append(el("p",details.join(" · "),"card-text-small"));
-  if(exercise.instructions)card.append(el("p",exercise.instructions,"card-text-small"));
+  const name=exercise.exercise_source==="ExerciseBank"
+    ?translateExerciseName(exercise.exercise_name)
+    :exercise.exercise_name;
+  card.append(el("h2",name,"patient-exercise-title"));
+
+  const videoArea=el("div",undefined,"patient-exercise-video bank-media");
   if(["ExerciseBank","wger"].includes(exercise.exercise_source)&&exercise.external_id){
-    const view=el("button","Ver demonstração em vídeo","btn btn-outline");
-    view.type="button";
-    const media=el("div",undefined,"bank-media");
-    view.addEventListener("click",()=>loadExerciseMedia(exercise.external_id,media,view,exercise.exercise_source));
-    card.append(view,media);
+    card.append(videoArea);
   }
+
+  const metrics=el("div",undefined,"patient-exercise-metrics");
+  for(const [label,value] of [
+    ["Séries",exercise.series],
+    ["Repetições",exercise.repetitions],
+    ["Duração",exercise.duration],
+    ["Frequência",exercise.frequency]
+  ]){
+    if(value===null||value===undefined||String(value).trim()==="")continue;
+    const tile=el("div",undefined,"patient-exercise-metric");
+    tile.append(el("span",label,"patient-exercise-metric-label"),
+      el("strong",String(value),"patient-exercise-metric-value"));
+    metrics.append(tile);
+  }
+  card.append(metrics);
+  // Instruções clínicas individuais continuam disponíveis; descrições automáticas
+  // em inglês do banco de vídeos não são apresentadas como orientação ao paciente.
+  if(exercise.instructions && exercise.exercise_source!=="ExerciseBank")
+    card.append(el("p",exercise.instructions,"patient-exercise-instructions"));
+
   const actions=el("div",undefined,"demo-acoes");
   const previous=el("button","Anterior","btn btn-outline");
   previous.type="button";
   previous.disabled=currentPatientExercise===0;
   previous.addEventListener("click",()=>{
-    if(currentPatientExercise>0){
-      currentPatientExercise--;
-      renderPatientPlans();
-    }
+    if(currentPatientExercise>0){currentPatientExercise--;renderPatientPlans();}
   });
   const next=el("button","Próximo","btn");
   next.type="button";
   next.disabled=currentPatientExercise===assigned.length-1;
   next.addEventListener("click",()=>{
-    if(currentPatientExercise<assigned.length-1){
-      currentPatientExercise++;
-      renderPatientPlans();
-    }
+    if(currentPatientExercise<assigned.length-1){currentPatientExercise++;renderPatientPlans();}
   });
   actions.append(previous,next);
   card.append(actions);
   root.append(card);
+  if(videoArea.isConnected){
+    loadExerciseMedia(exercise.external_id,videoArea,null,exercise.exercise_source,true);
+  }
 }
 function renderProfessionalPlans(){
   if(!isProfessional())return;
@@ -818,8 +824,9 @@ async function auditSandboxVideos(){
     button.disabled=false;
   }
 }
-async function loadExerciseMedia(id,target,button,source="ExerciseBank"){
-  button.disabled=true;target.replaceChildren(el("p","Carregando demonstração...","card-text-small"));
+async function loadExerciseMedia(id,target,button,source="ExerciseBank",autoPlay=false){
+  if(button)button.disabled=true;
+  target.replaceChildren(el("p","Carregando demonstração...","card-text-small"));
   try{
     let url,poster,credit;
     if(source==="wger"){
@@ -833,10 +840,27 @@ async function loadExerciseMedia(id,target,button,source="ExerciseBank"){
       url=item.mp4;poster=item.still;credit="ExerciseBank · link temporário";
     }
     if(!url)throw Error("Vídeo indisponível.");
-    const video=el("video");video.controls=true;video.playsInline=true;video.preload="metadata";video.src=url;if(poster)video.poster=poster;
-    target.replaceChildren(video,el("p",credit,"card-text-small"));
-  }catch(e){target.replaceChildren(el("p",e.message,"card-text-small"));}
-  finally{button.disabled=false;}
+    if(!target.isConnected)return;
+    const video=el("video");
+    video.controls=true;
+    video.playsInline=true;
+    video.preload=autoPlay?"auto":"metadata";
+    video.loop=autoPlay;
+    video.muted=autoPlay;
+    video.autoplay=autoPlay;
+    video.src=url;
+    if(poster)video.poster=poster;
+    target.replaceChildren(video);
+    if(autoPlay){
+      video.setAttribute("aria-label","Demonstração do exercício em reprodução contínua e sem áudio");
+      video.play().catch(()=>{
+        if(video.isConnected)target.append(el("p","Toque no vídeo para iniciar a demonstração.","card-text-small"));
+      });
+    }else{
+      target.append(el("p",credit,"card-text-small"));
+    }
+  }catch(e){if(target.isConnected)target.replaceChildren(el("p",e.message,"card-text-small"));}
+  finally{if(button)button.disabled=false;}
 }
 
 async function init(){
