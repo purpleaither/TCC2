@@ -446,9 +446,20 @@
       </select>
     </div>
     <div id="listaPlanosProf"></div>
-    <div class="card">
-      <button type="button" id="addExerciseEntry" class="btn" onclick="abrirOpcoesExercicios()">+ Adicionar exercícios</button>
+    <div class="card" id="planMainActions">
+      <h3 class="card-title">Ações dos planos</h3>
+      <button type="button" id="createPlanEntry" class="btn" onclick="criarPlanoProfissional()">Criar plano terapêutico</button>
+      <button type="button" id="addExerciseEntry" class="btn btn-outline" onclick="escolherPlanoParaExercicios()">Adicionar exercícios</button>
+      <p class="card-text-small" id="addExerciseEntryHint">Para acrescentar exercícios, selecione um plano existente.</p>
     </div>
+  </div>
+
+  <!-- ===== ESCOLHA DO PLANO PARA NOVOS EXERCÍCIOS ===== -->
+  <div class="page" id="page-exercise-target-prof">
+    <h1 class="page-title">Adicionar exercícios</h1>
+    <p class="page-subtitle">Escolha o plano terapêutico que receberá os novos exercícios.</p>
+    <div id="exerciseTargetPlans"></div>
+    <button type="button" class="btn btn-outline" onclick="navegarPara('planos-prof')">Voltar</button>
   </div>
 
   <!-- ===== ESCOLHA DO TIPO DE EXERCÍCIO ===== -->
