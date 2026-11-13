@@ -449,12 +449,10 @@ function renderProfessionalPlans(){
   const root=$("listaPlanosProf");
   root.replaceChildren();
   if(!plans.length)root.append(el("p","Nenhum plano disponível.","demo-vazio"));
-  const addButton=$("addExerciseEntry");
-  if(addButton)addButton.disabled=!patientId||!plans.length;
-  const hint=$("addExerciseEntryHint");
-  if(hint)hint.textContent=!patientId?"Selecione um paciente para gerenciar os planos.":!plans.length
-    ?"Crie um plano terapêutico antes de adicionar exercícios a ele."
-    :"Selecione o plano que receberá os novos exercícios.";
+  const mainActions=$("planMainActions");
+  if(mainActions)mainActions.hidden=!!plans.length;
+  const createEntry=$("createPlanEntry");
+  if(createEntry)createEntry.disabled=!patientId;
   for(const p of plans){
     const card=el("div",undefined,"card");
     card.append(el("h3",p.title,"card-title"));
@@ -480,6 +478,15 @@ function renderProfessionalPlans(){
     remove.addEventListener("click",()=>deletePlan(p.id));
     actions.append(edit,remove);
     card.append(actions);
+    const moreActions=el("div",undefined,"plan-card-add-actions");
+    const create=el("button","Criar plano terapêutico","btn");
+    create.type="button";
+    create.addEventListener("click",createPlanFromScratch);
+    const add=el("button","Adicionar exercícios","btn btn-outline");
+    add.type="button";
+    add.addEventListener("click",()=>addExercisesToExistingPlan(p.id));
+    moreActions.append(create,add);
+    card.append(moreActions);
     root.append(card);
   }
 }
@@ -732,7 +739,18 @@ function createPlanFromScratch(){
   navigate("editor-prof");
 }
 function cancelPlanEditor(){
+  if(!isProfessional()||busy)return;
+  const form=$("formPlanoProf");
+  const hasDraft=!!editingPlan||!!$("itensPlanoProf")?.children.length||
+    !!$("nomePlanoProf")?.value.trim()||!!$("orientacoesPlanoProf")?.value.trim();
+  if(hasDraft&&!confirm("Descartar as alterações não salvas e cancelar a edição?"))return;
   clearPlanForm();
+  if(form)form.reset();
+  navigate("planos-prof");
+  message("Edição cancelada. Nenhuma alteração foi salva.");
+}
+function backFromPlanEditor(){
+  if(!isProfessional())return;
   navigate("planos-prof");
 }
 function clearPlanForm(){
@@ -1145,6 +1163,7 @@ window.trocarPacienteRegistrosProf=()=>selectPatient($("pacienteRegistrosProf").
 window.adicionarExercicioPlano=()=>addExercise();
 window.limparFormularioPlano=clearPlanForm;
 window.cancelarFormularioPlano=cancelPlanEditor;
+window.voltarDoFormularioPlano=backFromPlanEditor;
 window.criarPlanoProfissional=createPlanFromScratch;
 window.abrirOpcoesExercicios=openExerciseSourceOptions;
 window.escolherPlanoParaExercicios=choosePlanForExerciseAddition;
