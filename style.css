@@ -903,3 +903,9 @@ body {
 .workout-history-name{display:block;font-size:14px;line-height:1.35;color:#003366}
 .workout-history-plan{display:block;font-size:12px;color:#567061;margin:3px 0}
 .workout-history-exercise .card-text-small{font-size:13px;line-height:1.5;margin:5px 0 0}
+
+/* A biblioteca e as opções só aparecem quando solicitadas pelo fisioterapeuta. */
+#exerciseChoice[hidden],#exercisebankPanel[hidden]{display:none}
+.exercise-source-choice{margin-top:14px;padding-top:14px;border-top:1px solid #dfe7e2}
+.exercise-source-choice .card-title{font-size:16px;margin-bottom:10px}
+.exercise-source-choice .demo-acoes{margin-bottom:0}
