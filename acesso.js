@@ -69,25 +69,25 @@ function navigate(page) {
   if(!isAuthenticated()) page="login";
   else {
     const allowed = isProfessional()
-      ? ["profissional","planos-prof","editor-prof","registros-prof"]
+      ? ["profissional","planos-prof","exercise-source-prof","exercise-bank-prof","exercise-config-prof","editor-prof","registros-prof"]
       : ["inicio","sintomas","historico","orientacoes","exercicios","contatos"];
     if(!allowed.includes(page)) page=homePage();
   }
   document.querySelectorAll(".page").forEach(n=>n.classList.toggle("active",n.id==="page-"+page));
   mostrarCabecalho(page!=="login");
   document.querySelectorAll(".menu-item").forEach(item=>{
-    const selected=item.getAttribute("onclick")==="navegarPara('"+(page==="editor-prof"?"planos-prof":page)+"')";
+    const selected=item.getAttribute("onclick")==="navegarPara('"+(
+      ["editor-prof","exercise-source-prof","exercise-bank-prof","exercise-config-prof"].includes(page)?"planos-prof":page
+    )+"')";
     item.classList.toggle("active",selected);
     if(selected)item.setAttribute("aria-current","page");
     else item.removeAttribute("aria-current");
   });
   fecharMenu();
   fecharClimaSheet();
-  if(page==="planos-prof"){
-    renderProfessionalPlans();
-    hideExerciseSourceOptions();
-  }
+  if(page==="planos-prof")renderProfessionalPlans();
   if(page==="editor-prof")updatePlanEditorSummary();
+  if(page==="exercise-bank-prof")loadSample();
   if(page==="registros-prof")renderProfessionalRecords();
   if(page==="exercicios")renderPatientPlans();
   if(page==="historico")gerarHeatmap();
@@ -572,43 +572,121 @@ function addExercise(entry){
       row.querySelector('[name="'+k+'"]').value=entry[k]??"";
   }
 }
-function updatePlanEditorSummary(){
-  const count=$("itensPlanoProf")?.children.length||0;
-  const label=$("resumoEtapaPlano");
-  if(label)label.textContent=count
-    ?count+" exercício(s) selecionado(s). Configure séries, repetições, duração e frequência."
-    :"Nenhum exercício selecionado. Você pode escolher na biblioteca ou adicionar manualmente.";
+let exerciseReturnPage="planos-prof";
+let pendingExerciseRow=null;
+let pendingExerciseOrigin="exercise-source-prof";
+let pendingExercisePlaceholder=null;
+function exerciseNameFromRow(row){
+  const selected=row.querySelector('[name="exercise"]');
+  const custom=row.querySelector('[name="customName"]');
+  const external=row.querySelector('[name="externalName"]');
+  return external?.value||(
+    selected?.value==="other" ? custom?.value.trim() : exercises.find(x=>x.id===selected?.value)?.name
+  )||"Exercício sem nome";
 }
-function hideExerciseSourceOptions(){
-  const choice=$("exerciseChoice");
-  const panel=$("exercisebankPanel");
-  const entry=$("addExerciseEntry");
-  if(choice)choice.hidden=true;
-  if(panel)panel.hidden=true;
-  if(entry)entry.setAttribute("aria-expanded","false");
+function updatePlanEditorSummary(){
+  const stored=$("itensPlanoProf");
+  const rows=Array.from(stored?.children||[]).filter(row=>row.classList.contains("demo-exercicio-item"));
+  text("resumoEtapaPlano",rows.length+
+    (rows.length===1?" exercício adicionado ao plano.":" exercícios adicionados ao plano."));
+  const list=$("resumoExerciciosPlano");
+  if(!list)return;
+  list.replaceChildren();
+  if(!rows.length){
+    list.append(el("p","Adicione exercícios para montar a ficha.","card-text-small"));
+    return;
+  }
+  rows.forEach((row,index)=>{
+    const item=el("div",undefined,"exercise-summary-item");
+    const heading=el("strong",(index+1)+". "+exerciseNameFromRow(row),"exercise-summary-name");
+    const detail=el("p",[
+      "Séries: "+(row.querySelector('[name="series"]')?.value||"–"),
+      "Repetições: "+(row.querySelector('[name="repetitions"]')?.value||"–"),
+      "Duração: "+(row.querySelector('[name="duration"]')?.value||"–"),
+      "Frequência: "+(row.querySelector('[name="frequency"]')?.value||"–")
+    ].join(" · "),"card-text-small");
+    const actions=el("div",undefined,"demo-acoes");
+    const edit=el("button","Editar exercício","btn btn-outline");
+    edit.type="button";
+    edit.addEventListener("click",()=>openExerciseConfiguration(row,"editor-prof",true));
+    const remove=el("button","Remover","btn btn-outline");
+    remove.type="button";
+    remove.addEventListener("click",()=>{row.remove();updatePlanEditorSummary();});
+    actions.append(edit,remove);
+    item.append(heading,detail,actions);
+    list.append(item);
+  });
 }
 function openExerciseSourceOptions(){
   if(!isProfessional())return;
-  if(!$("page-planos-prof").classList.contains("active"))navigate("planos-prof");
-  const choice=$("exerciseChoice");
-  const panel=$("exercisebankPanel");
-  choice.hidden=false;
-  panel.hidden=true;
-  $("addExerciseEntry").setAttribute("aria-expanded","true");
-  choice.scrollIntoView({behavior:"smooth",block:"nearest"});
+  exerciseReturnPage=$("page-editor-prof").classList.contains("active")?"editor-prof":"planos-prof";
+  navigate("exercise-source-prof");
+}
+function backFromExerciseSource(){
+  navigate(exerciseReturnPage);
 }
 function addManualExerciseFromOptions(){
   if(!isProfessional())return;
   addExercise();
-  navigate("editor-prof");
+  const row=$("itensPlanoProf").lastElementChild;
+  const select=row.querySelector('[name="exercise"]');
+  select.value="other";
+  select.dispatchEvent(new Event("change"));
+  openExerciseConfiguration(row,"exercise-source-prof",false);
 }
 function openExerciseBankFromOptions(){
   if(!isProfessional())return;
-  $("exerciseChoice").hidden=true;
-  $("exercisebankPanel").hidden=false;
-  $("addExerciseEntry").setAttribute("aria-expanded","true");
-  loadSample();
-  $("exercisebankPanel").scrollIntoView({behavior:"smooth",block:"start"});
+  navigate("exercise-bank-prof");
+}
+function openExerciseConfiguration(row,origin,existing=false){
+  if(!isProfessional()||!row)return;
+  if(pendingExerciseRow)return;
+  pendingExerciseRow=row;
+  pendingExerciseOrigin=origin;
+  pendingExercisePlaceholder=existing?document.createElement("span"):null;
+  if(existing)row.before(pendingExercisePlaceholder);
+  $("exerciseConfigRow").append(row);
+  const remove=row.querySelector("button.btn-outline");
+  if(remove)remove.hidden=true;
+  navigate("exercise-config-prof");
+}
+function finishExerciseInsertion(){
+  if(!pendingExerciseRow)return;
+  const row=pendingExerciseRow;
+  const select=row.querySelector('[name="exercise"]');
+  const custom=row.querySelector('[name="customName"]');
+  const series=Number(row.querySelector('[name="series"]')?.value);
+  const repeats=row.querySelector('[name="repetitions"]')?.value.trim()||"";
+  const duration=row.querySelector('[name="duration"]')?.value.trim()||"";
+  const frequency=row.querySelector('[name="frequency"]')?.value.trim()||"";
+  const name=select?.value==="other"?custom?.value.trim():exerciseNameFromRow(row);
+  if(!name||name.length<2||!Number.isInteger(series)||series<1||series>20||(!repeats&&!duration)||!frequency){
+    message("Informe o exercício, as séries, as repetições ou duração e a frequência.",true);
+    return;
+  }
+  const remove=row.querySelector("button.btn-outline");
+  if(remove)remove.hidden=false;
+  if(pendingExercisePlaceholder){
+    pendingExercisePlaceholder.replaceWith(row);
+  }else{
+    $("itensPlanoProf").append(row);
+  }
+  pendingExerciseRow=null;
+  pendingExercisePlaceholder=null;
+  updatePlanEditorSummary();
+  navigate("editor-prof");
+  message("Exercício inserido. Revise a quantidade e salve o plano quando terminar.");
+}
+function backFromExerciseConfiguration(){
+  if(!pendingExerciseRow)return navigate("exercise-source-prof");
+  const remove=pendingExerciseRow.querySelector("button.btn-outline");
+  if(remove)remove.hidden=false;
+  if(pendingExercisePlaceholder)pendingExercisePlaceholder.replaceWith(pendingExerciseRow);
+  else pendingExerciseRow.remove();
+  pendingExerciseRow=null;
+  pendingExercisePlaceholder=null;
+  updatePlanEditorSummary();
+  navigate(pendingExerciseOrigin);
 }
 function createPlanFromScratch(){
   if(!isProfessional())return;
@@ -621,6 +699,10 @@ function cancelPlanEditor(){
 }
 function clearPlanForm(){
   editingPlan=null;
+  if(pendingExerciseRow)pendingExerciseRow.remove();
+  if(pendingExercisePlaceholder)pendingExercisePlaceholder.remove();
+  pendingExerciseRow=null;
+  pendingExercisePlaceholder=null;
   $("formPlanoProf").reset();
   $("itensPlanoProf").replaceChildren();
   updatePlanEditorSummary();
@@ -881,9 +963,7 @@ function renderSample(){
       addExercise({exercise_name:translated,exercise_source:"ExerciseBank",
         external_id:x.id,instructions:x.description||"",series:2,
         repetitions:"10",duration:"",frequency:"3 vezes por semana"});
-      message("Exercício adicionado. Configure os parâmetros e salve o plano.");
-      updatePlanEditorSummary();
-      navigate("editor-prof");
+      openExerciseConfiguration($("itensPlanoProf").lastElementChild,"exercise-bank-prof",false);
     });
     row.append(preview,pick);card.append(row,media);root.append(card);
   });
@@ -1029,6 +1109,9 @@ window.limparFormularioPlano=clearPlanForm;
 window.cancelarFormularioPlano=cancelPlanEditor;
 window.criarPlanoProfissional=createPlanFromScratch;
 window.abrirOpcoesExercicios=openExerciseSourceOptions;
+window.voltarDaEscolhaExercicios=backFromExerciseSource;
+window.concluirInsercaoExercicio=finishExerciseInsertion;
+window.voltarDaConfiguracaoExercicio=backFromExerciseConfiguration;
 window.adicionarExercicioManual=addManualExerciseFromOptions;
 window.abrirBibliotecaExerciseBank=openExerciseBankFromOptions;
 window.salvarPlanoProf=savePlan;
