@@ -126,6 +126,8 @@ function reset() {
   records=[];
   editingPlan=null;
   currentPatientExercise=0;
+  workoutCompletedInView=false;
+  treinosConcluidos=[];
   registrosUsuario=[];
   menu();
   $("loginSenha").value="";
@@ -246,6 +248,12 @@ async function loadPatientData() {
         .eq("patient_id",patientId).order("recorded_at",{ascending:false}).limit(500);
     }
     records=result(symptomsResponse)||[];
+    if(!isProfessional()){
+      const workoutResponse=await supabase.from("workout_sessions")
+        .select("id,patient_id,completed_at,exercises")
+        .eq("patient_id",user.id).order("completed_at",{ascending:false}).limit(500);
+      treinosConcluidos=workoutResponse.error?[]:(workoutResponse.data||[]);
+    }
     if(isProfessional()){
       renderProfessionalPlans();
       renderProfessionalRecords();
@@ -276,6 +284,68 @@ const patientTpeAdvice=[
   {title:"Autonomia no dia a dia",body:"Pequenas adaptações nas atividades de casa e do trabalho podem ajudar a manter o movimento e favorecer o autocuidado."}
 ];
 let currentPatientExercise=0;
+let workoutCompletedInView=false;
+function patientExerciseAssignments(){
+  return plans.flatMap(plan=>[...(plan.plan_exercises||[])]
+    .sort((a,b)=>(a.position??0)-(b.position??0))
+    .map(exercise=>({plan,exercise})));
+}
+async function completePatientWorkout(){
+  if(!isAuthenticated()||isProfessional()||busy||workoutCompletedInView)return;
+  const assigned=patientExerciseAssignments();
+  if(!assigned.length||currentPatientExercise!==assigned.length-1)return;
+  busy=true;
+  const button=$("finishPatientWorkout");
+  if(button)button.disabled=true;
+  try{
+    const exercises=assigned.map(({plan,exercise})=>({
+      plan_id:plan.id,plan_title:plan.title,
+      exercise_name:exercise.exercise_name,exercise_source:exercise.exercise_source,
+      external_id:exercise.external_id,series:exercise.series,repetitions:exercise.repetitions,
+      duration:exercise.duration,frequency:exercise.frequency,position:exercise.position
+    }));
+    result(await supabase.from("workout_sessions").insert({patient_id:user.id,exercises}));
+    workoutCompletedInView=true;
+    await loadPatientData();
+    message("Treino concluído e registrado no histórico.");
+  }catch(err){
+    message("Não foi possível registrar o treino. Execute a migração de histórico no Supabase e tente novamente.",true);
+    if(button)button.disabled=false;
+  }finally{busy=false;}
+}
+function renderWorkoutDay(year,month,day){
+  const root=$("sheetWorkoutHistory");
+  if(!root)return;
+  root.replaceChildren();
+  const sessions=treinosConcluidos.filter(item=>{
+    const d=new Date(item.completed_at);
+    return d.getFullYear()===year&&d.getMonth()===month&&d.getDate()===day;
+  });
+  root.append(el("h3","Ficha de treino do dia","card-title"));
+  if(!sessions.length){
+    root.append(el("p","Nenhum treino concluído neste dia.","card-text-small"));
+    return;
+  }
+  for(const session of sessions){
+    const card=el("div",undefined,"workout-history-session");
+    const time=new Date(session.completed_at).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+    card.append(el("p","Treino concluído às "+time,"workout-history-time"));
+    const items=Array.isArray(session.exercises)?session.exercises:[];
+    for(const item of items){
+      const row=el("div",undefined,"workout-history-exercise");
+      const name=item.exercise_source==="ExerciseBank"
+        ?translateExerciseName(item.exercise_name):item.exercise_name;
+      row.append(el("strong",name||"Exercício","workout-history-name"));
+      row.append(el("span",String(item.plan_title||"Plano"),"workout-history-plan"));
+      row.append(el("p",[
+        "Séries: "+(item.series||"–"),"Repetições: "+(item.repetitions||"–"),
+        "Duração: "+(item.duration||"–"),"Frequência: "+(item.frequency||"–")
+      ].join(" · "),"card-text-small"));
+      card.append(row);
+    }
+    root.append(card);
+  }
+}
 function renderPatientPlans(){
   if(!isAuthenticated()||isProfessional())return;
   const root=$("exNormalContainer");
@@ -284,11 +354,7 @@ function renderPatientPlans(){
   text("homeRoutineValue",plans.length?plans.length+" plano(s) atribuído(s)":"Aguardando atribuição");
   text("homeRoutineLabel","Plano fisioterapêutico");
   text("homeRoutineDesc",plans.length?"Acompanhe um exercício por vez, conforme a prescrição do fisioterapeuta.":"Nenhum plano foi atribuído a esta conta.");
-  const assigned=plans.flatMap(plan=>
-    [...(plan.plan_exercises||[])]
-      .sort((a,b)=>(a.position??0)-(b.position??0))
-      .map(exercise=>({plan,exercise}))
-  );
+  const assigned=patientExerciseAssignments();
   if(!assigned.length){
     root.append(el("h3","Nenhum exercício atribuído","card-title"),
       el("p","Os exercícios aparecerão aqui após a prescrição profissional.","card-text"));
@@ -359,6 +425,14 @@ function renderPatientPlans(){
   });
   actions.append(previous,next);
   card.append(actions);
+  if(currentPatientExercise===assigned.length-1){
+    const finish=el("button",workoutCompletedInView?"Treino concluído ✓":"Treino concluído","btn patient-workout-finish");
+    finish.id="finishPatientWorkout";
+    finish.type="button";
+    finish.disabled=workoutCompletedInView;
+    finish.addEventListener("click",completePatientWorkout);
+    card.append(finish);
+  }
   root.append(card);
   if(videoArea.isConnected){
     loadExerciseMedia(exercise.external_id,videoArea,null,exercise.exercise_source,true);
@@ -912,7 +986,7 @@ async function init(){
   }
 }
 
-window.AppAuth={login,logout,navigate,saveSymptoms,isProfessional};
+window.AppAuth={login,logout,navigate,saveSymptoms,isProfessional,renderWorkoutDay};
 window.atualizarPacienteProfissional=()=>selectPatient($("pacienteProf").value);
 window.trocarPacientePlanoProf=()=>selectPatient($("pacientePlanoProf").value);
 window.trocarPacienteRegistrosProf=()=>selectPatient($("pacienteRegistrosProf").value);
