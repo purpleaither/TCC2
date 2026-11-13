@@ -83,7 +83,10 @@ function navigate(page) {
   });
   fecharMenu();
   fecharClimaSheet();
-  if(page==="planos-prof"){renderProfessionalPlans();loadSample();}
+  if(page==="planos-prof"){
+    renderProfessionalPlans();
+    hideExerciseSourceOptions();
+  }
   if(page==="editor-prof")updatePlanEditorSummary();
   if(page==="registros-prof")renderProfessionalRecords();
   if(page==="exercicios")renderPatientPlans();
@@ -576,6 +579,37 @@ function updatePlanEditorSummary(){
     ?count+" exercício(s) selecionado(s). Configure séries, repetições, duração e frequência."
     :"Nenhum exercício selecionado. Você pode escolher na biblioteca ou adicionar manualmente.";
 }
+function hideExerciseSourceOptions(){
+  const choice=$("exerciseChoice");
+  const panel=$("exercisebankPanel");
+  const entry=$("addExerciseEntry");
+  if(choice)choice.hidden=true;
+  if(panel)panel.hidden=true;
+  if(entry)entry.setAttribute("aria-expanded","false");
+}
+function openExerciseSourceOptions(){
+  if(!isProfessional())return;
+  if(!$("page-planos-prof").classList.contains("active"))navigate("planos-prof");
+  const choice=$("exerciseChoice");
+  const panel=$("exercisebankPanel");
+  choice.hidden=false;
+  panel.hidden=true;
+  $("addExerciseEntry").setAttribute("aria-expanded","true");
+  choice.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+function addManualExerciseFromOptions(){
+  if(!isProfessional())return;
+  addExercise();
+  navigate("editor-prof");
+}
+function openExerciseBankFromOptions(){
+  if(!isProfessional())return;
+  $("exerciseChoice").hidden=true;
+  $("exercisebankPanel").hidden=false;
+  $("addExerciseEntry").setAttribute("aria-expanded","true");
+  loadSample();
+  $("exercisebankPanel").scrollIntoView({behavior:"smooth",block:"start"});
+}
 function createPlanFromScratch(){
   if(!isProfessional())return;
   clearPlanForm();
@@ -994,5 +1028,8 @@ window.adicionarExercicioPlano=()=>addExercise();
 window.limparFormularioPlano=clearPlanForm;
 window.cancelarFormularioPlano=cancelPlanEditor;
 window.criarPlanoProfissional=createPlanFromScratch;
+window.abrirOpcoesExercicios=openExerciseSourceOptions;
+window.adicionarExercicioManual=addManualExerciseFromOptions;
+window.abrirBibliotecaExerciseBank=openExerciseBankFromOptions;
 window.salvarPlanoProf=savePlan;
 document.addEventListener("DOMContentLoaded",init);
