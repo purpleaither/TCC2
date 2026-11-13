@@ -446,11 +446,10 @@
       </select>
     </div>
     <div id="listaPlanosProf"></div>
-    <div class="card" id="planMainActions">
-      <h3 class="card-title">Ações dos planos</h3>
+    <div class="card" id="planMainActions" hidden>
+      <h3 class="card-title">Começar um plano</h3>
       <button type="button" id="createPlanEntry" class="btn" onclick="criarPlanoProfissional()">Criar plano terapêutico</button>
-      <button type="button" id="addExerciseEntry" class="btn btn-outline" onclick="escolherPlanoParaExercicios()">Adicionar exercícios</button>
-      <p class="card-text-small" id="addExerciseEntryHint">Para acrescentar exercícios, selecione um plano existente.</p>
+      <p class="card-text-small">Depois de criar o plano, será possível adicionar exercícios manualmente ou pela ExerciseBank.</p>
     </div>
   </div>
 
@@ -539,7 +538,7 @@
         <div id="itensPlanoProf" hidden></div>
         <button type="button" class="btn btn-outline" onclick="abrirOpcoesExercicios()">+ Adicionar exercícios</button>
         <button type="submit" class="btn">Salvar plano</button>
-        <button type="button" class="btn btn-outline" onclick="navegarPara('planos-prof')">Voltar</button>
+        <button type="button" class="btn btn-outline" onclick="voltarDoFormularioPlano()">Voltar</button>
         <button type="button" class="btn btn-outline" onclick="cancelarFormularioPlano()">Cancelar edição</button>
       </form>
     </div>
