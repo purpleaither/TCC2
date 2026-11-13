@@ -922,3 +922,10 @@ body {
 #page-editor-prof .exercise-summary-item .card-text-small{font-size:13px;line-height:1.5;margin:6px 0}
 #page-editor-prof .exercise-summary-item .demo-acoes{margin:8px 0 0}
 #page-editor-prof #itensPlanoProf[hidden]{display:none}
+
+/* Ações principais após a lista de planos e escolha do plano de destino. */
+#planMainActions .btn{display:block;width:100%;min-height:46px;margin:10px 0}
+#planMainActions .btn:disabled{opacity:.5;cursor:not-allowed}
+#planMainActions #addExerciseEntryHint{font-size:13px;line-height:1.5;margin-top:8px}
+#page-exercise-target-prof .card{margin-bottom:12px}
+#page-exercise-target-prof .card .btn{margin-top:12px}
