@@ -477,10 +477,8 @@
     <h1 class="page-title">Biblioteca ExerciseBank</h1>
     <button type="button" class="btn btn-outline" onclick="navegarPara('exercise-source-prof')">Voltar</button>
         <div class="card" id="exercisebankPanel">
-          <h3 class="card-title">Exercícios com vídeo — Sandbox ExerciseBank</h3>
-          <p class="card-text-small">Catálogo dos 50 exercícios com vídeo liberado no Sandbox. O fisioterapeuta seleciona e configura cada exercício.</p>
           <div class="form-group">
-            <label class="form-label" for="exercisebankQuery">Pesquisar nos exercícios liberados</label>
+            <label class="form-label" for="exercisebankQuery">Pesquisar exercício</label>
             <input id="exercisebankQuery" class="form-input" type="search" maxlength="90" placeholder="Nome do exercício ou músculo">
           </div>
           <div class="form-group">
@@ -499,13 +497,10 @@
             </select>
           </div>
           <div class="form-remember">
-            <label><input type="checkbox" id="exercisebankHomeOnly" checked> Apenas exercícios sem aparelhos de academia (peso corporal ou material simples)</label>
+            <label><input type="checkbox" id="exercisebankHomeOnly" checked> Exercícios domiciliares</label>
           </div>
-          <button type="button" id="exercisebankRefresh" class="btn btn-outline">Carregar os 50 exercícios</button>
-          <button type="button" id="exercisebankAudit" class="btn btn-outline">Verificar os vídeos dos 50 exercícios</button>
-          <p id="exercisebankAuditStatus" class="card-text-small" role="status" aria-live="polite">A verificação consulta os links liberados pela ExerciseBank e não reproduz os vídeos automaticamente.</p>
-          <div id="exercisebankAuditResults"></div>
-          <p id="exercisebankStatus" class="card-text-small" role="status" aria-live="polite">A lista será consultada no Sandbox, sem mostrar exercícios com vídeo bloqueado.</p>
+          <button type="button" id="exercisebankRefresh" class="btn btn-outline">Atualizar exercícios</button>
+          <p id="exercisebankStatus" class="card-text-small" role="status" aria-live="polite"></p>
           <div id="exercisebankResults"></div>
         </div>
 
