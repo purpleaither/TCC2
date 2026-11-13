@@ -935,3 +935,8 @@ body {
 #page-planos-prof .plan-card-add-actions{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 0;padding-top:12px;border-top:1px solid #dfe7e2}
 #page-planos-prof .plan-card-add-actions .btn{flex:1 1 180px;min-height:46px;width:auto;margin:0}
 @media(max-width:390px){#page-planos-prof .plan-card-add-actions{flex-direction:column}#page-planos-prof .plan-card-add-actions .btn{flex:auto;width:100%}}
+
+/* Leitura ampliada dos exercícios na primeira tela de gerenciamento de planos. */
+#page-planos-prof #listaPlanosProf .demo-detalhe{font-size:16px;line-height:1.6;padding:14px;margin:12px 0}
+#page-planos-prof #listaPlanosProf .plan-exercise-name{display:block;color:#003366;font-size:18px;line-height:1.4;font-weight:750;overflow-wrap:anywhere;margin-bottom:6px}
+#page-planos-prof #listaPlanosProf .plan-exercise-prescription{font-size:16px;line-height:1.6;margin:0;color:#253c30;overflow-wrap:anywhere}
