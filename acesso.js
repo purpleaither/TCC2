@@ -886,7 +886,7 @@ async function loadSample(force=false){
   if(!isProfessional()||loadingSample)return;
   if(sampleList&&!force){renderSample();return;}
   loadingSample=true;$("exercisebankRefresh").disabled=true;
-  text("exercisebankStatus","Carregando os vídeos liberados no Sandbox...");
+  text("exercisebankStatus","Carregando exercícios...");
   try{
     sampleList=await ebCall();
     renderSample();
@@ -993,19 +993,12 @@ function renderSample(){
       .join(" ").toLocaleLowerCase("pt-BR").includes(q);
   });
   const root=$("exercisebankResults");root.replaceChildren();
-  text("exercisebankStatus",filtered.length+" de "+all.length+
-    " exercícios exibidos · "+sampleList.sampleCount+
-    " IDs na amostra."+(home?" Filtro domiciliar ativo.":"")+
-    (region!=="todas"?" Região: "+BODY_REGION_LABELS[region]+".":""));
+  text("exercisebankStatus",filtered.length+" exercício(s)");
   if(!filtered.length)root.append(el("p","Nenhum exercício encontrado. Altere a região, o termo de busca ou o filtro domiciliar.","card-text-small"));
   filtered.forEach(x=>{
     const card=el("div",undefined,"demo-exercicio-item bank-result");
     const translated=translateExerciseName(x.name);
     card.append(el("h4",translated,"card-title"));
-    if(translated!==x.name)card.append(el("p","Nome original: "+x.name,"card-text-small"));
-    card.append(el("p","Região: "+regionText(x),"card-text-small"));
-    if(x.description)card.append(el("p","Descrição original (inglês): "+x.description,"card-text-small"));
-    card.append(el("p","Equipamentos: "+(x.equipment?.length?x.equipment.map(equipmentLabel).join(", "):"Não informado"),"card-text-small"));
     const row=el("div",undefined,"demo-acoes");
     const preview=el("button","Ver vídeo","btn btn-outline");
     const pick=el("button","Selecionar exercício","btn");
@@ -1020,68 +1013,6 @@ function renderSample(){
     });
     row.append(preview,pick);card.append(row,media);root.append(card);
   });
-}
-let sandboxAudit=null;
-let auditRunning=false;
-async function auditSandboxVideos(){
-  if(!isProfessional()||auditRunning)return;
-  auditRunning=true;
-  const button=$("exercisebankAudit");
-  button.disabled=true;
-  text("exercisebankAuditStatus","Verificando a disponibilidade dos vídeos da amostra Sandbox...");
-  try{
-    const result=await ebCall({
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({action:"audit"})
-    });
-    sandboxAudit=result;
-    const rows=Array.isArray(result.rows)?result.rows:[];
-    const totals=result.totals||{};
-    const table=el("table",undefined);
-    table.style.width="100%";
-    const header=el("thead");
-    const headRow=el("tr");
-    for(const name of ["Exercício","Equipamentos","Vídeo","Domiciliar"]){
-      headRow.append(el("th",name));
-    }
-    header.append(headRow);
-    const body=el("tbody");
-    for(const item of rows){
-      const tr=el("tr");
-      const status=item.videoStatus==="liberado"?"Liberado":item.videoStatus==="bloqueado"?"Bloqueado":"Sem link";
-      for(const value of [
-        translateExerciseName(item.name)+" ("+item.id+")",
-        Array.isArray(item.equipment)&&item.equipment.length?item.equipment.map(equipmentLabel).join(", "):"Não informado",
-        status,
-        item.home?"Sim":"Não"
-      ]){
-        const td=el("td",String(value));
-        td.style.padding="8px";
-        tr.append(td);
-      }
-      body.append(tr);
-    }
-    table.append(header,body);
-    const wrap=el("div");
-    wrap.style.overflowX="auto";
-    wrap.append(table);
-    $("exercisebankAuditResults").replaceChildren(wrap);
-    text("exercisebankAuditStatus",
-      "Amostra: "+(totals.sample??rows.length)+
-      " · Vídeos liberados: "+(totals.liberated??0)+
-      " · Bloqueados: "+(totals.blocked??0)+
-      " · Sem link: "+(totals.noLink??0)+
-      " · Domiciliares com link: "+(totals.homeWithVideo??0)+
-      ". Verificação de URLs, não da reprodução efetiva.");
-  }catch(e){
-    sandboxAudit=null;
-    $("exercisebankAuditResults").replaceChildren();
-    text("exercisebankAuditStatus",e.message);
-  }finally{
-    auditRunning=false;
-    button.disabled=false;
-  }
 }
 async function loadExerciseMedia(id,target,button,source="ExerciseBank",autoPlay=false){
   if(button)button.disabled=true;
@@ -1125,7 +1056,6 @@ async function loadExerciseMedia(id,target,button,source="ExerciseBank",autoPlay
 async function init(){
   menu();navigate("login");
   $("exercisebankRefresh")?.addEventListener("click",()=>loadSample(true));
-  $("exercisebankAudit")?.addEventListener("click",auditSandboxVideos);
   $("exercisebankQuery")?.addEventListener("input",renderSample);
   $("exercisebankHomeOnly")?.addEventListener("change",renderSample);
   $("exercisebankRegion")?.addEventListener("change",renderSample);
