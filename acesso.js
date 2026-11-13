@@ -597,24 +597,127 @@ async function loadSample(force=false){
     text("exercisebankStatus",e.message);
   }finally{loadingSample=false;$("exercisebankRefresh").disabled=false;}
 }
+const BODY_REGION_LABELS={
+  ombros:"Ombros",bracos:"Braços e antebraços",peito:"Peito",costas:"Costas",
+  abdomen:"Abdômen e tronco",quadril:"Quadril e glúteos",coxas:"Coxas",
+  pernas:"Panturrilhas e pernas","nao-classificados":"Não classificados"
+};
+const MUSCLE_TO_REGION={
+  shoulders:"ombros",shoulder:"ombros",delts:"ombros",deltoids:"ombros",
+  biceps:"bracos",triceps:"bracos",forearms:"bracos",forearm:"bracos",brachialis:"bracos",
+  chest:"peito",pecs:"peito",pectorals:"peito",
+  back:"costas",lats:"costas",traps:"costas",trapezius:"costas",rhomboids:"costas",erectors:"costas",lower_back:"costas",
+  abs:"abdomen",abdominals:"abdomen",core:"abdomen",obliques:"abdomen",transverse_abs:"abdomen",
+  glutes:"quadril",gluteals:"quadril",hip_flexors:"quadril",hip_adductors:"quadril",adductors:"quadril",abductors:"quadril",hips:"quadril",
+  quads:"coxas",quadriceps:"coxas",hamstrings:"coxas",thighs:"coxas",
+  calves:"pernas",calf:"pernas",gastrocnemius:"pernas",soleus:"pernas",shins:"pernas",tibialis:"pernas"
+};
+const EXERCISE_PHRASES_PT={
+  "push up":"Flexão de braços","push ups":"Flexões de braços","push-up":"Flexão de braços",
+  "pull up":"Barra fixa","pull ups":"Barras fixas","pull-up":"Barra fixa",
+  "squat":"Agachamento","squats":"Agachamentos","bodyweight squat":"Agachamento com peso corporal",
+  "plank":"Prancha","side plank":"Prancha lateral","reverse plank":"Prancha invertida",
+  "glute bridge":"Ponte de glúteos","hip bridge":"Ponte de quadril","bridge":"Ponte",
+  "dead bug":"Inseto morto (estabilização abdominal)","bird dog":"Extensão alternada de braço e perna em quatro apoios",
+  "lunge":"Avanço","lunges":"Avanços","reverse lunge":"Avanço para trás",
+  "calf raise":"Elevação de panturrilhas","crunch":"Abdominal curto",
+  "sit up":"Abdominal","sit-up":"Abdominal",
+  "mountain climber":"Escalador","jumping jack":"Polichinelo",
+  "leg raise":"Elevação de pernas","lateral raise":"Elevação lateral",
+  "hip thrust":"Elevação de quadril","wall sit":"Agachamento isométrico na parede"
+};
+const EXERCISE_TOKENS_PT={
+  shoulder:"ombro",shoulders:"ombros",chest:"peito",back:"costas",lower:"inferior",
+  upper:"superior",middle:"médio",arm:"braço",arms:"braços",leg:"perna",legs:"pernas",
+  knee:"joelho",knees:"joelhos",hip:"quadril",hips:"quadril",glute:"glúteo",
+  glutes:"glúteos",calf:"panturrilha",calves:"panturrilhas",abs:"abdômen",
+  abdominal:"abdominal",biceps:"bíceps",triceps:"tríceps",hamstring:"posterior de coxa",
+  hamstrings:"posteriores de coxa",quadriceps:"quadríceps",quad:"quadríceps",
+  squat:"agachamento",squats:"agachamentos",lunge:"avanço",lunges:"avanços",
+  plank:"prancha",bridge:"ponte",crunch:"abdominal curto",stretch:"alongamento",
+  stretching:"alongamento",raise:"elevação",raises:"elevações",lift:"elevação",
+  extension:"extensão",extensions:"extensões",flexion:"flexão",rotation:"rotação",
+  lateral:"lateral",front:"frontal",rear:"posterior",reverse:"inverso",
+  seated:"sentado",standing:"em pé",lying:"deitado",supine:"em decúbito dorsal",
+  prone:"em decúbito ventral",incline:"inclinado",decline:"declinado",single:"único",
+  alternating:"alternado",alternate:"alternado",band:"faixa elástica",resistance:"resistência",
+  bodyweight:"peso corporal",weighted:"com carga",dumbbell:"halter",barbell:"barra",
+  cable:"cabo",machine:"máquina",bench:"banco",wall:"parede",floor:"solo",
+  hold:"sustentação",press:"empurrada",row:"remada",curl:"rosca",fly:"crucifixo",
+  twist:"torção",walk:"caminhada",walking:"caminhando",step:"passo",up:"para cima",
+  down:"para baixo",side:"lateral",kick:"chute",kickback:"extensão para trás",
+  crunches:"abdominais curtos",isometric:"isométrico",static:"estático",
+  dynamic:"dinâmico",one:"um",two:"dois",hand:"mão",hands:"mãos",
+  foot:"pé",feet:"pés",elbow:"cotovelo",elbows:"cotovelos",rotation:"rotação"
+};
+const EQUIPMENT_PT={
+  bodyweight:"Peso corporal",mat:"Colchonete",chair:"Cadeira",
+  "exercise-mat":"Colchonete","yoga-mat":"Colchonete",
+  "resistance-band":"Faixa elástica","elastic-band":"Faixa elástica",
+  dumbbell:"Halter",barbell:"Barra",bench:"Banco",cable:"Cabo",
+  machine:"Máquina",kettlebell:"Kettlebell",none:"Sem equipamentos"
+};
+function translateExerciseName(name){
+  const original=String(name||"").trim();
+  const simplified=original.toLowerCase().replace(/[_–—]/g," ").replace(/\s+/g," ").trim();
+  if(EXERCISE_PHRASES_PT[simplified])return EXERCISE_PHRASES_PT[simplified];
+  const words=simplified.match(/[a-z]+(?:-[a-z]+)?|[0-9]+|[^a-z0-9\s]+/g)||[];
+  if(!words.length)return original;
+  const converted=words.map(word=>EXERCISE_TOKENS_PT[word]||word);
+  const known=words.filter(word=>EXERCISE_TOKENS_PT[word]).length;
+  if(!known)return original;
+  const textPt=converted.join(" ").replace(/\s+([,.)])/g,"$1").replace(/([(])\s+/g,"$1");
+  return textPt.charAt(0).toLocaleUpperCase("pt-BR")+textPt.slice(1);
+}
+function exerciseRegions(ex){
+  const primary=Array.isArray(ex.primaryMuscles)?ex.primaryMuscles:[];
+  const secondary=Array.isArray(ex.secondaryMuscles)?ex.secondaryMuscles:[];
+  const resolve=part=>MUSCLE_TO_REGION[String(part).toLowerCase().replace(/[-\s]/g,"_")];
+  const regions=[...new Set(primary.map(resolve).filter(Boolean))];
+  const secondaryRegions=[...new Set(secondary.map(resolve).filter(Boolean))];
+  return regions.length?regions:secondaryRegions.length?secondaryRegions:["nao-classificados"];
+}
+function equipmentLabel(value){return EQUIPMENT_PT[String(value||"").toLowerCase()]||String(value);}
+function regionText(ex){return exerciseRegions(ex).map(key=>BODY_REGION_LABELS[key]).join(", ");}
 function renderSample(){
   if(!isProfessional()||!sampleList)return;
-  const q=$("exercisebankQuery").value.trim().toLowerCase(),home=$("exercisebankHomeOnly").checked;
+  const q=$("exercisebankQuery").value.trim().toLocaleLowerCase("pt-BR");
+  const home=$("exercisebankHomeOnly").checked;
+  const region=$("exercisebankRegion").value;
   const all=Array.isArray(sampleList.items)?sampleList.items:[];
-  const filtered=all.filter(x=>(!home||x.home===true)&&(!q||[x.name,x.description,...x.equipment,...x.primaryMuscles].join(" ").toLowerCase().includes(q)));
+  const filtered=all.filter(x=>{
+    if(home&&x.home!==true)return false;
+    if(region!=="todas"&&!exerciseRegions(x).includes(region))return false;
+    if(!q)return true;
+    return [x.name,translateExerciseName(x.name),x.description,
+      ...(x.equipment||[]),...(x.primaryMuscles||[]),...(x.secondaryMuscles||[]),
+      ...exerciseRegions(x).map(key=>BODY_REGION_LABELS[key])]
+      .join(" ").toLocaleLowerCase("pt-BR").includes(q);
+  });
   const root=$("exercisebankResults");root.replaceChildren();
-  text("exercisebankStatus",filtered.length+" exibidos de "+all.length+" exercícios com vídeo liberado; "+sampleList.sampleCount+" IDs na amostra."+(home?" Filtro domiciliar ativo.":""));
-  if(!filtered.length)root.append(el("p","Nenhum exercício encontrado com os filtros atuais.","card-text-small"));
+  text("exercisebankStatus",filtered.length+" de "+all.length+
+    " exercícios exibidos · "+sampleList.sampleCount+
+    " IDs na amostra."+(home?" Filtro domiciliar ativo.":"")+
+    (region!=="todas"?" Região: "+BODY_REGION_LABELS[region]+".":""));
+  if(!filtered.length)root.append(el("p","Nenhum exercício encontrado. Altere a região, o termo de busca ou o filtro domiciliar.","card-text-small"));
   filtered.forEach(x=>{
     const card=el("div",undefined,"demo-exercicio-item bank-result");
-    card.append(el("h4",x.name,"card-title"));
-    if(x.description)card.append(el("p",x.description,"card-text-small"));
-    card.append(el("p","Equipamentos: "+(x.equipment.length?x.equipment.join(", "):"Nenhum"),"card-text-small"));
-    const row=el("div",undefined,"demo-acoes"),preview=el("button","Ver vídeo","btn btn-outline"),pick=el("button","Selecionar exercício","btn"),media=el("div",undefined,"bank-media");
+    const translated=translateExerciseName(x.name);
+    card.append(el("h4",translated,"card-title"));
+    if(translated!==x.name)card.append(el("p","Nome original: "+x.name,"card-text-small"));
+    card.append(el("p","Região: "+regionText(x),"card-text-small"));
+    if(x.description)card.append(el("p","Descrição original (inglês): "+x.description,"card-text-small"));
+    card.append(el("p","Equipamentos: "+(x.equipment?.length?x.equipment.map(equipmentLabel).join(", "):"Não informado"),"card-text-small"));
+    const row=el("div",undefined,"demo-acoes");
+    const preview=el("button","Ver vídeo","btn btn-outline");
+    const pick=el("button","Selecionar exercício","btn");
+    const media=el("div",undefined,"bank-media");
     preview.type=pick.type="button";
     preview.addEventListener("click",()=>loadExerciseMedia(x.id,media,preview,"ExerciseBank"));
     pick.addEventListener("click",()=>{
-      addExercise({exercise_name:x.name,exercise_source:"ExerciseBank",external_id:x.id,instructions:x.description||"",series:2,repetitions:"10",duration:"",frequency:"3 vezes por semana"});
+      addExercise({exercise_name:translated,exercise_source:"ExerciseBank",
+        external_id:x.id,instructions:x.description||"",series:2,
+        repetitions:"10",duration:"",frequency:"3 vezes por semana"});
       message("Exercício adicionado. Configure os parâmetros e salve o plano.");
       updatePlanEditorSummary();
       navigate("editor-prof");
@@ -629,7 +732,6 @@ async function auditSandboxVideos(){
   auditRunning=true;
   const button=$("exercisebankAudit");
   button.disabled=true;
-  $("exercisebankExport").hidden=true;
   text("exercisebankAuditStatus","Verificando a disponibilidade dos vídeos da amostra Sandbox...");
   try{
     const result=await ebCall({
@@ -653,8 +755,8 @@ async function auditSandboxVideos(){
       const tr=el("tr");
       const status=item.videoStatus==="liberado"?"Liberado":item.videoStatus==="bloqueado"?"Bloqueado":"Sem link";
       for(const value of [
-        item.name+" ("+item.id+")",
-        Array.isArray(item.equipment)&&item.equipment.length?item.equipment.join(", "):"Não informado",
+        translateExerciseName(item.name)+" ("+item.id+")",
+        Array.isArray(item.equipment)&&item.equipment.length?item.equipment.map(equipmentLabel).join(", "):"Não informado",
         status,
         item.home?"Sim":"Não"
       ]){
@@ -676,7 +778,6 @@ async function auditSandboxVideos(){
       " · Sem link: "+(totals.noLink??0)+
       " · Domiciliares com link: "+(totals.homeWithVideo??0)+
       ". Verificação de URLs, não da reprodução efetiva.");
-    $("exercisebankExport").hidden=!rows.length;
   }catch(e){
     sandboxAudit=null;
     $("exercisebankAuditResults").replaceChildren();
@@ -685,25 +786,6 @@ async function auditSandboxVideos(){
     auditRunning=false;
     button.disabled=false;
   }
-}
-function exportSandboxAudit(){
-  const rows=Array.isArray(sandboxAudit?.rows)?sandboxAudit.rows:[];
-  if(!rows.length)return;
-  const encode=value=>'"'+String(value??"").replace(/"/g,'""')+'"';
-  const data=[
-    ["ID","Nome","Equipamentos","Vídeo","Domiciliar"],
-    ...rows.map(item=>[
-      item.id,item.name,Array.isArray(item.equipment)?item.equipment.join("; "):"",
-      item.videoStatus,item.home?"Sim":"Não"
-    ])
-  ];
-  const csv="\uFEFF"+data.map(row=>row.map(encode).join(",")).join("\r\n");
-  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
-  const url=URL.createObjectURL(blob);
-  const link=document.createElement("a");
-  link.href=url;link.download="exercisebank_sandbox_verificacao.csv";
-  document.body.append(link);link.click();link.remove();
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 async function loadExerciseMedia(id,target,button,source="ExerciseBank"){
   button.disabled=true;target.replaceChildren(el("p","Carregando demonstração...","card-text-small"));
@@ -730,9 +812,9 @@ async function init(){
   menu();navigate("login");
   $("exercisebankRefresh")?.addEventListener("click",()=>loadSample(true));
   $("exercisebankAudit")?.addEventListener("click",auditSandboxVideos);
-  $("exercisebankExport")?.addEventListener("click",exportSandboxAudit);
   $("exercisebankQuery")?.addEventListener("input",renderSample);
   $("exercisebankHomeOnly")?.addEventListener("change",renderSample);
+  $("exercisebankRegion")?.addEventListener("change",renderSample);
   try{
     const response=await fetch("/api/database-config",{cache:"no-store"});
     const config=await response.json();
