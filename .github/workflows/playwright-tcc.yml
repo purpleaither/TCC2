@@ -1,17 +1,22 @@
-name: Verificação Técnica e Funcional do MVP — CI
-run-name: Verificação Técnica e Funcional do MVP — ${{ github.run_number }}
+name: Verificação Técnica e Funcional do MVP - CI
+run-name: Verificação Técnica e Funcional do MVP - ${{ github.run_number }}
 on:
   push:
-    branches: [testes-playwright-tcc-2026]
-    paths: ['.github/workflows/playwright-tcc.yml']
+    branches: [main]
+    paths: ['.github/workflows/playwright-tcc.yml', 'tests/*.cjs']
   workflow_dispatch:
+concurrency:
+  group: verificacao-mvp
+  cancel-in-progress: false
 jobs:
   playwright:
-    name: Verificação automatizada — Playwright
+    name: Verificação automatizada - Playwright
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.58.2-noble
-    timeout-minutes: 12
+    timeout-minutes: 20
+    permissions:
+      contents: write
     steps:
       - name: Obtenção do código-fonte
         uses: actions/checkout@v4
@@ -21,41 +26,41 @@ jobs:
           node-version: '22'
       - name: Preparação do ambiente de testes
         run: npm install --no-save playwright@1.58.2
-      - if: false
-        name: CI-01 — Disponibilidade e responsividade
+      - if: always() && !cancelled()
+        name: CI-01 - Disponibilidade e responsividade
         run: node tests/playwright-smoke.cjs
-      - if: false
-        name: CI-02 — Autenticação e controle de acesso na interface
+      - if: always() && !cancelled()
+        name: CI-02 - Autenticação e controle de acesso na interface
         env:
           TEST_FISIO_EMAIL: ${{ secrets.TEST_FISIO_EMAIL }}
           TEST_FISIO_PASSWORD: ${{ secrets.TEST_FISIO_PASSWORD }}
           TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
           TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
         run: node tests/playwright-auth.cjs
-      - if: false
-        name: CI-04 — Reteste isolado CT22
+      - if: always() && !cancelled()
+        name: CI-03 e CI-04 - Planos, persistência, edição e biblioteca
         env:
           TEST_FISIO_EMAIL: ${{ secrets.TEST_FISIO_EMAIL }}
           TEST_FISIO_PASSWORD: ${{ secrets.TEST_FISIO_PASSWORD }}
           TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
           TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
-          CT22_ONLY: '1'
         run: node tests/playwright-persistence.cjs
-      - if: false
-        name: CI-05 — Registro de sintomas e integração meteorológica
+      - if: always() && !cancelled()
+        name: CI-05 - Registro de sintomas e integração meteorológica
         env:
           TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
           TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
         run: node tests/playwright-sintomas-clima.cjs
-      - if: false
-        name: CI-06 — Conclusão e histórico de exercícios
+      - if: always() && !cancelled()
+        name: CI-06 - Conclusão e histórico de exercícios
         env:
           TEST_FISIO_EMAIL: ${{ secrets.TEST_FISIO_EMAIL }}
           TEST_FISIO_PASSWORD: ${{ secrets.TEST_FISIO_PASSWORD }}
           TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
           TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
         run: node tests/playwright-treino-historico.cjs
-      - name: CI-07 — Segurança e isolamento de dados
+      - if: always() && !cancelled()
+        name: CI-07 - Segurança e isolamento de dados
         env:
           TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
           TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
@@ -68,12 +73,27 @@ jobs:
         with:
           name: evidencias-verificacao-tecnica-mvp
           path: test-results/
-          retention-days: 7
+          retention-days: 90
 
-# Reteste CT22: busca explícita e diagnóstico de rede.
-
-# Reteste CI-07: diagnóstico individual de autenticação.
-
-# Reteste CI-07 após cadastro do segundo perfil.
-
-# CI-07: requisições REST autenticadas.
+      - name: Salvar resumo dos resultados no repositório
+        if: always() && !cancelled()
+        run: |
+          mkdir -p evidencias
+          node <<'NODE'
+          const fs = require('node:fs');
+          const dir = 'test-results';
+          const files = fs.existsSync(dir) ? fs.readdirSync(dir).filter(x => x.endsWith('.json')) : [];
+          const reports = files.map(file => {
+            const data = JSON.parse(fs.readFileSync(dir + '/' + file, 'utf8'));
+            const rows = Array.isArray(data) ? data : data.report || [];
+            return {arquivo: file, casos: rows.map(x => ({id:x.id,status:x.status})), cenarios: (data.scenarios || []).map(x => ({nome:x.name || x.role, aprovado: x.ok, verificacoes: (x.checks || []).map(c => ({aprovado:c.ok}))})), isolamento: (data.checks || []).map(x => ({tabela:x.table,direcao:x.direction,http:x.status,aprovado:x.passed}))};
+          });
+          fs.writeFileSync('evidencias/execucao-' + process.env.GITHUB_RUN_ID + '-' + process.env.GITHUB_RUN_ATTEMPT + '.json', JSON.stringify({execucao:process.env.GITHUB_RUN_ID,tentativa:process.env.GITHUB_RUN_ATTEMPT,commit:process.env.GITHUB_SHA,resultado:process.env.RESULTADO,relatorios:reports},null,2)+'\n');
+          NODE
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add evidencias/
+          git commit -m "Salva resumo da verificação técnica"
+          git push origin HEAD:main
+        env:
+          RESULTADO: ${{ job.status }}
