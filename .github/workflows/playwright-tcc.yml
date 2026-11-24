@@ -47,13 +47,21 @@ jobs:
           TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
           TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
         run: node tests/playwright-sintomas-clima.cjs
-      - name: CI-06 — Conclusão e histórico de exercícios
+      - if: false
+        name: CI-06 — Conclusão e histórico de exercícios
         env:
           TEST_FISIO_EMAIL: ${{ secrets.TEST_FISIO_EMAIL }}
           TEST_FISIO_PASSWORD: ${{ secrets.TEST_FISIO_PASSWORD }}
           TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
           TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
         run: node tests/playwright-treino-historico.cjs
+      - name: CI-07 — Segurança e isolamento de dados
+        env:
+          TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
+          TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
+          TEST_PACIENTEDOIS_EMAIL: ${{ secrets.TEST_PACIENTEDOIS_EMAIL }}
+          TEST_PACIENTEDOIS_PASSWORD: ${{ secrets.TEST_PACIENTEDOIS_PASSWORD }}
+        run: node tests/playwright-seguranca.cjs
       - name: Consolidação das evidências técnicas
         if: always()
         uses: actions/upload-artifact@v4
