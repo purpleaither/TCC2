@@ -32,7 +32,7 @@ jobs:
           TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
           TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
         run: node tests/playwright-auth.cjs
-      - if: always()
+      - if: false
         name: CI-04 — Reteste isolado CT22
         env:
           TEST_FISIO_EMAIL: ${{ secrets.TEST_FISIO_EMAIL }}
@@ -41,6 +41,11 @@ jobs:
           TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
           CT22_ONLY: '1'
         run: node tests/playwright-persistence.cjs
+      - name: CI-05 — Registro de sintomas e integração meteorológica
+        env:
+          TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
+          TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
+        run: node tests/playwright-sintomas-clima.cjs
       - name: Consolidação das evidências técnicas
         if: always()
         uses: actions/upload-artifact@v4
