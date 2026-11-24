@@ -1,10 +1,12 @@
-name: Playwright TCC smoke
+name: Verificação Técnica e Funcional do MVP — CI
+run-name: Verificação Técnica e Funcional do MVP — ${{ github.run_number }}
 on:
   push:
     branches: [testes-playwright-tcc-2026]
   workflow_dispatch:
 jobs:
   playwright:
+    name: Verificação automatizada — Playwright
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.58.2-noble
@@ -14,25 +16,25 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Install Playwright test package
+      - name: Preparação do ambiente de testes
         run: npm install --no-save playwright@1.58.2
-      - name: Execute public smoke tests
+      - name: CI-01 — Disponibilidade e responsividade
         run: node tests/playwright-smoke.cjs
-      - name: Execute authenticated role tests
+      - name: CI-02 — Autenticação e controle de acesso na interface
         env:
           TEST_FISIO_EMAIL: ${{ secrets.TEST_FISIO_EMAIL }}
           TEST_FISIO_PASSWORD: ${{ secrets.TEST_FISIO_PASSWORD }}
           TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
           TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
         run: node tests/playwright-auth.cjs
-      - name: Execute fictitious plan persistence tests
+      - name: CI-03/04 — Planos terapêuticos, persistência, edição e biblioteca
         env:
           TEST_FISIO_EMAIL: ${{ secrets.TEST_FISIO_EMAIL }}
           TEST_FISIO_PASSWORD: ${{ secrets.TEST_FISIO_PASSWORD }}
           TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
           TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
         run: node tests/playwright-persistence.cjs
-      - name: Archive test evidence
+      - name: Consolidação das evidências técnicas
         if: always()
         uses: actions/upload-artifact@v4
         with:
