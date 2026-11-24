@@ -25,6 +25,13 @@ jobs:
           TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
           TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
         run: node tests/playwright-auth.cjs
+      - name: Execute fictitious plan persistence tests
+        env:
+          TEST_FISIO_EMAIL: ${{ secrets.TEST_FISIO_EMAIL }}
+          TEST_FISIO_PASSWORD: ${{ secrets.TEST_FISIO_PASSWORD }}
+          TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
+          TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
+        run: node tests/playwright-persistence.cjs
       - name: Archive test evidence
         if: always()
         uses: actions/upload-artifact@v4
