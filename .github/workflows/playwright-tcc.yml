@@ -48,3 +48,5 @@ jobs:
           name: evidencias-verificacao-tecnica-mvp
           path: test-results/
           retention-days: 7
+
+# Reteste CT22: busca explícita e diagnóstico de rede.
