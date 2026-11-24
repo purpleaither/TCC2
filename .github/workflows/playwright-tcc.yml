@@ -6,16 +6,16 @@ on:
 jobs:
   playwright:
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.58.2-noble
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Install Playwright
-        run: |
-          npm install --no-save playwright@1.58.2
-          npx playwright install --with-deps chromium
+      - name: Install Playwright test package
+        run: npm install --no-save playwright@1.58.2
       - name: Execute public smoke tests
         run: node tests/playwright-smoke.cjs
       - name: Archive test evidence
