@@ -12,22 +12,26 @@ jobs:
       image: mcr.microsoft.com/playwright:v1.58.2-noble
     timeout-minutes: 12
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Obtenção do código-fonte
+        uses: actions/checkout@v4
+      - name: Configuração do Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '22'
       - name: Preparação do ambiente de testes
         run: npm install --no-save playwright@1.58.2
       - name: CI-01 — Disponibilidade e responsividade
         run: node tests/playwright-smoke.cjs
-      - name: CI-02 — Autenticação e controle de acesso na interface
+      - if: always()
+        name: CI-02 — Autenticação e controle de acesso na interface
         env:
           TEST_FISIO_EMAIL: ${{ secrets.TEST_FISIO_EMAIL }}
           TEST_FISIO_PASSWORD: ${{ secrets.TEST_FISIO_PASSWORD }}
           TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
           TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
         run: node tests/playwright-auth.cjs
-      - name: CI-03/04 — Planos terapêuticos, persistência, edição e biblioteca
+      - if: always()
+        name: CI-03/04 — Planos terapêuticos, persistência, edição e biblioteca
         env:
           TEST_FISIO_EMAIL: ${{ secrets.TEST_FISIO_EMAIL }}
           TEST_FISIO_PASSWORD: ${{ secrets.TEST_FISIO_PASSWORD }}
@@ -38,6 +42,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-tcc-evidencias
+          name: evidencias-verificacao-tecnica-mvp
           path: test-results/
           retention-days: 7
