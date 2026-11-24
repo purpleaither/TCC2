@@ -15,7 +15,7 @@ Os testes verificam o funcionamento da aplicação publicada na Vercel usando Pl
 
 Na aba Actions, selecione Verificação Técnica e Funcional do MVP e clique em Run workflow na branch main. O ambiente usa Node.js 22 e Playwright 1.58.2.
 
-Configure os secrets TEST_FISIO_EMAIL, TEST_FISIO_PASSWORD, TEST_PACIENTE_EMAIL, TEST_PACIENTE_PASSWORD, TEST_PACIENTEDOIS_EMAIL e TEST_PACIENTEDOIS_PASSWORD. Use somente contas fictícias. O primeiro paciente precisa estar vinculado ao fisioterapeuta de teste.
+As credenciais das contas fictícias já estão configuradas nos secrets do GitHub Actions. Não é necessário cadastrá-las novamente para executar os testes neste repositório. O primeiro paciente está vinculado ao fisioterapeuta de teste.
 
 Os scripts executam contra a aplicação publicada, não contra um servidor local. Alguns testes criam registros fictícios de sintomas, planos e treinos que permanecem no banco. O teste de persistência tenta excluir o plano que criou.
 
