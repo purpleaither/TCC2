@@ -71,3 +71,5 @@ jobs:
           retention-days: 7
 
 # Reteste CT22: busca explícita e diagnóstico de rede.
+
+# Reteste CI-07: diagnóstico individual de autenticação.
