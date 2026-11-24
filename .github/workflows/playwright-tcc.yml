@@ -1,0 +1,27 @@
+name: Playwright TCC smoke
+on:
+  push:
+    branches: [testes-playwright-tcc-2026]
+  workflow_dispatch:
+jobs:
+  playwright:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Execute public smoke tests
+        run: node tests/playwright-smoke.cjs
+      - name: Archive test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-tcc-evidencias
+          path: test-results/
+          retention-days: 7
