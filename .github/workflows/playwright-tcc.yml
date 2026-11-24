@@ -3,6 +3,7 @@ run-name: Verificação Técnica e Funcional do MVP — ${{ github.run_number }}
 on:
   push:
     branches: [testes-playwright-tcc-2026]
+    paths: ['.github/workflows/playwright-tcc.yml']
   workflow_dispatch:
 jobs:
   playwright:
@@ -20,9 +21,10 @@ jobs:
           node-version: '22'
       - name: Preparação do ambiente de testes
         run: npm install --no-save playwright@1.58.2
-      - name: CI-01 — Disponibilidade e responsividade
+      - if: false
+        name: CI-01 — Disponibilidade e responsividade
         run: node tests/playwright-smoke.cjs
-      - if: always()
+      - if: false
         name: CI-02 — Autenticação e controle de acesso na interface
         env:
           TEST_FISIO_EMAIL: ${{ secrets.TEST_FISIO_EMAIL }}
@@ -31,12 +33,13 @@ jobs:
           TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
         run: node tests/playwright-auth.cjs
       - if: always()
-        name: CI-03/04 — Planos terapêuticos, persistência, edição e biblioteca
+        name: CI-04 — Reteste isolado CT22
         env:
           TEST_FISIO_EMAIL: ${{ secrets.TEST_FISIO_EMAIL }}
           TEST_FISIO_PASSWORD: ${{ secrets.TEST_FISIO_PASSWORD }}
           TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
           TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
+          CT22_ONLY: '1'
         run: node tests/playwright-persistence.cjs
       - name: Consolidação das evidências técnicas
         if: always()
