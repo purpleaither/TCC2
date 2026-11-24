@@ -75,3 +75,5 @@ jobs:
 # Reteste CI-07: diagnóstico individual de autenticação.
 
 # Reteste CI-07 após cadastro do segundo perfil.
+
+# CI-07: requisições REST autenticadas.
