@@ -44,7 +44,6 @@ const roles = [
      check('Exercises screen accessible',await page.locator('#page-exercicios.active').count()===1);
    }
    check('No uncaught page errors',entry.errors.length===0,entry.errors.join(' | ').slice(0,500));
-   await page.screenshot({path:path.join(out,'authenticated-'+role.name+'.png'),fullPage:true});
    await page.evaluate(()=>window.realizarLogout());
    await page.locator('#page-login.active').waitFor({timeout:15000});
    check('Logout returns login screen',true);
