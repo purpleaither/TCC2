@@ -1,0 +1,162 @@
+{
+  "CI-01": [
+    {
+      "id": "desktop",
+      "estado": "aprovado"
+    },
+    {
+      "id": "mobile",
+      "estado": "aprovado"
+    }
+  ],
+  "CI-02": [
+    {
+      "id": "fisioterapeuta / Authenticated role dashboard",
+      "estado": "aprovado"
+    },
+    {
+      "id": "fisioterapeuta / Authorized menu is visible",
+      "estado": "aprovado"
+    },
+    {
+      "id": "fisioterapeuta / Other role menu hidden",
+      "estado": "aprovado"
+    },
+    {
+      "id": "fisioterapeuta / Unauthorized route redirected",
+      "estado": "aprovado"
+    },
+    {
+      "id": "fisioterapeuta / Authorized route accessible",
+      "estado": "aprovado"
+    },
+    {
+      "id": "fisioterapeuta / Patient selector linked",
+      "estado": "aprovado"
+    },
+    {
+      "id": "fisioterapeuta / No uncaught page errors",
+      "estado": "aprovado"
+    },
+    {
+      "id": "fisioterapeuta / Logout returns login screen",
+      "estado": "aprovado"
+    },
+    {
+      "id": "fisioterapeuta / Sessão encerrada após recarregar",
+      "estado": "aprovado"
+    },
+    {
+      "id": "fisioterapeuta / CT52, preferências preservadas após sair",
+      "estado": "aprovado"
+    },
+    {
+      "id": "fisioterapeuta / Sessão Supabase removida do armazenamento local",
+      "estado": "aprovado"
+    },
+    {
+      "id": "paciente / Authenticated role dashboard",
+      "estado": "aprovado"
+    },
+    {
+      "id": "paciente / Authorized menu is visible",
+      "estado": "aprovado"
+    },
+    {
+      "id": "paciente / Other role menu hidden",
+      "estado": "aprovado"
+    },
+    {
+      "id": "paciente / Unauthorized route redirected",
+      "estado": "aprovado"
+    },
+    {
+      "id": "paciente / Authorized route accessible",
+      "estado": "aprovado"
+    },
+    {
+      "id": "paciente / Symptoms screen accessible",
+      "estado": "aprovado"
+    },
+    {
+      "id": "paciente / Exercises screen accessible",
+      "estado": "aprovado"
+    },
+    {
+      "id": "paciente / No uncaught page errors",
+      "estado": "aprovado"
+    },
+    {
+      "id": "paciente / Logout returns login screen",
+      "estado": "aprovado"
+    },
+    {
+      "id": "paciente / Sessão encerrada após recarregar",
+      "estado": "aprovado"
+    },
+    {
+      "id": "paciente / CT52, preferências preservadas após sair",
+      "estado": "aprovado"
+    },
+    {
+      "id": "paciente / Sessão Supabase removida do armazenamento local",
+      "estado": "aprovado"
+    }
+  ],
+  "CI-03/04": [
+    {
+      "id": "CT20-21",
+      "estado": "aprovado"
+    },
+    {
+      "id": "CT23",
+      "estado": "aprovado"
+    },
+    {
+      "id": "CT29",
+      "estado": "aprovado"
+    },
+    {
+      "id": "CT22",
+      "estado": "bloqueado"
+    },
+    {
+      "id": "CT24",
+      "estado": "aprovado"
+    },
+    {
+      "id": "CT30-cleanup",
+      "estado": "aprovado"
+    }
+  ],
+  "CI-05": [
+    {
+      "id": "CT25",
+      "estado": "aprovado"
+    },
+    {
+      "id": "CT26",
+      "estado": "aprovado"
+    }
+  ],
+  "CI-06": [
+    {
+      "id": "CT27",
+      "estado": "aprovado"
+    },
+    {
+      "id": "CT28",
+      "estado": "aprovado"
+    }
+  ],
+  "CI-07": [
+    {
+      "id": "CT31",
+      "estado": "aprovado"
+    },
+    {
+      "id": "CT32",
+      "estado": "aprovado"
+    }
+  ]
+}

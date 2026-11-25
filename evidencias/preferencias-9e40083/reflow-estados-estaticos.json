@@ -1,0 +1,50 @@
+[
+  {
+    "tela": "inicio",
+    "elementos": []
+  },
+  {
+    "tela": "sintomas",
+    "elementos": []
+  },
+  {
+    "tela": "historico",
+    "elementos": []
+  },
+  {
+    "tela": "orientacoes",
+    "elementos": []
+  },
+  {
+    "tela": "exercicios",
+    "elementos": []
+  },
+  {
+    "tela": "contatos",
+    "elementos": []
+  },
+  {
+    "tela": "profissional",
+    "elementos": []
+  },
+  {
+    "tela": "planos-prof",
+    "elementos": []
+  },
+  {
+    "tela": "editor-prof",
+    "elementos": []
+  },
+  {
+    "tela": "exercise-bank-prof",
+    "elementos": []
+  },
+  {
+    "tela": "exercise-config-prof",
+    "elementos": []
+  },
+  {
+    "tela": "registros-prof",
+    "elementos": []
+  }
+]

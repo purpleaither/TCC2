@@ -122,3 +122,54 @@ Permanecem abertas as inspeções manuais, a confirmação dos cabeçalhos da pr
 - [OWASP ZAP. Automation Framework](https://www.zaproxy.org/docs/automate/automation-framework/)
 - [Supabase. Controle de acesso com RLS](https://supabase.com/docs/guides/database/postgres/row-level-security)
 - [Open-Meteo. Weather Forecast API](https://open-meteo.com/en/docs)
+
+## Rodada de finalização
+
+A execução de referência foi conferida no artefato `15011341541`: 12 estados autenticados passaram no axe-core, 24 snapshots tiveram pontuação 100 e a regressão funcional registrou 34 aprovações e um bloqueio. O código do handler confirma que a ausência das variáveis `EXERCISEBANK_API_KEY` e `EB_KEY` produz HTTP 503 antes de consultar o fornecedor. A candidata local reproduziu o HTTP 503 sem essas variáveis. No GitHub Actions, o workflow verifica a disponibilidade dos dois nomes aceitos pelo handler, sem imprimir valores. A produção foi usada exclusivamente como evidência auxiliar da interface; a proteção de acesso da prévia impede sua adoção como destino autenticado sem uma autorização para esse ambiente.
+
+O commit `c71227d` incluiu uma CSP aplicada para restringir enquadramento, objetos e URL-base, além de X-Frame-Options DENY e X-Content-Type-Options nosniff. A lista mais específica de domínios e diretivas foi colocada em modo de relatório. O arquivo Vercel foi aplicado também no servidor candidato de testes. O GET local retornou os quatro cabeçalhos configurados, e o teste de interface local aprovou CT33, CT35 e as seis larguras CT36. A coleta de navegador registra somente diretiva, origem e regime de aplicação. O modo de relatório permite observar a mídia assinada antes de escolher uma lista definitiva de origens. [Evidências locais](../evidencias/finalizacao-c71227d/) · [Execução da candidata](https://github.com/purpleaither/TCC2/actions/runs/45594510366)
+
+### Painel de acessibilidade, aparência e linguagem
+
+O commit `9e40083` acrescentou controles nativos de aparência e leitura em todas as telas, persistidos no navegador. O login passou em nove verificações locais do painel. O axe-core não registrou violações nas três configurações verificadas com o painel aberto, claro, escuro e alto contraste. Com espaçamento ampliado e movimento reduzido, a fonte raiz mediu 16, 20, 24 e 32 pixels nas escalas 100%, 125%, 150% e 200%, sem rolagem horizontal no recorte de 320 pixels CSS. A restauração voltou ao tema do sistema, ao tamanho padrão e às opções adicionais desativadas. CT33, CT35 e as seis larguras CT36 também passaram. O teste de 320 pixels CSS é evidência de reflow nesse recorte e não representa a inspeção de zoom real no navegador. [Evidências do painel](../evidencias/preferencias-9e40083/)
+
+O Lighthouse 13.6.0 obteve 100 nos snapshots locais do login com o painel aberto, tanto no tema claro quanto no escuro. Uma inspeção isolada da renderização escura dos 12 estados internos não encontrou violações nas regras automatizadas selecionadas. Essa inspeção local utilizou a estrutura estática das telas, sem autenticação, e complementa a rodada autenticada do workflow.
+
+A auditoria complementar do PR com o painel implementado aprovou os 12 estados autenticados com axe-core. A série Lighthouse do login teve mediana arredondada de FCP de 1.053 ms e LCP de 1.953 ms em mobile. Em desktop, as medianas foram de 282 ms e 503 ms. O TBT e o CLS medianos foram zero nos dois perfis. Essa execução usou o commit de integração do PR, registrado no artefato, enquanto o workflow da candidata verifica o SHA da branch. [Execução complementar](https://github.com/purpleaither/TCC2/actions/runs/45595424818) · [Relatórios e capturas](https://github.com/purpleaither/TCC2/actions/runs/45595424818/artifacts/15013525577)
+
+### Rodada autenticada com o painel
+
+Na execução `45596303799` (commit `3ce36c3`), o tema claro passou nos 12 estados no axe-core e marcou 100 nos 24 snapshots autenticados. No tema escuro, 11 estados passaram e o calendário do histórico com dados apresentou uma ocorrência da regra de contraste que afetou seis elementos. Os dois snapshots do histórico escuro receberam 96. Os outros 22 snapshots escuros receberam 100. As verificações de teclado na escala (CT47), ajuda móvel com texto ampliado (CT53) e persistência após sair (CT52, nos dois perfis) passaram. Os alvos medidos na escala tinham 44 × 32 pixels CSS. A cobertura desses alvos não representa uma inspeção de todas as exceções do critério 2.5.8.
+
+O CT22 continuou bloqueado por HTTP 503 no checkout sem a credencial. O cenário auxiliar usou o frontend candidato, com retorno HTTP 200 da rota publicada. A amostra real tinha 50 itens. A conferência textual verificou os 43 nomes exibidos contra o glossário e registrou sete itens sem equivalência cadastrada. Pesquisa, filtros e reprodução do vídeo selecionado passaram. A equivalência terminológica especializada e a inclusão persistente de um exercício real no plano da candidata continuam pendentes. [Artefato da rodada](https://github.com/purpleaither/TCC2/actions/runs/45596303799/artifacts/15013901788) · [Amostra e resultados](../evidencias/finalizacao-45596303799/)
+
+#### Repetições de desempenho
+
+A série registrou três medições válidas por operação, no Chromium 145.0.7632.6, sem throttling, com cache padrão em uma instância nova do navegador a cada script. Os valores são tempos operacionais do Playwright, em milissegundos.
+
+| Operação | Valores | Mínimo | Mediana | Máximo | Limite | Resultado |
+| --- | --- | ---: | ---: | ---: | ---: | --- |
+| Criação de plano | 1.455, 1.450, 954 | 954 | 1.450 | 1.455 | 3.000 | Aprovado |
+| Edição com recarga | 5.684, 5.683, 5.205 | 5.205 | 5.683 | 5.684 | 6.000 | Aprovado |
+| Sintomas com clima | 448, 245, 220 | 220 | 245 | 448 | 3.000 | Aprovado |
+| Sintomas com falha | 1.166, 1.347, 1.374 | 1.166 | 1.347 | 1.374 | 3.500 | Aprovado |
+| Conclusão de exercício | 1.457, 997, 1.197 | 997 | 1.197 | 1.457 | 3.000 | Aprovado |
+| Consulta ao histórico | 1.279, 673, 1.324 | 673 | 1.279 | 1.324 | 3.000 | Aprovado |
+
+O cenário de edição e recarga inclui navegação, espera de seleção, confirmação da alteração e verificação após recarregar. A mediana ficou abaixo da meta operacional, com margem de 317 ms. Os resultados não justificam alteração do código de edição. Autenticação, painéis, catálogo e requisição meteorológica têm observações individuais anteriores, sem uma série equivalente nesta rodada. [Dados da série e horário de cada amostra](../evidencias/finalizacao-45596303799/desempenho-operacoes.json)
+
+A correção do calendário identifica a intensidade por atributo de dados da célula e associa, no CSS, cores de texto escuras aos fundos quentes do calendário. A representação numérica permanece disponível. Um reteste local com quatro intensidades fictícias e marca de treino apresentou zero violações detectadas no claro, no escuro e em alto contraste. A execução autenticada seguinte verifica o mesmo fluxo com a candidata. [Reteste local](../evidencias/finalizacao-0678598/calendario-local.json) · [Execução autenticada](https://github.com/purpleaither/TCC2/actions/runs/45597393346)
+
+O navegador não registrou eventos de violação da CSP no ensaio de autenticação, navegação e reprodução auxiliar do catálogo no commit `3ce36c3`. Os cabeçalhos públicos da Vercel mostraram resposta HTTP 200 em produção e redirecionamento HTTP 302 na prévia protegida. A primeira repetição passiva na candidata instalada no GitHub Actions expirou antes de gerar relatório, com erros de criação e bloqueio das preferências Java. A repetição local encontrou falta de espaço no armazenamento do Docker durante a instalação da imagem. A execução passiva de recuperação usa um diretório gravável para as preferências Java e permanece restrita a requisições GET em loopback. [Inspeção pública](../evidencias/finalizacao-45596303799/cabecalhos-vercel.json)
+
+#### Reteste autenticado após a correção do calendário
+
+No SHA `0678598`, o axe-core aprovou 12 de 12 estados tanto no tema claro quanto no escuro. O Lighthouse atribuiu 100 aos 48 snapshots, com 12 telas em cada combinação de tema e perfil de dispositivo. A violação de contraste do histórico escuro deixou de ser detectada. A regressão CI-01 a CI-07 aprovou **36 verificações**, incluindo as duas verificações novas de persistência após sair, e manteve **CT22 bloqueado**. A consulta real ao clima e a persistência durante a falha simulada passaram. O vídeo, os filtros e a consistência do glossário passaram no ensaio auxiliar com a rota publicada. [Execução](https://github.com/purpleaither/TCC2/actions/runs/45597393346) · [Artefato](https://github.com/purpleaither/TCC2/actions/runs/45597393346/artifacts/15013903392) · [Classificação da regressão](../evidencias/finalizacao-0678598/regressao-casos.json)
+
+A repetição no SHA `0678598` aprovou as seis metas operacionais. As medianas foram de 988 ms para criar plano, 4.723 ms para editar com recarga, 241 ms para registrar sintomas com clima, 1.103 ms durante falha meteorológica simulada, 429 ms para concluir exercício e 436 ms para consultar o histórico. A variação entre as duas séries de runners não permite atribuir causalidade à correção do contraste. [Valores individuais, navegador, limites e horários](../evidencias/finalizacao-0678598/desempenho-operacoes.json)
+
+#### Reteste passivo da configuração de cabeçalhos
+
+O ZAP 2.17.0 concluiu a auditoria isolada após a correção do diretório de preferências Java. O reteste executou quatro GET em loopback sobre a mesma versão dos arquivos e cabeçalhos da candidata, em commit com ajuste exclusivo do workflow. Os alertas de CSP ausente, proteção contra enquadramento ausente e X-Content-Type-Options ausente deixaram de aparecer. A versão do servidor Python anteriormente identificada não se aplicou ao servidor desta rodada.
+
+O ZAP registrou quatro alertas médios de política incompleta, diretiva com curinga, scripts inline e estilos inline, além de dois informativos, presença de política em modo de relatório e classificação como aplicação web moderna. O uso de modo de relatório e a compatibilidade com os controles inline existentes explicam o estágio atual da política. Esses achados não demonstram exploração nem descaracterizam a proteção de enquadramento aplicada. A verificação da prévia autenticada e o endurecimento adicional após validação em implantação permanecem pendentes. [Execução passiva](https://github.com/purpleaither/TCC2/actions/runs/45598638375) · [Relatórios HTML e JSON](https://github.com/purpleaither/TCC2/actions/runs/45598638375/artifacts/15013588229) · [Resumo](../evidencias/finalizacao-0678598/zap-resumo.json)

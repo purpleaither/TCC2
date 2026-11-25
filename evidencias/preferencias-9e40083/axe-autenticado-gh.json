@@ -1,0 +1,126 @@
+[
+  {
+    "id": "CT42-inicio",
+    "perfil": "paciente",
+    "tela": "inicio",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": [],
+    "tempoLoginMs": 2530
+  },
+  {
+    "id": "CT42-sintomas",
+    "perfil": "paciente",
+    "tela": "sintomas",
+    "tempoInterfaceMs": 408,
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": [
+      "color-contrast"
+    ]
+  },
+  {
+    "id": "CT42-exercicios",
+    "perfil": "paciente",
+    "tela": "exercicios",
+    "tempoInterfaceMs": 392,
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-historico",
+    "perfil": "paciente",
+    "tela": "historico",
+    "tempoInterfaceMs": 424,
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": [
+      "color-contrast"
+    ]
+  },
+  {
+    "id": "CT42-orientacoes",
+    "perfil": "paciente",
+    "tela": "orientacoes",
+    "tempoInterfaceMs": 413,
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-contatos",
+    "perfil": "paciente",
+    "tela": "contatos",
+    "tempoInterfaceMs": 384,
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-profissional",
+    "perfil": "fisioterapeuta",
+    "tela": "profissional",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": [],
+    "tempoLoginMs": 1414
+  },
+  {
+    "id": "CT42-registros-prof",
+    "perfil": "fisioterapeuta",
+    "tela": "registros-prof",
+    "tempoInterfaceMs": 418,
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-planos-prof",
+    "perfil": "fisioterapeuta",
+    "tela": "planos-prof",
+    "tempoInterfaceMs": 394,
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-editor-prof",
+    "perfil": "fisioterapeuta",
+    "tela": "editor-prof",
+    "tempoInterfaceMs": 29,
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-exercise-config-prof",
+    "perfil": "fisioterapeuta",
+    "tela": "exercise-config-prof",
+    "tempoInterfaceMs": 68,
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-exercise-bank-prof",
+    "perfil": "fisioterapeuta",
+    "tela": "exercise-bank-prof",
+    "tempoInterfaceMs": 501,
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  }
+]

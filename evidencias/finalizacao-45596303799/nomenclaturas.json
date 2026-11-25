@@ -1,0 +1,305 @@
+{
+  "origem": "frontend candidato com rota publicada",
+  "amostra": [
+    {
+      "identificador": "tc-2128",
+      "original": "One-leg elbow plank",
+      "traducao": "Prancha sobre antebraços com uma perna elevada",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2265",
+      "original": "Alternating decline dumbbell press",
+      "traducao": "Supino declinado alternado com halteres",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2166",
+      "original": "Prone swimmer",
+      "traducao": "Extensão de tronco e movimentos dos braços em decúbito ventral",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2044",
+      "original": "Dumbbell bent-over row to biceps curl",
+      "traducao": "Remada curvada seguida de rosca bíceps com halteres",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2234",
+      "original": "Alternating dumbbell shoulder flexion on an incline bench",
+      "traducao": "Flexão alternada de ombros com halteres em banco inclinado",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2116",
+      "original": "Upright row (band)",
+      "traducao": null,
+      "situacao": "Sem equivalência cadastrada"
+    },
+    {
+      "identificador": "tc-2440",
+      "original": "Dan John get-up",
+      "traducao": "Levantada do solo (variação Dan John)",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2029",
+      "original": "Single-leg swing hop",
+      "traducao": "Salto unilateral com balanço da perna",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2055",
+      "original": "Dumbbell king kong",
+      "traducao": "Levantamento terra sumô, rosca e desenvolvimento com halteres (King Kong)",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2054",
+      "original": "Alternating forward lunge with lateral raise",
+      "traducao": "Avanço à frente alternado com elevação lateral dos braços",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2130",
+      "original": "Forearm plank elbow side walk",
+      "traducao": null,
+      "situacao": "Sem equivalência cadastrada"
+    },
+    {
+      "identificador": "tc-2032",
+      "original": "Alternating fast feet",
+      "traducao": "Passos rápidos alternados",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2503",
+      "original": "Wind relieving pose (single knee)",
+      "traducao": "Postura de liberação dos ventos com um joelho ao peito",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2047",
+      "original": "Single-leg Romanian deadlift with dumbbells",
+      "traducao": "Levantamento terra romeno unilateral com halteres",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2043",
+      "original": "Dumbbell discus throw",
+      "traducao": "Arremesso rotacional com halter",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2426",
+      "original": "Suitcase carry",
+      "traducao": "Caminhada com carga unilateral (suitcase carry)",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2469",
+      "original": "Eagle pose",
+      "traducao": "Postura da águia (Garudasana)",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2184",
+      "original": "Alternating dumbbell floor press",
+      "traducao": "Supino no solo alternado com halteres",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2115",
+      "original": "Banded single-leg heel drop (inward pull)",
+      "traducao": "Descida unilateral do calcanhar com tração elástica para dentro",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2045",
+      "original": "Dumbbell pull complex",
+      "traducao": "Sequência de movimentos de puxada com halteres",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2228",
+      "original": "Alternating seated Arnold press",
+      "traducao": "Desenvolvimento Arnold sentado e alternado",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2117",
+      "original": "Alternating upright row (band)",
+      "traducao": null,
+      "situacao": "Sem equivalência cadastrada"
+    },
+    {
+      "identificador": "tc-2144",
+      "original": "Side hollow rock",
+      "traducao": null,
+      "situacao": "Sem equivalência cadastrada"
+    },
+    {
+      "identificador": "tc-2005",
+      "original": "Cross-body jumping jack",
+      "traducao": "Polichinelo cruzado",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2028",
+      "original": "Skier arm swing",
+      "traducao": "Balanço dos braços do esquiador",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2053",
+      "original": "Alternating reverse lunge with lateral raise",
+      "traducao": "Avanço para trás alternado com elevação lateral dos braços",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2549",
+      "original": "Battle rope side plank circles",
+      "traducao": "Círculos com corda naval na prancha lateral",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2326",
+      "original": "Quickstep side to side, both feet together",
+      "traducao": "Deslocamento lateral rápido com os pés unidos",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2459",
+      "original": "Cat-cow",
+      "traducao": "Mobilização da coluna em quatro apoios (gato-vaca)",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2048",
+      "original": "Alternating single-leg Romanian deadlift",
+      "traducao": "Levantamento terra romeno unilateral alternado",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2038",
+      "original": "Quick punches",
+      "traducao": "Sequência de socos rápidos",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2039",
+      "original": "Split-stance sprinter arms",
+      "traducao": "Movimento alternado dos braços de corrida em posição de afundo",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2173",
+      "original": "Bear-stance push-up",
+      "traducao": "Flexão de braços em posição de urso",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2114",
+      "original": "Banded single-leg heel drop (outward pull)",
+      "traducao": "Descida unilateral do calcanhar com tração elástica para fora",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2167",
+      "original": "Prone superman with shoulder retraction",
+      "traducao": "Extensão de tronco em decúbito ventral com retração escapular",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2229",
+      "original": "Arnold press on exercise ball",
+      "traducao": "Desenvolvimento Arnold sentado na bola suíça",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2380",
+      "original": "Kipping pull-up",
+      "traducao": "Barra fixa com balanço (kipping)",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2152",
+      "original": "Side-to-side mountain climber",
+      "traducao": null,
+      "situacao": "Sem equivalência cadastrada"
+    },
+    {
+      "identificador": "tc-2006",
+      "original": "Seal jack",
+      "traducao": "Polichinelo com abertura horizontal dos braços",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2057",
+      "original": "Alternating-arm dumbbell king kong",
+      "traducao": "Sequência King Kong com halteres e braços alternados",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2052",
+      "original": "Split squat with lateral raise",
+      "traducao": "Agachamento em base alternada com elevação lateral dos braços",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2548",
+      "original": "Battle rope side plank waves",
+      "traducao": "Ondulações de corda naval na prancha lateral",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2321",
+      "original": "Quickstep two feet on and off, front and back",
+      "traducao": "Passos rápidos com os dois pés à frente e atrás",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2458",
+      "original": "Child's pose",
+      "traducao": "Postura da criança (Balasana)",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2163",
+      "original": "Hip bridge with leg extension",
+      "traducao": "Ponte de quadril com extensão de um joelho",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2504",
+      "original": "Supine spinal twist",
+      "traducao": "Rotação da coluna em decúbito dorsal",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2457",
+      "original": "Downward dog to side plank",
+      "traducao": "Transição da postura do cachorro olhando para baixo para prancha lateral",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2170",
+      "original": "Blast-off push-up",
+      "traducao": "Flexão de braços com deslocamento posterior do quadril",
+      "situacao": "Conferência terminológica pendente"
+    },
+    {
+      "identificador": "tc-2165",
+      "original": "Superman leg lift, arms at your sides",
+      "traducao": null,
+      "situacao": "Sem equivalência cadastrada"
+    },
+    {
+      "identificador": "tc-2069",
+      "original": "Barbell pull complex",
+      "traducao": null,
+      "situacao": "Sem equivalência cadastrada"
+    }
+  ]
+}

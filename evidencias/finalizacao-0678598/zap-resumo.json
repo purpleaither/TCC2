@@ -1,0 +1,49 @@
+{
+  "execucao": 45598638375,
+  "commit": "7fcac4d1a5411ef75903781c30a3902881e503c6",
+  "versao": "2.17.0",
+  "alertas": [
+    {
+      "name": "CSP: Failure to Define Directive with No Fallback",
+      "riskdesc": "Medium (High)",
+      "confidence": "3",
+      "pluginid": "10055",
+      "ocorrencias": 1
+    },
+    {
+      "name": "CSP: Wildcard Directive",
+      "riskdesc": "Medium (High)",
+      "confidence": "3",
+      "pluginid": "10055",
+      "ocorrencias": 1
+    },
+    {
+      "name": "CSP: script-src unsafe-inline",
+      "riskdesc": "Medium (High)",
+      "confidence": "3",
+      "pluginid": "10055",
+      "ocorrencias": 1
+    },
+    {
+      "name": "CSP: style-src unsafe-inline",
+      "riskdesc": "Medium (High)",
+      "confidence": "3",
+      "pluginid": "10055",
+      "ocorrencias": 1
+    },
+    {
+      "name": "Content Security Policy (CSP) Report-Only Header Found",
+      "riskdesc": "Informational (High)",
+      "confidence": "3",
+      "pluginid": "10038",
+      "ocorrencias": 1
+    },
+    {
+      "name": "Modern Web Application",
+      "riskdesc": "Informational (Medium)",
+      "confidence": "2",
+      "pluginid": "10109",
+      "ocorrencias": 1
+    }
+  ]
+}

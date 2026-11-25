@@ -1,0 +1,58 @@
+{
+  "mobile": {
+    "inicio": 1,
+    "sintomas": 1,
+    "exercicios": 1,
+    "historico": 1,
+    "orientacoes": 1,
+    "contatos": 1,
+    "profissional": 1,
+    "registros-prof": 1,
+    "planos-prof": 1,
+    "editor-prof": 1,
+    "exercise-config-prof": 1,
+    "exercise-bank-prof": 1
+  },
+  "desktop": {
+    "inicio": 1,
+    "sintomas": 1,
+    "exercicios": 1,
+    "historico": 1,
+    "orientacoes": 1,
+    "contatos": 1,
+    "profissional": 1,
+    "registros-prof": 1,
+    "planos-prof": 1,
+    "editor-prof": 1,
+    "exercise-config-prof": 1,
+    "exercise-bank-prof": 1
+  },
+  "mobile-escuro": {
+    "inicio": 1,
+    "sintomas": 1,
+    "exercicios": 1,
+    "historico": 1,
+    "orientacoes": 1,
+    "contatos": 1,
+    "profissional": 1,
+    "registros-prof": 1,
+    "planos-prof": 1,
+    "editor-prof": 1,
+    "exercise-config-prof": 1,
+    "exercise-bank-prof": 1
+  },
+  "desktop-escuro": {
+    "inicio": 1,
+    "sintomas": 1,
+    "exercicios": 1,
+    "historico": 1,
+    "orientacoes": 1,
+    "contatos": 1,
+    "profissional": 1,
+    "registros-prof": 1,
+    "planos-prof": 1,
+    "editor-prof": 1,
+    "exercise-config-prof": 1,
+    "exercise-bank-prof": 1
+  }
+}

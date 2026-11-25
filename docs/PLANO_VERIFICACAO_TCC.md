@@ -26,3 +26,42 @@ O workflow da candidata fixa o SHA do PR e verifica por comparação de bytes o 
 - [ ] Verificar alvos interativos considerando tamanho, espaçamento e exceções do critério 2.5.8.
 - [ ] Conferir organização, legibilidade, contraste de indicadores, mensagens e sobreposição de conteúdo nos fluxos autenticados.
 - [ ] Conferir alternativas textuais, demonstrações em vídeo e interação com leitor de tela.
+
+## Critérios da rodada de finalização
+
+A série CI-11 repete três vezes os mesmos scripts em runner Ubuntu 24.04, com Chromium novo a cada script, rede padrão sem throttling e cache padrão durante cada operação. Somente uma amostra com a condição funcional esperada integra a série. Para registro com clima disponível, CT25 e CT26 devem passar. Para falha simulada, os dois casos CT44 devem passar. A mediana é comparada aos limites operacionais definidos antes da leitura dos resultados.
+
+| Operação | Início e término | Limite da mediana |
+| --- | --- | --- |
+| Criação de plano manual | Início do cenário até a confirmação do plano e exercício no painel | 3.000 ms |
+| Edição com recarga | Abertura do cenário de edição até a verificação do texto após recarregar | 6.000 ms |
+| Registro de sintomas com clima real | Acionamento de concluir até a resposta de inserção | 3.000 ms |
+| Registro durante falha simulada | Mesmo intervalo, com HTTP 502 induzido e validação da persistência | 3.500 ms |
+| Conclusão de exercício | Acionamento até a confirmação no controle da sessão | 3.000 ms |
+| Consulta ao histórico | Início da recarga até a exibição do exercício concluído no histórico | 3.000 ms |
+
+CT46 compara os nomes efetivamente renderizados com o glossário cadastrado usando a amostra real, e registra identificador, nome original, equivalência e situação. Trata-se de consistência textual. A adequação da nomenclatura exige conferência especializada. CT47 verifica ativação por teclado e percurso entre os botões da escala. As dimensões registradas são evidência para inspeção da aplicação do critério 2.5.8.
+
+### Registro de inspeção manual
+
+| ID | WCAG 2.2 | Tela | Procedimento | Resultado esperado | Evidência | Observado | Situação |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| IM01 | 2.1.1, 2.1.2, 2.4.3, 2.4.7, 2.4.11 | Menus, seletores, histórico e sintomas | Percorrer com Tab e Shift+Tab, ativar com Enter e Espaço, fechar componentes quando aplicável e verificar retorno do foco | Todos os controles operáveis, foco visível e ordem coerente | Vídeo do percurso e capturas do foco | A preencher | Pendente |
+| IM02 | 1.4.4, 1.4.10 | Diário, formulários, biblioteca e histórico | Ampliar texto a 200% e usar zoom real a 400% no navegador, considerando as exceções | Conteúdo e ações acessíveis, sem sobreposição ou rolagem indevida | Capturas com valor do zoom e notas sobre exceções | A preencher | Pendente |
+| IM03 | 2.5.8 | Escalas, menus e calendário | Medir controles contíguos e verificar tamanho, distância e exceções | Alvos de 24 × 24 pixels CSS ou cumprimento de exceção aplicável | Capturas comentadas e medições | A preencher | Pendente |
+| IM04 | 1.4.3, 1.4.11, 3.3.1, 3.3.2 | Login, diário e planos | Inspecionar contraste de texto e indicadores, mensagens de erro e organização dos campos | Texto e estados distinguíveis, com instruções compreensíveis | Capturas e razões de contraste | A preencher | Pendente |
+| IM05 | 1.1.1, 1.3.1, 2.4.6, 4.1.2, 4.1.3 | Login e áreas autenticadas | Navegar com leitor de tela e conferir títulos, rótulos, nomes, estados e anúncios | Semântica e alterações de estado comunicadas de forma inteligível | Versão da tecnologia assistiva e registro do percurso | A preencher | Pendente |
+| IM06 | 1.2.1 a 1.2.5, conforme aplicabilidade | Biblioteca e demonstrações | Identificar se há áudio e informação visual essencial, e verificar alternativas aplicáveis | Conteúdo demonstrativo com alternativa adequada à modalidade | Ficha da mídia e evidência das alternativas | A preencher | Pendente |
+
+## Requisitos de personalização e linguagem simples
+
+| ID | Tipo | Requisito e evidência esperada | Casos |
+| --- | --- | --- | --- |
+| RF-A01 | Funcional | Painel disponível no login e para ambos os perfis, com identificação textual e controles nativos | CT48, CT49, CT53 |
+| RF-A02 | Funcional | Manter tema, escala, contraste, espaçamento e movimento no navegador, inclusive após sair. Restaurar valores padrão | CT50, CT51, CT52 |
+| RF-A03 | Funcional | Explicações acionáveis por toque para termos do diário, dos exercícios e do clima | CT53, IM05 |
+| RNF-A01 | Não funcional | Preservar acesso e foco com teclado e tamanho de texto ampliado em tela pequena. Sem bloquear zoom real | CT35, CT47, CT48, CT50, IM01, IM02 |
+| RNF-A02 | Não funcional | Verificar nomes, papéis e contraste nos temas e no alto contraste. Validar a apresentação da informação sem depender de cor | CT42, CT49, IM03, IM04 |
+| RNF-A03 | Não funcional | Usar preferências do sistema para aparência e movimento, mantendo a reprodução da mídia demonstrativa | CT51, CT46, IM06 |
+
+A auditoria textual examinou as páginas ativas do login, do paciente e do profissional e as mensagens de transição. Rigidez, fadiga, séries, repetições, plano terapêutico, umidade relativa, pressão atmosférica e hPa recebem explicações por controles nativos. O diário descreve a escala de 0 a 10. As siglas MVP e END e o termo cinesioterapia não foram localizados como rótulos da interface ativa. O nome do fornecedor é preservado. Mensagens de acesso usam os termos e-mail, senha e serviço. A revisão terminológica dos nomes de exercícios permanece separada das orientações clínicas e prescrições.
