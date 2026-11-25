@@ -27,7 +27,6 @@ const cargaPaciente = criarControleDeSolicitacao();
 const ocupacao = { ativa: false };
 let loginReady = false;
 const configuracaoDados = { weatherColumnsAvailable: true };
-
 function isAuthenticated() { return !!(user && profile); }
 function isProfessional() { return isAuthenticated() && profile.role === "fisioterapeuta"; }
 const updatePatientSelectors = () => exibirSeletoresDePaciente(patients, patientId);

@@ -1,5 +1,5 @@
 import { $ } from '../utils/dom.js';
-import { validarExercicio } from '../utils/validacao.js';
+import { validarExercicio, validarIntensidade } from '../utils/validacao.js';
 import { readExercises } from '../components/linha-exercicio.js';
 import { obterClimaBrasilia } from '../services/clima.js';
 import { registrarSintomas, registrarTreino } from '../services/paciente.js';
@@ -40,14 +40,16 @@ export function criarAcoesClinicas({
     if(event)event.preventDefault();
     if(!isProfessional()||!patientId()||ocupacao.ativa)return;
     const title=$("nomePlanoProf").value.trim();
+    const notes=$("orientacoesPlanoProf").value.trim();
     const items=readExercises();
     if(title.length<2||!items.length)return message("Informe um nome e pelo menos um exercício.",true);
+    if(title.length>120||notes.length>1000)return message("O nome ou as orientações do plano excedem o limite de caracteres.",true);
     if(items.some(x => !validarExercicio(x)))
       return message("Verifique o exercício, as séries, as repetições ou duração e a frequência.",true);
     ocupacao.ativa=true;
     const usuarioInicial = user();
     try{
-      const data={title,notes:$("orientacoesPlanoProf").value.trim(),patient_id:patientId(),physiotherapist_id:usuarioInicial.id};
+      const data={title,notes,patient_id:patientId(),physiotherapist_id:usuarioInicial.id};
       await gravarPlano(banco(), planoEmEdicao(), data, items);
       if (user() !== usuarioInicial) return;
       clearPlanForm();
@@ -76,9 +78,13 @@ export function criarAcoesClinicas({
   }
   async function saveSymptoms(){
     if(!user()||isProfessional()||ocupacao.ativa)return;
+    const { painRest, painMove, stiffness, fatigue, sinalAtipico } = lerDiario();
+    if(!validarIntensidade(painRest)||!validarIntensidade(painMove)){
+      message("Informe valores de dor de 0 a 10.",true);
+      return;
+    }
     ocupacao.ativa=true;
     const usuarioInicial = user();
-    const { painRest, painMove, stiffness, fatigue, sinalAtipico } = lerDiario();
     try{
       let clima=null;
       try {

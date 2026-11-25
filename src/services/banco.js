@@ -7,7 +7,7 @@ export async function conectarBanco() {
   const response=await fetch("/api/database-config",{cache:"no-store"});
   const config=await response.json();
   if(!response.ok||!config.configured)throw Error("Conexão indisponível");
-  const {createClient}=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
+  const {createClient}=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/+esm");
   return createClient(config.url,config.publishableKey,{
     auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}
   });

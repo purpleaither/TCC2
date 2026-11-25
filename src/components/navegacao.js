@@ -22,4 +22,3 @@ export function navegarNaInterface(page, { isAuthenticated, isProfessional, atua
   atualizarTela(page);
   window.scrollTo(0,0);
 }
-

@@ -67,7 +67,7 @@ function gerarHeatmap() {
   }
 
   var nomes = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
-  
+
   var elLabel = document.getElementById('mesLabel');
   if (elLabel) elLabel.textContent = (nomes[mesAtual.getMonth()] + ' ' + mesAtual.getFullYear()).toLowerCase();
 

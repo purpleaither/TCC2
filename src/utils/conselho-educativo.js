@@ -2,7 +2,7 @@ import { localDateKey } from './datas.js';
 
 // Conselho educativo por sintomas do dia, sem diagnóstico nem mudança da prescrição.
 function todaysPatientSymptoms(records) {
-  if(isProfessional()||!records.length)return null;
+  if(!records.length)return null;
   const today=localDateKey(new Date());
   return records.filter(r=>localDateKey(r.recorded_at)===today)
     .sort((a,b)=>new Date(b.recorded_at)-new Date(a.recorded_at))[0]||null;

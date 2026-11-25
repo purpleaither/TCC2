@@ -9,6 +9,9 @@ on:
       - '*.html'
       - '*.css'
       - 'api/**'
+      - 'src/**'
+      - 'database/**'
+      - '.gitignore'
       - 'vercel.json'
 
 permissions:
