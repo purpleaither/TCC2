@@ -399,8 +399,6 @@ function renderPatientPlans(){
   const root=$("exNormalContainer");
   if(!root)return;
   root.replaceChildren();
-  const homeRoutineValue = $("homeRoutineValue");
-  if (homeRoutineValue) homeRoutineValue.hidden = plans.length > 0;
   const assigned=patientExerciseAssignments();
   if(!assigned.length){
     root.append(el("h2","Nenhum exercício atribuído","card-title"),

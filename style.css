@@ -816,12 +816,6 @@ body {
   #homeBtnExercicios { inline-size: auto; }
 }
 
-.routine-value {
-  margin-block-end: var(--espaco-grupo);
-  font-size: var(--fonte-minima);
-  color: var(--texto, #333);
-}
-
 /* ---- Lista de dados paciente / contatos ---- */
 .contact-info-item {
   margin-bottom: 10px;
