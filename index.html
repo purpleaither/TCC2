@@ -17,7 +17,7 @@
     <div class="header-brand" onclick="navegarPara(appPaginaInicial())">
       <img src="logo.svg" alt="Logo Autonomia em Movimento" class="header-logo">
     </div>
-    <button class="header-perfil-btn" id="headerPerfilBtn" onclick="navegarPara('conta')">Perfil</button>
+    <button class="header-perfil-btn" id="headerPerfilBtn" onclick="navegarPara('conta')">Minha conta</button>
   </div>
 
   <div id="authFlash" role="status" aria-live="polite" hidden style="margin:12px 16px 0;padding:12px 14px;border-radius:6px;background:var(--superficie-verde, #e8f5e9);color:var(--titulo, #003366);font-size:var(--fonte-minima)"></div>
@@ -35,7 +35,7 @@
       <button class="menu-item" data-perfil="paciente" onclick="navegarPara('historico')">Meu histórico</button>
       <button class="menu-item" data-perfil="paciente" onclick="navegarPara('orientacoes')">Orientações</button>
       <button class="menu-item" data-perfil="paciente" onclick="navegarPara('exercicios')">Meus exercícios</button>
-      <button class="menu-item" data-perfil="paciente" onclick="navegarPara('contatos')">Contatos do HUB</button>
+      <button class="menu-item" data-perfil="paciente" onclick="navegarPara('contatos')">Minha conta</button>
       <button class="menu-item" data-perfil="fisioterapeuta" onclick="navegarPara('profissional')">Painel profissional</button>
       <button class="menu-item" data-perfil="fisioterapeuta" onclick="navegarPara('planos-prof')">Gerenciar planos</button>
       <button class="menu-item" data-perfil="fisioterapeuta" onclick="navegarPara('registros-prof')">Registros dos pacientes</button>
@@ -392,11 +392,10 @@
     </div>
   </div>
 
-  <!-- ===== TELA 6.0: CONTATOS DO HUB ===== -->
+  <!-- ===== TELA 6.0: MINHA CONTA ===== -->
   <div class="page" id="page-contatos">
 
-    <h1 class="page-title">Contatos do HUB / UnB</h1>
-    <p class="page-subtitle">Hospital Universitário de Brasília</p>
+    <h1 class="page-title">Minha conta</h1>
 
     <div class="card">
       <h2 class="card-title">Meus dados</h2>
@@ -415,7 +414,7 @@
     </div>
 
     <div class="card">
-      <h2 class="card-title">Equipe de Fisioterapia</h2>
+      <h2 class="card-title">Contatos do HUB</h2>
       <p class="card-text" style="font-weight:bold; color:var(--titulo, #003366)">HUB / Universidade de Brasília</p>
       
       <div class="contact-info-item" style="margin-top:10px">
