@@ -201,3 +201,9 @@ A contagem inclui as linhas físicas dos arquivos rastreados com extensão JavaS
 No último corte foram excluídas 62 linhas e inseridas 57, com saldo de −5. Foram removidos campos sem consumidores e unificada a atualização visual das duas escalas de dor. O calendário passou a agrupar sintomas e treinos por data uma só vez. O servidor local da candidata também retornou a política de referência esperada e serviu JavaScript e CSS idênticos ao checkout.
 
 Após o último corte, o reteste com Chromium 156.0.8078.79 manteve os 18 testes locais, os 8 casos de interface pública e os 9 casos de preferências aprovados. A nova comparação visual teve 30 de 32 capturas idênticas. As duas restantes apresentaram diferenças de 12 e 13 pixels nas bordas da tela de login, com diferença máxima de 2 por canal RGB. O histórico por teclado, a atualização das duas escalas de dor e a abertura do plano no editor foram verificados no mesmo ensaio com dados fictícios.
+
+### Redução adicional no commit `692dcee`
+
+O código da aplicação passou de 4.644 para 4.604 linhas. O diff do código excluiu 56 linhas e inseriu 16. A unificação da paleta escura economizou 25 linhas, a remoção de comentários redundantes economizou 13 e a simplificação da retentativa do clima economizou 2. A suíte de preferências ganhou duas linhas líquidas para verificar a troca de tema do sistema nos dois sentidos.
+
+Foram repetidos os 18 testes de rotas e privacidade, os 8 casos de interface pública e os 9 casos de preferências. Todos passaram. O teste isolado do clima confirmou recuperação na segunda tentativa e encerramento após duas falhas. Das 32 capturas comparadas em Chromium com dados fictícios, 31 foram idênticas. Uma captura de login apresentou diferenças em 12 pixels de borda, com variação máxima de 2 por canal RGB. Os resultados de integração real continuam pendentes nesta candidata.
