@@ -1,6 +1,20 @@
 import { result } from './banco.js';
 
 export async function gravarPlano(supabase, editingPlan, data, items) {
+  const gravacao = await supabase.rpc("gravar_plano", {
+    p_plano: editingPlan,
+    p_paciente: data.patient_id,
+    p_titulo: data.title,
+    p_notas: data.notes,
+    p_itens: items
+  });
+  // Mantém a gravação disponível em implantações anteriores à migração.
+  // Erros de gravação ou autorização nunca disparam a gravação alternativa.
+  if (gravacao.error?.code !== "PGRST202") return result(gravacao);
+  return gravarPlanoLegado(supabase, editingPlan, data, items);
+}
+
+async function gravarPlanoLegado(supabase, editingPlan, data, items) {
   let insertedId = null;
   try {
     if(editingPlan){
