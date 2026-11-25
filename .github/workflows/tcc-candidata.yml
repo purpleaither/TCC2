@@ -106,7 +106,15 @@ jobs:
           mkdir -p "$TCC_EVIDENCIAS/regressao"
           cp test-results/*.json "$TCC_EVIDENCIAS/regressao/"
           node tests/auditoria/desempenho.mjs
+      - name: Guardar testes e medições antes da auditoria passiva
+        if: always() && !cancelled()
+        uses: actions/upload-artifact@v4
+        with:
+          name: candidata-testes-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test-results/candidata/
+          retention-days: 90
       - name: Auditoria passiva do servidor candidato
+        timeout-minutes: 4
         if: always() && !cancelled() && steps.preparar.outcome == 'success'
         run: |
           sed 's/8765/8766/g' tests/auditoria/zap.yml > /tmp/zap-candidata.yml
