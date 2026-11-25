@@ -76,22 +76,23 @@ export function adicionarLinha(entry, isProfessional, updatePlanEditorSummary) {
   }
 }
 
-export function readExercises(){
-  return Array.from($("itensPlanoProf").children).map((row,i)=>{
-    const v=key=>row.querySelector('[name="'+key+'"]').value.trim();
-    const selected=exercises.find(x=>x.id===v("exercise"));
-    const bankId=v("externalId");
-    const name=selected?selected.name:v("customName");
-    return {
-      exercise_name:name,
-      exercise_source:bankId?(row.querySelector("[name=externalSource]")?.value||"ExerciseBank"):"manual",
-      external_id:bankId||null,
-      series:Number(v("series")),
-      repetitions:v("repetitions"),
-      duration:v("duration"),
-      frequency:v("frequency"),
-      instructions:bankId?v("externalInstructions"):(selected?selected.info:""),
-      position:i
-    };
-  });
+export function lerExercicio(row, position) {
+  const v = key => row.querySelector('[name="' + key + '"]').value.trim();
+  const selected = exercises.find(x => x.id === v("exercise"));
+  const bankId = v("externalId");
+  return {
+    exercise_name: selected?.name ?? v("customName"),
+    exercise_source: bankId ? v("externalSource") || "ExerciseBank" : "manual",
+    external_id: bankId || null,
+    series: Number(v("series")),
+    repetitions: v("repetitions"),
+    duration: v("duration"),
+    frequency: v("frequency"),
+    instructions: bankId ? v("externalInstructions") : selected?.info ?? "",
+    position
+  };
+}
+
+export function readExercises() {
+  return Array.from($("itensPlanoProf").children, lerExercicio);
 }

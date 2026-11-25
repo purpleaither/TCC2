@@ -1,7 +1,6 @@
 import { $, el, text } from '../utils/dom.js';
-import { exercises } from '../data/exercicios-manuais.js';
 import { validarExercicio } from '../utils/validacao.js';
-import { adicionarLinha } from './linha-exercicio.js';
+import { adicionarLinha, lerExercicio } from './linha-exercicio.js';
 
 export function criarEditor({ isProfessional, pacienteSelecionado, listarPlanos, ocupado, navigate, message }) {
   let editingPlan = null;
@@ -11,13 +10,6 @@ export function criarEditor({ isProfessional, pacienteSelecionado, listarPlanos,
   let pendingExerciseRow=null;
   let pendingExerciseOrigin="exercise-source-prof";
   let pendingExercisePlaceholder=null;
-  function exerciseNameFromRow(row){
-    const selected=row.querySelector('[name="exercise"]');
-    const custom=row.querySelector('[name="customName"]');
-    return (
-      selected?.value==="other" ? custom?.value.trim() : exercises.find(x=>x.id===selected?.value)?.name
-    )||"Exercício sem nome";
-  }
   function updatePlanEditorSummary(){
     const stored=$("itensPlanoProf");
     const rows=Array.from(stored?.children||[]).filter(row=>row.classList.contains("demo-exercicio-item"));
@@ -32,7 +24,7 @@ export function criarEditor({ isProfessional, pacienteSelecionado, listarPlanos,
     }
     rows.forEach((row,index)=>{
       const item=el("div",undefined,"exercise-summary-item");
-      const heading=el("strong",(index+1)+". "+exerciseNameFromRow(row),"exercise-summary-name");
+      const heading=el("strong",(index+1)+". "+(lerExercicio(row).exercise_name || "Exercício sem nome"),"exercise-summary-name");
       const detail=el("p",[
         "Séries: "+(row.querySelector('[name="series"]')?.value||"–"),
         "Repetições: "+(row.querySelector('[name="repetitions"]')?.value||"–"),
@@ -120,40 +112,28 @@ export function criarEditor({ isProfessional, pacienteSelecionado, listarPlanos,
   function finishExerciseInsertion(){
     if(!pendingExerciseRow)return;
     const row=pendingExerciseRow;
-    const select=row.querySelector('[name="exercise"]');
-    const custom=row.querySelector('[name="customName"]');
-    const series=Number(row.querySelector('[name="series"]')?.value);
-    const repeats=row.querySelector('[name="repetitions"]')?.value.trim()||"";
-    const duration=row.querySelector('[name="duration"]')?.value.trim()||"";
-    const frequency=row.querySelector('[name="frequency"]')?.value.trim()||"";
-    const name=select?.value==="other"?custom?.value.trim():exerciseNameFromRow(row);
-    if(!validarExercicio({ exercise_name: name, series, repetitions: repeats, duration, frequency })){
+    if(!validarExercicio(lerExercicio(row))){
       message("Informe o exercício, as séries, as repetições ou duração e a frequência.",true);
       return;
     }
-    const remove=row.querySelector("button.btn-outline");
-    if(remove)remove.hidden=false;
-    if(pendingExercisePlaceholder){
-      pendingExercisePlaceholder.replaceWith(row);
-    }else{
-      $("itensPlanoProf").append(row);
-    }
-    pendingExerciseRow=null;
-    pendingExercisePlaceholder=null;
-    updatePlanEditorSummary();
+    encerrarConfiguracao(true);
     navigate("editor-prof");
     message("Exercício inserido. Revise a quantidade e salve o plano quando terminar.");
   }
   function backFromExerciseConfiguration(){
     if(!pendingExerciseRow)return navigate("exercise-source-prof");
+    encerrarConfiguracao(false);
+    navigate(pendingExerciseOrigin);
+  }
+  function encerrarConfiguracao(inserir) {
     const remove=pendingExerciseRow.querySelector("button.btn-outline");
     if(remove)remove.hidden=false;
     if(pendingExercisePlaceholder)pendingExercisePlaceholder.replaceWith(pendingExerciseRow);
+    else if (inserir) $("itensPlanoProf").append(pendingExerciseRow);
     else pendingExerciseRow.remove();
     pendingExerciseRow=null;
     pendingExercisePlaceholder=null;
     updatePlanEditorSummary();
-    navigate(pendingExerciseOrigin);
   }
   function createPlanFromScratch(){
     if(!isProfessional())return;
@@ -162,12 +142,10 @@ export function criarEditor({ isProfessional, pacienteSelecionado, listarPlanos,
   }
   function cancelPlanEditor(){
     if(!isProfessional()||ocupado())return;
-    const form=$("formPlanoProf");
     const hasDraft=!!editingPlan||!!$("itensPlanoProf")?.children.length||
       !!$("nomePlanoProf")?.value.trim()||!!$("orientacoesPlanoProf")?.value.trim();
     if(hasDraft&&!confirm("Descartar as alterações não salvas e cancelar a edição?"))return;
     clearPlanForm();
-    if(form)form.reset();
     navigate("planos-prof");
     message("Edição cancelada. Nenhuma alteração foi salva.");
   }
