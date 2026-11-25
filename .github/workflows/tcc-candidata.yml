@@ -16,12 +16,12 @@ permissions:
 
 concurrency:
   # Esta rodada entra enquanto a anterior termina apenas a auditoria passiva.
-  group: ${{ github.event.before == '3ce36c312150ab43365bce3a1d890e58c444d73f' && 'verificacao-mvp-retomada' || 'verificacao-mvp' }}
+  group: ${{ github.event.before == '067859838c87ad659bf3e316f138fbd38c5e3fce' && 'verificacao-passiva-tcc' || 'verificacao-mvp' }}
   cancel-in-progress: false
 
 jobs:
   candidata:
-    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'verificacao-complementar-tcc'
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'verificacao-complementar-tcc' && github.event.before != '067859838c87ad659bf3e316f138fbd38c5e3fce'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     env:
@@ -119,7 +119,7 @@ jobs:
         if: always() && !cancelled() && steps.preparar.outcome == 'success'
         run: |
           sed 's/8765/8766/g' tests/auditoria/zap.yml > /tmp/zap-candidata.yml
-          docker run --rm --network host --user "$(id -u):$(id -g)" \
+          docker run --rm --network host --user "$(id -u):$(id -g)" -e HOME=/tmp -e JAVA_TOOL_OPTIONS=-Duser.home=/tmp \
             -v /tmp/zap-candidata.yml:/tmp/plano.yml:ro \
             -v "$PWD/$TCC_EVIDENCIAS:/zap/wrk:rw" \
             ghcr.io/zaproxy/zaproxy@sha256:9624669db72f54d86c4b46a7064518bd9bf79d8c61a4c31befa9923489f328af \
@@ -136,3 +136,37 @@ jobs:
             test-results/candidata/
             test-results/*.json
           retention-days: 90
+
+  reteste-passivo:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'verificacao-complementar-tcc' && github.event.before == '067859838c87ad659bf3e316f138fbd38c5e3fce'
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    env:
+      TCC_EVIDENCIAS: test-results/passiva
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Repetir inspeção passiva com diretório Java gravável
+        timeout-minutes: 4
+        run: |
+          mkdir -p "$TCC_EVIDENCIAS"
+          git rev-parse HEAD > "$TCC_EVIDENCIAS/commit.txt"
+          node tests/auditoria/candidata.mjs > /tmp/tcc-candidata-passiva.log 2>&1 &
+          curl --retry 8 --retry-max-time 30 --retry-connrefused --fail --silent http://127.0.0.1:8766/ -D "$TCC_EVIDENCIAS/cabecalhos.txt" -o /tmp/tcc-index.html
+          cmp index.html /tmp/tcc-index.html
+          sed 's/8765/8766/g' tests/auditoria/zap.yml > /tmp/zap-candidata.yml
+          docker run --rm --network host --user "$(id -u):$(id -g)" -e HOME=/tmp -e JAVA_TOOL_OPTIONS=-Duser.home=/tmp \
+            -v /tmp/zap-candidata.yml:/tmp/plano.yml:ro \
+            -v "$PWD/$TCC_EVIDENCIAS:/zap/wrk:rw" \
+            ghcr.io/zaproxy/zaproxy@sha256:9624669db72f54d86c4b46a7064518bd9bf79d8c61a4c31befa9923489f328af \
+            zap.sh -cmd -dir /tmp/zap-home -autorun /tmp/plano.yml
+      - name: Guardar relatório passivo
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: candidata-passiva-${{ github.run_id }}
+          path: test-results/passiva/
