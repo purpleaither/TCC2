@@ -1,0 +1,152 @@
+{
+  "axe": [
+    {
+      "tela": "inicio",
+      "tempoLoginMs": 1911
+    },
+    {
+      "tela": "sintomas",
+      "tempoInterfaceMs": 424
+    },
+    {
+      "tela": "exercicios",
+      "tempoInterfaceMs": 412
+    },
+    {
+      "tela": "historico",
+      "tempoInterfaceMs": 404
+    },
+    {
+      "tela": "orientacoes",
+      "tempoInterfaceMs": 386
+    },
+    {
+      "tela": "contatos",
+      "tempoInterfaceMs": 410
+    },
+    {
+      "tela": "profissional",
+      "tempoLoginMs": 1917
+    },
+    {
+      "tela": "registros-prof",
+      "tempoInterfaceMs": 399
+    },
+    {
+      "tela": "planos-prof",
+      "tempoInterfaceMs": 404
+    },
+    {
+      "tela": "editor-prof",
+      "tempoInterfaceMs": 32
+    },
+    {
+      "tela": "exercise-config-prof",
+      "tempoInterfaceMs": 63
+    },
+    {
+      "tela": "exercise-bank-prof",
+      "tempoInterfaceMs": 486
+    }
+  ],
+  "mobile": [
+    {
+      "tela": "inicio",
+      "tempoLoginMs": 1379
+    },
+    {
+      "tela": "sintomas",
+      "tempoInterfaceMs": 421
+    },
+    {
+      "tela": "exercicios",
+      "tempoInterfaceMs": 390
+    },
+    {
+      "tela": "historico",
+      "tempoInterfaceMs": 394
+    },
+    {
+      "tela": "orientacoes",
+      "tempoInterfaceMs": 389
+    },
+    {
+      "tela": "contatos",
+      "tempoInterfaceMs": 404
+    },
+    {
+      "tela": "profissional",
+      "tempoLoginMs": 1917
+    },
+    {
+      "tela": "registros-prof",
+      "tempoInterfaceMs": 395
+    },
+    {
+      "tela": "planos-prof",
+      "tempoInterfaceMs": 403
+    },
+    {
+      "tela": "editor-prof",
+      "tempoInterfaceMs": 36
+    },
+    {
+      "tela": "exercise-config-prof",
+      "tempoInterfaceMs": 69
+    },
+    {
+      "tela": "exercise-bank-prof",
+      "tempoInterfaceMs": 502
+    }
+  ],
+  "desktop": [
+    {
+      "tela": "inicio",
+      "tempoLoginMs": 1357
+    },
+    {
+      "tela": "sintomas",
+      "tempoInterfaceMs": 421
+    },
+    {
+      "tela": "exercicios",
+      "tempoInterfaceMs": 419
+    },
+    {
+      "tela": "historico",
+      "tempoInterfaceMs": 418
+    },
+    {
+      "tela": "orientacoes",
+      "tempoInterfaceMs": 391
+    },
+    {
+      "tela": "contatos",
+      "tempoInterfaceMs": 417
+    },
+    {
+      "tela": "profissional",
+      "tempoLoginMs": 1445
+    },
+    {
+      "tela": "registros-prof",
+      "tempoInterfaceMs": 410
+    },
+    {
+      "tela": "planos-prof",
+      "tempoInterfaceMs": 412
+    },
+    {
+      "tela": "editor-prof",
+      "tempoInterfaceMs": 37
+    },
+    {
+      "tela": "exercise-config-prof",
+      "tempoInterfaceMs": 64
+    },
+    {
+      "tela": "exercise-bank-prof",
+      "tempoInterfaceMs": 517
+    }
+  ]
+}

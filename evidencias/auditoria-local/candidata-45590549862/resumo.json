@@ -1,0 +1,553 @@
+{
+  "axe": [
+    {
+      "id": "CT42-inicio",
+      "tela": "inicio",
+      "estado": "aprovado",
+      "violacoes": [],
+      "inspecao": [],
+      "tempoLoginMs": 2421
+    },
+    {
+      "id": "CT42-sintomas",
+      "tela": "sintomas",
+      "estado": "aprovado",
+      "violacoes": [],
+      "inspecao": [
+        "color-contrast"
+      ],
+      "tempoInterfaceMs": 407
+    },
+    {
+      "id": "CT42-exercicios",
+      "tela": "exercicios",
+      "estado": "aprovado",
+      "violacoes": [],
+      "inspecao": [],
+      "tempoInterfaceMs": 421
+    },
+    {
+      "id": "CT42-historico",
+      "tela": "historico",
+      "estado": "aprovado",
+      "violacoes": [],
+      "inspecao": [
+        "color-contrast"
+      ],
+      "tempoInterfaceMs": 413
+    },
+    {
+      "id": "CT42-orientacoes",
+      "tela": "orientacoes",
+      "estado": "aprovado",
+      "violacoes": [],
+      "inspecao": [],
+      "tempoInterfaceMs": 411
+    },
+    {
+      "id": "CT42-contatos",
+      "tela": "contatos",
+      "estado": "aprovado",
+      "violacoes": [],
+      "inspecao": [],
+      "tempoInterfaceMs": 405
+    },
+    {
+      "id": "CT42-profissional",
+      "tela": "profissional",
+      "estado": "aprovado",
+      "violacoes": [],
+      "inspecao": [],
+      "tempoLoginMs": 1380
+    },
+    {
+      "id": "CT42-registros-prof",
+      "tela": "registros-prof",
+      "estado": "aprovado",
+      "violacoes": [],
+      "inspecao": [],
+      "tempoInterfaceMs": 386
+    },
+    {
+      "id": "CT42-planos-prof",
+      "tela": "planos-prof",
+      "estado": "aprovado",
+      "violacoes": [],
+      "inspecao": [],
+      "tempoInterfaceMs": 390
+    },
+    {
+      "id": "CT42-editor-prof",
+      "tela": "editor-prof",
+      "estado": "aprovado",
+      "violacoes": [],
+      "inspecao": [],
+      "tempoInterfaceMs": 38
+    },
+    {
+      "id": "CT42-exercise-config-prof",
+      "tela": "exercise-config-prof",
+      "estado": "aprovado",
+      "violacoes": [],
+      "inspecao": [],
+      "tempoInterfaceMs": 61
+    },
+    {
+      "id": "CT42-exercise-bank-prof",
+      "tela": "exercise-bank-prof",
+      "estado": "aprovado",
+      "violacoes": [],
+      "inspecao": [],
+      "tempoInterfaceMs": 498
+    }
+  ],
+  "biblioteca": [
+    {
+      "id": "CT45-falha-biblioteca",
+      "estado": "aprovado"
+    },
+    {
+      "id": "CT46-catalogo-real",
+      "origem": "candidata",
+      "estado": "bloqueado",
+      "http": 503,
+      "tempoRespostaMs": 45
+    },
+    {
+      "id": "CT46-catalogo-real",
+      "origem": "frontend candidato com rota publicada",
+      "estado": "aprovado",
+      "http": 200,
+      "tempoRespostaMs": 1097
+    },
+    {
+      "id": "CT46-nomenclatura",
+      "origem": "frontend candidato com rota publicada",
+      "estado": "bloqueado",
+      "totalReferencias": 0
+    },
+    {
+      "id": "CT46-pesquisa-filtros",
+      "origem": "frontend candidato com rota publicada",
+      "estado": "aprovado",
+      "total": 43,
+      "domiciliares": 19,
+      "ombros": 15
+    },
+    {
+      "id": "CT46-video",
+      "origem": "frontend candidato com rota publicada",
+      "estado": "aprovado"
+    }
+  ],
+  "mobile": [
+    {
+      "id": "CT42-inicio",
+      "tela": "inicio",
+      "estado": "aprovado",
+      "pontuacao": 1,
+      "tempoLoginMs": 1350
+    },
+    {
+      "id": "CT42-sintomas",
+      "tela": "sintomas",
+      "estado": "aprovado",
+      "pontuacao": 1,
+      "tempoInterfaceMs": 408
+    },
+    {
+      "id": "CT42-exercicios",
+      "tela": "exercicios",
+      "estado": "aprovado",
+      "pontuacao": 1,
+      "tempoInterfaceMs": 421
+    },
+    {
+      "id": "CT42-historico",
+      "tela": "historico",
+      "estado": "aprovado",
+      "pontuacao": 1,
+      "tempoInterfaceMs": 408
+    },
+    {
+      "id": "CT42-orientacoes",
+      "tela": "orientacoes",
+      "estado": "aprovado",
+      "pontuacao": 1,
+      "tempoInterfaceMs": 390
+    },
+    {
+      "id": "CT42-contatos",
+      "tela": "contatos",
+      "estado": "aprovado",
+      "pontuacao": 1,
+      "tempoInterfaceMs": 404
+    },
+    {
+      "id": "CT42-profissional",
+      "tela": "profissional",
+      "estado": "aprovado",
+      "pontuacao": 1,
+      "tempoLoginMs": 1334
+    },
+    {
+      "id": "CT42-registros-prof",
+      "tela": "registros-prof",
+      "estado": "aprovado",
+      "pontuacao": 1,
+      "tempoInterfaceMs": 409
+    },
+    {
+      "id": "CT42-planos-prof",
+      "tela": "planos-prof",
+      "estado": "aprovado",
+      "pontuacao": 1,
+      "tempoInterfaceMs": 413
+    },
+    {
+      "id": "CT42-editor-prof",
+      "tela": "editor-prof",
+      "estado": "aprovado",
+      "pontuacao": 1,
+      "tempoInterfaceMs": 31
+    },
+    {
+      "id": "CT42-exercise-config-prof",
+      "tela": "exercise-config-prof",
+      "estado": "aprovado",
+      "pontuacao": 1,
+      "tempoInterfaceMs": 64
+    },
+    {
+      "id": "CT42-exercise-bank-prof",
+      "tela": "exercise-bank-prof",
+      "estado": "aprovado",
+      "pontuacao": 1,
+      "tempoInterfaceMs": 498
+    }
+  ],
+  "desktop": [
+    {
+      "id": "CT42-inicio",
+      "tela": "inicio",
+      "estado": "aprovado",
+      "pontuacao": 1,
+      "tempoLoginMs": 1349
+    },
+    {
+      "id": "CT42-sintomas",
+      "tela": "sintomas",
+      "estado": "aprovado",
+      "pontuacao": 1,
+      "tempoInterfaceMs": 420
+    },
+    {
+      "id": "CT42-exercicios",
+      "tela": "exercicios",
+      "estado": "aprovado",
+      "pontuacao": 1,
+      "tempoInterfaceMs": 408
+    },
+    {
+      "id": "CT42-historico",
+      "tela": "historico",
+      "estado": "aprovado",
+      "pontuacao": 1,
+      "tempoInterfaceMs": 391
+    },
+    {
+      "id": "CT42-orientacoes",
+      "tela": "orientacoes",
+      "estado": "aprovado",
+      "pontuacao": 1,
+      "tempoInterfaceMs": 406
+    },
+    {
+      "id": "CT42-contatos",
+      "tela": "contatos",
+      "estado": "aprovado",
+      "pontuacao": 1,
+      "tempoInterfaceMs": 402
+    },
+    {
+      "id": "CT42-profissional",
+      "tela": "profissional",
+      "estado": "aprovado",
+      "pontuacao": 1,
+      "tempoLoginMs": 1353
+    },
+    {
+      "id": "CT42-registros-prof",
+      "tela": "registros-prof",
+      "estado": "aprovado",
+      "pontuacao": 1,
+      "tempoInterfaceMs": 421
+    },
+    {
+      "id": "CT42-planos-prof",
+      "tela": "planos-prof",
+      "estado": "aprovado",
+      "pontuacao": 1,
+      "tempoInterfaceMs": 414
+    },
+    {
+      "id": "CT42-editor-prof",
+      "tela": "editor-prof",
+      "estado": "aprovado",
+      "pontuacao": 1,
+      "tempoInterfaceMs": 32
+    },
+    {
+      "id": "CT42-exercise-config-prof",
+      "tela": "exercise-config-prof",
+      "estado": "aprovado",
+      "pontuacao": 1,
+      "tempoInterfaceMs": 63
+    },
+    {
+      "id": "CT42-exercise-bank-prof",
+      "tela": "exercise-bank-prof",
+      "estado": "aprovado",
+      "pontuacao": 1,
+      "tempoInterfaceMs": 508
+    }
+  ],
+  "regressao": {
+    "CI01": [
+      {
+        "cenario": "desktop",
+        "aprovado": true
+      },
+      {
+        "cenario": "mobile",
+        "aprovado": true
+      }
+    ],
+    "CI02": {
+      "fisioterapeuta": [
+        {
+          "name": "Authenticated role dashboard",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "Authorized menu is visible",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "Other role menu hidden",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "Unauthorized route redirected",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "Authorized route accessible",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "Patient selector linked",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "No uncaught page errors",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "Logout returns login screen",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "Sessão encerrada após recarregar",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "Sessão Supabase removida do armazenamento local",
+          "ok": true,
+          "detail": ""
+        }
+      ],
+      "paciente": [
+        {
+          "name": "Authenticated role dashboard",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "Authorized menu is visible",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "Other role menu hidden",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "Unauthorized route redirected",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "Authorized route accessible",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "Symptoms screen accessible",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "Exercises screen accessible",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "No uncaught page errors",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "Logout returns login screen",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "Sessão encerrada após recarregar",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "Sessão Supabase removida do armazenamento local",
+          "ok": true,
+          "detail": ""
+        }
+      ]
+    },
+    "CI03-CI04": [
+      {
+        "id": "CT20-21",
+        "status": "passed",
+        "duracaoMs": 975
+      },
+      {
+        "id": "CT23",
+        "status": "passed",
+        "duracaoMs": 2357
+      },
+      {
+        "id": "CT29",
+        "status": "passed",
+        "duracaoMs": 4700
+      },
+      {
+        "id": "CT22",
+        "status": "failed",
+        "error": "Biblioteca sem resultados: Configure EXERCISEBANK_API_KEY na Vercel para consultar os 50 vídeos do Sandbox."
+      },
+      {
+        "id": "CT24",
+        "status": "passed",
+        "duracaoMs": 855
+      },
+      {
+        "id": "CT30-cleanup",
+        "status": "passed",
+        "duracaoMs": 2331
+      }
+    ],
+    "CI05": [
+      {
+        "id": "CT25",
+        "status": "passed",
+        "expected": {
+          "pain_rest": 2,
+          "pain_movement": 5,
+          "stiffness": "Moderada",
+          "fatigue": "Leve"
+        },
+        "tempoRegistroMs": 336
+      },
+      {
+        "id": "CT26",
+        "status": "passed",
+        "weather": {
+          "city": "Brasília",
+          "temperature": 22.6,
+          "humidity": 89,
+          "pressure": 893.1,
+          "observedAt": "2026-11-25T10:00:00+00:00"
+        }
+      }
+    ],
+    "CI06": [
+      {
+        "id": "preparacao-plano",
+        "status": "passed"
+      },
+      {
+        "id": "CT27",
+        "status": "passed",
+        "duracaoMs": 426
+      },
+      {
+        "id": "CT28",
+        "status": "passed",
+        "duracaoMs": 512
+      }
+    ],
+    "CI07": [
+      {
+        "id": "CT31",
+        "status": "passed"
+      },
+      {
+        "id": "CT32",
+        "status": "passed",
+        "operation": "insert cross-account",
+        "http": 403
+      }
+    ]
+  },
+  "falhaClima": [
+    {
+      "id": "CT44-persistencia",
+      "status": "passed",
+      "expected": {
+        "pain_rest": 2,
+        "pain_movement": 5,
+        "stiffness": "Moderada",
+        "fatigue": "Leve"
+      },
+      "tempoRegistroMs": 1138
+    },
+    {
+      "id": "CT44-falha-clima",
+      "status": "passed",
+      "simulacoes": 2,
+      "semMedicao": true,
+      "avisoExibido": true
+    }
+  ],
+  "temposMeteorologia": [
+    {
+      "endpoint": "/api/weather",
+      "method": "GET",
+      "status": 200,
+      "tempoAteCabecalhoMs": 209
+    }
+  ],
+  "execucao": "45590549862",
+  "commit": "01f1c61f73ba9903ad4033c47e4f7025172e165f",
+  "ambiente": "checkout candidato em loopback, Supabase real"
+}

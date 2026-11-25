@@ -1,0 +1,32 @@
+[
+  {
+    "id": "CT20-21",
+    "status": "passed",
+    "duracaoMs": 983
+  },
+  {
+    "id": "CT23",
+    "status": "passed",
+    "duracaoMs": 2362
+  },
+  {
+    "id": "CT29",
+    "status": "passed",
+    "duracaoMs": 4701
+  },
+  {
+    "id": "CT22",
+    "status": "failed",
+    "error": "Biblioteca sem resultados: Configure EXERCISEBANK_API_KEY na Vercel para consultar os 50 vídeos do Sandbox."
+  },
+  {
+    "id": "CT24",
+    "status": "passed",
+    "duracaoMs": 858
+  },
+  {
+    "id": "CT30-cleanup",
+    "status": "passed",
+    "duracaoMs": 2328
+  }
+]
