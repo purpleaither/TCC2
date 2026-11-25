@@ -1,0 +1,114 @@
+[
+  {
+    "id": "CT42-inicio",
+    "perfil": "paciente",
+    "tela": "inicio",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-sintomas",
+    "perfil": "paciente",
+    "tela": "sintomas",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": [
+      "color-contrast"
+    ]
+  },
+  {
+    "id": "CT42-exercicios",
+    "perfil": "paciente",
+    "tela": "exercicios",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-historico",
+    "perfil": "paciente",
+    "tela": "historico",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": [
+      "color-contrast"
+    ]
+  },
+  {
+    "id": "CT42-orientacoes",
+    "perfil": "paciente",
+    "tela": "orientacoes",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-contatos",
+    "perfil": "paciente",
+    "tela": "contatos",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-profissional",
+    "perfil": "fisioterapeuta",
+    "tela": "profissional",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-registros-prof",
+    "perfil": "fisioterapeuta",
+    "tela": "registros-prof",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-planos-prof",
+    "perfil": "fisioterapeuta",
+    "tela": "planos-prof",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-editor-prof",
+    "perfil": "fisioterapeuta",
+    "tela": "editor-prof",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-exercise-config-prof",
+    "perfil": "fisioterapeuta",
+    "tela": "exercise-config-prof",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-exercise-bank-prof",
+    "perfil": "fisioterapeuta",
+    "tela": "exercise-bank-prof",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  }
+]

@@ -20,7 +20,7 @@ concurrency:
 jobs:
   candidata:
     if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'verificacao-complementar-tcc'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     env:
       TCC_BASE_URL: http://127.0.0.1:8766/
@@ -64,7 +64,7 @@ jobs:
           TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
         run: |
           falhou=0
-          node tests/auditoria/autenticada.mjs || falhou=1
+          TCC_BIBLIOTECA=1 node tests/auditoria/autenticada.mjs || falhou=1
           TCC_SNAPSHOT=mobile node tests/auditoria/autenticada.mjs || falhou=1
           TCC_SNAPSHOT=desktop node tests/auditoria/autenticada.mjs || falhou=1
           exit "$falhou"
@@ -89,6 +89,9 @@ jobs:
           done
           TCC_CLIMA_FALHA=1 node tests/playwright-sintomas-clima.cjs > /tmp/tcc-clima-falha.log 2>&1 || falhou=1
           exit "$falhou"
+      - name: Conferir cabeçalhos públicos da Vercel
+        if: always() && !cancelled()
+        run: node tests/auditoria/cabecalhos-vercel.mjs
       - name: Guardar evidências da candidata
         if: always()
         uses: actions/upload-artifact@v4

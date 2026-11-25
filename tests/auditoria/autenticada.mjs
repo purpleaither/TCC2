@@ -1,6 +1,7 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { chromium } from 'playwright';
 import AxeBuilder from '@axe-core/playwright';
+import { verificarBiblioteca } from './biblioteca.mjs';
 
 const pasta = process.env.TCC_EVIDENCIAS ?? 'test-results/auditoria';
 const base = process.env.TCC_BASE_URL ?? 'http://127.0.0.1:8765/';
@@ -117,6 +118,7 @@ try {
           await pagina.getByRole('button', { name: '+ Adicionar exercícios', exact: true }).click({ timeout: 8000 });
           await pagina.getByRole('button', { name: 'Escolher na ExerciseBank', exact: true }).click({ timeout: 8000 });
         });
+        if (process.env.TCC_BIBLIOTECA === '1') await verificarBiblioteca(pagina, casos);
       }
     } catch {
       casos.push({ id: 'CT42-sessao-' + perfil.nome, perfil: perfil.nome, estado: 'bloqueado', motivo: 'Sessão fictícia indisponível.' });
