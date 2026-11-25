@@ -41,7 +41,7 @@ function aplicarUsuarioNaInterface(nome) {
 
 function mostrarCabecalho(visivel) {
   var header = document.getElementById('appHeader');
-  if (header) header.style.display = visivel ? 'flex' : 'none';
+  if (header) header.style.display = visivel ? 'grid' : 'none';
 }
 
 function navegarPara(pagina) {
@@ -54,8 +54,9 @@ function navegarPara(pagina) {
 function alternarMenu() {
   var drawer = document.getElementById('menuDrawer');
   var overlay = document.getElementById('menuOverlay');
-  if (drawer) drawer.classList.toggle('open');
-  if (overlay) overlay.classList.toggle('open');
+  var aberto = drawer ? drawer.classList.toggle('open') : false;
+  if (overlay) overlay.classList.toggle('open', aberto);
+  document.getElementById('menuBtn')?.setAttribute('aria-expanded', String(aberto));
 }
 
 function fecharMenu() {
@@ -63,6 +64,7 @@ function fecharMenu() {
   var overlay = document.getElementById('menuOverlay');
   if (drawer) drawer.classList.remove('open');
   if (overlay) overlay.classList.remove('open');
+  document.getElementById('menuBtn')?.setAttribute('aria-expanded', 'false');
 }
 
 document.addEventListener('DOMContentLoaded', function() {

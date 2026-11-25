@@ -12,13 +12,16 @@
 <div class="app">
 
   <!-- ===== CABEÇALHO (Oculto na tela de login) ===== -->
-  <div class="header" id="appHeader" style="display:none">
-    <button class="header-menu-btn" id="menuBtn">☰ Menu</button>
-    <div class="header-brand" onclick="navegarPara(appPaginaInicial())">
-      <img src="logo.svg" alt="Logo Autonomia em Movimento" class="header-logo">
-    </div>
-    <button class="header-perfil-btn" id="headerPerfilBtn" onclick="navegarPara('conta')">Minha conta</button>
-  </div>
+  <header class="header" id="appHeader" style="display:none">
+    <button type="button" class="header-menu-btn" id="menuBtn" aria-controls="menuDrawer" aria-expanded="false">
+      <span class="header-menu-icon" aria-hidden="true"></span>
+      <span>Menu</span>
+    </button>
+    <button type="button" class="header-brand" aria-label="Ir para o início" onclick="navegarPara(appPaginaInicial())">
+      <img src="logo.svg" alt="" class="header-logo">
+    </button>
+    <button type="button" class="header-perfil-btn" id="headerPerfilBtn" onclick="navegarPara('conta')">Minha conta</button>
+  </header>
 
   <div id="authFlash" role="status" aria-live="polite" hidden style="margin:12px 16px 0;padding:12px 14px;border-radius:6px;background:var(--superficie-verde, #e8f5e9);color:var(--titulo, #003366);font-size:var(--fonte-minima)"></div>
 
