@@ -481,6 +481,10 @@ body {
   color: var(--texto-suave, #666);
 }
 
+#page-inicio > :is(.card, .locked-card, .weather-card) {
+  border: 0;
+}
+
 /* ---- Heatmap (meu histórico) ---- */
 .heatmap-header {
   display: flex;
