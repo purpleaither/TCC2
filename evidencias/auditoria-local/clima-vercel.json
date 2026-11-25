@@ -1,0 +1,13 @@
+{
+  "id": "CT43",
+  "estado": "aprovado",
+  "http": 200,
+  "origem": "https://tcc2-lime.vercel.app/api/weather",
+  "dados": {
+    "weather_city": "Brasília",
+    "weather_temperature": 21.5,
+    "weather_humidity": 93,
+    "weather_pressure": 892.3,
+    "weather_observed_at": "2026-11-25T02:30:00.000Z"
+  }
+}
