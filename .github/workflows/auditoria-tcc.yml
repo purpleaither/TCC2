@@ -61,7 +61,8 @@ jobs:
           docker run --rm --network host --user "$(id -u):$(id -g)" \
             -e HOME=/tmp -v "$PWD/tests/auditoria/zap.yml:/tmp/plano.yml:ro" \
             -v "$PWD/$TCC_EVIDENCIAS:/zap/wrk:rw" \
-            ghcr.io/zaproxy/zaproxy:stable zap.sh -cmd -autorun /tmp/plano.yml
+            ghcr.io/zaproxy/zaproxy@sha256:9624669db72f54d86c4b46a7064518bd9bf79d8c61a4c31befa9923489f328af \
+            zap.sh -cmd -dir /tmp/zap-home -autorun /tmp/plano.yml
       - name: Guardar resultados da execução
         if: always()
         uses: actions/upload-artifact@v4
