@@ -918,7 +918,6 @@ body {
 #page-exercicios .patient-workout-finish{display:block;width:100%;margin-top:15px;min-height:50px;font-size:var(--fonte-minima);font-weight:800}
 #page-exercicios .patient-workout-finish:disabled{opacity:.8;cursor:default}
 .heatmap-workout-day{box-shadow:inset 0 0 0 2px var(--destaque, #006633);position:relative;cursor:pointer}
-.heatmap-workout-marker{font-size:var(--fonte-minima);font-weight:800;color:var(--destaque, #006633);line-height:1}
 .heatmap-cell[role="button"]:focus-visible{outline:3px solid var(--titulo, #003366);outline-offset:2px}
 #climaSheet{max-height:85vh;overflow-y:auto}
 .workout-history-details{margin-top:16px;border-top:1px solid var(--linha, #e0e7e1);padding-top:15px}
@@ -1203,7 +1202,7 @@ body {
 :is(.heatmap-cell, .legend-color)[data-intensidade="moderada"] { background: var(--dor-moderada); }
 :is(.heatmap-cell, .legend-color)[data-intensidade="intensa"] { background: var(--dor-intensa); }
 .heatmap-cell[data-intensidade]:not([data-intensidade="nenhuma"]) { color: var(--sobre-dor); }
-.heatmap-cell[data-intensidade]:not([data-intensidade="nenhuma"]) :is(.heatmap-cell-day, .heatmap-workout-marker) {
+.heatmap-cell[data-intensidade]:not([data-intensidade="nenhuma"]) .heatmap-cell-day {
   color: inherit;
 }
 :root[data-texto="200"] .header,

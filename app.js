@@ -149,12 +149,13 @@ function gerarHeatmap() {
     });
     var cell = document.createElement('div');
     cell.className = 'heatmap-cell';
-    var valorVisivel = treinosDoDia.length ? '✓' : '-';
+    var valorVisivel = treinosDoDia.length ? '' : '-';
 
     if (!regDoDia) {
       cell.style.backgroundColor = 'var(--superficie-neutra)';
       cell.style.borderColor = 'var(--linha)';
-      cell.innerHTML = '<span class="heatmap-cell-day">' + i + '</span> <span class="heatmap-cell-value">' + valorVisivel + '</span>';
+      cell.innerHTML = '<span class="heatmap-cell-day">' + i + '</span>' +
+        (valorVisivel ? ' <span class="heatmap-cell-value">' + valorVisivel + '</span>' : '');
     } else {
       var v = (filtroDorVisualizacao === 0) ? regDoDia.dorRepouso : regDoDia.dorMovimento;
       totalDor += v;
@@ -173,21 +174,14 @@ function gerarHeatmap() {
     if (treinosDoDia.length) {
       cell.classList.add('heatmap-workout-day');
       cell.title = treinosDoDia.length + ' treino(s) concluído(s)';
-      if (regDoDia) {
-        var marker = document.createElement('span');
-        marker.className = 'heatmap-workout-marker';
-        marker.textContent = ' ✓';
-        cell.appendChild(marker);
-      }
     }
     if (regDoDia || treinosDoDia.length) {
       (function(dia, registro) {
         cell.onclick = function() { abrirClimaSheet(dia, registro || null); };
         cell.tabIndex = 0;
         cell.setAttribute('role', 'button');
-        var marcador = registro && treinosDoDia.length ? ' ✓' : '';
         var descricao = treinosDoDia.length ? ' e treinos concluídos' : '';
-        cell.setAttribute('aria-label', 'Ver registros do dia ' + dia + ' ' + valorVisivel + marcador + descricao);
+        cell.setAttribute('aria-label', 'Ver registros do dia ' + dia + (valorVisivel ? ' ' + valorVisivel : '') + descricao);
         cell.onkeydown = function(event) {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
