@@ -44,7 +44,7 @@ body {
 .header-menu-btn {
   background: none;
   border: none;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: bold;
   color: #003366;
   cursor: pointer;
@@ -65,7 +65,7 @@ body {
 }
 
 .header-title {
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: bold;
   color: #003366;
 }
@@ -73,7 +73,7 @@ body {
 .header-perfil-btn {
   background: none;
   border: none;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: bold;
   color: #003366;
   cursor: pointer;
@@ -110,14 +110,14 @@ body {
 }
 
 .login-title {
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: bold;
   color: #003366;
   margin-bottom: 4px;
 }
 
 .login-sub {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: #666;
 }
 
@@ -131,7 +131,7 @@ body {
 
 .form-label {
   display: block;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: bold;
   color: #003366;
   margin-bottom: 6px;
@@ -140,7 +140,7 @@ body {
 .form-input {
   width: 100%;
   padding: 12px 14px;
-  font-size: 14px;
+  font-size: 0.875rem;
   border: 1px solid #ccc;
   border-radius: 6px;
   outline: none;
@@ -156,7 +156,7 @@ body {
 .form-remember {
   display: flex;
   align-items: center;
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: #555;
   margin-bottom: 16px;
 }
@@ -167,7 +167,7 @@ body {
 }
 
 .login-help {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: #888;
   text-align: center;
   margin-top: 16px;
@@ -183,26 +183,26 @@ body {
 }
 
 .card-title {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: bold;
   color: #003366;
   margin-bottom: 8px;
 }
 
 .card-text {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: #333;
   margin-bottom: 8px;
   line-height: 1.4;
 }
 
 .card-text-small {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: #666;
 }
 
 .card-link {
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: bold;
   color: #006633;
   text-decoration: none;
@@ -212,14 +212,14 @@ body {
 
 /* ---- Títulos das páginas ---- */
 .page-title {
-  font-size: 19px;
+  font-size: 1.1875rem;
   font-weight: bold;
   color: #003366;
   margin-bottom: 4px;
 }
 
 .page-subtitle {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: #666;
   margin-bottom: 16px;
 }
@@ -233,7 +233,7 @@ body {
   color: white;
   border: none;
   border-radius: 6px;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: bold;
   cursor: pointer;
   text-align: center;
@@ -276,7 +276,7 @@ body {
 }
 
 .pain-scale-label {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: bold;
   color: #003366;
   margin-bottom: 6px;
@@ -296,7 +296,7 @@ body {
   background: #f0f0f0;
   border: 1px solid #ccc;
   border-radius: 4px;
-  font-size: 22px;
+  font-size: 1.375rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -334,7 +334,7 @@ body {
 .pain-scale-labels {
   display: flex;
   justify-content: space-between;
-  font-size: 10px;
+  font-size: 0.625rem;
   color: #888;
   margin-top: 4px;
 }
@@ -345,7 +345,7 @@ body {
 }
 
 .choices-label {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: bold;
   color: #003366;
   margin-bottom: 8px;
@@ -362,7 +362,7 @@ body {
   background: white;
   border: 1px solid #ccc;
   border-radius: 4px;
-  font-size: 11px;
+  font-size: 0.6875rem;
   cursor: pointer;
   text-align: center;
 }
@@ -397,13 +397,13 @@ body {
 }
 
 .mood-emoji {
-  font-size: 24px;
+  font-size: 1.5rem;
   display: block;
   margin-bottom: 4px;
 }
 
 .mood-label {
-  font-size: 11px;
+  font-size: 0.6875rem;
 }
 
 /* ---- Bloqueio meteorológico ---- */
@@ -417,7 +417,7 @@ body {
 }
 
 .lock-icon {
-  font-size: 22px;
+  font-size: 1.375rem;
   margin-bottom: 6px;
 }
 
@@ -432,20 +432,20 @@ body {
 }
 
 .weather-title {
-  font-size: 14px; /* Adicionado para igualar aos outros cards */
+  font-size: 0.875rem; /* Adicionado para igualar aos outros cards */
   font-weight: bold;
   color: #003366;
   margin-bottom: 6px;
 }
 
 .weather-main {
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: bold;
   margin-bottom: 4px;
 }
 
 .weather-detail {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: #666;
 }
 
@@ -463,12 +463,12 @@ body {
   background: white;
   border: 1px solid #ccc;
   border-radius: 4px;
-  font-size: 20px;
+  font-size: 1.25rem;
   cursor: pointer;
 }
 
 .month-label {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: bold;
   color: #003366;
 }
@@ -485,13 +485,13 @@ body {
 }
 
 .stat-value {
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: bold;
   color: #003366;
 }
 
 .stat-label {
-  font-size: 10px;
+  font-size: 0.625rem;
   color: #888;
 }
 
@@ -504,7 +504,7 @@ body {
 
 .heatmap-weekday {
   text-align: center;
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: bold;
   color: #666;
 }
@@ -525,7 +525,7 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 10px;
+  font-size: 0.625rem;
    background: #f4f4f4;
 }
 
@@ -535,12 +535,12 @@ body {
 }
 
 .heatmap-cell-day {
-  font-size: 9px;
+  font-size: 0.5625rem;
   color: #555;
 }
 
 .heatmap-cell-value {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: bold;
 }
 
@@ -555,7 +555,7 @@ body {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 11px;
+  font-size: 0.6875rem;
 }
 
 .legend-color {
@@ -615,7 +615,7 @@ body {
 }
 
 .menu-title {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: bold;
   color: #003366;
 }
@@ -632,7 +632,7 @@ body {
   border: none;
   border-bottom: 1px solid #eee;
   text-align: left;
-  font-size: 14px;
+  font-size: 0.875rem;
   color: #333;
   cursor: pointer;
 }
@@ -691,7 +691,7 @@ body {
 }
 
 .exercise-visual-label {
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: bold;
   color: #003366;
 }
@@ -712,7 +712,7 @@ body {
 }
 
 .alert-text {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: #333;
   margin-bottom: 4px;
   line-height: 1.4;
@@ -729,12 +729,12 @@ body {
 
 .warning-title {
   font-weight: bold;
-  font-size: 12px;
+  font-size: 0.75rem;
   margin-bottom: 4px;
 }
 
 .warning-text {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: #666;
   line-height: 1.4;
 }
@@ -749,26 +749,26 @@ body {
 }
 
 .routine-label {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: bold;
   margin-bottom: 2px;
   color: #003366;
 }
 
 .routine-value {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: #333;
 }
 
 /* ---- Lista de dados paciente / contatos ---- */
 .contact-info-item {
   margin-bottom: 10px;
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.4;
 }
 
 .contact-info-label {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: bold;
   color: #003366;
   text-transform: uppercase;
@@ -815,7 +815,7 @@ body {
   width: 36px;
   height: 36px;
   border-radius: 4px;
-  font-size: 18px;
+  font-size: 1.125rem;
   cursor: pointer;
 }
 /* Ícone do título da Pílula TPE */
@@ -845,13 +845,13 @@ body {
 .demo-grid-parametros{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .demo-acoes{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
 .demo-acoes .btn{width:auto;margin-top:0;flex:1}
-.demo-detalhe{background:#f6faf7;border-left:3px solid #006633;padding:10px;margin:9px 0;line-height:1.5;font-size:12px}
-.demo-vazio{color:#69756e;font-size:13px;padding:12px 0}
+.demo-detalhe{background:#f6faf7;border-left:3px solid #006633;padding:10px;margin:9px 0;line-height:1.5;font-size:0.75rem}
+.demo-vazio{color:#69756e;font-size:0.8125rem;padding:12px 0}
 #page-profissional select,#page-planos-prof select,#page-registros-prof select{background:#fff}
 @media(max-width:340px){.demo-grid-parametros{grid-template-columns:1fr}.demo-acoes{flex-direction:column}}
 
 .bank-result{margin-top:12px}
-.bank-result .card-title{font-size:14px;line-height:1.4}
+.bank-result .card-title{font-size:0.875rem;line-height:1.4}
 .bank-result .card-text-small{margin:7px 0;line-height:1.55}
 .bank-media{max-width:100%;margin-top:10px}
 .bank-media video,.bank-media img{width:100%;max-height:260px;object-fit:contain;display:block;background:#f5f7f5;border:1px solid #e0e7e1;border-radius:6px}
@@ -862,16 +862,16 @@ body {
 
 /* Prescrição individual: leitura prioritária para o paciente. */
 #page-exercicios .patient-exercise-card{background:#fff;border:1px solid #dce9e0;border-radius:12px;padding:16px;min-width:0}
-#page-exercicios .patient-plan-title{font-size:13px;color:#466654;font-weight:600;margin:0 0 6px}
-#page-exercicios .patient-exercise-progress{font-size:14px;color:#006633;font-weight:700;margin:0 0 10px}
-#page-exercicios .patient-exercise-title{font-size:clamp(21px,5vw,27px);line-height:1.25;color:#003366;margin:0 0 14px}
+#page-exercicios .patient-plan-title{font-size:0.8125rem;color:#466654;font-weight:600;margin:0 0 6px}
+#page-exercicios .patient-exercise-progress{font-size:0.875rem;color:#006633;font-weight:700;margin:0 0 10px}
+#page-exercicios .patient-exercise-title{font-size:clamp(1.3125rem,calc(5vw * var(--escala-texto, 1)),1.6875rem);line-height:1.25;color:#003366;margin:0 0 14px}
 #page-exercicios .patient-exercise-video{margin:0 0 16px}
 #page-exercicios .patient-exercise-video video{width:100%;max-height:320px;aspect-ratio:16 / 9;background:#f2f5f3;border-radius:10px;object-fit:contain}
 #page-exercicios .patient-exercise-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0 16px}
 #page-exercicios .patient-exercise-metric{padding:14px 12px;background:#f0f8f3;border:1px solid #cfe2d5;border-radius:10px;min-width:0}
-#page-exercicios .patient-exercise-metric-label{display:block;font-size:13px;font-weight:600;color:#375946;margin-bottom:5px}
-#page-exercicios .patient-exercise-metric-value{display:block;font-size:clamp(19px,5vw,26px);line-height:1.15;font-weight:800;color:#003366;overflow-wrap:anywhere}
-#page-exercicios .patient-exercise-instructions{font-size:15px;line-height:1.6;margin:0 0 14px}
+#page-exercicios .patient-exercise-metric-label{display:block;font-size:0.8125rem;font-weight:600;color:#375946;margin-bottom:5px}
+#page-exercicios .patient-exercise-metric-value{display:block;font-size:clamp(1.1875rem,calc(5vw * var(--escala-texto, 1)),1.625rem);line-height:1.15;font-weight:800;color:#003366;overflow-wrap:anywhere}
+#page-exercicios .patient-exercise-instructions{font-size:0.9375rem;line-height:1.6;margin:0 0 14px}
 #page-exercicios .patient-exercise-card .demo-acoes{margin-top:14px}
 #page-exercicios .patient-exercise-card .demo-acoes .btn{min-height:44px}
 @media(max-width:340px){
@@ -882,32 +882,32 @@ body {
 
 /* Conselhos curtos de educação terapêutica na tela do exercício. */
 #page-exercicios .patient-tpe-advice{margin:8px 0 18px;padding:14px 15px;border-left:4px solid #006633;border-radius:8px;background:#f0f8f3}
-#page-exercicios .patient-tpe-label{display:inline-block;color:#006633;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
-#page-exercicios .patient-tpe-heading{font-size:16px;line-height:1.4;color:#003366;margin:0 0 6px}
-#page-exercicios .patient-tpe-text{font-size:14px;line-height:1.6;color:#2c4539;margin:0 0 8px}
-#page-exercicios .patient-tpe-link{background:none;border:0;padding:5px 0;color:#006633;text-align:left;text-decoration:underline;cursor:pointer;font-size:13px;font-weight:700}
+#page-exercicios .patient-tpe-label{display:inline-block;color:#006633;font-weight:800;font-size:0.75rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+#page-exercicios .patient-tpe-heading{font-size:1rem;line-height:1.4;color:#003366;margin:0 0 6px}
+#page-exercicios .patient-tpe-text{font-size:0.875rem;line-height:1.6;color:#2c4539;margin:0 0 8px}
+#page-exercicios .patient-tpe-link{background:none;border:0;padding:5px 0;color:#006633;text-align:left;text-decoration:underline;cursor:pointer;font-size:0.8125rem;font-weight:700}
 #page-exercicios .patient-tpe-link:focus-visible{outline:2px solid #003366;outline-offset:3px}
 
 /* Conclusão do treino e ficha preservada no histórico diário. */
-#page-exercicios .patient-workout-finish{display:block;width:100%;margin-top:15px;min-height:50px;font-size:16px;font-weight:800}
+#page-exercicios .patient-workout-finish{display:block;width:100%;margin-top:15px;min-height:50px;font-size:1rem;font-weight:800}
 #page-exercicios .patient-workout-finish:disabled{opacity:.8;cursor:default}
 .heatmap-workout-day{box-shadow:inset 0 0 0 2px #006633;position:relative;cursor:pointer}
-.heatmap-workout-marker{position:absolute;right:2px;top:1px;font-size:10px;font-weight:800;color:#006633;line-height:1}
+.heatmap-workout-marker{position:absolute;right:2px;top:1px;font-size:0.625rem;font-weight:800;color:#006633;line-height:1}
 .heatmap-cell[role="button"]:focus-visible{outline:3px solid #003366;outline-offset:2px}
 #climaSheet{max-height:85vh;overflow-y:auto}
 .workout-history-details{margin-top:16px;border-top:1px solid #e0e7e1;padding-top:15px}
-.workout-history-details .card-title{font-size:16px;color:#003366}
+.workout-history-details .card-title{font-size:1rem;color:#003366}
 .workout-history-session{padding:12px;margin:10px 0;background:#f6faf7;border:1px solid #d5e5d9;border-radius:8px}
-.workout-history-time{font-size:13px;font-weight:800;color:#006633;margin:0 0 10px}
+.workout-history-time{font-size:0.8125rem;font-weight:800;color:#006633;margin:0 0 10px}
 .workout-history-exercise{padding:10px 0;border-top:1px solid #d8e6dc}
-.workout-history-name{display:block;font-size:14px;line-height:1.35;color:#003366}
-.workout-history-plan{display:block;font-size:12px;color:#567061;margin:3px 0}
-.workout-history-exercise .card-text-small{font-size:13px;line-height:1.5;margin:5px 0 0}
+.workout-history-name{display:block;font-size:0.875rem;line-height:1.35;color:#003366}
+.workout-history-plan{display:block;font-size:0.75rem;color:#567061;margin:3px 0}
+.workout-history-exercise .card-text-small{font-size:0.8125rem;line-height:1.5;margin:5px 0 0}
 
 /* A biblioteca e as opções só aparecem quando solicitadas pelo fisioterapeuta. */
 #exerciseChoice[hidden],#exercisebankPanel[hidden]{display:none}
 .exercise-source-choice{margin-top:14px;padding-top:14px;border-top:1px solid #dfe7e2}
-.exercise-source-choice .card-title{font-size:16px;margin-bottom:10px}
+.exercise-source-choice .card-title{font-size:1rem;margin-bottom:10px}
 .exercise-source-choice .demo-acoes{margin-bottom:0}
 
 /* Inserção em páginas separadas: seleção, configuração e resumo. */
@@ -918,15 +918,15 @@ body {
 #page-exercise-config-prof .card>.btn{min-height:46px}
 #page-exercise-bank-prof>.btn{margin-bottom:12px}
 #page-editor-prof .exercise-summary-item{border:1px solid #dfe7e2;background:#fafcfa;border-radius:8px;padding:12px;margin:10px 0}
-#page-editor-prof .exercise-summary-name{font-size:16px;line-height:1.4;display:block;color:#003366}
-#page-editor-prof .exercise-summary-item .card-text-small{font-size:13px;line-height:1.5;margin:6px 0}
+#page-editor-prof .exercise-summary-name{font-size:1rem;line-height:1.4;display:block;color:#003366}
+#page-editor-prof .exercise-summary-item .card-text-small{font-size:0.8125rem;line-height:1.5;margin:6px 0}
 #page-editor-prof .exercise-summary-item .demo-acoes{margin:8px 0 0}
 #page-editor-prof #itensPlanoProf[hidden]{display:none}
 
 /* Ações principais após a lista de planos e escolha do plano de destino. */
 #planMainActions .btn{display:block;width:100%;min-height:46px;margin:10px 0}
 #planMainActions .btn:disabled{opacity:.5;cursor:not-allowed}
-#planMainActions #addExerciseEntryHint{font-size:13px;line-height:1.5;margin-top:8px}
+#planMainActions #addExerciseEntryHint{font-size:0.8125rem;line-height:1.5;margin-top:8px}
 #page-exercise-target-prof .card{margin-bottom:12px}
 #page-exercise-target-prof .card .btn{margin-top:12px}
 
@@ -937,9 +937,9 @@ body {
 @media(max-width:390px){#page-planos-prof .plan-card-add-actions{flex-direction:column}#page-planos-prof .plan-card-add-actions .btn{flex:auto;width:100%}}
 
 /* Leitura ampliada dos exercícios na primeira tela de gerenciamento de planos. */
-#page-planos-prof #listaPlanosProf .demo-detalhe{font-size:16px;line-height:1.6;padding:14px;margin:12px 0}
-#page-planos-prof #listaPlanosProf .plan-exercise-name{display:block;color:#003366;font-size:18px;line-height:1.4;font-weight:750;overflow-wrap:anywhere;margin-bottom:6px}
-#page-planos-prof #listaPlanosProf .plan-exercise-prescription{font-size:16px;line-height:1.6;margin:0;color:#253c30;overflow-wrap:anywhere}
+#page-planos-prof #listaPlanosProf .demo-detalhe{font-size:1rem;line-height:1.6;padding:14px;margin:12px 0}
+#page-planos-prof #listaPlanosProf .plan-exercise-name{display:block;color:#003366;font-size:1.125rem;line-height:1.4;font-weight:750;overflow-wrap:anywhere;margin-bottom:6px}
+#page-planos-prof #listaPlanosProf .plan-exercise-prescription{font-size:1rem;line-height:1.6;margin:0;color:#253c30;overflow-wrap:anywhere}
 
 /* Ajuste responsivo: a biblioteca deve caber na largura disponível do dispositivo. */
 #page-exercise-bank-prof,
@@ -984,4 +984,104 @@ body {
   #page-exercise-bank-prof{padding:16px 12px}
   #page-exercise-bank-prof #exercisebankPanel{padding:12px}
   #page-exercise-bank-prof .bank-result .demo-acoes{grid-template-columns:minmax(0,1fr)}
+}
+
+/* ---- Preferências de acessibilidade ---- */
+.acessibilidade {
+  max-width: 390px;
+  margin: 0 auto;
+  padding: 8px 16px;
+  border-bottom: 1px solid #dce2e6;
+  background: #fff;
+  color: #003366;
+}
+
+.acessibilidade summary {
+  width: fit-content;
+  padding: 8px 0;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: bold;
+}
+
+.acessibilidade-opcoes,
+.acessibilidade-texto {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.acessibilidade-opcoes {
+  padding: 6px 0;
+  font-size: 0.875rem;
+}
+
+.acessibilidade button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 6px 10px;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  background: #fff;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+}
+
+.acessibilidade button[aria-disabled="true"] {
+  border-style: dashed;
+  cursor: default;
+}
+
+.acessibilidade button[aria-pressed="true"] {
+  background: #003366;
+  color: #fff;
+}
+
+.acessibilidade :focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 2px;
+}
+
+.alto-contraste {
+  color-scheme: dark;
+}
+
+.alto-contraste body,
+.alto-contraste .app,
+.alto-contraste .acessibilidade,
+.alto-contraste .app :is(.header, .menu-drawer, .card, #climaSheet, button, input, select, textarea) {
+  background-color: #101010 !important;
+  background-image: none !important;
+  color: #fff !important;
+  border-color: #fff !important;
+}
+
+.alto-contraste .app :where(:not(svg, svg *, img, video, canvas, .menu-overlay)) {
+  background-color: transparent !important;
+  background-image: none !important;
+  color: #fff !important;
+  text-shadow: none;
+}
+
+.alto-contraste .app :is(a, a *),
+.alto-contraste .acessibilidade summary {
+  color: #ffdf4d !important;
+}
+
+.alto-contraste .app :is(.selected, .menu-item.active, [aria-current="page"]),
+.alto-contraste .acessibilidade button[aria-pressed="true"] {
+  background: #ffdf4d !important;
+  color: #101010 !important;
+}
+
+.alto-contraste .app :is(.selected, .menu-item.active, [aria-current="page"]) :not(svg, svg *) {
+  color: #101010 !important;
+}
+
+.alto-contraste .app :focus-visible,
+.alto-contraste .acessibilidade :focus-visible {
+  outline: 3px solid #ffdf4d !important;
+  outline-offset: 2px;
 }
