@@ -772,8 +772,6 @@ body {
 }
 
 /* ---- Rotina de exercícios (card na tela início) ---- */
-#btnRegistrarSintomas[hidden] { display: none; }
-
 #cardRegistroDiario,
 #homeBtnExercicios {
   margin-block-end: 1.25rem;
@@ -1315,10 +1313,6 @@ body {
   border-color: var(--acao-restaurar);
 }
 .preferencias .btn-outline:hover { background: var(--fundo-restaurar-hover); }
-.registro-concluido {
-  color: var(--destaque);
-  font-weight: 700;
-}
 .app img.icon { filter: var(--filtro-icone); }
 .app :is(.login-logo, .header-logo, .menu-logo) {
   content: var(--imagem-logo, normal);

@@ -261,15 +261,32 @@ function abrirClimaSheet(dia, reg) {
   if (sheet) sheet.classList.add('open');
 }
 
-function verificarRegistroHoje() {
-  var hoje = new Date().toDateString();
-  var existe = registrosUsuario.some(function(r) {
-    return new Date(r.data).toDateString() === hoje;
+function obterRegistroHoje(hoje) {
+  return registrosUsuario.findLast(function(registro) {
+    return new Date(registro.data).toDateString() === hoje.toDateString();
   });
+}
+
+function verificarRegistroHoje() {
   var botao = document.getElementById('btnRegistrarSintomas');
-  var status = document.getElementById('registroDiarioStatus');
-  if (botao) botao.hidden = existe;
-  if (status) status.hidden = !existe;
+  if (botao) {
+    botao.textContent = obterRegistroHoje(new Date())
+      ? 'Ver meu registro de sintomas'
+      : 'Registrar sintomas';
+  }
+}
+
+function abrirRegistroDiario() {
+  var hoje = new Date();
+  var registro = obterRegistroHoje(hoje);
+  if (!registro) {
+    navegarPara('sintomas');
+    return;
+  }
+  mesAtual = hoje;
+  navegarPara('historico');
+  abrirClimaSheet(hoje.getDate(), registro);
+  document.querySelector('#climaSheet .bottom-sheet-close')?.focus();
 }
 
 atualizarDataAtual();
