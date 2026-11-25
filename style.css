@@ -785,24 +785,12 @@ body {
 }
 
 /* ---- Rotina de exercícios (card na tela início) ---- */
-.routine-preview {
-  display: grid;
-  gap: var(--espaco-valor-rotulo);
-  margin-block-end: var(--espaco-grupo);
-}
-
 @media (min-width: 640px) {
   #homeBtnExercicios { inline-size: auto; }
 }
 
-.routine-label {
-  font-size: var(--fonte-minima);
-  font-weight: bold;
-  line-height: var(--entrelinha-titulo);
-  color: var(--titulo, #003366);
-}
-
 .routine-value {
+  margin-block-end: var(--espaco-grupo);
   font-size: var(--fonte-minima);
   color: var(--texto, #333);
 }
