@@ -3,9 +3,9 @@ const fs=require('node:fs');
 (async()=>{const report=[],network=[];let browser;try{
 browser=await chromium.launch();const p=await browser.newPage();
 const isSymptoms=r=>new URL(r.url()).pathname.endsWith('/rest/v1/symptom_records');
-p.on('response',r=>{if(isSymptoms(r)||new URL(r.url()).hostname==='api.open-meteo.com')network.push({endpoint:new URL(r.url()).pathname,method:r.request().method(),status:r.status()})});
-p.on('requestfailed',r=>{if(new URL(r.url()).hostname==='api.open-meteo.com')network.push({endpoint:new URL(r.url()).pathname,method:r.method(),error:r.failure()?.errorText})});
-p.on('request',r=>{if(new URL(r.url()).hostname==='api.open-meteo.com')network.push({endpoint:new URL(r.url()).pathname,method:r.method(),event:'request'})});
+p.on('response',r=>{if(isSymptoms(r)||(new URL(r.url()).pathname==='/api/weather'||new URL(r.url()).hostname==='api.open-meteo.com'))network.push({endpoint:new URL(r.url()).pathname,method:r.request().method(),status:r.status()})});
+p.on('requestfailed',r=>{if((new URL(r.url()).pathname==='/api/weather'||new URL(r.url()).hostname==='api.open-meteo.com'))network.push({endpoint:new URL(r.url()).pathname,method:r.method(),error:r.failure()?.errorText})});
+p.on('request',r=>{if((new URL(r.url()).pathname==='/api/weather'||new URL(r.url()).hostname==='api.open-meteo.com'))network.push({endpoint:new URL(r.url()).pathname,method:r.method(),event:'request'})});
 await p.goto('https://tcc2-lime.vercel.app/');
 await p.locator('#loginEmail').fill(process.env.TEST_PACIENTE_EMAIL);await p.locator('#loginSenha').fill(process.env.TEST_PACIENTE_PASSWORD);
 const initial=p.waitForResponse(r=>isSymptoms(r)&&r.request().method()==='GET'&&r.ok(),{timeout:30000});
