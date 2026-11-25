@@ -14,6 +14,7 @@
 body {
   font-family: Arial, sans-serif;
   line-height: var(--entrelinha-texto);
+  font-size: var(--fonte-minima);
   background: var(--fundo, #f0f2f5);
   color: var(--texto, #333);
 }
@@ -42,7 +43,7 @@ body {
 .header-menu-btn {
   background: none;
   border: none;
-  font-size: 0.875rem;
+  font-size: var(--fonte-minima);
   font-weight: bold;
   color: var(--titulo, #003366);
   cursor: pointer;
@@ -50,6 +51,7 @@ body {
 }
 
 .header-brand {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -63,7 +65,7 @@ body {
 }
 
 .header-title {
-  font-size: 0.9375rem;
+  font-size: var(--fonte-minima);
   font-weight: bold;
   color: var(--titulo, #003366);
 }
@@ -71,7 +73,7 @@ body {
 .header-perfil-btn {
   background: none;
   border: none;
-  font-size: 0.875rem;
+  font-size: var(--fonte-minima);
   font-weight: bold;
   color: var(--titulo, #003366);
   cursor: pointer;
@@ -140,7 +142,7 @@ body {
 .form-input {
   width: 100%;
   padding: 12px 14px;
-  font-size: 0.875rem;
+  font-size: var(--fonte-minima);
   border: 1px solid var(--borda, #ccc);
   border-radius: 6px;
   outline: none;
@@ -184,7 +186,7 @@ body {
 
 .card-title {
   line-height: var(--entrelinha-titulo);
-  font-size: 0.875rem;
+  font-size: var(--fonte-minima);
   font-weight: bold;
   color: var(--titulo, #003366);
   margin-block-end: var(--espaco-texto);
@@ -213,7 +215,7 @@ body {
 /* ---- Títulos das páginas ---- */
 .page-title {
   line-height: var(--entrelinha-titulo);
-  font-size: 1.1875rem;
+  font-size: var(--fonte-minima);
   font-weight: bold;
   color: var(--titulo, #003366);
   margin-block-end: var(--espaco-texto);
@@ -234,7 +236,7 @@ body {
   color: var(--sobre-acao, white);
   border: none;
   border-radius: 6px;
-  font-size: 0.875rem;
+  font-size: var(--fonte-minima);
   font-weight: bold;
   cursor: pointer;
   text-align: center;
@@ -439,14 +441,14 @@ body {
 }
 
 .weather-title {
-  font-size: 0.875rem; /* Adicionado para igualar aos outros cards */
+  font-size: var(--fonte-minima); /* Adicionado para igualar aos outros cards */
   font-weight: bold;
   color: var(--titulo, #003366);
   margin-bottom: 6px;
 }
 
 .weather-main {
-  font-size: 0.9375rem;
+  font-size: var(--fonte-minima);
   font-weight: bold;
   margin-bottom: 4px;
 }
@@ -475,7 +477,7 @@ body {
 }
 
 .month-label {
-  font-size: 0.875rem;
+  font-size: var(--fonte-minima);
   font-weight: bold;
   color: var(--titulo, #003366);
 }
@@ -492,13 +494,14 @@ body {
 
 .stat-item {
   flex: 1;
+  min-inline-size: 0;
   text-align: center;
 }
 
 .stat-value {
   line-height: var(--entrelinha-valor);
   margin-block-end: var(--espaco-valor-rotulo);
-  font-size: 1.125rem;
+  font-size: var(--fonte-minima);
   font-weight: bold;
   color: var(--titulo, #003366);
 }
@@ -507,6 +510,16 @@ body {
   line-height: var(--entrelinha-rotulo);
   font-size: var(--fonte-minima);
   color: var(--texto-suave, #666);
+}
+
+.heatmap-scroll {
+  overflow-x: auto;
+  margin-block-end: var(--espaco-grupo);
+  padding: 4px;
+}
+
+.heatmap-scroll :is(.heatmap-weekdays, .heatmap-grid) {
+  min-inline-size: 21rem;
 }
 
 .heatmap-weekdays {
@@ -527,7 +540,6 @@ body {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 4px;
-  margin-bottom: 12px;
 }
 
 .heatmap-cell {
@@ -574,6 +586,7 @@ body {
 }
 
 .legend-color {
+  flex-shrink: 0;
   width: 14px;
   height: 14px;
   border: 1px solid var(--borda, #ccc);
@@ -633,7 +646,7 @@ body {
 }
 
 .menu-title {
-  font-size: 1rem;
+  font-size: var(--fonte-minima);
   font-weight: bold;
   color: var(--titulo, #003366);
 }
@@ -650,7 +663,7 @@ body {
   border: none;
   border-bottom: 1px solid var(--linha, #eee);
   text-align: left;
-  font-size: 0.875rem;
+  font-size: var(--fonte-minima);
   color: var(--texto, #333);
   cursor: pointer;
 }
@@ -836,7 +849,7 @@ body {
   width: 36px;
   height: 36px;
   border-radius: 4px;
-  font-size: 1.125rem;
+  font-size: var(--fonte-minima);
   cursor: pointer;
 }
 /* Ícone do título da Pílula TPE */
@@ -872,7 +885,7 @@ body {
 @media(max-width:340px){.demo-grid-parametros{grid-template-columns:1fr}.demo-acoes{flex-direction:column}}
 
 .bank-result{margin-top:12px}
-.bank-result .card-title{font-size:0.875rem;line-height:var(--entrelinha-titulo)}
+.bank-result .card-title{font-size:var(--fonte-minima);line-height:var(--entrelinha-titulo)}
 .bank-result .card-text-small{margin:7px 0;line-height:var(--entrelinha-texto)}
 .bank-media{max-width:100%;margin-top:10px}
 .bank-media video,.bank-media img{width:100%;max-height:260px;object-fit:contain;display:block;background:var(--superficie-suave, #f5f7f5);border:1px solid var(--linha, #e0e7e1);border-radius:6px}
@@ -884,15 +897,15 @@ body {
 /* Prescrição individual: leitura prioritária para o paciente. */
 #page-exercicios .patient-exercise-card{background:var(--superficie, #fff);border:1px solid var(--linha, #dce9e0);border-radius:12px;padding:16px;min-width:0}
 #page-exercicios .patient-plan-title{font-size:var(--fonte-minima);color:var(--texto-suave, #466654);font-weight:600;margin:0 0 6px}
-#page-exercicios .patient-exercise-progress{font-size:0.875rem;color:var(--destaque, #006633);font-weight:700;margin:0 0 10px}
+#page-exercicios .patient-exercise-progress{font-size:var(--fonte-minima);color:var(--destaque, #006633);font-weight:700;margin:0 0 10px}
 #page-exercicios .patient-exercise-title{font-size:clamp(1.3125rem,calc(5vw * var(--escala-texto)),1.6875rem);line-height:var(--entrelinha-titulo);color:var(--titulo, #003366);margin:0 0 14px}
 #page-exercicios .patient-exercise-video{margin:0 0 16px}
 #page-exercicios .patient-exercise-video video{width:100%;max-height:320px;aspect-ratio:16 / 9;background:var(--superficie-suave, #f2f5f3);border-radius:10px;object-fit:contain}
 #page-exercicios .patient-exercise-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0 16px}
 #page-exercicios .patient-exercise-metric{padding:14px 12px;background:var(--superficie-suave, #f0f8f3);border:1px solid var(--linha, #cfe2d5);border-radius:10px;min-width:0}
 #page-exercicios .patient-exercise-metric-label{display:block;font-size:var(--fonte-minima);font-weight:600;color:var(--texto-suave, #375946);line-height:var(--entrelinha-rotulo);margin-block-end:var(--espaco-valor-rotulo)}
-#page-exercicios .patient-exercise-metric-value{display:block;font-size:clamp(1.1875rem,calc(5vw * var(--escala-texto)),1.625rem);line-height:var(--entrelinha-valor);font-weight:800;color:var(--titulo, #003366);overflow-wrap:anywhere}
-#page-exercicios .patient-exercise-instructions{font-size:0.9375rem;line-height:var(--entrelinha-texto);margin:0 0 14px}
+#page-exercicios .patient-exercise-metric-value{display:block;font-size:clamp(var(--fonte-minima),calc(5vw * var(--escala-texto)),1.625rem);line-height:var(--entrelinha-valor);font-weight:800;color:var(--titulo, #003366);overflow-wrap:anywhere}
+#page-exercicios .patient-exercise-instructions{font-size:var(--fonte-minima);line-height:var(--entrelinha-texto);margin:0 0 14px}
 #page-exercicios .patient-exercise-card .demo-acoes{margin-top:14px}
 #page-exercicios .patient-exercise-card .demo-acoes .btn{min-height:44px}
 @media(max-width:340px){
@@ -904,31 +917,31 @@ body {
 /* Conselhos curtos de educação terapêutica na tela do exercício. */
 #page-exercicios .patient-tpe-advice{margin:8px 0 18px;padding:14px 15px;border-left:4px solid var(--destaque, #006633);border-radius:8px;background:var(--superficie-suave, #f0f8f3)}
 #page-exercicios .patient-tpe-label{display:inline-block;color:var(--destaque, #006633);font-weight:800;font-size:var(--fonte-minima);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
-#page-exercicios .patient-tpe-heading{font-size:1rem;line-height:var(--entrelinha-titulo);color:var(--titulo, #003366);margin:0 0 6px}
-#page-exercicios .patient-tpe-text{font-size:0.875rem;line-height:var(--entrelinha-texto);color:var(--texto, #2c4539);margin:0 0 8px}
+#page-exercicios .patient-tpe-heading{font-size:var(--fonte-minima);line-height:var(--entrelinha-titulo);color:var(--titulo, #003366);margin:0 0 6px}
+#page-exercicios .patient-tpe-text{font-size:var(--fonte-minima);line-height:var(--entrelinha-texto);color:var(--texto, #2c4539);margin:0 0 8px}
 #page-exercicios .patient-tpe-link{background:none;border:0;padding:5px 0;color:var(--destaque, #006633);text-align:left;text-decoration:underline;cursor:pointer;font-size:var(--fonte-minima);font-weight:700}
 #page-exercicios .patient-tpe-link:focus-visible{outline:2px solid var(--titulo, #003366);outline-offset:3px}
 
 /* Conclusão do treino e ficha preservada no histórico diário. */
-#page-exercicios .patient-workout-finish{display:block;width:100%;margin-top:15px;min-height:50px;font-size:1rem;font-weight:800}
+#page-exercicios .patient-workout-finish{display:block;width:100%;margin-top:15px;min-height:50px;font-size:var(--fonte-minima);font-weight:800}
 #page-exercicios .patient-workout-finish:disabled{opacity:.8;cursor:default}
 .heatmap-workout-day{box-shadow:inset 0 0 0 2px var(--destaque, #006633);position:relative;cursor:pointer}
 .heatmap-workout-marker{font-size:var(--fonte-minima);font-weight:800;color:var(--destaque, #006633);line-height:1}
 .heatmap-cell[role="button"]:focus-visible{outline:3px solid var(--titulo, #003366);outline-offset:2px}
 #climaSheet{max-height:85vh;overflow-y:auto}
 .workout-history-details{margin-top:16px;border-top:1px solid var(--linha, #e0e7e1);padding-top:15px}
-.workout-history-details .card-title{font-size:1rem;color:var(--titulo, #003366)}
+.workout-history-details .card-title{font-size:var(--fonte-minima);color:var(--titulo, #003366)}
 .workout-history-session{padding:12px;margin:10px 0;background:var(--superficie-suave, #f6faf7);border:1px solid var(--linha, #d5e5d9);border-radius:8px}
 .workout-history-time{font-size:var(--fonte-minima);font-weight:800;color:var(--destaque, #006633);margin:0 0 10px}
 .workout-history-exercise{padding:10px 0;border-top:1px solid var(--linha, #d8e6dc)}
-.workout-history-name{display:block;font-size:0.875rem;line-height:var(--entrelinha-titulo);color:var(--titulo, #003366)}
+.workout-history-name{display:block;font-size:var(--fonte-minima);line-height:var(--entrelinha-titulo);color:var(--titulo, #003366)}
 .workout-history-plan{display:block;font-size:var(--fonte-minima);color:var(--texto-suave, #567061);margin:3px 0}
 .workout-history-exercise .card-text-small{font-size:var(--fonte-minima);line-height:var(--entrelinha-texto);margin:5px 0 0}
 
 /* A biblioteca e as opções só aparecem quando solicitadas pelo fisioterapeuta. */
 #exerciseChoice[hidden],#exercisebankPanel[hidden]{display:none}
 .exercise-source-choice{margin-top:14px;padding-top:14px;border-top:1px solid var(--linha, #dfe7e2)}
-.exercise-source-choice .card-title{font-size:1rem;margin-bottom:10px}
+.exercise-source-choice .card-title{font-size:var(--fonte-minima);margin-bottom:10px}
 .exercise-source-choice .demo-acoes{margin-bottom:0}
 
 /* Inserção em páginas separadas: seleção, configuração e resumo. */
@@ -939,7 +952,7 @@ body {
 #page-exercise-config-prof .card>.btn{min-height:46px}
 #page-exercise-bank-prof>.btn{margin-bottom:12px}
 #page-editor-prof .exercise-summary-item{border:1px solid var(--linha, #dfe7e2);background:var(--superficie-suave, #fafcfa);border-radius:8px;padding:12px;margin:10px 0}
-#page-editor-prof .exercise-summary-name{font-size:1rem;line-height:var(--entrelinha-titulo);display:block;color:var(--titulo, #003366)}
+#page-editor-prof .exercise-summary-name{font-size:var(--fonte-minima);line-height:var(--entrelinha-titulo);display:block;color:var(--titulo, #003366)}
 #page-editor-prof .exercise-summary-item .card-text-small{font-size:var(--fonte-minima);line-height:var(--entrelinha-texto);margin:6px 0}
 #page-editor-prof .exercise-summary-item .demo-acoes{margin:8px 0 0}
 #page-editor-prof #itensPlanoProf[hidden]{display:none}
@@ -958,9 +971,9 @@ body {
 @media(max-width:390px){#page-planos-prof .plan-card-add-actions{flex-direction:column}#page-planos-prof .plan-card-add-actions .btn{flex:auto;width:100%}}
 
 /* Leitura ampliada dos exercícios na primeira tela de gerenciamento de planos. */
-#page-planos-prof #listaPlanosProf .demo-detalhe{font-size:1rem;line-height:var(--entrelinha-texto);padding:14px;margin:12px 0}
-#page-planos-prof #listaPlanosProf .plan-exercise-name{display:block;color:var(--titulo, #003366);font-size:1.125rem;line-height:var(--entrelinha-titulo);font-weight:750;overflow-wrap:anywhere;margin-bottom:6px}
-#page-planos-prof #listaPlanosProf .plan-exercise-prescription{font-size:1rem;line-height:var(--entrelinha-texto);margin:0;color:var(--texto, #253c30);overflow-wrap:anywhere}
+#page-planos-prof #listaPlanosProf .demo-detalhe{font-size:var(--fonte-minima);line-height:var(--entrelinha-texto);padding:14px;margin:12px 0}
+#page-planos-prof #listaPlanosProf .plan-exercise-name{display:block;color:var(--titulo, #003366);font-size:var(--fonte-minima);line-height:var(--entrelinha-titulo);font-weight:750;overflow-wrap:anywhere;margin-bottom:6px}
+#page-planos-prof #listaPlanosProf .plan-exercise-prescription{font-size:var(--fonte-minima);line-height:var(--entrelinha-texto);margin:0;color:var(--texto, #253c30);overflow-wrap:anywhere}
 
 /* Ajuste responsivo: a biblioteca deve caber na largura disponível do dispositivo. */
 #page-exercise-bank-prof,
@@ -1009,7 +1022,7 @@ body {
 
 /* Preferências locais de leitura e aparência. */
 :root {
-  --fonte-minima: 0.875rem;
+  --fonte-minima: 1.25rem;
   --entrelinha-texto: 1.5;
   --entrelinha-rotulo: 1.4;
   --entrelinha-titulo: 1.25;
@@ -1197,6 +1210,7 @@ body {
 }
 .app { overflow-wrap: anywhere; }
 .app :is(button, input, select, textarea) { max-width: 100%; }
+:where(button, input, select, textarea) { font-size: var(--fonte-minima); }
 .app :is(button, input, select, textarea) { scroll-margin-block: 5rem 1rem; }
 .app :is(.choice-btn, .pain-scale-btn, .month-btn) { min-height: 2rem; height: auto; }
 .app .heatmap-cell { min-width: 0; height: auto; }
@@ -1249,7 +1263,7 @@ body {
   border-radius: 999px;
   background: var(--superficie);
   color: var(--titulo);
-  font-size: .875rem;
+  font-size: var(--fonte-minima);
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 3px 12px rgb(0 0 0 / .18);
@@ -1257,6 +1271,8 @@ body {
 .accessibilidade summary:hover { background: var(--superficie-suave); }
 .accessibilidade summary svg { flex: 0 0 1em; width: 1em; height: 1em; }
 .accessibilidade[open] {
+  max-block-size: calc(100dvh - 24px - env(safe-area-inset-bottom, 0px));
+  overflow-y: auto;
   inline-size: min(340px, calc(100% - 32px));
   padding: .65rem;
   border: 1px solid var(--borda);
@@ -1280,7 +1296,7 @@ body {
   min-height: 1.5rem; padding: .3rem .15rem;
 }
 .preferencias { display: grid; gap: .45rem; padding-block: .35rem; }
-.preferencias label { display: block; font-size: .875rem; }
+.preferencias label { display: block; font-size: var(--fonte-minima); }
 .preferencias input[type="checkbox"] { accent-color: var(--destaque); }
 .preferencias .form-input { margin-block-start: .25rem; }
 .preferencias .btn { margin-block-start: .3rem; }
@@ -1300,8 +1316,8 @@ body {
   border-radius: 50%;
 }
 .ajuda-termo { margin: .2rem 0 .65rem; }
-.ajuda-termo summary { font-size: .8125rem; }
-.ajuda-termo p { font-size: .8125rem; line-height:var(--entrelinha-texto); color: var(--texto); }
+.ajuda-termo summary { font-size: var(--fonte-minima); }
+.ajuda-termo p { font-size: var(--fonte-minima); line-height:var(--entrelinha-texto); color: var(--texto); }
 
 @media (min-width: 640px) {
   .app {
