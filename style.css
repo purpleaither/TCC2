@@ -445,10 +445,6 @@ body {
   margin-bottom: 6px;
 }
 
-#page-inicio > .card {
-  border: 0;
-}
-
 /* ---- Heatmap (meu histórico) ---- */
 .heatmap-header {
   display: flex;
@@ -776,6 +772,13 @@ body {
 }
 
 /* ---- Rotina de exercícios (card na tela início) ---- */
+#btnRegistrarSintomas[hidden] { display: none; }
+
+#cardRegistroDiario,
+#homeBtnExercicios {
+  margin-block-end: 1.25rem;
+}
+
 #homeBtnExercicios {
   inline-size: 100%;
   min-block-size: 44px;
@@ -1045,8 +1048,6 @@ body {
   --dor-moderada: #ffb464;
   --dor-intensa: #f17b72;
   --sobre-dor: #182019;
-  --registro-concluido: #4a7c59;
-  --sobre-registro: #fff;
   --acao-perigo: #cc0000;
   --acao-perigo-hover: #aa0000;
   --sobre-perigo: #fff;
@@ -1082,8 +1083,6 @@ body {
   --dor-moderada: #e3a582;
   --dor-intensa: #df919f;
   --sobre-dor: #241c27;
-  --registro-concluido: #2a4463;
-  --sobre-registro: #dceaff;
   --acao-perigo: #9a344b;
   --acao-perigo-hover: #aa4057;
   --sobre-perigo: #fff;
@@ -1120,8 +1119,6 @@ body {
     --dor-moderada: #e3a582;
     --dor-intensa: #df919f;
     --sobre-dor: #241c27;
-    --registro-concluido: #2a4463;
-    --sobre-registro: #dceaff;
     --acao-perigo: #9a344b;
     --acao-perigo-hover: #aa4057;
     --sobre-perigo: #fff;
@@ -1158,8 +1155,6 @@ body {
   --dor-moderada: #ffb464;
   --dor-intensa: #f17b72;
   --sobre-dor: #182019;
-  --registro-concluido: #fff;
-  --sobre-registro: #000;
   --acao-perigo: #cc0000;
   --acao-perigo-hover: #aa0000;
   --sobre-perigo: #fff;
@@ -1321,10 +1316,9 @@ body {
   border-color: var(--acao-restaurar);
 }
 .preferencias .btn-outline:hover { background: var(--fundo-restaurar-hover); }
-.btn.registro-concluido,
-.btn.registro-concluido:hover {
-  background: var(--registro-concluido);
-  color: var(--sobre-registro);
+.registro-concluido {
+  color: var(--destaque);
+  font-weight: 700;
 }
 .app img.icon { filter: var(--filtro-icone); }
 .app :is(.login-logo, .header-logo, .menu-logo) {

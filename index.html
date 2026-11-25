@@ -110,17 +110,13 @@
     <h1 class="page-title">Olá, <span id="userNameDisplay">Maria</span></h1>
     <p class="page-subtitle" id="currentDateDisplay">Carregando data...</p>
 
-    <!-- Card: Registro diário -->
-<div class="card" id="cardRegistroDiario">
-  <h2 class="card-title">Registro diário de sintomas</h2>
-  <p class="card-text">Como você se sente hoje?</p>
-  <button class="btn" id="btnRegistrarSintomas" onclick="navegarPara('sintomas')">Registrar sintomas</button>
-</div>
+    <section id="cardRegistroDiario" aria-labelledby="registroDiarioTitulo">
+      <h2 class="card-title" id="registroDiarioTitulo">Registro de sintomas</h2>
+      <button type="button" class="btn" id="btnRegistrarSintomas" onclick="navegarPara('sintomas')">Registrar sintomas</button>
+      <p class="registro-concluido" id="registroDiarioStatus" role="status" hidden><span aria-hidden="true">✓</span> Registro de hoje concluído</p>
+    </section>
 
-    <!-- Card: Meus exercícios -->
-    <div class="card" id="homeExerciciosCard">
-      <button class="btn" id="homeBtnExercicios" onclick="navegarPara('exercicios')">Ver meus exercícios</button>
-    </div>
+    <button type="button" class="btn" id="homeBtnExercicios" onclick="navegarPara('exercicios')">Ver meus exercícios</button>
 
     <!-- Card: Aviso -->
     <div class="warning-card">

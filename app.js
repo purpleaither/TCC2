@@ -273,10 +273,9 @@ function verificarRegistroHoje() {
     return new Date(r.data).toDateString() === hoje;
   });
   var botao = document.getElementById('btnRegistrarSintomas');
-  if (botao) {
-    botao.textContent = existe ? 'Sintomas já registrados hoje ✓' : 'Registrar sintomas';
-    botao.classList.toggle('registro-concluido', existe);
-  }
+  var status = document.getElementById('registroDiarioStatus');
+  if (botao) botao.hidden = existe;
+  if (status) status.hidden = !existe;
 }
 
 atualizarDataAtual();
