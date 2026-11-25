@@ -1279,6 +1279,7 @@ body {
 }
 .accessibilidade summary {
   display: flex;
+  list-style: none;
   align-items: center;
   gap: .4em;
   min-block-size: 44px;
@@ -1292,6 +1293,11 @@ body {
   cursor: pointer;
   box-shadow: 0 3px 12px rgb(0 0 0 / .18);
 }
+.accessibilidade summary::marker { content: ""; }
+.accessibilidade summary::-webkit-details-marker { display: none; }
+.accessibilidade:not([open]) .accessibilidade-fechar,
+.accessibilidade[open] .accessibilidade-abrir { display: none; }
+
 .accessibilidade summary:hover { background: var(--superficie-suave); }
 .accessibilidade summary svg { flex: 0 0 1em; width: 1em; height: 1em; }
 .accessibilidade[open] {
