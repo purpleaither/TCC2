@@ -63,22 +63,16 @@ function menu() {
   document.querySelectorAll("[data-perfil]").forEach(item=>{
     item.style.display = isAuthenticated() && item.dataset.perfil === profile.role ? "" : "none";
   });
+  text("headerPerfilBtn",isProfessional() ? "Profissional" : "Perfil");
 }
 function navigate(page) {
   if(!isAuthenticated()) page="login";
   else {
+    if (page === "conta") page = isProfessional() ? "profissional" : "contatos";
     const allowed = isProfessional()
-      ? ["conta","profissional","planos-prof","exercise-target-prof","exercise-source-prof","exercise-bank-prof","exercise-config-prof","editor-prof","registros-prof"]
-      : ["conta","inicio","sintomas","historico","orientacoes","exercicios","contatos"];
+      ? ["profissional","planos-prof","exercise-target-prof","exercise-source-prof","exercise-bank-prof","exercise-config-prof","editor-prof","registros-prof"]
+      : ["inicio","sintomas","historico","orientacoes","exercicios","contatos"];
     if(!allowed.includes(page)) page=homePage();
-  }
-  if (page === "conta") {
-    text("contaNome", profile.display_name || "Nome não informado");
-    text("contaEmail", user.email || "E-mail não informado");
-    text("contaTipo", isProfessional() ? "Fisioterapeuta" : "Paciente");
-    if (location.hash !== "#conta") history.replaceState(history.state, "", "#conta");
-  } else if (page !== "login" && location.hash === "#conta") {
-    history.replaceState(history.state, "", location.pathname + location.search);
   }
   document.querySelectorAll(".page").forEach(n=>n.classList.toggle("active",n.id==="page-"+page));
   mostrarCabecalho(page!=="login");
@@ -144,7 +138,6 @@ function reset() {
   registrosUsuario=[];
   menu();
   $("loginSenha").value="";
-  for (const id of ["contaNome", "contaEmail", "contaTipo"]) text(id, "");
   const flash=$("authFlash");
   if(flash)flash.hidden=true;
   navigate("login");
@@ -165,13 +158,15 @@ async function openSession() {
     updatePatientSelectors();
     text("profGreeting","Olá, "+profile.display_name);
     await loadPatientData();
+    navigate("profissional");
   } else {
     patients=[];
     patientId=user.id;
     aplicarUsuarioNaInterface(profile.display_name);
     await loadPatientData();
+    navigate(location.hash === "#conta" ? "conta" : "inicio");
   }
-  navigate(location.hash === "#conta" ? "conta" : homePage());
+  if (location.hash === "#conta") history.replaceState(history.state, "", location.pathname + location.search);
   message("Acesso autenticado. Utilize somente dados fictícios.");
 }
 function updatePatientSelectors() {
