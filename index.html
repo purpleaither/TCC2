@@ -553,13 +553,14 @@
   <!-- ===== REGISTROS DE SINTOMAS DO PROFISSIONAL ===== -->
   <div class="page" id="page-registros-prof">
     <h1 class="page-title">Registros dos pacientes</h1>
-    <p class="page-subtitle">Consulta de informações fictícias, sem avaliação automática</p>
     <div class="card">
       <label class="form-label" for="pacienteRegistrosProf">Paciente</label>
       <select id="pacienteRegistrosProf" class="form-input" onchange="trocarPacienteRegistrosProf()">
         <option value="p1">Maria Silva</option><option value="p2">João Oliveira</option>
       </select>
     </div>
+    <div id="graficosRegistrosProf"></div>
+    <h2 class="card-title">Registros individuais</h2>
     <div id="listaRegistrosProf"></div>
   </div>
 

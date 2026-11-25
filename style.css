@@ -1351,3 +1351,34 @@ body {
     min-block-size: 3.75rem;
   }
 }
+
+/* Acompanhamento na área do fisioterapeuta */
+.monitoring-symptoms {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 16px;
+}
+.monitoring-bars {
+  display: grid;
+  gap: 12px;
+  list-style: none;
+}
+.monitoring-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
+}
+.monitoring-track {
+  display: block;
+  flex-basis: 100%;
+  block-size: 8px;
+  border-radius: 4px;
+  background: var(--superficie-neutra);
+}
+.monitoring-fill {
+  display: block;
+  block-size: 100%;
+  border-radius: inherit;
+  background: var(--destaque);
+}
