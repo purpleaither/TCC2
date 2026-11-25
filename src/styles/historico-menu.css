@@ -1,0 +1,241 @@
+/* ---- Heatmap (meu histórico) ---- */
+.heatmap-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.month-nav-btn {
+  width: 40px;
+  height: 40px;
+  background: var(--superficie, white);
+  border: 1px solid var(--borda, #ccc);
+  border-radius: 4px;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.month-label {
+  font-size: var(--fonte-minima);
+  font-weight: bold;
+  color: var(--titulo, #003366);
+}
+
+.stats-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+#historicoPeriodo + .stats-row {
+  margin-block-start: var(--espaco-grupo);
+}
+
+.stat-item {
+  flex: 1;
+  min-inline-size: 0;
+  text-align: center;
+}
+
+.stat-value {
+  line-height: var(--entrelinha-valor);
+  margin-block-end: var(--espaco-valor-rotulo);
+  font-size: var(--fonte-minima);
+  font-weight: bold;
+  color: var(--titulo, #003366);
+}
+
+.stat-label {
+  line-height: var(--entrelinha-rotulo);
+  font-size: var(--fonte-minima);
+  color: var(--texto-suave, #666);
+}
+
+.heatmap-scroll {
+  overflow-x: auto;
+  margin-block-end: var(--espaco-grupo);
+  padding: 4px;
+}
+
+.heatmap-scroll :is(.heatmap-weekdays, .heatmap-grid) {
+  min-inline-size: 21rem;
+}
+
+.heatmap-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.heatmap-weekday {
+  text-align: center;
+  font-size: var(--fonte-minima);
+  font-weight: bold;
+  color: var(--texto-suave, #666);
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.heatmap-cell {
+  aspect-ratio: 1;
+  border: 1px solid var(--borda, #ccc);
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: var(--fonte-minima);
+   background: var(--superficie-neutra, #f4f4f4);
+}
+
+.heatmap-cell:hover {
+  border-color: var(--destaque, #006633);
+  border-width: 2px;
+}
+
+.heatmap-cell-day {
+  font-size: var(--fonte-minima);
+  color: var(--texto, #333);
+}
+
+.heatmap-cell-value {
+  max-inline-size: 100%;
+  font-size: var(--fonte-minima);
+  font-weight: bold;
+}
+
+.heatmap-legend {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--fonte-minima);
+}
+
+.legend-color {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--borda, #ccc);
+  border-radius: 2px;
+}
+
+/* ---- Menu lateral ---- */
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.3);
+  z-index: 20;
+  display: none;
+}
+
+.menu-overlay.open {
+  display: block;
+}
+
+.menu-drawer {
+  position: fixed;
+  top: 0;
+  left: -280px;
+  width: min(280px, 100%);
+  height: 100vh;
+  height: 100dvh;
+  background: var(--superficie, white);
+  z-index: 30;
+  padding: 20px 0;
+  visibility: hidden;
+  transition: left 0.3s ease;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+   box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+}
+
+.menu-drawer.open {
+  left: 0;
+  visibility: visible;
+}
+
+.menu-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 20px;
+  margin-bottom: 16px;
+}
+
+.menu-logo {
+  width: 30px;
+  height: 30px;
+}
+
+.menu-title {
+  font-size: var(--fonte-minima);
+  font-weight: bold;
+  color: var(--titulo, #003366);
+}
+
+.menu-items-list {
+  flex: 1;
+}
+
+.menu-item {
+  display: block;
+  width: 100%;
+  padding: 15px 20px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--linha, #eee);
+  text-align: left;
+  font-size: var(--fonte-minima);
+  color: var(--texto, #333);
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background: var(--superficie-neutra, #f5f5f5);
+}
+
+.menu-item.active {
+  background: var(--superficie-verde, #e8f5e9);
+  font-weight: bold;
+  color: var(--destaque, #006633);
+  border-left: 3px solid var(--destaque, #006633);
+}
+
+.menu-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--linha, #eee);
+}
+
+.menu-logout-btn {
+  width: 100%;
+  padding: 10px;
+  background: var(--superficie, white);
+  border: 1px solid var(--erro, #cc0000);
+  color: var(--erro, #cc0000);
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.menu-logout-btn:hover {
+  background: var(--fundo-alerta, #fff5f5);
+}
+

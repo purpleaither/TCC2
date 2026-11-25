@@ -1,22 +1,20 @@
+import { criarBiblioteca } from './src/components/biblioteca.js';
+import { criarEditor } from './src/components/editor-planos.js';
+import { readExercises } from './src/components/linha-exercicio.js';
+import { exibirPlanoPaciente, exibirTreinosDoDia } from './src/components/plano-paciente.js';
+import { exibirPlanosProfissionais } from './src/components/planos-profissionais.js';
+import { exibirRegistrosProfissionais } from './src/components/acompanhamento.js';
+import { criarExibicaoDeVideo } from './src/components/video-exercicio.js';
+import { validarExercicio } from './src/utils/validacao.js';
 import { $, el, text } from './src/utils/dom.js';
-import { date, localDateKey, monitoringWeeks } from './src/utils/datas.js';
+import { monitoringWeeks } from './src/utils/datas.js';
 import { levels } from './src/types/sintomas.js';
 import { criarControleDeSolicitacao } from './src/hooks/solicitacao.js';
 import { conectarBanco, consultarPerfil, consultarPacientesVinculados, autenticar, encerrarSessao, consultarUsuario, consultarSessao, observarSessao } from './src/services/banco.js';
 import { obterClimaBrasilia, mapWeather } from './src/services/clima.js';
 import { consultarDadosPaciente, registrarSintomas, registrarTreino } from './src/services/paciente.js';
 import { gravarPlano, excluirPlano } from './src/services/planos.js';
-import { consultarExerciseBank, consultarWger } from './src/services/biblioteca.js';
-
-const exercises = [
-  {id:"e1",name:"Ponte de glúteos",area:"Musculoesquelética",info:"Elevação controlada da pelve conforme prescrição."},
-  {id:"e2",name:"Mobilidade de tornozelo",area:"Musculoesquelética",info:"Flexão dorsal e plantar dentro dos limites orientados."},
-  {id:"e3",name:"Extensão ativa de joelho",area:"Musculoesquelética",info:"Extensão de joelho em posição sentada."},
-  {id:"e4",name:"Abdução de quadril em pé",area:"Musculoesquelética",info:"Movimento lateral do quadril com apoio estável."},
-  {id:"e5",name:"Sentar e levantar",area:"Funcional",info:"Movimento em cadeira estável conforme orientação."},
-  {id:"e6",name:"Respiração diafragmática",area:"Respiratória",info:"Respiração em posição confortável conforme orientação profissional."},
-  {id:"e7",name:"Expiração com lábios semicerrados",area:"Respiratória",info:"Expiração controlada sem esforço excessivo, quando indicada."}
-];
+import { consultarExerciseBank } from './src/services/biblioteca.js';
 
 let supabase = null;
 let user = null;
@@ -27,7 +25,6 @@ let plans = [];
 let records = [];
 let professionalWorkouts;
 const cargaPaciente = criarControleDeSolicitacao();
-let editingPlan = null;
 let busy = false;
 let loginReady = false;
 const configuracaoDados = { weatherColumnsAvailable: true };
@@ -119,11 +116,19 @@ function reset() {
   patientId=null;
   plans=[];
   records=[];
-  editingPlan=null;
-  currentPatientExercise=0;
-  workoutCompletedInView=false;
+  estadoTreino.indice=0;
+  estadoTreino.concluido=false;
   treinosConcluidos=[];
   registrosUsuario=[];
+  resetLibrary();
+  clearPlanForm();
+  aplicarUsuarioNaInterface("");
+  for (const id of ["profGreeting", "profPlanosDescricao"]) text(id, "");
+  for (const id of ["exNormalContainer", "listaPlanosProf", "graficosRegistrosProf",
+    "exerciseTargetPlans", "sheetWorkoutHistory"]) $(id)?.replaceChildren();
+  for (const id of ["sheetDorNivel", "sheetRigidez", "sheetFadiga", "sheetClimaDesc"]) text(id, "");
+  updatePatientSelectors();
+  gerarHeatmap();
   menu();
   $("loginSenha").value="";
   const flash=$("authFlash");
@@ -174,7 +179,6 @@ function updatePatientSelectors() {
 async function selectPatient(id) {
   if(!isProfessional() || !patients.some(p=>p.id===id))return;
   patientId=id;
-  editingPlan=null;
   clearPlanForm();
   updatePatientSelectors();
   await loadPatientData();
@@ -230,55 +234,16 @@ async function loadPatientData() {
     message("Não foi possível consultar os dados do paciente. Verifique a conexão e as permissões.",true);
   }
 }
-// Conselho educativo por sintomas do dia, sem diagnóstico nem mudança da prescrição.
-function todaysPatientSymptoms(){
-  if(isProfessional()||!records.length)return null;
-  const today=localDateKey(new Date());
-  return records.filter(r=>localDateKey(r.recorded_at)===today)
-    .sort((a,b)=>new Date(b.recorded_at)-new Date(a.recorded_at))[0]||null;
-}
-function patientTpeAdviceForToday(){
-  const record=todaysPatientSymptoms();
-  if(!record)return {
-    title:"Conselho geral",
-    body:"O registro de sintomas de hoje ainda não foi realizado. Observe como você se sente e siga o plano combinado com seu fisioterapeuta; o conselho será ajustado após o registro."
-  };
-  const rest=Number(record.pain_rest), movement=Number(record.pain_movement);
-  const intensity=Math.max(Number.isFinite(rest)?rest:0,Number.isFinite(movement)?movement:0);
-  const stiffness=String(record.stiffness||"").toLowerCase();
-  const fatigue=String(record.fatigue||"").toLowerCase();
-  if(intensity>=8)return {
-    title:"Atenção aos sintomas de hoje",
-    body:"Você registrou dor intensa hoje. Não force os movimentos nem aumente a intensidade por conta própria. Entre em contato com o fisioterapeuta para orientar a continuidade do plano. Se a dor for súbita, muito diferente da habitual ou acompanhada de sinais preocupantes, procure atendimento de saúde."
-  };
-  if(intensity>=5)return {
-    title:"Dor e movimento",
-    body:"Hoje você registrou dor moderada ou elevada. A intensidade da dor pode variar de um dia para outro e não indica, sozinha, dano aos tecidos. Respeite os limites orientados pelo fisioterapeuta e converse com ele caso os exercícios piorem os sintomas."
-  };
-  if(fatigue==="intensa"||fatigue==="moderada")return {
-    title:"Fadiga e organização das atividades",
-    body:"Você relatou fadiga hoje. Planejar pausas e distribuir as atividades ao longo do dia pode ajudar no autocuidado. Mantenha as orientações do fisioterapeuta e informe caso a fadiga limite a execução do plano."
-  };
-  if(stiffness==="intensa"||stiffness==="moderada")return {
-    title:"Rigidez e movimento",
-    body:"Você relatou rigidez hoje. Movimentos confortáveis, realizados conforme o plano prescrito, podem ajudar a explorar a mobilidade sem forçar amplitudes. Se a rigidez for incomum ou piorar, converse com o fisioterapeuta."
-  };
-  return {
-    title:"Autonomia no dia a dia",
-    body:"Seu registro de hoje indica sintomas menos intensos. Continue observando como se sente e siga o ritmo e os exercícios indicados pelo fisioterapeuta, sem aumentar a carga por conta própria."
-  };
-}
-let currentPatientExercise=0;
-let workoutCompletedInView=false;
+const estadoTreino = { indice: 0, concluido: false };
 function patientExerciseAssignments(){
   return plans.flatMap(plan=>[...(plan.plan_exercises||[])]
     .sort((a,b)=>(a.position??0)-(b.position??0))
     .map(exercise=>({plan,exercise})));
 }
 async function completePatientWorkout(){
-  if(!isAuthenticated()||isProfessional()||busy||workoutCompletedInView)return;
+  if(!isAuthenticated()||isProfessional()||busy||estadoTreino.concluido)return;
   const assigned=patientExerciseAssignments();
-  if(!assigned.length||currentPatientExercise!==assigned.length-1)return;
+  if(!assigned.length||estadoTreino.indice!==assigned.length-1)return;
   busy=true;
   const button=$("finishPatientWorkout");
   if(button)button.disabled=true;
@@ -290,7 +255,7 @@ async function completePatientWorkout(){
       duration:exercise.duration,frequency:exercise.frequency,position:exercise.position
     }));
     await registrarTreino(supabase, user.id, exercises);
-    workoutCompletedInView=true;
+    estadoTreino.concluido=true;
     await loadPatientData();
     message("Treino concluído e registrado no histórico.");
   }catch(err){
@@ -298,605 +263,18 @@ async function completePatientWorkout(){
     if(button)button.disabled=false;
   }finally{busy=false;}
 }
-function renderWorkoutDay(year,month,day){
-  const root=$("sheetWorkoutHistory");
-  if(!root)return;
-  root.replaceChildren();
-  const sessions=treinosConcluidos.filter(item=>{
-    const d=new Date(item.completed_at);
-    return d.getFullYear()===year&&d.getMonth()===month&&d.getDate()===day;
-  });
-  root.append(el("h3","Ficha de treino do dia","card-title"));
-  if(!sessions.length){
-    root.append(el("p","Nenhum treino concluído neste dia.","card-text-small"));
-    return;
-  }
-  for(const session of sessions){
-    const card=el("div",undefined,"workout-history-session");
-    const time=new Date(session.completed_at).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
-    card.append(el("p","Treino concluído às "+time,"workout-history-time"));
-    const items=Array.isArray(session.exercises)?session.exercises:[];
-    for(const item of items){
-      const row=el("div",undefined,"workout-history-exercise");
-      const name=item.exercise_source==="ExerciseBank"
-        ?translateExerciseName(item.exercise_name):item.exercise_name;
-      row.append(el("strong",name||"Exercício","workout-history-name"));
-      row.append(el("span",String(item.plan_title||"Plano"),"workout-history-plan"));
-      row.append(el("p",[
-        "Séries: "+(item.series||"–"),"Repetições: "+(item.repetitions||"–"),
-        "Duração: "+(item.duration||"–"),"Frequência: "+(item.frequency||"–")
-      ].join(" · "),"card-text-small"));
-      card.append(row);
-    }
-    root.append(card);
-  }
-}
-function renderPatientPlans(){
-  if(!isAuthenticated()||isProfessional())return;
-  const root=$("exNormalContainer");
-  if(!root)return;
-  root.replaceChildren();
-  const assigned=patientExerciseAssignments();
-  if(!assigned.length){
-    root.append(el("h2","Nenhum exercício atribuído","card-title"),
-      el("p","Os exercícios aparecerão aqui após a prescrição profissional.","card-text"));
-    return;
-  }
-  currentPatientExercise=Math.max(0,Math.min(currentPatientExercise,assigned.length-1));
-  const {plan,exercise}=assigned[currentPatientExercise];
-  const card=el("div",undefined,"patient-exercise-card");
-  card.append(el("p",plan.title,"patient-plan-title"));
-  const progress=el("p","Exercício "+(currentPatientExercise+1)+" de "+assigned.length,"patient-exercise-progress");
-  progress.setAttribute("role","status");
-  progress.setAttribute("aria-live","polite");
-  card.append(progress);
-  const name=exercise.exercise_source==="ExerciseBank"
-    ?translateExerciseName(exercise.exercise_name)
-    :exercise.exercise_name;
-  card.append(el("h2",name,"patient-exercise-title"));
-
-  const videoArea=el("div",undefined,"patient-exercise-video bank-media");
-  if(["ExerciseBank","wger"].includes(exercise.exercise_source)&&exercise.external_id){
-    card.append(videoArea);
-  }
-
-  const metrics=el("div",undefined,"patient-exercise-metrics");
-  for(const [label,value] of [
-    ["Séries",exercise.series],
-    ["Repetições",exercise.repetitions],
-    ["Duração",exercise.duration],
-    ["Frequência",exercise.frequency]
-  ]){
-    if(value===null||value===undefined||String(value).trim()==="")continue;
-    const tile=el("div",undefined,"patient-exercise-metric");
-    tile.append(el("span",label,"patient-exercise-metric-label"),
-      el("strong",String(value),"patient-exercise-metric-value"));
-    metrics.append(tile);
-  }
-  card.append(metrics);
-  const advice=patientTpeAdviceForToday();
-  const adviceBox=el("aside",undefined,"patient-tpe-advice");
-  adviceBox.setAttribute("aria-label","Conselho de educação terapêutica");
-  adviceBox.append(
-    el("span","Conselho","patient-tpe-label"),
-    el("h3",advice.title,"patient-tpe-heading"),
-    el("p",advice.body,"patient-tpe-text")
-  );
-  const moreAdvice=el("button","Saiba mais em Aprender a cuidar","patient-tpe-link");
-  moreAdvice.type="button";
-  moreAdvice.addEventListener("click",()=>navigate("orientacoes"));
-  adviceBox.append(moreAdvice);
-  card.append(adviceBox);
-  // Instruções clínicas individuais continuam disponíveis; descrições automáticas
-  // em inglês do banco de vídeos não são apresentadas como orientação ao paciente.
-  if(exercise.instructions && exercise.exercise_source!=="ExerciseBank")
-    card.append(el("p",exercise.instructions,"patient-exercise-instructions"));
-
-  if(assigned.length>1){
-    const actions=el("div",undefined,"demo-acoes");
-    const previous=el("button","Anterior","btn btn-outline");
-    previous.type="button";
-    previous.disabled=currentPatientExercise===0;
-    previous.addEventListener("click",()=>{
-      if(currentPatientExercise>0){currentPatientExercise--;renderPatientPlans();}
-    });
-    const next=el("button","Próximo","btn");
-    next.type="button";
-    next.disabled=currentPatientExercise===assigned.length-1;
-    next.addEventListener("click",()=>{
-      if(currentPatientExercise<assigned.length-1){currentPatientExercise++;renderPatientPlans();}
-    });
-    actions.append(previous,next);
-    card.append(actions);
-  }
-  if(currentPatientExercise===assigned.length-1){
-    const finish=el("button",workoutCompletedInView?"Treino concluído ✓":"Treino concluído","btn patient-workout-finish");
-    finish.id="finishPatientWorkout";
-    finish.type="button";
-    finish.disabled=workoutCompletedInView;
-    finish.addEventListener("click",completePatientWorkout);
-    card.append(finish);
-  }
-  root.append(card);
-  if(videoArea.isConnected){
-    loadExerciseMedia(exercise.external_id,videoArea,null,exercise.exercise_source,true);
-  }
-}
-function renderProfessionalPlans(){
-  if(!isProfessional())return;
-  updatePatientSelectors();
-  const patient=patients.find(p=>p.id===patientId);
-  text("profPlanosDescricao",patient?"Planos de "+patient.display_name:"Nenhum paciente vinculado");
-  const root=$("listaPlanosProf");
-  root.replaceChildren();
-  if(!plans.length)root.append(el("p","Nenhum plano disponível.","demo-vazio"));
-  const mainActions=$("planMainActions");
-  if(mainActions)mainActions.hidden=!!plans.length;
-  const createEntry=$("createPlanEntry");
-  if(createEntry)createEntry.disabled=!patientId;
-  for(const p of plans){
-    const card=el("div",undefined,"card");
-    card.append(el("h2",p.title,"card-title"));
-    if(p.notes)card.append(el("p",p.notes,"card-text"));
-    for(const x of [...(p.plan_exercises||[])].sort((a,b)=>a.position-b.position)){
-      const line=el("div",undefined,"demo-detalhe");
-      line.append(el("strong",x.exercise_name,"plan-exercise-name"));
-      line.append(el("p",(x.series||"–")+" série(s) · "+(x.repetitions||"–")+" repetições · "+(x.duration||"–")+" duração · "+x.frequency,"plan-exercise-prescription"));
-      if(["ExerciseBank","wger"].includes(x.exercise_source) && x.external_id){
-        const view=el("button","Ver demonstração","btn btn-outline");
-        view.type="button";
-        const media=el("div",undefined,"bank-media");
-        view.addEventListener("click",()=>loadExerciseMedia(x.external_id,media,view,x.exercise_source,true));
-        line.append(view,media);
-      }
-      card.append(line);
-    }
-    const actions=el("div",undefined,"demo-acoes");
-    const edit=el("button","Editar","btn");
-    const remove=el("button","Excluir","btn btn-outline");
-    edit.type="button";
-    remove.type="button";
-    edit.addEventListener("click",()=>editPlan(p.id));
-    remove.addEventListener("click",()=>deletePlan(p.id));
-    actions.append(edit,remove);
-    card.append(actions);
-    const moreActions=el("div",undefined,"plan-card-add-actions");
-    const create=el("button","Criar plano terapêutico","btn");
-    create.type="button";
-    create.addEventListener("click",createPlanFromScratch);
-    const add=el("button","Adicionar exercícios","btn btn-outline");
-    add.type="button";
-    add.addEventListener("click",()=>addExercisesToExistingPlan(p.id));
-    moreActions.append(create,add);
-    card.append(moreActions);
-    root.append(card);
-  }
-}
-function monitoringBars(rows, maximum, title){
-  const list = el("ul", undefined, "monitoring-bars");
-  list.setAttribute("role", "list");
-  list.setAttribute("aria-label", title);
-  for (const row of rows) {
-    const item = el("li", undefined, "monitoring-bar");
-    item.append(el("span", row.label), el("strong", row.text));
-    const track = el("span", undefined, "monitoring-track");
-    track.setAttribute("aria-hidden", "true");
-    const fill = el("span", undefined, "monitoring-fill");
-    fill.style.inlineSize = (row.value / maximum * 100) + "%";
-    track.append(fill);
-    item.append(track);
-    list.append(item);
-  }
-  return list;
-}
-
-function monitoringTopic(label, panel){
-  const details = el("details", undefined, "monitoring-topic");
-  details.append(el("summary", label), panel);
-  return details;
-}
-
-function renderProfessionalMonitoring(){
-  const root = $("graficosRegistrosProf");
-  root.replaceChildren();
-  if (!patientId) return;
-  if (professionalWorkouts === undefined) {
-    root.append(el("p", "Carregando acompanhamento…", "card-text"));
-    return;
-  }
-
-  root.append(el("h2", "Acompanhamento do paciente", "card-title"));
-  const windows = monitoringWeeks();
-  const shortDate = new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit" });
-  const latestByDay = new Map();
-  for (const record of records) {
-    const day = localDateKey(record.recorded_at);
-    if (day && !latestByDay.has(day)) latestByDay.set(day, record);
-  }
-  const recent = [...latestByDay.values()].slice(0, 7).reverse();
-  const workoutCard = el("section", undefined, "card");
-  workoutCard.append(el("h3", "Treinos concluídos por semana", "card-title"),
-    el("p", "Últimos 28 dias, incluindo hoje. Cada treino conta uma vez no gráfico.", "card-text"));
-  if (professionalWorkouts === null) {
-    workoutCard.append(el("p", "Não foi possível carregar os treinos.", "card-text-small"));
-  } else {
-    const planOptions = new Map(plans.map(plan => [plan.id, plan.title]));
-    for (const session of professionalWorkouts) {
-      for (const exercise of session.exercises || []) {
-        if (exercise.plan_id && !planOptions.has(exercise.plan_id)) {
-          planOptions.set(exercise.plan_id, exercise.plan_title || "Plano anterior");
-        }
-      }
-    }
-    const select = el("select", undefined, "form-input");
-    select.id = "monitoramentoPlano";
-    const all = el("option", "Todos os planos");
-    all.value = "";
-    select.append(all);
-    for (const [id, title] of planOptions) {
-      const option = el("option", title);
-      option.value = id;
-      select.append(option);
-    }
-    const filter = el("label", "Plano", "form-group form-label");
-    filter.append(select);
-    const output = el("div");
-    output.setAttribute("aria-live", "polite");
-    const showSessions = () => {
-      const counts = [0, 0, 0, 0];
-      for (const session of professionalWorkouts) {
-        if (select.value && !session.exercises?.some(exercise => exercise.plan_id === select.value)) continue;
-        const time = new Date(session.completed_at);
-        const week = counts.findIndex((_, index) => time >= windows[index] && time < windows[index + 1]);
-        if (week >= 0) counts[week] += 1;
-      }
-      const rows = counts.map((count, index) => {
-        const lastDay = new Date(windows[index + 1]);
-        lastDay.setDate(lastDay.getDate() - 1);
-        return { label: shortDate.format(windows[index]) + " a " + shortDate.format(lastDay),
-          text: count + (count === 1 ? " treino" : " treinos"), value: count };
-      });
-      output.replaceChildren(monitoringBars(rows, Math.max(1, ...counts), "Treinos concluídos por período"));
-    };
-    select.addEventListener("change", showSessions);
-    workoutCard.append(filter, output);
-    if (professionalWorkouts.length === 500) {
-      workoutCard.append(el("p", "O gráfico considera até os 500 treinos mais recentes do período.", "card-text-small"));
-    }
-    showSessions();
-  }
-  root.append(monitoringTopic("Ver treinos concluídos", workoutCard));
-  for (const [key, title, buttonLabel] of [
-    ["stiffness", "Rigidez", "Ver nível de rigidez"],
-    ["fatigue", "Cansaço (fadiga)", "Ver nível de cansaço"]
-  ]) {
-    const card = el("section", undefined, "card");
-    card.append(el("h3", title, "card-title"),
-      el("p", "Último relato de até 7 dias com registro. Dias sem resposta ficam fora do gráfico.", "card-text"));
-    const rows = recent.filter(record => levels.includes(record[key])).map(record => ({
-      label: shortDate.format(new Date(record.recorded_at)),
-      text: record[key], value: levels.indexOf(record[key])
-    }));
-    card.append(rows.length ? monitoringBars(rows, levels.length - 1, title + " por dia")
-      : el("p", "Nenhum relato disponível.", "card-text-small"));
-    root.append(monitoringTopic(buttonLabel, card));
-  }
-}
-
-function renderProfessionalRecords(){
-  if(!isProfessional())return;
-  updatePatientSelectors();
-  renderProfessionalMonitoring();
-  if (!patientId || professionalWorkouts === undefined) return;
-  const root = el("div");
-  root.id = "listaRegistrosProf";
-  $("graficosRegistrosProf").append(monitoringTopic("Ver registros individuais", root));
-  if(!records.length)root.append(el("p","Nenhum registro disponível.","demo-vazio"));
-  for(const r of records) {
-    const card=el("div",undefined,"card");
-    card.append(el("h3",date(r.recorded_at),"card-title"));
-    card.append(el("p","Dor em repouso: "+r.pain_rest+"/10 · Dor ao movimento: "+r.pain_movement+"/10","card-text"));
-    card.append(el("p","Rigidez: "+r.stiffness+" · Fadiga: "+r.fatigue,"card-text-small"));
-    const clima=mapWeather(r);
-    if(clima)card.append(el("p","Clima registrado em "+date(clima.observadoEm)+": "+clima.temperatura+" °C · "+clima.umidade+"% · "+clima.pressao+" hPa ("+clima.cidade+")","card-text-small"));
-    root.append(card);
-  }
-}
-function addExercise(entry){
-  if(!isProfessional())return;
-  const row=el("div",undefined,"demo-exercicio-item");
-  const label=el("label","Exercício","form-label");
-  const select=el("select",undefined,"form-input");
-  select.name="exercise";
-  for(const x of exercises){
-    const option=el("option",x.name+" · "+x.area);
-    option.value=x.id;
-    select.append(option);
-  }
-  const custom=el("option","Outro exercício (digitar nome)");
-  custom.value="other";
-  select.append(custom);
-  label.append(select);
-  row.append(label);
-  const externalId=el("input");
-  externalId.name="externalId";
-  externalId.type="hidden";
-  const externalInstructions=el("input");
-  externalInstructions.name="externalInstructions";
-  externalInstructions.type="hidden";
-  const externalName=el("input");
-  externalName.name="externalName";
-  externalName.type="hidden";
-  const externalSource=el("input");externalSource.name="externalSource";externalSource.type="hidden";
-  row.append(externalId,externalInstructions,externalName,externalSource);
-  const customName=el("input",undefined,"form-input");
-  customName.name="customName";
-  customName.placeholder="Nome do exercício";
-  customName.maxLength=160;
-  customName.hidden=true;
-  row.append(customName);
-  select.addEventListener("change",()=>{
-    customName.hidden=select.value!=="other";
-    customName.required=select.value==="other";
-    externalId.value="";
-    externalInstructions.value="";
-    externalName.value="";externalSource.value="";
-  });
-  const params=el("div",undefined,"demo-grid-parametros");
-  for(const [key,title,type,value] of [
-    ["series","Séries","number",2],
-    ["repetitions","Repetições","text","10"],
-    ["duration","Duração","text",""],
-    ["frequency","Frequência","text","3 vezes por semana"]
-  ]){
-    const wrap=el("div",undefined,"form-group");
-    const lbl=el("label",title,"form-label");
-    const input=el("input",undefined,"form-input");
-    input.name=key;input.type=type;input.value=value;
-    if(type==="number"){input.min="1";input.max="20";}
-    else input.maxLength=80;
-    lbl.append(input);wrap.append(lbl);params.append(wrap);
-  }
-  row.append(params);
-  const remove=el("button","Remover exercício","btn btn-outline");
-  remove.type="button";
-  remove.addEventListener("click",()=>{row.remove();updatePlanEditorSummary();});
-  row.append(remove);
-  $("itensPlanoProf").append(row);
-  updatePlanEditorSummary();
-  if(entry){
-    const existing=["ExerciseBank","wger"].includes(entry.exercise_source)?null:exercises.find(x=>x.name===entry.exercise_name);
-    select.value=existing?existing.id:"other";
-    customName.value=entry.exercise_name;
-    customName.hidden=!!existing;
-    customName.required=!existing;
-    if(["ExerciseBank","wger"].includes(entry.exercise_source)&&entry.external_id){
-      externalId.value=entry.external_id;
-      externalInstructions.value=entry.instructions||"";
-      externalName.value=entry.exercise_name;externalSource.value=entry.exercise_source;
-      const sourceLabel=el("p",entry.exercise_source==="ExerciseBank"?"ExerciseBank · catálogo de demonstração":"wger · vídeo sujeito à disponibilidade e licença","card-text-small");
-      row.prepend(sourceLabel);
-    }
-    for(const k of ["series","repetitions","duration","frequency"])
-      row.querySelector('[name="'+k+'"]').value=entry[k]??"";
-  }
-}
-let exerciseReturnPage="planos-prof";
-let pendingExerciseRow=null;
-let pendingExerciseOrigin="exercise-source-prof";
-let pendingExercisePlaceholder=null;
-function exerciseNameFromRow(row){
-  const selected=row.querySelector('[name="exercise"]');
-  const custom=row.querySelector('[name="customName"]');
-  return (
-    selected?.value==="other" ? custom?.value.trim() : exercises.find(x=>x.id===selected?.value)?.name
-  )||"Exercício sem nome";
-}
-function updatePlanEditorSummary(){
-  const stored=$("itensPlanoProf");
-  const rows=Array.from(stored?.children||[]).filter(row=>row.classList.contains("demo-exercicio-item"));
-  text("resumoEtapaPlano",rows.length+
-    (rows.length===1?" exercício adicionado ao plano.":" exercícios adicionados ao plano."));
-  const list=$("resumoExerciciosPlano");
-  if(!list)return;
-  list.replaceChildren();
-  if(!rows.length){
-    list.append(el("p","Adicione exercícios para montar a ficha.","card-text-small"));
-    return;
-  }
-  rows.forEach((row,index)=>{
-    const item=el("div",undefined,"exercise-summary-item");
-    const heading=el("strong",(index+1)+". "+exerciseNameFromRow(row),"exercise-summary-name");
-    const detail=el("p",[
-      "Séries: "+(row.querySelector('[name="series"]')?.value||"–"),
-      "Repetições: "+(row.querySelector('[name="repetitions"]')?.value||"–"),
-      "Duração: "+(row.querySelector('[name="duration"]')?.value||"–"),
-      "Frequência: "+(row.querySelector('[name="frequency"]')?.value||"–")
-    ].join(" · "),"card-text-small");
-    const actions=el("div",undefined,"demo-acoes");
-    const edit=el("button","Editar exercício","btn btn-outline");
-    edit.type="button";
-    edit.addEventListener("click",()=>openExerciseConfiguration(row,"editor-prof",true));
-    const remove=el("button","Remover","btn btn-outline");
-    remove.type="button";
-    remove.addEventListener("click",()=>{row.remove();updatePlanEditorSummary();});
-    actions.append(edit,remove);
-    item.append(heading,detail,actions);
-    list.append(item);
-  });
-}
-function choosePlanForExerciseAddition(){
-  if(!isProfessional()||!patientId)return;
-  if(!plans.length){
-    message("Crie um plano terapêutico antes de adicionar exercícios.",true);
-    return;
-  }
-  if(plans.length===1){
-    addExercisesToExistingPlan(plans[0].id);
-    return;
-  }
-  const root=$("exerciseTargetPlans");
-  root.replaceChildren();
-  for(const plan of plans){
-    const card=el("div",undefined,"card");
-    card.append(el("h2",plan.title,"card-title"));
-    const count=Array.isArray(plan.plan_exercises)?plan.plan_exercises.length:0;
-    card.append(el("p",count+" exercício(s) no plano.","card-text-small"));
-    const button=el("button","Adicionar exercícios a este plano","btn");
-    button.type="button";
-    button.addEventListener("click",()=>addExercisesToExistingPlan(plan.id));
-    card.append(button);
-    root.append(card);
-  }
-  navigate("exercise-target-prof");
-}
-function addExercisesToExistingPlan(planId){
-  if(!isProfessional())return;
-  const plan=plans.find(x=>x.id===planId);
-  if(!plan)return;
-  editPlan(planId);
-  openExerciseSourceOptions();
-}
-function openExerciseSourceOptions(){
-  if(!isProfessional())return;
-  exerciseReturnPage=$("page-editor-prof").classList.contains("active")?"editor-prof":"planos-prof";
-  navigate("exercise-source-prof");
-}
-function backFromExerciseSource(){
-  navigate(exerciseReturnPage);
-}
-function addManualExerciseFromOptions(){
-  if(!isProfessional())return;
-  addExercise();
-  const row=$("itensPlanoProf").lastElementChild;
-  const select=row.querySelector('[name="exercise"]');
-  select.value="other";
-  select.dispatchEvent(new Event("change"));
-  openExerciseConfiguration(row,"exercise-source-prof",false);
-}
-function openExerciseBankFromOptions(){
-  if(!isProfessional())return;
-  navigate("exercise-bank-prof");
-}
-function openExerciseConfiguration(row,origin,existing=false){
-  if(!isProfessional()||!row)return;
-  if(pendingExerciseRow)return;
-  pendingExerciseRow=row;
-  pendingExerciseOrigin=origin;
-  pendingExercisePlaceholder=existing?document.createElement("span"):null;
-  if(existing)row.before(pendingExercisePlaceholder);
-  $("exerciseConfigRow").append(row);
-  const remove=row.querySelector("button.btn-outline");
-  if(remove)remove.hidden=true;
-  navigate("exercise-config-prof");
-}
-function finishExerciseInsertion(){
-  if(!pendingExerciseRow)return;
-  const row=pendingExerciseRow;
-  const select=row.querySelector('[name="exercise"]');
-  const custom=row.querySelector('[name="customName"]');
-  const series=Number(row.querySelector('[name="series"]')?.value);
-  const repeats=row.querySelector('[name="repetitions"]')?.value.trim()||"";
-  const duration=row.querySelector('[name="duration"]')?.value.trim()||"";
-  const frequency=row.querySelector('[name="frequency"]')?.value.trim()||"";
-  const name=select?.value==="other"?custom?.value.trim():exerciseNameFromRow(row);
-  if(!name||name.length<2||!Number.isInteger(series)||series<1||series>20||(!repeats&&!duration)||!frequency){
-    message("Informe o exercício, as séries, as repetições ou duração e a frequência.",true);
-    return;
-  }
-  const remove=row.querySelector("button.btn-outline");
-  if(remove)remove.hidden=false;
-  if(pendingExercisePlaceholder){
-    pendingExercisePlaceholder.replaceWith(row);
-  }else{
-    $("itensPlanoProf").append(row);
-  }
-  pendingExerciseRow=null;
-  pendingExercisePlaceholder=null;
-  updatePlanEditorSummary();
-  navigate("editor-prof");
-  message("Exercício inserido. Revise a quantidade e salve o plano quando terminar.");
-}
-function backFromExerciseConfiguration(){
-  if(!pendingExerciseRow)return navigate("exercise-source-prof");
-  const remove=pendingExerciseRow.querySelector("button.btn-outline");
-  if(remove)remove.hidden=false;
-  if(pendingExercisePlaceholder)pendingExercisePlaceholder.replaceWith(pendingExerciseRow);
-  else pendingExerciseRow.remove();
-  pendingExerciseRow=null;
-  pendingExercisePlaceholder=null;
-  updatePlanEditorSummary();
-  navigate(pendingExerciseOrigin);
-}
-function createPlanFromScratch(){
-  if(!isProfessional())return;
-  clearPlanForm();
-  navigate("editor-prof");
-}
-function cancelPlanEditor(){
-  if(!isProfessional()||busy)return;
-  const form=$("formPlanoProf");
-  const hasDraft=!!editingPlan||!!$("itensPlanoProf")?.children.length||
-    !!$("nomePlanoProf")?.value.trim()||!!$("orientacoesPlanoProf")?.value.trim();
-  if(hasDraft&&!confirm("Descartar as alterações não salvas e cancelar a edição?"))return;
-  clearPlanForm();
-  if(form)form.reset();
-  navigate("planos-prof");
-  message("Edição cancelada. Nenhuma alteração foi salva.");
-}
-function clearPlanForm(){
-  editingPlan=null;
-  if(pendingExerciseRow)pendingExerciseRow.remove();
-  if(pendingExercisePlaceholder)pendingExercisePlaceholder.remove();
-  pendingExerciseRow=null;
-  pendingExercisePlaceholder=null;
-  $("formPlanoProf").reset();
-  $("itensPlanoProf").replaceChildren();
-  updatePlanEditorSummary();
-  text("tituloFormularioPlano","Criar plano terapêutico");
-}
-function editPlan(id){
-  const plan=plans.find(p=>p.id===id);
-  if(!plan||!isProfessional())return;
-  clearPlanForm();
-  editingPlan=id;
-  $("nomePlanoProf").value=plan.title;
-  $("orientacoesPlanoProf").value=plan.notes||"";
-  for(const x of [...(plan.plan_exercises||[])].sort((a,b)=>a.position-b.position))addExercise(x);
-  text("tituloFormularioPlano","Editar plano terapêutico");
-  navigate("editor-prof");
-}
-function readExercises(){
-  return Array.from($("itensPlanoProf").children).map((row,i)=>{
-    const v=key=>row.querySelector('[name="'+key+'"]').value.trim();
-    const selected=exercises.find(x=>x.id===v("exercise"));
-    const bankId=v("externalId");
-    const name=selected?selected.name:v("customName");
-    return {
-      exercise_name:name,
-      exercise_source:bankId?(row.querySelector("[name=externalSource]")?.value||"ExerciseBank"):"manual",
-      external_id:bankId||null,
-      series:Number(v("series")),
-      repetitions:v("repetitions"),
-      duration:v("duration"),
-      frequency:v("frequency"),
-      instructions:bankId?v("externalInstructions"):(selected?selected.info:""),
-      position:i
-    };
-  });
-}
 async function savePlan(event){
   if(event)event.preventDefault();
   if(!isProfessional()||!patientId||busy)return;
   const title=$("nomePlanoProf").value.trim();
   const items=readExercises();
   if(title.length<2||!items.length)return message("Informe um nome e pelo menos um exercício.",true);
-  if(items.some(x=>x.exercise_name.length<2||!Number.isInteger(x.series)||x.series<1||x.series>20||(!x.repetitions&&!x.duration)||!x.frequency))
+  if(items.some(x => !validarExercicio(x)))
     return message("Verifique o exercício, as séries, as repetições ou duração e a frequência.",true);
   busy=true;
   try{
     const data={title,notes:$("orientacoesPlanoProf").value.trim(),patient_id:patientId,physiotherapist_id:user.id};
-    await gravarPlano(supabase, editingPlan, data, items);
+    await gravarPlano(supabase, planoEmEdicao(), data, items);
     clearPlanForm();
     await loadPatientData();
     navigate("planos-prof");
@@ -946,417 +324,9 @@ async function saveSymptoms(){
 }
 
 
-let sampleList=null,loadingSample=false;
 function ebCall(opts) {
   if (!supabase || !isAuthenticated()) throw Error("Entre para consultar a biblioteca.");
   return consultarExerciseBank(supabase, opts);
-}
-
-async function loadSample(){
-  if(!isProfessional()||loadingSample)return;
-  if(sampleList){renderSample();return;}
-  loadingSample=true;$("exercisebankRefresh").disabled=true;
-  text("exercisebankStatus","Carregando exercícios...");
-  try{
-    sampleList=await ebCall();
-    renderSample();
-  }catch(e){
-    sampleList=null;$("exercisebankResults").replaceChildren();
-    text("exercisebankStatus",e.message);
-  }finally{loadingSample=false;$("exercisebankRefresh").disabled=false;}
-}
-const BODY_REGION_LABELS={
-  ombros:"Ombros",bracos:"Braços e antebraços",peito:"Peito",costas:"Costas",
-  abdomen:"Abdômen e tronco",quadril:"Quadril e glúteos",coxas:"Coxas",
-  pernas:"Panturrilhas e pernas","nao-classificados":"Não classificados"
-};
-const MUSCLE_TO_REGION={
-  shoulders:"ombros",shoulder:"ombros",delts:"ombros",deltoids:"ombros",
-  biceps:"bracos",triceps:"bracos",forearms:"bracos",forearm:"bracos",brachialis:"bracos",
-  chest:"peito",pecs:"peito",pectorals:"peito",
-  back:"costas",lats:"costas",traps:"costas",trapezius:"costas",rhomboids:"costas",erectors:"costas",lower_back:"costas",
-  abs:"abdomen",abdominals:"abdomen",core:"abdomen",obliques:"abdomen",transverse_abs:"abdomen",
-  glutes:"quadril",gluteals:"quadril",hip_flexors:"quadril",hip_adductors:"quadril",adductors:"quadril",abductors:"quadril",hips:"quadril",
-  quads:"coxas",quadriceps:"coxas",hamstrings:"coxas",thighs:"coxas",
-  calves:"pernas",calf:"pernas",gastrocnemius:"pernas",soleus:"pernas",shins:"pernas",tibialis:"pernas"
-};
-// Equivalências brasileiras por exercício completo; nunca traduzir por tokens soltos.
-// Nomes não reconhecidos permanecem no idioma original para revisão profissional.
-const EXERCISE_NAMES_PT={
-  "squat":"Agachamento",
-  "squats":"Agachamentos",
-  "bodyweight squat":"Agachamento com peso corporal",
-  "air squat":"Agachamento livre",
-  "back squat":"Agachamento com barra nas costas",
-  "barbell back squat":"Agachamento com barra nas costas",
-  "front squat":"Agachamento frontal",
-  "barbell front squat":"Agachamento frontal com barra",
-  "goblet squat":"Agachamento goblet",
-  "dumbbell goblet squat":"Agachamento goblet com halter",
-  "sumo squat":"Agachamento sumô",
-  "split squat":"Agachamento com base alternada",
-  "bulgarian split squat":"Agachamento búlgaro",
-  "jump squat":"Agachamento com salto",
-  "wall squat":"Agachamento na parede",
-  "wall sit":"Agachamento isométrico na parede",
-  "box squat":"Agachamento no banco",
-  "chair squat":"Agachamento com cadeira",
-  "leg press":"Leg press",
-  "leg extension":"Extensão de joelhos na cadeira extensora",
-  "seated leg extension":"Extensão de joelhos sentado",
-  "leg curl":"Flexão de joelhos",
-  "lying leg curl":"Flexão de joelhos na mesa flexora",
-  "seated leg curl":"Flexão de joelhos na cadeira flexora",
-  "romanian deadlift":"Levantamento terra romeno",
-  "barbell romanian deadlift":"Levantamento terra romeno com barra",
-  "dumbbell romanian deadlift":"Levantamento terra romeno com halteres",
-  "deadlift":"Levantamento terra",
-  "conventional deadlift":"Levantamento terra convencional",
-  "sumo deadlift":"Levantamento terra sumô",
-  "stiff leg deadlift":"Levantamento terra com joelhos estendidos (stiff)",
-  "stiff legged deadlift":"Levantamento terra com joelhos estendidos (stiff)",
-  "hip hinge":"Flexão do quadril (padrão hinge)",
-  "good morning":"Bom-dia",
-  "hip thrust":"Elevação de quadril com apoio",
-  "glute bridge":"Ponte de glúteos",
-  "hip bridge":"Ponte de quadril",
-  "bridge":"Ponte",
-  "single leg glute bridge":"Ponte de glúteos unilateral",
-  "single leg bridge":"Ponte unilateral",
-  "clamshell":"Abdução de quadril em decúbito lateral (conchinha)",
-  "clam shell":"Abdução de quadril em decúbito lateral (conchinha)",
-  "fire hydrant":"Abdução de quadril em quatro apoios",
-  "donkey kick":"Extensão de quadril em quatro apoios",
-  "bird dog":"Extensão alternada de braço e perna em quatro apoios",
-  "dead bug":"Estabilização abdominal com braços e pernas alternados (dead bug)",
-  "plank":"Prancha ventral",
-  "front plank":"Prancha ventral",
-  "forearm plank":"Prancha ventral sobre antebraços",
-  "side plank":"Prancha lateral",
-  "reverse plank":"Prancha invertida",
-  "high plank":"Prancha com braços estendidos",
-  "mountain climber":"Escalador",
-  "crunch":"Abdominal curto",
-  "abdominal crunch":"Abdominal curto",
-  "bicycle crunch":"Abdominal bicicleta",
-  "reverse crunch":"Abdominal reverso",
-  "sit up":"Abdominal completo",
-  "sit ups":"Abdominais completos",
-  "russian twist":"Rotação de tronco sentada (russian twist)",
-  "leg raise":"Elevação de pernas",
-  "lying leg raise":"Elevação de pernas em decúbito dorsal",
-  "hanging leg raise":"Elevação de pernas em suspensão",
-  "superman":"Extensão de tronco e membros em decúbito ventral",
-  "back extension":"Extensão de tronco",
-  "cat cow":"Mobilização da coluna em quatro apoios (gato-vaca)",
-  "cat camel":"Mobilização da coluna em quatro apoios (gato-camelo)",
-  "push up":"Flexão de braços",
-  "push ups":"Flexões de braços",
-  "pushup":"Flexão de braços",
-  "knee push up":"Flexão de braços com apoio dos joelhos",
-  "wall push up":"Flexão de braços na parede",
-  "incline push up":"Flexão de braços inclinada",
-  "decline push up":"Flexão de braços declinada",
-  "diamond push up":"Flexão de braços com mãos próximas",
-  "close grip push up":"Flexão de braços com pegada fechada",
-  "bench press":"Supino reto",
-  "barbell bench press":"Supino reto com barra",
-  "dumbbell bench press":"Supino reto com halteres",
-  "incline bench press":"Supino inclinado",
-  "barbell incline bench press":"Supino inclinado com barra",
-  "dumbbell incline bench press":"Supino inclinado com halteres",
-  "decline bench press":"Supino declinado",
-  "chest press":"Supino na máquina",
-  "machine chest press":"Supino na máquina",
-  "dumbbell fly":"Crucifixo com halteres",
-  "dumbbell flye":"Crucifixo com halteres",
-  "chest fly":"Crucifixo",
-  "cable fly":"Crucifixo no cabo",
-  "cable crossover":"Crucifixo no crossover",
-  "pec deck":"Crucifixo na máquina",
-  "pull up":"Barra fixa com pegada pronada",
-  "pull ups":"Barra fixa com pegada pronada",
-  "chin up":"Barra fixa com pegada supinada",
-  "chin ups":"Barra fixa com pegada supinada",
-  "lat pulldown":"Puxada alta",
-  "wide grip lat pulldown":"Puxada alta com pegada aberta",
-  "close grip lat pulldown":"Puxada alta com pegada fechada",
-  "straight arm pulldown":"Puxada com braços estendidos",
-  "seated row":"Remada sentada",
-  "cable seated row":"Remada baixa no cabo",
-  "cable row":"Remada no cabo",
-  "bent over row":"Remada curvada",
-  "barbell bent over row":"Remada curvada com barra",
-  "dumbbell bent over row":"Remada curvada com halteres",
-  "one arm dumbbell row":"Remada unilateral com halter",
-  "single arm dumbbell row":"Remada unilateral com halter",
-  "inverted row":"Remada invertida",
-  "upright row":"Remada alta",
-  "face pull":"Puxada para a face",
-  "shoulder press":"Desenvolvimento de ombros",
-  "overhead press":"Desenvolvimento acima da cabeça",
-  "military press":"Desenvolvimento militar",
-  "dumbbell shoulder press":"Desenvolvimento de ombros com halteres",
-  "barbell shoulder press":"Desenvolvimento de ombros com barra",
-  "arnold press":"Desenvolvimento Arnold",
-  "lateral raise":"Elevação lateral dos braços",
-  "dumbbell lateral raise":"Elevação lateral com halteres",
-  "front raise":"Elevação frontal dos braços",
-  "dumbbell front raise":"Elevação frontal com halteres",
-  "rear delt fly":"Crucifixo inverso",
-  "reverse fly":"Crucifixo inverso",
-  "shrug":"Encolhimento de ombros",
-  "barbell shrug":"Encolhimento de ombros com barra",
-  "dumbbell shrug":"Encolhimento de ombros com halteres",
-  "biceps curl":"Rosca bíceps",
-  "barbell curl":"Rosca direta com barra",
-  "dumbbell curl":"Rosca direta com halteres",
-  "hammer curl":"Rosca martelo",
-  "concentration curl":"Rosca concentrada",
-  "preacher curl":"Rosca Scott",
-  "incline dumbbell curl":"Rosca inclinada com halteres",
-  "triceps pushdown":"Extensão de cotovelos na polia alta",
-  "rope triceps pushdown":"Extensão de cotovelos com corda na polia alta",
-  "overhead triceps extension":"Extensão de cotovelos acima da cabeça",
-  "triceps kickback":"Coice de tríceps",
-  "bench dip":"Mergulho de tríceps no banco",
-  "triceps dip":"Mergulho de tríceps",
-  "calf raise":"Elevação de panturrilhas",
-  "standing calf raise":"Elevação de panturrilhas em pé",
-  "seated calf raise":"Elevação de panturrilhas sentado",
-  "single leg calf raise":"Elevação de panturrilha unilateral",
-  "hip abduction":"Abdução de quadril",
-  "hip adduction":"Adução de quadril",
-  "side lying hip abduction":"Abdução de quadril em decúbito lateral",
-  "standing hip abduction":"Abdução de quadril em pé",
-  "lunge":"Avanço",
-  "lunges":"Avanços",
-  "forward lunge":"Avanço à frente",
-  "reverse lunge":"Avanço para trás",
-  "walking lunge":"Avanço com deslocamento",
-  "lateral lunge":"Avanço lateral",
-  "step up":"Subida em degrau",
-  "step down":"Descida de degrau",
-  "box step up":"Subida no banco",
-  "jumping jack":"Polichinelo",
-  "jump rope":"Pular corda",
-  "burpee":"Burpee",
-  "high knees":"Corrida estacionária com elevação dos joelhos",
-  "marching in place":"Marcha estacionária",
-  "alternating decline dumbbell press":"Supino declinado alternado com halteres",
-  "prone swimmer":"Extensão de tronco e movimentos dos braços em decúbito ventral",
-  "dumbbell bent-over row to biceps curl":"Remada curvada seguida de rosca bíceps com halteres",
-  "alternating dumbbell shoulder flexion on an incline bench":"Flexão alternada de ombros com halteres em banco inclinado",
-  "alternating dumbbell shoulder flexion on incline bench":"Flexão alternada de ombros com halteres em banco inclinado",
-  "upright row (resistance band)":"Remada alta com faixa elástica",
-  "alternating upright row (resistance band)":"Remada alta alternada com faixa elástica",
-  "dan john get-up":"Levantada do solo (variação Dan John)",
-  "dumbbell king kong":"Levantamento terra sumô, rosca e desenvolvimento com halteres (King Kong)",
-  "alternating forward lunge with lateral raise":"Avanço à frente alternado com elevação lateral dos braços",
-  "forearm plank lateral elbow walk":"Deslocamento lateral na prancha sobre antebraços",
-  "dumbbell discus throw":"Arremesso rotacional com halter",
-  "suitcase carry":"Caminhada com carga unilateral (suitcase carry)",
-  "eagle pose":"Postura da águia (Garudasana)",
-  "alternating dumbbell floor press":"Supino no solo alternado com halteres",
-  "banded single-leg heel drop (inward pull)":"Descida unilateral do calcanhar com tração elástica para dentro",
-  "banded single-leg heel drop (outward pull)":"Descida unilateral do calcanhar com tração elástica para fora",
-  "lateral hollow rock":"Balanço lateral em posição de hollow body",
-  "skier arm swing":"Balanço dos braços do esquiador",
-  "alternating reverse lunge with lateral raise":"Avanço para trás alternado com elevação lateral dos braços",
-  "bear-stance push-up":"Flexão de braços em posição de urso",
-  "prone superman with shoulder retraction":"Extensão de tronco em decúbito ventral com retração escapular",
-  "arnold press on exercise ball":"Desenvolvimento Arnold sentado na bola suíça",
-  "kipping pull-up":"Barra fixa com balanço (kipping)",
-  "seal jack":"Polichinelo com abertura horizontal dos braços",
-  "split squat with lateral raise":"Agachamento em base alternada com elevação lateral dos braços",
-  "battle rope lateral plank waves":"Ondulações de corda naval em prancha lateral",
-  "battle rope lateral plank circles":"Círculos com corda naval em prancha lateral",
-  "child's pose":"Postura da criança (Balasana)",
-  "supine spinal twist":"Rotação da coluna em decúbito dorsal",
-  "downward dog to side plank":"Transição da postura do cachorro olhando para baixo para prancha lateral",
-  "alternating decline dumbbell chest press":"Supino declinado alternado com halteres",
-  "dumbbell decline alternating chest press":"Supino declinado alternado com halteres",
-  "alternating decline dumbbell bench press":"Supino declinado alternado com halteres",
-  "prone swimmers":"Movimentos alternados dos braços em decúbito ventral",
-  "dumbbell bent over row to bicep curl":"Remada curvada seguida de rosca bíceps com halteres",
-  "alternating dumbbell shoulder flexion on an inclined bench":"Flexão alternada de ombros com halteres em banco inclinado",
-  "alternating dumbbell shoulder flexion incline bench":"Flexão alternada de ombros com halteres em banco inclinado",
-  "one leg elbow plank":"Prancha sobre antebraços com uma perna elevada",
-  "single leg elbow plank":"Prancha sobre antebraços com uma perna elevada",
-  "single leg forearm plank":"Prancha sobre antebraços com uma perna elevada",
-  "band alternating upright row":"Remada alta alternada com faixa elástica",
-  "resistance band upright row":"Remada alta com faixa elástica",
-  "alternating resistance band upright row":"Remada alta alternada com faixa elástica",
-  "alternating dumbbell king kong":"Sequência King Kong com halteres e braços alternados",
-  "dumbbell pull complex":"Sequência de movimentos de puxada com halteres",
-  "dumbbell pulling complex":"Sequência de movimentos de puxada com halteres",
-  "alternating seated arnold shoulder press":"Desenvolvimento Arnold sentado e alternado",
-  "alternating seated arnold presses":"Desenvolvimento Arnold sentado e alternado",
-  "forearm plank lateral elbow walking":"Deslocamento lateral na prancha sobre antebraços",
-  "forearm lateral elbow plank walk":"Deslocamento lateral na prancha sobre antebraços",
-  "side to side lateral mountain climber":"Escalador lateral alternado",
-  "side to lateral mountain climber":"Escalador lateral alternado",
-  "quickstep two feet on and off frontal and back":"Passos rápidos com os dois pés à frente e atrás",
-  "quickstep two feet on and off front and back":"Passos rápidos com os dois pés à frente e atrás",
-  "quickstep both feet on and off front and back":"Passos rápidos com os dois pés à frente e atrás",
-  "quickstep lateral to lateral both feet together":"Deslocamento lateral rápido com os pés unidos",
-  "quickstep side to side both feet together":"Deslocamento lateral rápido com os pés unidos",
-  "hip bridge with leg extension":"Ponte de quadril com extensão de um joelho",
-  "hip bridge with leg lift":"Ponte de quadril com elevação de uma perna",
-  "supine spinal rotation":"Rotação da coluna em decúbito dorsal",
-  "supine spine twist":"Rotação da coluna em decúbito dorsal",
-  "downward dog to lateral plank":"Transição do cachorro olhando para baixo para prancha lateral",
-  "downward facing dog to side plank":"Transição do cachorro olhando para baixo para prancha lateral",
-  "blast off push up":"Flexão de braços com deslocamento posterior do quadril",
-  "cross body jumping jack":"Polichinelo cruzado",
-  "split stance sprinter arms":"Movimento alternado dos braços de corrida em posição de afundo",
-  "split stance sprint arm swing":"Movimento alternado dos braços de corrida em posição de afundo",
-  "alternating forward lunge with lateral arm raise":"Avanço à frente alternado com elevação lateral dos braços",
-  "alternating reverse lunge with lateral arm raise":"Avanço para trás alternado com elevação lateral dos braços",
-  "split squat with lateral arm raise":"Agachamento em base alternada com elevação lateral dos braços",
-  "battle rope side plank waves":"Ondulações de corda naval na prancha lateral",
-  "battle rope side plank circles":"Círculos com corda naval na prancha lateral",
-  "single leg heel drop banded inward pull":"Descida do calcanhar unilateral com tração elástica para dentro",
-  "single leg heel drop banded outward pull":"Descida do calcanhar unilateral com tração elástica para fora",
-  "single leg romanian deadlift with dumbbells":"Levantamento terra romeno unilateral com halteres",
-  "alternating single leg romanian deadlift":"Levantamento terra romeno unilateral alternado",
-  "alternating single leg romanian deadlift with dumbbells":"Levantamento terra romeno unilateral alternado com halteres",
-  "skier arm swings":"Balanço de braços do esquiador",
-  "wind relieving pose single knee":"Postura de liberação dos ventos com um joelho ao peito",
-  "wind relieving pose one knee":"Postura de liberação dos ventos com um joelho ao peito",
-  "quick punches":"Sequência de socos rápidos",
-  "alternating fast feet":"Passos rápidos alternados",
-  "alternating fast footwork":"Passos rápidos alternados",
-  "seated alternating arnold press":"Desenvolvimento Arnold sentado e alternado",
-  "alternating seated arnold press":"Desenvolvimento Arnold sentado e alternado",
-  "alternating arm dumbbell floor press":"Supino no solo alternado com halteres",
-  "prone superman shoulder retraction":"Extensão de tronco em decúbito ventral com retração escapular",
-  "arnold press on stability ball":"Desenvolvimento Arnold sentado na bola suíça",
-  "seal jumping jack":"Polichinelo com abertura horizontal dos braços",
-  "single leg swing hop":"Salto unilateral com balanço da perna",
-  "alternating-arm dumbbell king kong":"Sequência King Kong com halteres e braços alternados",
-  "alternado declinado halter empurrada":"Supino declinado alternado com halteres",
-  "em decubito ventral swimmer":"Movimentos alternados dos braços em decúbito ventral",
-  "halter bent over remada to biceps rosca":"Remada curvada seguida de rosca bíceps com halteres",
-  "alternado halter ombro flexao on an inclinado banco":"Flexão alternada de ombros com halteres em banco inclinado",
-  "one leg cotovelo prancha":"Prancha sobre antebraços com uma perna elevada",
-  "em decubito dorsal spinal torcao":"Rotação da coluna em decúbito dorsal",
-  "downward dog to lateral prancha":"Transição do cachorro olhando para baixo para prancha lateral",
-  "quadril ponte with perna extensao":"Ponte de quadril com extensão de um joelho",
-  "alternado upright remada faixa elastica":"Remada alta alternada com faixa elástica",
-  "upright remada faixa elastica":"Remada alta com faixa elástica",
-  "alternado inverse avanco with lateral elevacao":"Avanço para trás alternado com elevação lateral dos braços",
-  "alternado forward avanco with lateral elevacao":"Avanço à frente alternado com elevação lateral dos braços",
-  "forearm prancha cotovelo lateral caminhada":"Deslocamento lateral na prancha sobre antebraços",
-  "alternado fast pes":"Passos rápidos alternados",
-  "alternado single leg romanian deadlift":"Levantamento terra romeno unilateral alternado",
-  "alternado sentado arnold empurrada":"Desenvolvimento Arnold sentado e alternado",
-  "alterando sentado arnold empurrada":"Desenvolvimento Arnold sentado e alternado",
-  "halter king kong":"Sequência King Kong com halteres",
-  "alterando halter solo empurrada":"Supino no solo alternado com halteres",
-  "alternado halter solo empurrada":"Supino no solo alternado com halteres",
-  "halter pull complex":"Sequência de movimentos de puxada com halteres",
-  "barra pull complex":"Sequência de movimentos de puxada com barra",
-  "alterando halter king kong":"Sequência King Kong com halteres e braços alternados",
-  "alternating arm halter king kong":"Sequência King Kong com halteres e braços alternados"
-};
-function normalizeExerciseName(name){
-  return String(name||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"")
-    .toLowerCase().replace(/&/g," and ").replace(/[-_/]+/g," ")
-    .replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();
-}
-const EXERCISE_PT_LOOKUP=new Map(Object.entries(EXERCISE_NAMES_PT)
-  .map(([en,pt])=>[normalizeExerciseName(en),pt]));
-function translateExerciseName(name){
-  const original=String(name||"").trim();
-  return EXERCISE_PT_LOOKUP.get(normalizeExerciseName(original))||original;
-}
-function isExerciseNameTranslated(name){
-  return EXERCISE_PT_LOOKUP.has(normalizeExerciseName(name));
-}
-function exerciseRegions(ex){
-  const primary=Array.isArray(ex.primaryMuscles)?ex.primaryMuscles:[];
-  const secondary=Array.isArray(ex.secondaryMuscles)?ex.secondaryMuscles:[];
-  const resolve=part=>MUSCLE_TO_REGION[String(part).toLowerCase().replace(/[-\s]/g,"_")];
-  const regions=[...new Set(primary.map(resolve).filter(Boolean))];
-  const secondaryRegions=[...new Set(secondary.map(resolve).filter(Boolean))];
-  return regions.length?regions:secondaryRegions.length?secondaryRegions:["nao-classificados"];
-}
-function renderSample(){
-  if(!isProfessional()||!sampleList)return;
-  const q=$("exercisebankQuery").value.trim().toLocaleLowerCase("pt-BR");
-  const home=$("exercisebankHomeOnly").checked;
-  const region=$("exercisebankRegion").value;
-  const all=Array.isArray(sampleList.items)?sampleList.items:[];
-  const filtered=all.filter(x=>{
-    // Exibir somente exercícios com equivalência explícita em português no glossário.
-    if(!isExerciseNameTranslated(x.name))return false;
-    if(home&&x.home!==true)return false;
-    if(region!=="todas"&&!exerciseRegions(x).includes(region))return false;
-    if(!q)return true;
-    return [x.name,translateExerciseName(x.name),x.description,
-      ...(x.equipment||[]),...(x.primaryMuscles||[]),...(x.secondaryMuscles||[]),
-      ...exerciseRegions(x).map(key=>BODY_REGION_LABELS[key])]
-      .join(" ").toLocaleLowerCase("pt-BR").includes(q);
-  });
-  const root=$("exercisebankResults");root.replaceChildren();
-  text("exercisebankStatus",filtered.length+" exercício(s)");
-  if(!filtered.length)root.append(el("p","Nenhum exercício com nome em português encontrado para esses filtros.","card-text-small"));
-  filtered.forEach(x=>{
-    const card=el("div",undefined,"demo-exercicio-item bank-result");
-    const translated=translateExerciseName(x.name);
-    card.append(el("h2",translated,"card-title"));
-    const row=el("div",undefined,"demo-acoes");
-    const preview=el("button","Ver vídeo","btn btn-outline");
-    const pick=el("button","Selecionar exercício","btn");
-    const media=el("div",undefined,"bank-media");
-    preview.type=pick.type="button";
-    preview.addEventListener("click",()=>loadExerciseMedia(x.id,media,preview,"ExerciseBank",true));
-    pick.addEventListener("click",()=>{
-      addExercise({exercise_name:translated,exercise_source:"ExerciseBank",
-        external_id:x.id,instructions:x.description||"",series:2,
-        repetitions:"10",duration:"",frequency:"3 vezes por semana"});
-      openExerciseConfiguration($("itensPlanoProf").lastElementChild,"exercise-bank-prof",false);
-    });
-    row.append(preview,pick);card.append(row,media);root.append(card);
-  });
-}
-async function loadExerciseMedia(id,target,button,source="ExerciseBank",autoPlay=false){
-  if(button)button.disabled=true;
-  target.replaceChildren(el("p","Carregando demonstração...","card-text-small"));
-  try{
-    let url,poster,credit;
-    if(source==="wger"){
-      const data = await consultarWger(id);
-      url=data.item?.videos?.[0]?.url;credit="Fonte: wger";
-    }else if(source==="ExerciseBank"){
-      const data=await ebCall({method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({ids:[id]})});
-      const item=data.data?.[id];
-      if(!item?.signed)throw Error("Este vídeo não está disponível no catálogo de demonstração.");
-      url=item.mp4;poster=item.still;credit="ExerciseBank · link temporário";
-    }
-    if(!url)throw Error("Vídeo indisponível.");
-    if(!target.isConnected)return;
-    const video=el("video");
-    video.controls=true;
-    video.playsInline=true;
-    video.preload=autoPlay?"auto":"metadata";
-    video.loop=autoPlay;
-    video.muted=autoPlay;
-    video.autoplay=autoPlay;
-    video.src=url;
-    if(poster)video.poster=poster;
-    target.replaceChildren(video);
-    if(autoPlay){
-      video.setAttribute("aria-label","Demonstração do exercício em reprodução contínua e sem áudio");
-      video.play().catch(()=>{
-        if(video.isConnected)target.append(el("p","Toque no vídeo para iniciar a demonstração.","card-text-small"));
-      });
-    }else{
-      target.append(el("p",credit,"card-text-small"));
-    }
-  }catch(e){if(target.isConnected)target.replaceChildren(el("p",e.message,"card-text-small"));}
-  finally{if(button)button.disabled=false;}
 }
 
 async function init(){
@@ -1376,6 +346,45 @@ async function init(){
     $("loginSubmit").disabled=true;
     message("Não foi possível conectar ao serviço. Tente novamente mais tarde.",true);
   }
+}
+
+const {
+  addExercise, updatePlanEditorSummary, choosePlanForExerciseAddition, addExercisesToExistingPlan,
+  openExerciseSourceOptions, backFromExerciseSource, addManualExerciseFromOptions, openExerciseBankFromOptions,
+  openExerciseConfiguration, finishExerciseInsertion, backFromExerciseConfiguration, createPlanFromScratch,
+  cancelPlanEditor, clearPlanForm, editPlan, planoEmEdicao
+} = criarEditor({
+  isProfessional, pacienteSelecionado: () => patientId, listarPlanos: () => plans,
+  ocupado: () => busy, navigate, message
+});
+const loadExerciseMedia = criarExibicaoDeVideo(ebCall);
+const { loadSample, resetLibrary } = criarBiblioteca({
+  isProfessional, ebCall, addExercise, openExerciseConfiguration, loadExerciseMedia
+});
+
+function renderWorkoutDay(year, month, day) {
+  exibirTreinosDoDia(treinosConcluidos, year, month, day);
+}
+
+function renderPatientPlans() {
+  if (!isAuthenticated() || isProfessional()) return;
+  exibirPlanoPaciente({
+    assigned: patientExerciseAssignments(), estado: estadoTreino, records, navigate, completePatientWorkout, loadExerciseMedia
+  });
+}
+
+function renderProfessionalPlans() {
+  if (!isProfessional()) return;
+  updatePatientSelectors();
+  exibirPlanosProfissionais({
+    patients, patientId, plans, loadExerciseMedia, editPlan, deletePlan, createPlanFromScratch, addExercisesToExistingPlan
+  });
+}
+
+function renderProfessionalRecords() {
+  if (!isProfessional()) return;
+  updatePatientSelectors();
+  exibirRegistrosProfissionais({ patientId, professionalWorkouts, records, plans });
 }
 
 window.AppAuth={login,logout,navigate,saveSymptoms,isProfessional,renderWorkoutDay};
