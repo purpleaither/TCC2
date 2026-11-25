@@ -167,7 +167,7 @@ async function openSession() {
     navigate(location.hash === "#conta" ? "conta" : "inicio");
   }
   if (location.hash === "#conta") history.replaceState(history.state, "", location.pathname + location.search);
-  message("Acesso autenticado. Utilize somente dados fictícios.");
+  text("loginStatus", "Entre com uma conta de teste cadastrada.");
 }
 function updatePatientSelectors() {
   for(const id of ["pacienteProf","pacientePlanoProf","pacienteRegistrosProf"]) {
