@@ -17,17 +17,14 @@ export function adicionarLinha(entry, isProfessional, updatePlanEditorSummary) {
   select.append(custom);
   label.append(select);
   row.append(label);
-  const externalId=el("input");
-  externalId.name="externalId";
-  externalId.type="hidden";
-  const externalInstructions=el("input");
-  externalInstructions.name="externalInstructions";
-  externalInstructions.type="hidden";
-  const externalName=el("input");
-  externalName.name="externalName";
-  externalName.type="hidden";
-  const externalSource=el("input");externalSource.name="externalSource";externalSource.type="hidden";
-  row.append(externalId,externalInstructions,externalName,externalSource);
+  const hiddenFields = ["externalId", "externalInstructions", "externalSource"].map(name => {
+    const field = el("input");
+    field.name = name;
+    field.type = "hidden";
+    return field;
+  });
+  const [externalId, externalInstructions, externalSource] = hiddenFields;
+  row.append(...hiddenFields);
   const customName=el("input",undefined,"form-input");
   customName.name="customName";
   customName.placeholder="Nome do exercício";
@@ -37,9 +34,7 @@ export function adicionarLinha(entry, isProfessional, updatePlanEditorSummary) {
   select.addEventListener("change",()=>{
     customName.hidden=select.value!=="other";
     customName.required=select.value==="other";
-    externalId.value="";
-    externalInstructions.value="";
-    externalName.value="";externalSource.value="";
+    for (const field of hiddenFields) field.value = "";
   });
   const params=el("div",undefined,"demo-grid-parametros");
   for(const [key,title,type,value] of [
@@ -72,7 +67,7 @@ export function adicionarLinha(entry, isProfessional, updatePlanEditorSummary) {
     if(["ExerciseBank","wger"].includes(entry.exercise_source)&&entry.external_id){
       externalId.value=entry.external_id;
       externalInstructions.value=entry.instructions||"";
-      externalName.value=entry.exercise_name;externalSource.value=entry.exercise_source;
+      externalSource.value=entry.exercise_source;
       const sourceLabel=el("p",entry.exercise_source==="ExerciseBank"?"ExerciseBank · catálogo de demonstração":"wger · vídeo sujeito à disponibilidade e licença","card-text-small");
       row.prepend(sourceLabel);
     }

@@ -80,19 +80,16 @@ function atualizarDataAtual() {
 }
 
 function alterarDor(tipo, delta) {
-  if (tipo === 'rest') {
-    dorRepouso = Math.max(0, Math.min(10, dorRepouso + delta));
-    document.getElementById('restPainValue').textContent = dorRepouso + '/10';
-    var pct = dorRepouso * 10;
-    document.getElementById('restPainFill').style.width = pct + '%';
-    document.getElementById('restPainThumb').style.left = 'calc(' + pct + '% - 9px)';
-  } else {
-    dorMovimento = Math.max(0, Math.min(10, dorMovimento + delta));
-    document.getElementById('movPainValue').textContent = dorMovimento + '/10';
-    var pct = dorMovimento * 10;
-    document.getElementById('movPainFill').style.width = pct + '%';
-    document.getElementById('movPainThumb').style.left = 'calc(' + pct + '% - 9px)';
-  }
+  const emRepouso = tipo === 'rest';
+  const anterior = emRepouso ? dorRepouso : dorMovimento;
+  const valor = Math.max(0, Math.min(10, anterior + delta));
+  if (emRepouso) dorRepouso = valor;
+  else dorMovimento = valor;
+  const prefixo = emRepouso ? 'restPain' : 'movPain';
+  const pct = valor * 10 + '%';
+  document.getElementById(prefixo + 'Value').textContent = valor + '/10';
+  document.getElementById(prefixo + 'Fill').style.width = pct;
+  document.getElementById(prefixo + 'Thumb').style.left = 'calc(' + pct + ' - 9px)';
 }
 
 function selecionar(grupoId, indice) {

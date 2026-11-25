@@ -4,26 +4,34 @@ function gerarHeatmap() {
   grid.replaceChildren();
 
   var totalDor = 0, maxDor = 0, diasComRegistro = 0;
-  var numDias = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + 1, 0).getDate();
+  const ano = mesAtual.getFullYear();
+  const mes = mesAtual.getMonth();
+  const numDias = new Date(ano, mes + 1, 0).getDate();
+  const diaDoMes = data => {
+    const d = new Date(data);
+    return d.getMonth() === mes && d.getFullYear() === ano ? d.getDate() : null;
+  };
+  const sintomasPorDia = new Map();
+  for (const registro of registrosUsuario) {
+    const dia = diaDoMes(registro.data);
+    if (dia !== null) sintomasPorDia.set(dia, registro);
+  }
+  const treinosPorDia = new Map();
+  for (const treino of treinosConcluidos) {
+    const dia = diaDoMes(treino.completed_at);
+    if (dia !== null) treinosPorDia.set(dia, (treinosPorDia.get(dia) ?? 0) + 1);
+  }
 
-  for (var i = 1; i <= numDias; i++) {
-    var regDoDia = registrosUsuario.slice().reverse().find(function(r) {
-      var d = new Date(r.data);
-      return d.getDate() === i && d.getMonth() === mesAtual.getMonth() && d.getFullYear() === mesAtual.getFullYear();
-    });
-
-    var treinosDoDia = treinosConcluidos.filter(function(t) {
-      var d = new Date(t.completed_at);
-      return d.getDate() === i && d.getMonth() === mesAtual.getMonth() && d.getFullYear() === mesAtual.getFullYear();
-    });
+  for (let i = 1; i <= numDias; i++) {
+    const regDoDia = sintomasPorDia.get(i);
+    const treinosDoDia = treinosPorDia.get(i) ?? 0;
     var cell = document.createElement('div');
     cell.className = 'heatmap-cell';
-    var valorVisivel = treinosDoDia.length ? '' : '-';
+    var valorVisivel = treinosDoDia ? '' : '-';
 
     if (!regDoDia) {
       cell.style.backgroundColor = 'var(--superficie-neutra)';
       cell.style.borderColor = 'var(--linha)';
-
     } else {
       var v = (filtroDorVisualizacao === 0) ? regDoDia.dorRepouso : regDoDia.dorMovimento;
       totalDor += v;
@@ -44,24 +52,23 @@ function gerarHeatmap() {
       valor.textContent = valorVisivel;
       cell.append(' ', valor);
     }
-    if (treinosDoDia.length) {
+    if (treinosDoDia) {
       cell.classList.add('heatmap-workout-day');
-      cell.title = treinosDoDia.length + ' treino(s) concluído(s)';
+      cell.title = treinosDoDia + ' treino(s) concluído(s)';
     }
-    if (regDoDia || treinosDoDia.length) {
-      (function(dia, registro) {
-        cell.onclick = function() { abrirClimaSheet(dia, registro || null); };
-        cell.tabIndex = 0;
-        cell.setAttribute('role', 'button');
-        var descricao = treinosDoDia.length ? ' e treinos concluídos' : '';
-        cell.setAttribute('aria-label', 'Ver registros do dia ' + dia + (valorVisivel ? ' ' + valorVisivel : '') + descricao);
-        cell.onkeydown = function(event) {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            abrirClimaSheet(dia, registro || null);
-          }
-        };
-      })(i, regDoDia);
+    if (regDoDia || treinosDoDia) {
+      const abrir = () => abrirClimaSheet(i, regDoDia ?? null);
+      const descricao = treinosDoDia ? ' e treinos concluídos' : '';
+      cell.tabIndex = 0;
+      cell.setAttribute('role', 'button');
+      cell.setAttribute('aria-label', 'Ver registros do dia ' + i + (valorVisivel ? ' ' + valorVisivel : '') + descricao);
+      cell.onclick = abrir;
+      cell.onkeydown = event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          abrir();
+        }
+      };
     }
     grid.appendChild(cell);
   }
