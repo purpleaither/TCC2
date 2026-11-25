@@ -22,10 +22,6 @@ let records = [];
 let editingPlan = null;
 let busy = false;
 let loginReady = false;
-let bankItems=[];
-let bankOffset=0;
-let bankQuery="";
-let bankBusy=false;
 let weatherColumnsAvailable = true;
 
 function el(tag, content, cls) {
@@ -926,9 +922,9 @@ async function ebCall(opts={}){
   if(!response.ok)throw Error(data.error||"ExerciseBank indisponível.");
   return data;
 }
-async function loadSample(force=false){
+async function loadSample(){
   if(!isProfessional()||loadingSample)return;
-  if(sampleList&&!force){renderSample();return;}
+  if(sampleList){renderSample();return;}
   loadingSample=true;$("exercisebankRefresh").disabled=true;
   text("exercisebankStatus","Carregando exercícios...");
   try{
@@ -1117,8 +1113,6 @@ const EXERCISE_NAMES_PT={
   "burpee":"Burpee",
   "high knees":"Corrida estacionária com elevação dos joelhos",
   "marching in place":"Marcha estacionária",
-  "one-leg elbow plank":"Prancha sobre antebraços com uma perna elevada",
-  "one leg elbow plank":"Prancha sobre antebraços com uma perna elevada",
   "alternating decline dumbbell press":"Supino declinado alternado com halteres",
   "prone swimmer":"Extensão de tronco e movimentos dos braços em decúbito ventral",
   "dumbbell bent-over row to biceps curl":"Remada curvada seguida de rosca bíceps com halteres",
@@ -1127,48 +1121,29 @@ const EXERCISE_NAMES_PT={
   "upright row (resistance band)":"Remada alta com faixa elástica",
   "alternating upright row (resistance band)":"Remada alta alternada com faixa elástica",
   "dan john get-up":"Levantada do solo (variação Dan John)",
-  "single-leg swing hop":"Salto unilateral com balanço da perna",
   "dumbbell king kong":"Levantamento terra sumô, rosca e desenvolvimento com halteres (King Kong)",
-  "alternating-arm dumbbell king kong":"King Kong com halteres e braços alternados",
   "alternating forward lunge with lateral raise":"Avanço à frente alternado com elevação lateral dos braços",
   "forearm plank lateral elbow walk":"Deslocamento lateral na prancha sobre antebraços",
-  "alternating fast feet":"Passos rápidos alternados",
-  "wind relieving pose (one knee)":"Postura de liberação dos ventos com um joelho ao peito",
-  "wind relieving pose (single knee)":"Postura de liberação dos ventos com um joelho ao peito",
-  "single-leg romanian deadlift with dumbbells":"Levantamento terra romeno unilateral com halteres",
   "dumbbell discus throw":"Arremesso rotacional com halter",
   "suitcase carry":"Caminhada com carga unilateral (suitcase carry)",
   "eagle pose":"Postura da águia (Garudasana)",
   "alternating dumbbell floor press":"Supino no solo alternado com halteres",
   "banded single-leg heel drop (inward pull)":"Descida unilateral do calcanhar com tração elástica para dentro",
   "banded single-leg heel drop (outward pull)":"Descida unilateral do calcanhar com tração elástica para fora",
-  "dumbbell pull complex":"Sequência combinada de puxadas com halteres",
-  "alternating seated arnold press":"Desenvolvimento Arnold sentado e alternado",
-  "alternating seated arnold shoulder press":"Desenvolvimento Arnold sentado e alternado",
   "lateral hollow rock":"Balanço lateral em posição de hollow body",
-  "cross-body jumping jack":"Polichinelo cruzado",
   "skier arm swing":"Balanço dos braços do esquiador",
   "alternating reverse lunge with lateral raise":"Avanço para trás alternado com elevação lateral dos braços",
-  "split-stance sprinter arms":"Simulação de corrida com braços em base alternada",
   "bear-stance push-up":"Flexão de braços em posição de urso",
   "prone superman with shoulder retraction":"Extensão de tronco em decúbito ventral com retração escapular",
   "arnold press on exercise ball":"Desenvolvimento Arnold sentado na bola suíça",
   "kipping pull-up":"Barra fixa com balanço (kipping)",
-  "side-to-side lateral mountain climber":"Escalador lateral alternado",
-  "side-to - lateral mountain climber":"Escalador lateral alternado",
   "seal jack":"Polichinelo com abertura horizontal dos braços",
   "split squat with lateral raise":"Agachamento em base alternada com elevação lateral dos braços",
   "battle rope lateral plank waves":"Ondulações de corda naval em prancha lateral",
   "battle rope lateral plank circles":"Círculos com corda naval em prancha lateral",
-  "quickstep both feet on and off, front and back":"Passos rápidos com ambos os pés, entrando e saindo à frente e atrás",
-  "quickstep two feet on and off, front and back":"Passos rápidos com ambos os pés, entrando e saindo à frente e atrás",
-  "quickstep lateral to lateral, both feet together":"Saltos laterais rápidos com pés unidos",
   "child's pose":"Postura da criança (Balasana)",
-  "hip bridge with leg extension":"Ponte de quadril com extensão de joelho",
   "supine spinal twist":"Rotação da coluna em decúbito dorsal",
   "downward dog to side plank":"Transição da postura do cachorro olhando para baixo para prancha lateral",
-  "downward dog to lateral plank":"Transição da postura do cachorro olhando para baixo para prancha lateral",
-  "blast-off push-up":"Flexão de braços com deslocamento posterior do quadril",
   "alternating decline dumbbell chest press":"Supino declinado alternado com halteres",
   "dumbbell decline alternating chest press":"Supino declinado alternado com halteres",
   "alternating decline dumbbell bench press":"Supino declinado alternado com halteres",
@@ -1182,7 +1157,6 @@ const EXERCISE_NAMES_PT={
   "band alternating upright row":"Remada alta alternada com faixa elástica",
   "resistance band upright row":"Remada alta com faixa elástica",
   "alternating resistance band upright row":"Remada alta alternada com faixa elástica",
-  "alternating arm dumbbell king kong":"Sequência King Kong com halteres e braços alternados",
   "alternating dumbbell king kong":"Sequência King Kong com halteres e braços alternados",
   "dumbbell pull complex":"Sequência de movimentos de puxada com halteres",
   "dumbbell pulling complex":"Sequência de movimentos de puxada com halteres",
@@ -1270,13 +1244,6 @@ function translateExerciseName(name){
 function isExerciseNameTranslated(name){
   return EXERCISE_PT_LOOKUP.has(normalizeExerciseName(name));
 }
-const EQUIPMENT_PT={
-  bodyweight:"Peso corporal",mat:"Colchonete",chair:"Cadeira",
-  "exercise-mat":"Colchonete","yoga-mat":"Colchonete",
-  "resistance-band":"Faixa elástica","elastic-band":"Faixa elástica",
-  dumbbell:"Halter",barbell:"Barra",bench:"Banco",cable:"Cabo",
-  machine:"Máquina",kettlebell:"Kettlebell",none:"Sem equipamentos"
-};
 function exerciseRegions(ex){
   const primary=Array.isArray(ex.primaryMuscles)?ex.primaryMuscles:[];
   const secondary=Array.isArray(ex.secondaryMuscles)?ex.secondaryMuscles:[];
@@ -1285,8 +1252,6 @@ function exerciseRegions(ex){
   const secondaryRegions=[...new Set(secondary.map(resolve).filter(Boolean))];
   return regions.length?regions:secondaryRegions.length?secondaryRegions:["nao-classificados"];
 }
-function equipmentLabel(value){return EQUIPMENT_PT[String(value||"").toLowerCase()]||String(value);}
-function regionText(ex){return exerciseRegions(ex).map(key=>BODY_REGION_LABELS[key]).join(", ");}
 function renderSample(){
   if(!isProfessional()||!sampleList)return;
   const q=$("exercisebankQuery").value.trim().toLocaleLowerCase("pt-BR");
@@ -1396,8 +1361,6 @@ window.AppAuth={login,logout,navigate,saveSymptoms,isProfessional,renderWorkoutD
 window.atualizarPacienteProfissional=()=>selectPatient($("pacienteProf").value);
 window.trocarPacientePlanoProf=()=>selectPatient($("pacientePlanoProf").value);
 window.trocarPacienteRegistrosProf=()=>selectPatient($("pacienteRegistrosProf").value);
-window.adicionarExercicioPlano=()=>addExercise();
-window.limparFormularioPlano=clearPlanForm;
 window.cancelarFormularioPlano=cancelPlanEditor;
 window.criarPlanoProfissional=createPlanFromScratch;
 window.abrirOpcoesExercicios=openExerciseSourceOptions;
