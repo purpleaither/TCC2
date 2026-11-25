@@ -1013,44 +1013,44 @@ body {
 }
 :root[data-tema="escuro"] {
   color-scheme: dark;
-  --fundo: #101814;
-  --superficie: #19241f;
-  --superficie-suave: #22352a;
-  --superficie-neutra: #26332c;
-  --superficie-verde: #284437;
+  --fundo: #11151c;
+  --superficie: #1a202a;
+  --superficie-suave: #222a36;
+  --superficie-neutra: #293240;
+  --superficie-verde: #24354a;
   --fundo-alerta: #432628;
   --fundo-aviso: #40361a;
-  --texto: #edf5ef;
-  --texto-suave: #b9cfc1;
-  --titulo: #b7dcff;
-  --destaque: #89e4ae;
-  --acao: #19623f;
-  --acao-hover: #23744d;
+  --texto: #f0f4fa;
+  --texto-suave: #c1cbd9;
+  --titulo: #c7ddff;
+  --destaque: #a4caff;
+  --acao: #344b68;
+  --acao-hover: #405a79;
   --sobre-acao: #ffffff;
   --erro: #ffb4b4;
-  --borda: #718779;
-  --linha: #43574b;
+  --borda: #8292a8;
+  --linha: #49586b;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-tema]), :root[data-tema="sistema"] {
     color-scheme: dark;
-  --fundo: #101814;
-  --superficie: #19241f;
-  --superficie-suave: #22352a;
-  --superficie-neutra: #26332c;
-  --superficie-verde: #284437;
-  --fundo-alerta: #432628;
-  --fundo-aviso: #40361a;
-  --texto: #edf5ef;
-  --texto-suave: #b9cfc1;
-  --titulo: #b7dcff;
-  --destaque: #89e4ae;
-  --acao: #19623f;
-  --acao-hover: #23744d;
-  --sobre-acao: #ffffff;
-  --erro: #ffb4b4;
-  --borda: #718779;
-  --linha: #43574b;
+    --fundo: #11151c;
+    --superficie: #1a202a;
+    --superficie-suave: #222a36;
+    --superficie-neutra: #293240;
+    --superficie-verde: #24354a;
+    --fundo-alerta: #432628;
+    --fundo-aviso: #40361a;
+    --texto: #f0f4fa;
+    --texto-suave: #c1cbd9;
+    --titulo: #c7ddff;
+    --destaque: #a4caff;
+    --acao: #344b68;
+    --acao-hover: #405a79;
+    --sobre-acao: #ffffff;
+    --erro: #ffb4b4;
+    --borda: #8292a8;
+    --linha: #49586b;
   }
 }
 :root[data-contraste] {
@@ -1119,17 +1119,57 @@ body {
 :root[data-espacamento] .choices-options { flex-wrap: wrap; }
 :root[data-texto="200"] .heatmap-grid,
 :root[data-espacamento] .heatmap-grid { gap: 2px; }
-.accessibilidade { margin: .5rem 1rem; }
-.accessibilidade summary, .ajuda-termo summary {
+/* Reserva espaço para o controle fixo no fim das telas. */
+.app { padding-block-end: calc(5rem + env(safe-area-inset-bottom, 0px)); }
+:root { scroll-padding-block-end: calc(5rem + env(safe-area-inset-bottom, 0px)); }
+
+.accessibilidade {
+  position: fixed;
+  z-index: 12;
+  inset-inline-end: max(12px, calc((100% - 390px) / 2 + 12px), env(safe-area-inset-right, 0px));
+  inset-block-end: calc(12px + env(safe-area-inset-bottom, 0px));
+  max-inline-size: calc(100% - 32px);
+  color: var(--texto);
+}
+.accessibilidade summary {
+  display: flex;
+  align-items: center;
+  gap: .4em;
+  min-block-size: 44px;
+  padding: .5em .8em;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  background: var(--superficie);
+  color: var(--titulo);
+  font-size: .875rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgb(0 0 0 / .18);
+}
+.accessibilidade summary:hover { background: var(--superficie-suave); }
+.accessibilidade summary svg { flex: 0 0 1em; width: 1em; height: 1em; }
+.accessibilidade[open] {
+  inline-size: min(340px, calc(100% - 32px));
+  padding: .65rem;
+  border: 1px solid var(--borda);
+  border-radius: .8rem;
+  background: var(--superficie);
+  box-shadow: 0 6px 24px rgb(0 0 0 / .22);
+}
+.accessibilidade[open] summary {
+  border-color: transparent;
+  border-radius: .35rem;
+  box-shadow: none;
+}
+.accessibilidade[open] .preferencias {
+  max-block-size: max(3rem, calc(100dvh - 7rem - env(safe-area-inset-bottom, 0px)));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-inline: 4px;
+}
+.ajuda-termo summary {
   cursor: pointer; color: var(--titulo); font-weight: 700;
   min-height: 1.5rem; padding: .3rem .15rem;
-}
-.accessibilidade summary svg {
-  width: 1em; height: 1em; vertical-align: -.15em; margin-inline-end: .2em;
-}
-.accessibilidade[open] {
-  padding: .65rem; border: 1px solid var(--borda);
-  border-radius: .5rem; background: var(--superficie-suave);
 }
 .preferencias { display: grid; gap: .45rem; padding-block: .35rem; }
 .preferencias label { display: block; font-size: .875rem; }
