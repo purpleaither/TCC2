@@ -90,10 +90,13 @@ jobs:
           });
           fs.writeFileSync('evidencias/execucao-' + process.env.GITHUB_RUN_ID + '-' + process.env.GITHUB_RUN_ATTEMPT + '.json', JSON.stringify({execucao:process.env.GITHUB_RUN_ID,tentativa:process.env.GITHUB_RUN_ATTEMPT,commit:process.env.GITHUB_SHA,resultado:process.env.RESULTADO,relatorios:reports},null,2)+'\n');
           NODE
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          cd "$GITHUB_WORKSPACE"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add evidencias/
           git commit -m "Salva resumo da verificação técnica"
+          git pull --rebase origin main
           git push origin HEAD:main
         env:
           RESULTADO: ${{ job.status }}
