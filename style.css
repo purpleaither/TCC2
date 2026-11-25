@@ -438,31 +438,6 @@ body {
   font-size: var(--fonte-minima);
 }
 
-/* ---- Bloqueio meteorológico ---- */
-.locked-card {
-  background: transparent;
-  border: 1px solid var(--linha, #ddd);
-  border-radius: 6px;
-  padding: 16px;
-  margin-bottom: 16px;
-  text-align: left;
-}
-
-.lock-icon {
-  font-size: 1.375rem;
-  margin-bottom: 6px;
-}
-
-/* ---- Info meteorológica (desbloqueada) ---- */
-.weather-card {
-  background: transparent;
-  border: 1px solid var(--linha, #ddd);
-  border-radius: 6px;
-  padding: 16px;
-  margin-bottom: 16px;
-  text-align: left;
-}
-
 .weather-title {
   font-size: var(--fonte-minima); /* Adicionado para igualar aos outros cards */
   font-weight: bold;
@@ -470,18 +445,7 @@ body {
   margin-bottom: 6px;
 }
 
-.weather-main {
-  font-size: var(--fonte-minima);
-  font-weight: bold;
-  margin-bottom: 4px;
-}
-
-.weather-detail {
-  font-size: var(--fonte-minima);
-  color: var(--texto-suave, #666);
-}
-
-#page-inicio > :is(.card, .locked-card, .weather-card) {
+#page-inicio > .card {
   border: 0;
 }
 

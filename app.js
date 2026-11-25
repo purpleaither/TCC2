@@ -234,35 +234,6 @@ function fecharClimaSheet() {
   if (sheet) sheet.classList.remove('open');
 }
 
-function apresentarClimaNoPainel(registro) {
-  var card = document.getElementById('climaLiberado');
-  if (!card) return;
-  card.replaceChildren();
-  var titulo = document.createElement('h2');
-  titulo.className = 'weather-title';
-  titulo.textContent = 'Informações meteorológicas';
-  card.append(titulo);
-
-  var main = document.createElement('p');
-  main.className = 'weather-main';
-  var detalhe = document.createElement('p');
-  detalhe.className = 'weather-detail';
-  var observacao = document.createElement('p');
-  observacao.className = 'card-text-small';
-
-  var clima = registro && registro.clima;
-  if (clima && clima.temperatura != null && clima.umidade != null && clima.pressao != null) {
-    main.textContent = '☀ ' + (clima.cidade || 'Brasília') + ' · ' + clima.temperatura + ' °C';
-    detalhe.textContent = 'Umidade: ' + clima.umidade + '% · Pressão: ' + clima.pressao + ' hPa';
-    observacao.textContent = 'Condições registradas em ' + new Date(clima.observadoEm || registro.data).toLocaleString('pt-BR') + '. Fonte: Open-Meteo.';
-  } else {
-    main.textContent = 'Dados meteorológicos não disponíveis';
-    detalhe.textContent = 'Não foi possível associar informações meteorológicas a este registro.';
-    observacao.textContent = 'Os sintomas permanecem salvos. O clima não será substituído por uma medição de outra data.';
-  }
-  card.append(main, detalhe, observacao);
-}
-
 function abrirClimaSheet(dia, reg) {
   var nomesMes = ['jan.', 'fev.', 'mar.', 'abr.', 'mai.', 'jun.', 'jul.', 'ago.', 'set.', 'out.', 'nov.', 'dez.'];
   var titulo = document.getElementById('climaSheetTitle');
@@ -302,19 +273,9 @@ function verificarRegistroHoje() {
     return new Date(r.data).toDateString() === hoje;
   });
   var botao = document.getElementById('btnRegistrarSintomas');
-  var bloqueado = document.getElementById('climaBloqueado');
-  var liberado = document.getElementById('climaLiberado');
   if (botao) {
     botao.textContent = existe ? 'Sintomas já registrados hoje ✓' : 'Registrar sintomas';
     botao.classList.toggle('registro-concluido', existe);
-  }
-  if (bloqueado) bloqueado.style.display = existe ? 'none' : 'block';
-  if (liberado) liberado.style.display = existe ? 'block' : 'none';
-  if (existe) {
-    var hojeRegistro = registrosUsuario.slice().reverse().find(function(r) {
-      return new Date(r.data).toDateString() === hoje;
-    });
-    apresentarClimaNoPainel(hojeRegistro);
   }
 }
 
