@@ -1,6 +1,7 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { chromium } from 'playwright';
 import AxeBuilder from '@axe-core/playwright';
+import { verificarTeclado } from './teclado.mjs';
 import { verificarBiblioteca } from './biblioteca.mjs';
 
 const pasta = process.env.TCC_EVIDENCIAS ?? 'test-results/auditoria';
@@ -9,6 +10,7 @@ const modo = process.env.TCC_SNAPSHOT;
 const evidencias = modo ? 'lighthouse-autenticado-' + modo : 'axe-autenticado';
 const configuracaoReal = 'https://tcc2-lime.vercel.app/api/database-config';
 const casos = [];
+const politica = [];
 const regras = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22a', 'wcag22aa'];
 let chrome;
 let puppeteer;
@@ -82,6 +84,16 @@ try {
   for (const perfil of perfis) {
     const contexto = await navegador.newContext({ viewport: modo === 'mobile' ? { width: 412, height: 823 } : { width: 1350, height: 940 } });
     const pagina = await contexto.newPage();
+    if (!modo) {
+      await pagina.exposeFunction('registrarPolitica', evento => politica.push({ perfil: perfil.nome, ...evento }));
+      await pagina.addInitScript(() => {
+        document.addEventListener('securitypolicyviolation', evento => {
+          let origem = 'inline ou recurso interno';
+          try { origem = new URL(evento.blockedURI).origin; } catch {}
+          window.registrarPolitica({ diretiva: evento.effectiveDirective, regime: evento.disposition, origem });
+        });
+      });
+    }
     try {
       const email = process.env['TEST_' + perfil.credencial + '_EMAIL'];
       const senha = process.env['TEST_' + perfil.credencial + '_PASSWORD'];
@@ -103,6 +115,13 @@ try {
       if (perfil.nome === 'paciente') {
         for (const tela of ['sintomas', 'exercicios', 'historico', 'orientacoes', 'contatos']) {
           await auditar(pagina, perfil.nome, tela, () => navegar(pagina, tela));
+        }
+        if (!modo && process.env.TCC_BIBLIOTECA === '1') {
+          try {
+            casos.push({ id: 'CT47-teclado-escala', estado: 'aprovado', ...await verificarTeclado(pagina, pasta) });
+          } catch {
+            casos.push({ id: 'CT47-teclado-escala', estado: 'reprovado' });
+          }
         }
       } else {
         await auditar(pagina, perfil.nome, 'registros-prof', () => navegar(pagina, 'registros-prof'));
@@ -130,6 +149,7 @@ try {
   await navegador.close();
   if (puppeteer) puppeteer.disconnect();
   if (chrome) await chrome.kill();
+  if (!modo) await writeFile(pasta + '/csp-navegador.json', JSON.stringify(politica, null, 2));
   await writeFile(pasta + '/' + evidencias + '.json', JSON.stringify(casos, null, 2));
 }
 if (casos.some(caso => caso.estado !== 'aprovado')) process.exitCode = 1;

@@ -9,6 +9,7 @@ on:
       - '*.html'
       - '*.css'
       - 'api/**'
+      - 'vercel.json'
 
 permissions:
   contents: read
@@ -38,6 +39,7 @@ jobs:
         id: preparar
         env:
           EXERCISEBANK_API_KEY: ${{ secrets.EXERCISEBANK_API_KEY }}
+          EB_KEY: ${{ secrets.EB_KEY }}
         run: |
           mkdir -p "$TCC_EVIDENCIAS"
           git rev-parse HEAD > "$TCC_EVIDENCIAS/commit.txt"
@@ -50,7 +52,7 @@ jobs:
             curl --fail --silent "${TCC_BASE_URL}${arquivo}" -o /tmp/tcc-arquivo
             cmp "$arquivo" /tmp/tcc-arquivo
           done
-          if [ -n "$EXERCISEBANK_API_KEY" ]; then
+          if [ -n "${EXERCISEBANK_API_KEY:-${EB_KEY:-}}" ]; then
             echo 'ExerciseBank configurada' > "$TCC_EVIDENCIAS/dependencias.txt"
           else
             echo 'ExerciseBank sem chave no runner' > "$TCC_EVIDENCIAS/dependencias.txt"
@@ -89,6 +91,26 @@ jobs:
           done
           TCC_CLIMA_FALHA=1 node tests/playwright-sintomas-clima.cjs > /tmp/tcc-clima-falha.log 2>&1 || falhou=1
           exit "$falhou"
+      - name: Repetir medições operacionais
+        if: always() && !cancelled() && steps.preparar.outcome == 'success'
+        env:
+          TEST_FISIO_EMAIL: ${{ secrets.TEST_FISIO_EMAIL }}
+          TEST_FISIO_PASSWORD: ${{ secrets.TEST_FISIO_PASSWORD }}
+          TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
+          TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
+        run: |
+          mkdir -p "$TCC_EVIDENCIAS/regressao"
+          cp test-results/*.json "$TCC_EVIDENCIAS/regressao/"
+          node tests/auditoria/desempenho.mjs
+      - name: Auditoria passiva do servidor candidato
+        if: always() && !cancelled() && steps.preparar.outcome == 'success'
+        run: |
+          sed 's/8765/8766/g' tests/auditoria/zap.yml > /tmp/zap-candidata.yml
+          docker run --rm --network host --user "$(id -u):$(id -g)" \
+            -v /tmp/zap-candidata.yml:/tmp/plano.yml:ro \
+            -v "$PWD/$TCC_EVIDENCIAS:/zap/wrk:rw" \
+            ghcr.io/zaproxy/zaproxy@sha256:9624669db72f54d86c4b46a7064518bd9bf79d8c61a4c31befa9923489f328af \
+            zap.sh -cmd -dir /tmp/zap-home -autorun /tmp/plano.yml
       - name: Conferir cabeçalhos públicos da Vercel
         if: always() && !cancelled()
         run: node tests/auditoria/cabecalhos-vercel.mjs
