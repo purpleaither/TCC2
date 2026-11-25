@@ -1,0 +1,63 @@
+{
+  "versao": "156.0.8078.79",
+  "casos": [
+    {
+      "id": "CT33",
+      "estado": "reprovado",
+      "motivo": "Please use browser.newContext()\n Please check out https://github.com/dequelabs/axe-core-npm/blob/develop/packages/playwright/error-handling.md"
+    },
+    {
+      "id": "CT35",
+      "estado": "reprovado",
+      "motivo": "Expected values to be strictly equal:\n+ actual - expected\n\n+ null\n- 'loginEmail'\n"
+    },
+    {
+      "id": "CT36-320",
+      "estado": "aprovado",
+      "detalhes": {
+        "viewport": 320,
+        "conteudo": 320
+      }
+    },
+    {
+      "id": "CT36-360",
+      "estado": "aprovado",
+      "detalhes": {
+        "viewport": 360,
+        "conteudo": 360
+      }
+    },
+    {
+      "id": "CT36-390",
+      "estado": "aprovado",
+      "detalhes": {
+        "viewport": 390,
+        "conteudo": 390
+      }
+    },
+    {
+      "id": "CT36-768",
+      "estado": "aprovado",
+      "detalhes": {
+        "viewport": 768,
+        "conteudo": 768
+      }
+    },
+    {
+      "id": "CT36-1024",
+      "estado": "aprovado",
+      "detalhes": {
+        "viewport": 1024,
+        "conteudo": 1024
+      }
+    },
+    {
+      "id": "CT36-1440",
+      "estado": "aprovado",
+      "detalhes": {
+        "viewport": 1440,
+        "conteudo": 1440
+      }
+    }
+  ]
+}

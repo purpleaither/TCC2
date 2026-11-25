@@ -1,0 +1,63 @@
+name: Auditoria complementar do MVP
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/auditoria-tcc.yml'
+      - 'tests/auditoria/**'
+      - '*.html'
+      - '*.js'
+      - '*.css'
+      - 'api/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: auditoria-local-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  auditoria:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      TCC_EVIDENCIAS: test-results/auditoria
+      CHROME_PATH: /usr/bin/google-chrome
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Preparar ferramentas e identificar a versão auditada
+        run: |
+          mkdir -p "$TCC_EVIDENCIAS"
+          git rev-parse HEAD > "$TCC_EVIDENCIAS/commit.txt"
+          node --version > "$TCC_EVIDENCIAS/node.txt"
+          npm ci --prefix tests/auditoria
+          python3 -m http.server 8765 --bind 127.0.0.1 > /tmp/servidor-tcc.log 2>&1 &
+          curl --retry 10 --retry-connrefused --fail --silent http://127.0.0.1:8765/ > /dev/null
+      - name: CI-08 e CI-10, axe-core, teclado e larguras
+        run: node tests/auditoria/interface.mjs
+      - name: CI-09 e CI-11, Lighthouse
+        if: always() && !cancelled()
+        run: node tests/auditoria/lighthouse.mjs
+      - name: CI-12, CI-13 e CI-15, rotas simuladas e privacidade estática
+        if: always() && !cancelled()
+        run: |
+          set -o pipefail
+          node --test --test-isolation=none --test-reporter=tap tests/auditoria/*.test.mjs | tee "$TCC_EVIDENCIAS/rotas.tap"
+      - name: CI-14, inspeção passiva da página local
+        if: always() && !cancelled()
+        run: |
+          docker run --rm --network host --user "$(id -u):$(id -g)" \
+            -e HOME=/tmp -v "$PWD/tests/auditoria/zap.yml:/tmp/plano.yml:ro" \
+            -v "$PWD/$TCC_EVIDENCIAS:/zap/wrk:rw" \
+            ghcr.io/zaproxy/zaproxy:stable zap.sh -cmd -autorun /tmp/plano.yml
+      - name: Guardar resultados da execução
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: auditoria-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test-results/auditoria/
+          retention-days: 90
