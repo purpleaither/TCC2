@@ -11,7 +11,7 @@ var dorMovimento = 5;
 var atipico = 0;
 var rigidezAtual = 1;
 var fadigaAtual = 1;
-var mesAtual = new Date(); 
+var mesAtual = new Date();
 var filtroDorVisualizacao = 1; // 0 = Repouso, 1 = Movimento
 
 function appPaginaInicial() {
@@ -46,20 +46,18 @@ function navegarPara(pagina) {
   mostrarCabecalho(false);
 }
 
-function alternarMenu() {
-  var drawer = document.getElementById('menuDrawer');
-  var overlay = document.getElementById('menuOverlay');
-  var aberto = drawer ? drawer.classList.toggle('open') : false;
-  if (overlay) overlay.classList.toggle('open', aberto);
+function definirMenu(aberto) {
+  document.getElementById('menuDrawer')?.classList.toggle('open', aberto);
+  document.getElementById('menuOverlay')?.classList.toggle('open', aberto);
   document.getElementById('menuBtn')?.setAttribute('aria-expanded', String(aberto));
 }
 
+function alternarMenu() {
+  definirMenu(!document.getElementById('menuDrawer')?.classList.contains('open'));
+}
+
 function fecharMenu() {
-  var drawer = document.getElementById('menuDrawer');
-  var overlay = document.getElementById('menuOverlay');
-  if (drawer) drawer.classList.remove('open');
-  if (overlay) overlay.classList.remove('open');
-  document.getElementById('menuBtn')?.setAttribute('aria-expanded', 'false');
+  definirMenu(false);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -103,9 +101,9 @@ function selecionar(grupoId, indice) {
     case 'rigidezOptions': rigidezAtual = indice; break;
     case 'fadigaOptions': fadigaAtual = indice; break;
     case 'atipicoOptions': atipico = indice; break;
-    case 'filtDorOptions': 
-      filtroDorVisualizacao = indice; 
-      gerarHeatmap(); 
+    case 'filtDorOptions':
+      filtroDorVisualizacao = indice;
+      gerarHeatmap();
       break;
   }
 }
@@ -116,9 +114,8 @@ function concluirRegistro(event) {
 }
 
 function obterRegistroHoje(hoje) {
-  return registrosUsuario.findLast(function(registro) {
-    return new Date(registro.data).toDateString() === hoje.toDateString();
-  });
+  const data = hoje.toDateString();
+  return registrosUsuario.findLast(registro => new Date(registro.data).toDateString() === data);
 }
 
 function verificarRegistroHoje() {

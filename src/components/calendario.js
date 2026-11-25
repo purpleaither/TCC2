@@ -84,17 +84,11 @@ function gerarHeatmap() {
     lblFiltro.textContent = 'Mês de ' + nomes[mesAtual.getMonth()] + ' · ' + textoFiltro;
   }
 
-  var statsElements = document.querySelectorAll('.stat-value');
-  if (statsElements.length >= 3) {
-    if (diasComRegistro > 0) {
-      statsElements[0].textContent = (totalDor / diasComRegistro).toFixed(1).replace('.', ',') + '/10';
-      statsElements[1].textContent = maxDor + '/10';
-      statsElements[2].textContent = diasComRegistro;
-    } else {
-      statsElements[0].textContent = '-';
-      statsElements[1].textContent = '-';
-      statsElements[2].textContent = '0';
-    }
+  const [media, maxima, dias] = document.querySelectorAll('.stat-value');
+  if (dias) {
+    media.textContent = diasComRegistro ? (totalDor / diasComRegistro).toFixed(1).replace('.', ',') + '/10' : '-';
+    maxima.textContent = diasComRegistro ? maxDor + '/10' : '-';
+    dias.textContent = diasComRegistro;
   }
 }
 
@@ -104,8 +98,7 @@ function mudarMes(delta) {
 }
 
 function fecharClimaSheet() {
-  var sheet = document.getElementById('climaSheet');
-  if (sheet) sheet.classList.remove('open');
+  document.getElementById('climaSheet')?.classList.remove('open');
 }
 
 function abrirClimaSheet(dia, reg) {
@@ -119,10 +112,8 @@ function abrirClimaSheet(dia, reg) {
   var intensidade = ['Nenhuma', 'Leve', 'Moderada', 'Intensa'];
   var rigidez = document.getElementById('sheetRigidez');
   var fadiga = document.getElementById('sheetFadiga');
-  var humor = document.getElementById('sheetHumor');
   if (rigidez) rigidez.textContent = (reg ? intensidade[reg.rigidez] : null) || 'Não registrado';
   if (fadiga) fadiga.textContent = (reg ? intensidade[reg.fadiga] : null) || 'Não registrado';
-  if (humor) humor.textContent = 'Não registrado';
 
   var resumo = document.getElementById('sheetClimaDesc');
   if (resumo) {
@@ -136,9 +127,8 @@ function abrirClimaSheet(dia, reg) {
       resumo.textContent = 'Não há dados meteorológicos salvos para este registro.';
     }
   }
-  if (window.AppAuth && window.AppAuth.renderWorkoutDay) window.AppAuth.renderWorkoutDay(mesAtual.getFullYear(), mesAtual.getMonth(), dia);
-  var sheet = document.getElementById('climaSheet');
-  if (sheet) sheet.classList.add('open');
+  window.AppAuth?.renderWorkoutDay(mesAtual.getFullYear(), mesAtual.getMonth(), dia);
+  document.getElementById('climaSheet')?.classList.add('open');
 }
 
 
