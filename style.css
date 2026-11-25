@@ -1087,7 +1087,6 @@ body {
   --sobre-perigo: #fff;
   --sobre-desabilitado: var(--sobre-acao);
   --filtro-icone: none;
-  --fundo-logo: transparent;
   --acao-restaurar: var(--erro);
   --fundo-restaurar-hover: var(--fundo-alerta);
   font-size: calc(100% * var(--escala-texto));
@@ -1125,7 +1124,7 @@ body {
   --sobre-perigo: #fff;
   --sobre-desabilitado: #182033;
   --filtro-icone: invert(1);
-  --fundo-logo: #e8f0ff;
+  --imagem-logo: url("logo-escuro.svg");
   --acao-restaurar: var(--titulo);
   --fundo-restaurar-hover: var(--superficie-suave);
 }
@@ -1163,7 +1162,7 @@ body {
     --sobre-perigo: #fff;
     --sobre-desabilitado: #182033;
     --filtro-icone: invert(1);
-    --fundo-logo: #e8f0ff;
+    --imagem-logo: url("logo-escuro.svg");
     --acao-restaurar: var(--titulo);
     --fundo-restaurar-hover: var(--superficie-suave);
   }
@@ -1201,7 +1200,8 @@ body {
   --sobre-perigo: #fff;
   --sobre-desabilitado: #000;
   --filtro-icone: invert(1);
-  --fundo-logo: #fff;
+  --imagem-logo: url("logo-escuro.svg");
+  --filtro-logo: brightness(0) invert(1);
   --acao-restaurar: #fff;
   --fundo-restaurar-hover: #111;
 }
@@ -1336,8 +1336,8 @@ body {
 }
 .app img.icon { filter: var(--filtro-icone); }
 .app :is(.login-logo, .header-logo, .menu-logo) {
-  background: var(--fundo-logo);
-  border-radius: 50%;
+  content: var(--imagem-logo, normal);
+  filter: var(--filtro-logo, none);
 }
 .ajuda-termo { margin: .2rem 0 .65rem; }
 .ajuda-termo summary { font-size: var(--fonte-minima); }
