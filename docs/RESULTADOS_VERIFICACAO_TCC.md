@@ -187,3 +187,15 @@ A refatoração foi desenvolvida em branch dedicada. Foram separados os componen
 | Persistência transacional | A função foi testada com PostgreSQL local. A edição com item inválido preservou o título e os itens existentes. O acesso de leitura do paciente foi preservado, e a gravação por paciente, profissional sem vínculo ou sessão anônima foi recusada. |
 
 O novo cabeçalho de política de referência está configurado no repositório. A implantação da migração e a regressão com o Supabase e a ExerciseBank no ambiente publicado dependem de uma rodada na candidata. A modalidade de gravação anterior permanece disponível em ambientes sem a função SQL. A ExerciseBank ainda recebe o identificador pseudonimizado necessário ao fluxo atual, e a política CSP ampliada permanece em modo de observação. As inspeções manuais anteriores continuam pendentes.
+
+### Contagem de código
+
+A contagem inclui as linhas físicas dos arquivos rastreados com extensão JavaScript, HTML, CSS ou SQL, excluindo a pasta de testes. São contabilizadas linhas em branco e comentários. Documentos, relatórios e imagens ficam fora desse total.
+
+| Referência | Linhas | Diferença para a candidata |
+| --- | ---: | ---: |
+| `main` local de referência (`a903929`) | 5.162 | −518 |
+| Início desta refatoração, após a limpeza anterior (`63f7c45`) | 4.283 | +361 |
+| Candidata após o corte de duplicações (`fe0c6de`) | 4.644 | 0 |
+
+No último corte foram excluídas 62 linhas e inseridas 57, com saldo de −5. Foram removidos campos sem consumidores e unificada a atualização visual das duas escalas de dor. O calendário passou a agrupar sintomas e treinos por data uma só vez. O servidor local da candidata também retornou a política de referência esperada e serviu JavaScript e CSS idênticos ao checkout.
