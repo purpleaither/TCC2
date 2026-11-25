@@ -812,8 +812,11 @@ body {
 }
 
 /* ---- Rotina de exercícios (card na tela início) ---- */
-@media (min-width: 640px) {
-  #homeBtnExercicios { inline-size: auto; }
+#homeBtnExercicios {
+  inline-size: 100%;
+  min-block-size: 44px;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 /* ---- Lista de dados paciente / contatos ---- */
