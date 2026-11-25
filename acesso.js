@@ -191,9 +191,9 @@ async function selectPatient(id) {
   updatePatientSelectors();
   await loadPatientData();
 }
-async function obterClimaBrasilia() {
+async function consultarClimaBrasilia() {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 7500);
+  const timeout = setTimeout(() => controller.abort(), 10000);
   try {
     const endpoint = "https://api.open-meteo.com/v1/forecast?latitude=-15.7801&longitude=-47.9292&current=temperature_2m,relative_humidity_2m,surface_pressure&timezone=America%2FSao_Paulo";
     const response = await fetch(endpoint,{signal:controller.signal,cache:"no-store"});
@@ -212,6 +212,18 @@ async function obterClimaBrasilia() {
     };
   } finally {
     clearTimeout(timeout);
+  }
+}
+
+// Tenta novamente se o serviço meteorológico estiver temporariamente indisponível.
+async function obterClimaBrasilia() {
+  for (let tentativa = 1; tentativa <= 2; tentativa++) {
+    try {
+      return await consultarClimaBrasilia();
+    } catch (erro) {
+      if (tentativa === 2) throw erro;
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
   }
 }
 
