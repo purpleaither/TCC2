@@ -1105,12 +1105,14 @@ body {
 .app :is(button, input, select, textarea) { scroll-margin-block: 5rem 1rem; }
 .app :is(.choice-btn, .pain-scale-btn, .month-btn) { min-height: 2rem; height: auto; }
 .app .heatmap-cell { min-width: 0; height: auto; }
-.app .heatmap-cell[style*="ffe48a"],
-.app .heatmap-cell[style*="ffb464"],
-.app .heatmap-cell[style*="f17b72"] { color: #182019; }
-.app .heatmap-cell[style*="ffe48a"] .heatmap-cell-day,
-.app .heatmap-cell[style*="ffb464"] .heatmap-cell-day,
-.app .heatmap-cell[style*="f17b72"] .heatmap-cell-day { color: inherit; }
+.heatmap-cell[data-intensidade="nenhuma"] { background: var(--superficie-neutra); }
+.heatmap-cell[data-intensidade="leve"] { background: #ffe48a; }
+.heatmap-cell[data-intensidade="moderada"] { background: #ffb464; }
+.heatmap-cell[data-intensidade="intensa"] { background: #f17b72; }
+.heatmap-cell[data-intensidade]:not([data-intensidade="nenhuma"]) { color: #182019; }
+.heatmap-cell[data-intensidade]:not([data-intensidade="nenhuma"]) :is(.heatmap-cell-day, .heatmap-workout-marker) {
+  color: inherit;
+}
 :root[data-texto="200"] .header,
 :root[data-espacamento] .header { position: static; flex-wrap: wrap; }
 :root[data-texto="200"] .choices-options,

@@ -159,10 +159,7 @@ function gerarHeatmap() {
       if (v > maxDor) maxDor = v;
       diasComRegistro++;
 
-      if (v === 0) cell.style.backgroundColor = 'var(--superficie-neutra)';
-      else if (v <= 3) cell.style.backgroundColor = '#ffe48a';
-      else if (v <= 6) cell.style.backgroundColor = '#ffb464';
-      else cell.style.backgroundColor = '#f17b72';
+      cell.dataset.intensidade = v === 0 ? 'nenhuma' : v <= 3 ? 'leve' : v <= 6 ? 'moderada' : 'intensa';
 
       valorVisivel = v + '/10';
       cell.innerHTML = '<span class="heatmap-cell-day">' + i + '</span> <span class="heatmap-cell-value">' + valorVisivel + '</span>';

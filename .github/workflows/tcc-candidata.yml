@@ -16,7 +16,7 @@ permissions:
 
 concurrency:
   # Esta rodada entra enquanto a anterior termina apenas a auditoria passiva.
-  group: ${{ github.event.before == '4774739746558656d558910794eef8362cbb838f' && 'verificacao-mvp-retomada' || 'verificacao-mvp' }}
+  group: ${{ github.event.before == '3ce36c312150ab43365bce3a1d890e58c444d73f' && 'verificacao-mvp-retomada' || 'verificacao-mvp' }}
   cancel-in-progress: false
 
 jobs:
