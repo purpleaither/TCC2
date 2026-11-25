@@ -17,9 +17,7 @@ export function exibirMenu(perfil, profissional) {
   text("headerPerfilBtn",profissional ? "Profissional" : "Minha conta");
 }
 export function exibirSeletoresDePaciente(patients, patientId) {
-  for(const id of ["pacienteProf","pacientePlanoProf","pacienteRegistrosProf"]) {
-    const select=$(id);
-    if(!select)continue;
+  for (const select of document.querySelectorAll("[data-paciente]")) {
     select.replaceChildren();
     for(const patient of patients) {
       const option=el("option",patient.display_name);

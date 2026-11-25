@@ -109,20 +109,19 @@ async function openSession() {
   user=me;
   profile=ownProfile;
   menu();
-  if(isProfessional()) {
+  const profissional = isProfessional();
+  if (profissional) {
     patients = await consultarPacientesVinculados(supabase, user.id);
     patientId=patients[0]?.id||null;
     updatePatientSelectors();
     text("profGreeting","Olá, "+profile.display_name);
-    await loadPatientData();
-    navigate("profissional");
   } else {
     patients=[];
     patientId=user.id;
     aplicarUsuarioNaInterface(profile.display_name);
-    await loadPatientData();
-    navigate(location.hash === "#conta" ? "conta" : "inicio");
   }
+  await loadPatientData();
+  navigate(profissional ? "profissional" : location.hash === "#conta" ? "conta" : "inicio");
   if (location.hash === "#conta") history.replaceState(history.state, "", location.pathname + location.search);
   text("loginStatus", "Entre com uma conta de teste cadastrada.");
 }
@@ -187,6 +186,9 @@ function ebCall(opts) {
 async function init(){
   menu();navigate("login");
   $("exercisebankRefresh")?.addEventListener("click",()=>loadSample());
+  for (const select of document.querySelectorAll("[data-paciente]")) {
+    select.addEventListener("change", () => selectPatient(select.value));
+  }
   try{
     supabase = await conectarBanco();
     loginReady=true;
@@ -234,9 +236,6 @@ const { renderPatientPlans, renderProfessionalPlans, renderProfessionalRecords }
 const renderWorkoutDay = (year, month, day) => exibirTreinosDoDia(treinosConcluidos, year, month, day);
 
 window.AppAuth={login,logout,navigate,saveSymptoms,isProfessional,renderWorkoutDay};
-window.atualizarPacienteProfissional=()=>selectPatient($("pacienteProf").value);
-window.trocarPacientePlanoProf=()=>selectPatient($("pacientePlanoProf").value);
-window.trocarPacienteRegistrosProf=()=>selectPatient($("pacienteRegistrosProf").value);
 window.cancelarFormularioPlano=cancelPlanEditor;
 window.criarPlanoProfissional=createPlanFromScratch;
 window.abrirOpcoesExercicios=openExerciseSourceOptions;

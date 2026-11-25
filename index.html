@@ -397,7 +397,7 @@
       <h2 class="card-title" id="profGreeting">Bem-vindo(a), fisioterapeuta</h2>
       <p class="card-text">Selecione um paciente vinculado para consultar registros e configurar planos terapêuticos individualizados.</p>
       <label class="form-label" for="pacienteProf">Paciente</label>
-      <select class="form-input" id="pacienteProf" onchange="atualizarPacienteProfissional()"><option value="p1">Maria Silva</option><option value="p2">João Oliveira</option></select>
+      <select class="form-input" id="pacienteProf" data-paciente disabled></select>
     </div>
     <div class="card">
       <h2 class="card-title">Planos terapêuticos</h2>
@@ -417,9 +417,7 @@
     <p class="page-subtitle" id="profPlanosDescricao">Planos individualizados</p>
     <div class="card">
       <label class="form-label" for="pacientePlanoProf">Paciente</label>
-      <select id="pacientePlanoProf" class="form-input" onchange="trocarPacientePlanoProf()">
-        <option value="p1">Maria Silva</option><option value="p2">João Oliveira</option>
-      </select>
+      <select id="pacientePlanoProf" class="form-input" data-paciente disabled></select>
     </div>
     <div id="listaPlanosProf"></div>
     <div class="card" id="planMainActions" hidden>
@@ -519,9 +517,7 @@
     <h1 class="page-title">Registros dos pacientes</h1>
     <div class="card">
       <label class="form-label" for="pacienteRegistrosProf">Paciente</label>
-      <select id="pacienteRegistrosProf" class="form-input" onchange="trocarPacienteRegistrosProf()">
-        <option value="p1">Maria Silva</option><option value="p2">João Oliveira</option>
-      </select>
+      <select id="pacienteRegistrosProf" class="form-input" data-paciente disabled></select>
     </div>
     <div id="graficosRegistrosProf"></div>
   </div>
