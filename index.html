@@ -17,7 +17,7 @@
     <div class="header-brand" onclick="navegarPara(appPaginaInicial())">
       <img src="logo.svg" alt="Logo Autonomia em Movimento" class="header-logo">
     </div>
-    <button class="header-perfil-btn" id="headerPerfilBtn" onclick="navegarPara(appPaginaInicial())">Perfil</button>
+    <button class="header-perfil-btn" id="headerPerfilBtn" onclick="navegarPara('conta')">Perfil</button>
   </div>
 
   <div id="authFlash" role="status" aria-live="polite" hidden style="margin:12px 16px 0;padding:12px 14px;border-radius:6px;background:var(--superficie-verde, #e8f5e9);color:var(--titulo, #003366);font-size:var(--fonte-minima)"></div>
@@ -391,6 +391,28 @@
       <p class="card-text-small">Apenas os exercícios definidos pelo fisioterapeuta vinculado serão exibidos nesta página.</p>
     </div>
   </div>
+
+  <!-- ===== PERFIL DA CONTA ===== -->
+  <section class="page" id="page-conta" aria-labelledby="contaTitulo">
+    <h1 class="page-title" id="contaTitulo">Meu perfil</h1>
+    <p class="page-subtitle">Dados da sua conta</p>
+    <div class="card">
+      <dl>
+        <div class="contact-info-item">
+          <dt class="contact-info-label">Nome</dt>
+          <dd id="contaNome"></dd>
+        </div>
+        <div class="contact-info-item">
+          <dt class="contact-info-label">E-mail</dt>
+          <dd id="contaEmail"></dd>
+        </div>
+        <div class="contact-info-item">
+          <dt class="contact-info-label">Tipo de perfil</dt>
+          <dd id="contaTipo"></dd>
+        </div>
+      </dl>
+    </div>
+  </section>
 
   <!-- ===== TELA 6.0: CONTATOS DO HUB ===== -->
   <div class="page" id="page-contatos">
