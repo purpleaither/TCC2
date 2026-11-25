@@ -6,6 +6,13 @@
   <title>Autonomia em Movimento — HUB / UnB</title>
   <link rel="icon" type="image/svg+xml" href="logo.svg">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="src/styles/controles.css">
+  <link rel="stylesheet" href="src/styles/historico-menu.css">
+  <link rel="stylesheet" href="src/styles/avisos-e-detalhes.css">
+  <link rel="stylesheet" href="src/styles/planos-e-biblioteca.css">
+  <link rel="stylesheet" href="src/styles/temas.css">
+  <link rel="stylesheet" href="src/styles/preferencias-e-layout.css">
+  <link rel="stylesheet" href="src/styles/acompanhamento.css">
 </head>
 <body>
 
@@ -120,7 +127,6 @@
       <button type="button" class="btn" id="homeBtnExercicios" onclick="navegarPara('exercicios')">Ver meus exercícios</button>
     </section>
 
-    <!-- Card: Aviso -->
     <div class="warning-card">
       <h2 class="warning-title"><img src="Icones/alert-triangle.svg" alt="" class="icon">Sobre o uso do aplicativo</h2>
       <p class="warning-text">Este aplicativo complementa seu tratamento e não substitui o acompanhamento profissional presencial.</p>
@@ -134,71 +140,41 @@
     <h1 class="page-title">Meus sintomas</h1>
     <p class="page-subtitle">Registre como você está se sentindo hoje. Na escala de dor, 0 significa sem dor e 10, a maior dor da escala.</p>
 
-    <!-- Dor em repouso -->
-    <div class="pain-scale">
-      <div class="pain-scale-label">
-        <span>Dor em repouso</span>
-        <span id="restPainValue">2/10</span>
-      </div>
-      <div class="pain-scale-controls">
-        <button class="pain-scale-btn" onclick="alterarDor('rest', -1)">−</button>
-        <div class="pain-scale-bar">
-          <div class="pain-scale-fill" id="restPainFill" style="width:20%"></div>
-          <div class="pain-scale-thumb" id="restPainThumb" style="left:calc(20% - 9px)"></div>
+    <template id="modeloEscalaDor">
+      <div class="pain-scale">
+        <div class="pain-scale-label">
+          <span></span>
+          <span data-valor></span>
         </div>
-        <button class="pain-scale-btn" onclick="alterarDor('rest', 1)">+</button>
-      </div>
-      <div class="pain-scale-labels">
-        <span>0 — Sem dor</span>
-        <span>10 — Dor máxima</span>
-      </div>
-    </div>
-
-    <!-- Dor ao movimento -->
-    <div class="pain-scale">
-      <div class="pain-scale-label">
-        <span>Dor ao movimento</span>
-        <span id="movPainValue">5/10</span>
-      </div>
-      <div class="pain-scale-controls">
-        <button class="pain-scale-btn" onclick="alterarDor('mov', -1)">−</button>
-        <div class="pain-scale-bar">
-          <div class="pain-scale-fill" id="movPainFill" style="width:50%"></div>
-          <div class="pain-scale-thumb" id="movPainThumb" style="left:calc(50% - 9px)"></div>
+        <div class="pain-scale-controls">
+          <button class="pain-scale-btn">−</button>
+          <div class="pain-scale-bar">
+            <div class="pain-scale-fill"></div>
+            <div class="pain-scale-thumb"></div>
+          </div>
+          <button class="pain-scale-btn">+</button>
         </div>
-        <button class="pain-scale-btn" onclick="alterarDor('mov', 1)">+</button>
+        <div class="pain-scale-labels">
+          <span>0 — Sem dor</span>
+          <span>10 — Dor máxima</span>
+        </div>
       </div>
-      <div class="pain-scale-labels">
-        <span>0 — Sem dor</span>
-        <span>10 — Dor máxima</span>
-      </div>
-    </div>
+    </template>
+    <div data-escala="rest">Dor em repouso</div>
+    <div data-escala="mov">Dor ao movimento</div>
 
-    <!-- Rigidez articular -->
     <div class="choices">
       <p class="choices-label">Rigidez nas articulações</p>
       <p class="card-text" id="descricaoRigidez">Sensação de que uma articulação está dura ou difícil de mover.</p>
-      <div class="choices-options" id="rigidezOptions">
-        <button class="choice-btn" onclick="selecionar('rigidezOptions', 0)">Nenhuma</button>
-        <button class="choice-btn selected" onclick="selecionar('rigidezOptions', 1)">Leve</button>
-        <button class="choice-btn" onclick="selecionar('rigidezOptions', 2)">Moderada</button>
-        <button class="choice-btn" onclick="selecionar('rigidezOptions', 3)">Intensa</button>
-      </div>
+      <div class="choices-options" id="rigidezOptions" data-intensidade></div>
     </div>
 
-    <!-- Fadiga -->
     <div class="choices">
       <p class="choices-label">Cansaço (fadiga)</p>
       <p class="card-text" id="descricaoCansaco">Sensação de falta de energia.</p>
-      <div class="choices-options" id="fadigaOptions">
-        <button class="choice-btn" onclick="selecionar('fadigaOptions', 0)">Nenhuma</button>
-        <button class="choice-btn selected" onclick="selecionar('fadigaOptions', 1)">Leve</button>
-        <button class="choice-btn" onclick="selecionar('fadigaOptions', 2)">Moderada</button>
-        <button class="choice-btn" onclick="selecionar('fadigaOptions', 3)">Intensa</button>
-      </div>
+      <div class="choices-options" id="fadigaOptions" data-intensidade></div>
     </div>
 
-    <!-- Humor -->
     <div class="choices">
       <p class="choices-label">Humor</p>
       <div class="mood-options" id="humorOptions">
@@ -217,18 +193,11 @@
       </div>
     </div>
 
-    <!-- Atividade física -->
     <div class="choices">
       <p class="choices-label">Atividade física realizada</p>
-      <div class="choices-options" id="atividadeOptions">
-        <button class="choice-btn" onclick="selecionar('atividadeOptions', 0)">Nenhuma</button>
-        <button class="choice-btn selected" onclick="selecionar('atividadeOptions', 1)">Leve</button>
-        <button class="choice-btn" onclick="selecionar('atividadeOptions', 2)">Moderada</button>
-        <button class="choice-btn" onclick="selecionar('atividadeOptions', 3)">Intensa</button>
-      </div>
+      <div class="choices-options" id="atividadeOptions" data-intensidade></div>
     </div>
 
-    <!-- Sinal atípico -->
     <p style="font-size:var(--fonte-minima); font-weight:bold; color:var(--titulo, #003366); margin-bottom:4px">Você percebeu algum sinal fora do comum hoje?</p>
     <p style="font-size:var(--fonte-minima); color:var(--texto-suave, #666); margin-bottom:8px">Febre, inchaço súbito ou dor extrema fora do comum.</p>
     <div class="choices">
@@ -248,14 +217,12 @@
     <h1 class="page-title">Meu histórico</h1>
     <details class="ajuda-termo"><summary>Entenda os dados do clima</summary><p>Umidade relativa indica quanto vapor de água há no ar em relação ao máximo possível naquela temperatura. Pressão atmosférica é a pressão que o ar exerce. hPa significa hectopascal, uma unidade de pressão.</p></details>
 
-    <!-- Navegação de mês -->
     <div class="heatmap-header">
       <button class="month-nav-btn" onclick="mudarMes(-1)">‹</button>
       <span class="month-label" id="mesLabel">maio 2025</span>
       <button class="month-nav-btn" onclick="mudarMes(1)">›</button>
     </div>
 
-    <!-- Visão global -->
     <div class="card">
       <h2 class="card-title">Visão global</h2>
       <p class="card-text-small" id="historicoPeriodo">1–21 de mai. · Dor ao movimento</p>
@@ -275,7 +242,6 @@
       </div>
     </div>
 
-    <!-- Filtro dor -->
     <div class="choices">
       <p class="choices-label">Visualizar dor</p>
       <div class="choices-options" id="filtDorOptions">
@@ -284,7 +250,6 @@
       </div>
     </div>
 
-    <!-- Heatmap -->
     <div class="card">
       <p class="choices-label">Dor ao movimento por dia</p>
 
@@ -300,7 +265,6 @@
         </div>
 
         <div class="heatmap-grid" id="heatmapGrid">
-          <!-- Preenchido pelo JS -->
         </div>
       </div>
 
@@ -325,7 +289,7 @@
         <div style="display: flex; gap: 8px; font-size: var(--fonte-minima); color: var(--texto, #444);">
           <div style="flex: 1;"><strong>Rigidez:</strong><br><span id="sheetRigidez">-</span></div>
           <div style="flex: 1;"><strong>Fadiga:</strong><br><span id="sheetFadiga">-</span></div>
-          <div style="flex: 1;"><strong>Humor:</strong><br><span id="sheetHumor">-</span></div>
+          <div style="flex: 1;"><strong>Humor:</strong><br><span id="sheetHumor">Não registrado</span></div>
         </div>
       </div>
 
@@ -433,7 +397,7 @@
       <h2 class="card-title" id="profGreeting">Bem-vindo(a), fisioterapeuta</h2>
       <p class="card-text">Selecione um paciente vinculado para consultar registros e configurar planos terapêuticos individualizados.</p>
       <label class="form-label" for="pacienteProf">Paciente</label>
-      <select class="form-input" id="pacienteProf" onchange="atualizarPacienteProfissional()"><option value="p1">Maria Silva</option><option value="p2">João Oliveira</option></select>
+      <select class="form-input" id="pacienteProf" data-paciente disabled></select>
     </div>
     <div class="card">
       <h2 class="card-title">Planos terapêuticos</h2>
@@ -453,9 +417,7 @@
     <p class="page-subtitle" id="profPlanosDescricao">Planos individualizados</p>
     <div class="card">
       <label class="form-label" for="pacientePlanoProf">Paciente</label>
-      <select id="pacientePlanoProf" class="form-input" onchange="trocarPacientePlanoProf()">
-        <option value="p1">Maria Silva</option><option value="p2">João Oliveira</option>
-      </select>
+      <select id="pacientePlanoProf" class="form-input" data-paciente disabled></select>
     </div>
     <div id="listaPlanosProf"></div>
     <div class="card" id="planMainActions" hidden>
@@ -555,9 +517,7 @@
     <h1 class="page-title">Registros dos pacientes</h1>
     <div class="card">
       <label class="form-label" for="pacienteRegistrosProf">Paciente</label>
-      <select id="pacienteRegistrosProf" class="form-input" onchange="trocarPacienteRegistrosProf()">
-        <option value="p1">Maria Silva</option><option value="p2">João Oliveira</option>
-      </select>
+      <select id="pacienteRegistrosProf" class="form-input" data-paciente disabled></select>
     </div>
     <div id="graficosRegistrosProf"></div>
   </div>
@@ -566,6 +526,7 @@
 </div><!-- Fim de .app -->
 
 <script src="preferencias.js"></script>
+<script src="src/components/calendario.js"></script>
 <script src="app.js"></script>
 <script type="module" src="acesso.js"></script>
 </body>

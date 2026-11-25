@@ -1,0 +1,112 @@
+/* ---- Aviso sobre o uso do aplicativo ---- */
+.warning-card {
+  background: var(--fundo-aviso, #fffbe6);
+  border: 1px solid var(--borda-aviso);
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.warning-title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--espaco-texto);
+  line-height: var(--entrelinha-titulo);
+  color: var(--cor-aviso);
+  font-weight: bold;
+  font-size: var(--fonte-minima);
+  margin-block-end: var(--espaco-texto);
+}
+
+.warning-title .icon {
+  flex: 0 0 1em;
+  inline-size: 1em;
+  block-size: 1em;
+  align-self: flex-start;
+  margin-block-start: 0.125em;
+}
+
+.warning-text {
+  font-size: var(--fonte-minima);
+  color: var(--texto-suave, #666);
+  line-height: var(--entrelinha-texto);
+}
+
+/* ---- Rotina de exercícios (card na tela início) ---- */
+#cardRegistroDiario,
+#homeBtnExercicios {
+  margin-block-end: 1.25rem;
+}
+
+#homeBtnExercicios {
+  inline-size: 100%;
+  min-block-size: 44px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* ---- Lista de dados paciente / contatos ---- */
+.contact-info-item {
+  margin-bottom: 10px;
+  font-size: var(--fonte-minima);
+  line-height: 1.4;
+}
+
+.contact-info-label {
+  font-size: var(--fonte-minima);
+  font-weight: bold;
+  color: var(--titulo, #003366);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: block;
+  margin-bottom: 2px;
+}
+
+/* ---- Painel inferior (bottom sheet) ---- */
+.bottom-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 390px;
+  width: 100%;
+  background: var(--superficie, white);
+  border-top: 1px solid var(--borda, #ccc);
+  border-radius: 16px 16px 0 0;
+  padding: 20px;
+  z-index: 15;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+  display: none;
+}
+
+.bottom-sheet.open {
+  display: block;
+}
+
+.bottom-sheet-handle {
+  width: 40px;
+  height: 4px;
+  background: var(--borda, #ccc);
+  border-radius: 2px;
+  margin: 0 auto 16px;
+}
+
+.bottom-sheet-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: 1px solid var(--borda, #ccc);
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  font-size: var(--fonte-minima);
+  cursor: pointer;
+}
+.icon {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  display: inline-block;
+  object-fit: contain;
+}

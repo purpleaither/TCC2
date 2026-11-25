@@ -88,7 +88,9 @@ try {
     assert.equal(await texto.inputValue(), '100');
     assert.equal(await tema.inputValue(), 'sistema');
     await pagina.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce' });
-    assert.equal(await raiz.evaluate(el => getComputedStyle(el).colorScheme), 'dark');
+    await pagina.waitForFunction(() => getComputedStyle(document.documentElement).colorScheme === 'dark');
+    await pagina.emulateMedia({ colorScheme: 'light' });
+    await pagina.waitForFunction(() => getComputedStyle(document.documentElement).colorScheme === 'light');
     assert.equal(await pagina.locator('#loginEmail').evaluate(el => getComputedStyle(el).transitionDuration), '0s');
     for (const nome of ['contraste', 'espacamento', 'movimento']) assert.equal(await raiz.getAttribute('data-' + nome), null);
   });

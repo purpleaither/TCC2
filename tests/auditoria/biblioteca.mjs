@@ -1,4 +1,5 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { EXERCISE_NAMES_PT, normalizeExerciseName } from '../../src/utils/exercicios.js';
+import { mkdir, writeFile } from 'node:fs/promises';
 import assert from 'node:assert/strict';
 
 export async function verificarBiblioteca(pagina, casos) {
@@ -66,14 +67,9 @@ export async function verificarBiblioteca(pagina, casos) {
     const todos = await nomes();
     assert.ok(todos.length > 0 && domiciliares.every(nome => todos.includes(nome)));
 
-    const fonte = await readFile(new URL('../../acesso.js', import.meta.url), 'utf8');
-    const glossario = JSON.parse(fonte.match(/const EXERCISE_NAMES_PT=(\{[\s\S]*?\n\});/)[1]);
-    const normalizar = nome => nome.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase().replace(/&/g, ' and ').replace(/[-_/]+/g, ' ')
-      .replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
-    const referencia = new Map(Object.entries(glossario).map(([nome, traducao]) => [normalizar(nome), traducao]));
+    const referencia = new Map(Object.entries(EXERCISE_NAMES_PT).map(([nome, traducao]) => [normalizeExerciseName(nome), traducao]));
     const amostra = items.map(({ id, name }) => {
-      const traducao = referencia.get(normalizar(name)) ?? null;
+      const traducao = referencia.get(normalizeExerciseName(name)) ?? null;
       return { identificador: id, original: name, traducao, situacao: traducao ? 'Conferência terminológica pendente' : 'Sem equivalência cadastrada' };
     });
     const pasta = process.env.TCC_EVIDENCIAS ?? 'test-results/auditoria';

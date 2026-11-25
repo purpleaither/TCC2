@@ -1,0 +1,238 @@
+/* ---- Cards ---- */
+.card {
+  border: 1px solid var(--linha, #ddd);
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 16px;
+  background: var(--superficie, white);
+}
+
+.card-title {
+  line-height: var(--entrelinha-titulo);
+  font-size: var(--fonte-minima);
+  font-weight: bold;
+  color: var(--titulo, #003366);
+  margin-block-end: var(--espaco-texto);
+}
+
+.card-text {
+  font-size: var(--fonte-minima);
+  color: var(--texto, #333);
+  margin-block-end: var(--espaco-texto);
+}
+
+.card-text-small {
+  font-size: var(--fonte-minima);
+  color: var(--texto-suave, #666);
+}
+
+.card-link {
+  font-size: var(--fonte-minima);
+  font-weight: bold;
+  color: var(--destaque, #006633);
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 4px;
+}
+
+/* ---- Títulos das páginas ---- */
+.page-title {
+  line-height: var(--entrelinha-titulo);
+  font-size: var(--fonte-minima);
+  font-weight: bold;
+  color: var(--titulo, #003366);
+  margin-block-end: var(--espaco-texto);
+}
+
+.page-subtitle {
+  font-size: var(--fonte-minima);
+  color: var(--texto-suave, #666);
+  margin-bottom: 16px;
+}
+
+/* ---- Botões principais (Verde UnB) ---- */
+.btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background: var(--acao, #006633);
+  color: var(--sobre-acao, white);
+  border: none;
+  border-radius: 6px;
+  font-size: var(--fonte-minima);
+  font-weight: bold;
+  cursor: pointer;
+  text-align: center;
+  margin-top: 12px;
+}
+
+.btn:hover {
+  background: var(--acao-hover, #005528);
+}
+
+/* Botão de contorno (outline / sair) */
+.btn-outline {
+  background: var(--superficie, white);
+  color: var(--erro, #cc0000);
+  border: 1px solid var(--erro, #cc0000);
+}
+
+.btn-outline:hover {
+  background: var(--fundo-alerta, #fff5f5);
+}
+
+/* Botão desabilitado */
+.btn:disabled {
+  color: var(--sobre-desabilitado);
+  background: var(--texto-suave, #999);
+  cursor: not-allowed;
+}
+
+/* ---- Escala de dor (EVA) ---- */
+.pain-scale {
+  margin-bottom: 20px;
+}
+
+.pain-scale-label {
+  font-size: var(--fonte-minima);
+  font-weight: bold;
+  color: var(--titulo, #003366);
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.pain-scale-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pain-scale-btn {
+  width: 44px;
+  height: 44px;
+  background: var(--superficie-neutra, #f0f0f0);
+  border: 1px solid var(--borda, #ccc);
+  border-radius: 4px;
+  font-size: 1.375rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pain-scale-btn:hover {
+  background: var(--linha, #e0e0e0);
+}
+
+.pain-scale-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--linha, #ddd);
+  border-radius: 3px;
+  position: relative;
+}
+
+.pain-scale-fill {
+  height: 100%;
+  width: var(--valor-dor);
+  background: var(--acao, #006633);
+  border-radius: 3px;
+}
+
+.pain-scale-thumb {
+  left: calc(var(--valor-dor) - 9px);
+  width: 18px;
+  height: 18px;
+  background: var(--superficie, white);
+  border: 2px solid var(--destaque, #006633);
+  border-radius: 50%;
+  position: absolute;
+  top: -6px;
+}
+
+.pain-scale-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--fonte-minima);
+  color: var(--texto-suave, #666);
+  margin-top: 4px;
+}
+
+/* ---- Opções de escolha (Choices) ---- */
+.choices {
+  margin-bottom: 20px;
+}
+
+.choices-label {
+  line-height: var(--entrelinha-rotulo);
+  font-size: var(--fonte-minima);
+  font-weight: bold;
+  color: var(--titulo, #003366);
+  margin-bottom: 8px;
+}
+
+.choices-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.choice-btn {
+  flex: 1 1 3.75rem;
+  min-inline-size: 0;
+  padding: 10px 4px;
+  background: var(--superficie, white);
+  border: 1px solid var(--borda, #ccc);
+  border-radius: 4px;
+  font-size: var(--fonte-minima);
+  cursor: pointer;
+  text-align: center;
+}
+
+.choice-btn.selected {
+  background: var(--superficie-verde, #e8f5e9);
+  border: 2px solid var(--destaque, #006633);
+  font-weight: bold;
+  color: var(--destaque, #006633);
+}
+
+/* ---- Humor (rostos) ---- */
+.mood-options {
+  display: flex;
+  gap: 8px;
+}
+
+.mood-btn {
+  flex: 1;
+  min-inline-size: 0;
+  padding: 10px 4px;
+  background: var(--superficie, white);
+  border: 1px solid var(--borda, #ccc);
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.mood-btn.selected {
+  background: var(--superficie-verde, #e8f5e9);
+  border: 2px solid var(--destaque, #006633);
+  font-weight: bold;
+}
+
+.mood-emoji {
+  font-size: 1.5rem;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.mood-label {
+  font-size: var(--fonte-minima);
+}
+
+.weather-title {
+  font-size: var(--fonte-minima); /* Adicionado para igualar aos outros cards */
+  font-weight: bold;
+  color: var(--titulo, #003366);
+  margin-bottom: 6px;
+}

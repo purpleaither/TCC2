@@ -6,17 +6,12 @@
 var registrosUsuario = [];
 var treinosConcluidos = [];
 
-var usuarioAtual = null;
 var dorRepouso = 2;
 var dorMovimento = 5;
 var atipico = 0;
 var rigidezAtual = 1;
 var fadigaAtual = 1;
-var humorAtual = 1;
-var atividadeAtual = 1;
-var treinoConcluido = false;
-var registroEnviadoHoje = false;
-var mesAtual = new Date(); 
+var mesAtual = new Date();
 var filtroDorVisualizacao = 1; // 0 = Repouso, 1 = Movimento
 
 function appPaginaInicial() {
@@ -51,20 +46,18 @@ function navegarPara(pagina) {
   mostrarCabecalho(false);
 }
 
-function alternarMenu() {
-  var drawer = document.getElementById('menuDrawer');
-  var overlay = document.getElementById('menuOverlay');
-  var aberto = drawer ? drawer.classList.toggle('open') : false;
-  if (overlay) overlay.classList.toggle('open', aberto);
+function definirMenu(aberto) {
+  document.getElementById('menuDrawer')?.classList.toggle('open', aberto);
+  document.getElementById('menuOverlay')?.classList.toggle('open', aberto);
   document.getElementById('menuBtn')?.setAttribute('aria-expanded', String(aberto));
 }
 
+function alternarMenu() {
+  definirMenu(!document.getElementById('menuDrawer')?.classList.contains('open'));
+}
+
 function fecharMenu() {
-  var drawer = document.getElementById('menuDrawer');
-  var overlay = document.getElementById('menuOverlay');
-  if (drawer) drawer.classList.remove('open');
-  if (overlay) overlay.classList.remove('open');
-  document.getElementById('menuBtn')?.setAttribute('aria-expanded', 'false');
+  definirMenu(false);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -85,18 +78,39 @@ function atualizarDataAtual() {
 }
 
 function alterarDor(tipo, delta) {
-  if (tipo === 'rest') {
-    dorRepouso = Math.max(0, Math.min(10, dorRepouso + delta));
-    document.getElementById('restPainValue').textContent = dorRepouso + '/10';
-    var pct = dorRepouso * 10;
-    document.getElementById('restPainFill').style.width = pct + '%';
-    document.getElementById('restPainThumb').style.left = 'calc(' + pct + '% - 9px)';
-  } else {
-    dorMovimento = Math.max(0, Math.min(10, dorMovimento + delta));
-    document.getElementById('movPainValue').textContent = dorMovimento + '/10';
-    var pct = dorMovimento * 10;
-    document.getElementById('movPainFill').style.width = pct + '%';
-    document.getElementById('movPainThumb').style.left = 'calc(' + pct + '% - 9px)';
+  const emRepouso = tipo === 'rest';
+  const anterior = emRepouso ? dorRepouso : dorMovimento;
+  const valor = Math.max(0, Math.min(10, anterior + delta));
+  if (emRepouso) dorRepouso = valor;
+  else dorMovimento = valor;
+  const escala = document.querySelector(`.pain-scale[data-tipo="${tipo}"]`);
+  if (!escala) return;
+  escala.querySelector('[data-valor]').textContent = valor + '/10';
+  escala.style.setProperty('--valor-dor', valor * 10 + '%');
+}
+
+function montarDiario() {
+  const modelo = document.getElementById('modeloEscalaDor');
+  for (const lugar of document.querySelectorAll('[data-escala]')) {
+    const tipo = lugar.dataset.escala;
+    const escala = modelo.content.firstElementChild.cloneNode(true);
+    escala.dataset.tipo = tipo;
+    escala.querySelector('[data-valor]').id = tipo + 'PainValue';
+    escala.querySelector('.pain-scale-label span').textContent = lugar.textContent;
+    escala.querySelectorAll('button').forEach((botao, i) => {
+      botao.onclick = () => alterarDor(tipo, i === 0 ? -1 : 1);
+    });
+    lugar.replaceWith(escala);
+    alterarDor(tipo, 0);
+  }
+  for (const grupo of document.querySelectorAll('[data-intensidade].choices-options')) {
+    ['Nenhuma', 'Leve', 'Moderada', 'Intensa'].forEach((nome, i) => {
+      const botao = document.createElement('button');
+      botao.className = i === 1 ? 'choice-btn selected' : 'choice-btn';
+      botao.textContent = nome;
+      botao.onclick = () => selecionar(grupo.id, i);
+      grupo.append(botao);
+    });
   }
 }
 
@@ -110,12 +124,10 @@ function selecionar(grupoId, indice) {
   switch (grupoId) {
     case 'rigidezOptions': rigidezAtual = indice; break;
     case 'fadigaOptions': fadigaAtual = indice; break;
-    case 'humorOptions': humorAtual = indice; break;
-    case 'atividadeOptions': atividadeAtual = indice; break;
     case 'atipicoOptions': atipico = indice; break;
-    case 'filtDorOptions': 
-      filtroDorVisualizacao = indice; 
-      gerarHeatmap(); 
+    case 'filtDorOptions':
+      filtroDorVisualizacao = indice;
+      gerarHeatmap();
       break;
   }
 }
@@ -125,146 +137,9 @@ function concluirRegistro(event) {
   if (window.AppAuth) return window.AppAuth.saveSymptoms();
 }
 
-// ========================================
-// GERAÇÃO DE HISTÓRICO E HEATMAP DINÂMICO
-// ========================================
-
-function gerarHeatmap() {
-  var grid = document.getElementById('heatmapGrid');
-  if (!grid) return;
-  grid.innerHTML = '';
-
-  var totalDor = 0, maxDor = 0, diasComRegistro = 0;
-  var numDias = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + 1, 0).getDate();
-
-  for (var i = 1; i <= numDias; i++) {
-    var regDoDia = registrosUsuario.slice().reverse().find(function(r) {
-      var d = new Date(r.data);
-      return d.getDate() === i && d.getMonth() === mesAtual.getMonth() && d.getFullYear() === mesAtual.getFullYear();
-    });
-
-    var treinosDoDia = treinosConcluidos.filter(function(t) {
-      var d = new Date(t.completed_at);
-      return d.getDate() === i && d.getMonth() === mesAtual.getMonth() && d.getFullYear() === mesAtual.getFullYear();
-    });
-    var cell = document.createElement('div');
-    cell.className = 'heatmap-cell';
-    var valorVisivel = treinosDoDia.length ? '' : '-';
-
-    if (!regDoDia) {
-      cell.style.backgroundColor = 'var(--superficie-neutra)';
-      cell.style.borderColor = 'var(--linha)';
-      cell.innerHTML = '<span class="heatmap-cell-day">' + i + '</span>' +
-        (valorVisivel ? ' <span class="heatmap-cell-value">' + valorVisivel + '</span>' : '');
-    } else {
-      var v = (filtroDorVisualizacao === 0) ? regDoDia.dorRepouso : regDoDia.dorMovimento;
-      totalDor += v;
-      if (v > maxDor) maxDor = v;
-      diasComRegistro++;
-
-      cell.dataset.intensidade = v === 0 ? 'nenhuma' : v <= 3 ? 'leve' : v <= 6 ? 'moderada' : 'intensa';
-
-      valorVisivel = v + '/10';
-      cell.innerHTML = '<span class="heatmap-cell-day">' + i + '</span> <span class="heatmap-cell-value">' + valorVisivel + '</span>';
-      
-      (function(dia, reg) {
-        cell.onclick = function() { abrirClimaSheet(dia, reg); };
-      })(i, regDoDia);
-    }
-    if (treinosDoDia.length) {
-      cell.classList.add('heatmap-workout-day');
-      cell.title = treinosDoDia.length + ' treino(s) concluído(s)';
-    }
-    if (regDoDia || treinosDoDia.length) {
-      (function(dia, registro) {
-        cell.onclick = function() { abrirClimaSheet(dia, registro || null); };
-        cell.tabIndex = 0;
-        cell.setAttribute('role', 'button');
-        var descricao = treinosDoDia.length ? ' e treinos concluídos' : '';
-        cell.setAttribute('aria-label', 'Ver registros do dia ' + dia + (valorVisivel ? ' ' + valorVisivel : '') + descricao);
-        cell.onkeydown = function(event) {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            abrirClimaSheet(dia, registro || null);
-          }
-        };
-      })(i, regDoDia);
-    }
-    grid.appendChild(cell);
-  }
-
-  var nomes = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
-  
-  var elLabel = document.getElementById('mesLabel');
-  if (elLabel) elLabel.textContent = (nomes[mesAtual.getMonth()] + ' ' + mesAtual.getFullYear()).toLowerCase();
-
-  var lblFiltro = document.getElementById('historicoPeriodo');
-  if (lblFiltro) {
-    var textoFiltro = (filtroDorVisualizacao === 0) ? 'Dor em repouso' : 'Dor ao movimento';
-    lblFiltro.textContent = 'Mês de ' + nomes[mesAtual.getMonth()] + ' · ' + textoFiltro;
-  }
-
-  var statsElements = document.querySelectorAll('.stat-value');
-  if (statsElements.length >= 3) {
-    if (diasComRegistro > 0) {
-      statsElements[0].textContent = (totalDor / diasComRegistro).toFixed(1).replace('.', ',') + '/10';
-      statsElements[1].textContent = maxDor + '/10';
-      statsElements[2].textContent = diasComRegistro;
-    } else {
-      statsElements[0].textContent = '-';
-      statsElements[1].textContent = '-';
-      statsElements[2].textContent = '0';
-    }
-  }
-}
-
-function mudarMes(delta) {
-  mesAtual = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + delta, 1);
-  gerarHeatmap();
-}
-
-function fecharClimaSheet() {
-  var sheet = document.getElementById('climaSheet');
-  if (sheet) sheet.classList.remove('open');
-}
-
-function abrirClimaSheet(dia, reg) {
-  var nomesMes = ['jan.', 'fev.', 'mar.', 'abr.', 'mai.', 'jun.', 'jul.', 'ago.', 'set.', 'out.', 'nov.', 'dez.'];
-  var titulo = document.getElementById('climaSheetTitle');
-  if (titulo) titulo.textContent = 'Registro do dia ' + dia + ' de ' + nomesMes[mesAtual.getMonth()];
-
-  var dor = document.getElementById('sheetDorNivel');
-  if (dor) dor.textContent = 'Dor ao movimento: ' + (reg ? reg.dorMovimento + '/10 (Repouso: ' + reg.dorRepouso + '/10)' : 'Nenhum registro de dor neste dia');
-
-  var intensidade = ['Nenhuma', 'Leve', 'Moderada', 'Intensa'];
-  var rigidez = document.getElementById('sheetRigidez');
-  var fadiga = document.getElementById('sheetFadiga');
-  var humor = document.getElementById('sheetHumor');
-  if (rigidez) rigidez.textContent = (reg ? intensidade[reg.rigidez] : null) || 'Não registrado';
-  if (fadiga) fadiga.textContent = (reg ? intensidade[reg.fadiga] : null) || 'Não registrado';
-  if (humor) humor.textContent = 'Não registrado';
-
-  var resumo = document.getElementById('sheetClimaDesc');
-  if (resumo) {
-    var clima = reg && reg.clima;
-    if (clima && clima.temperatura != null && clima.umidade != null && clima.pressao != null) {
-      resumo.textContent = (clima.cidade || 'Brasília') + ': ' +
-        clima.temperatura + ' °C, umidade ' + clima.umidade + '% e pressão ' + clima.pressao +
-        ' hPa. Observado em ' + new Date(clima.observadoEm || reg.data).toLocaleString('pt-BR') +
-        ' (Open-Meteo).';
-    } else {
-      resumo.textContent = 'Não há dados meteorológicos salvos para este registro.';
-    }
-  }
-  if (window.AppAuth && window.AppAuth.renderWorkoutDay) window.AppAuth.renderWorkoutDay(mesAtual.getFullYear(), mesAtual.getMonth(), dia);
-  var sheet = document.getElementById('climaSheet');
-  if (sheet) sheet.classList.add('open');
-}
-
 function obterRegistroHoje(hoje) {
-  return registrosUsuario.findLast(function(registro) {
-    return new Date(registro.data).toDateString() === hoje.toDateString();
-  });
+  const data = hoje.toDateString();
+  return registrosUsuario.findLast(registro => new Date(registro.data).toDateString() === data);
 }
 
 function verificarRegistroHoje() {
@@ -289,5 +164,5 @@ function abrirRegistroDiario() {
   document.querySelector('#climaSheet .bottom-sheet-close')?.focus();
 }
 
+montarDiario();
 atualizarDataAtual();
-gerarHeatmap();

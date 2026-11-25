@@ -173,3 +173,43 @@ A repetição no SHA `0678598` aprovou as seis metas operacionais. As medianas f
 O ZAP 2.17.0 concluiu a auditoria isolada após a correção do diretório de preferências Java. O reteste executou quatro GET em loopback sobre a mesma versão dos arquivos e cabeçalhos da candidata, em commit com ajuste exclusivo do workflow. Os alertas de CSP ausente, proteção contra enquadramento ausente e X-Content-Type-Options ausente deixaram de aparecer. A versão do servidor Python anteriormente identificada não se aplicou ao servidor desta rodada.
 
 O ZAP registrou quatro alertas médios de política incompleta, diretiva com curinga, scripts inline e estilos inline, além de dois informativos, presença de política em modo de relatório e classificação como aplicação web moderna. O uso de modo de relatório e a compatibilidade com os controles inline existentes explicam o estágio atual da política. Esses achados não demonstram exploração nem descaracterizam a proteção de enquadramento aplicada. A verificação da prévia autenticada e o endurecimento adicional após validação em implantação permanecem pendentes. [Execução passiva](https://github.com/purpleaither/TCC2/actions/runs/45598638375) · [Relatórios HTML e JSON](https://github.com/purpleaither/TCC2/actions/runs/45598638375/artifacts/15013588229) · [Resumo](../evidencias/finalizacao-0678598/zap-resumo.json)
+
+## Refatoração modular e segurança
+
+A refatoração foi desenvolvida em branch dedicada. Foram separados os componentes de calendário, biblioteca, vídeos, planos e acompanhamento, os serviços de autenticação e dados, as ações de interface e as folhas de estilo. A ordem da cascata CSS foi preservada. O HTML de entrada permaneceu em um único arquivo para manter o carregamento estático e a estrutura inicial da aplicação.
+
+| Verificação desta rodada | Resultado observado |
+| --- | --- |
+| Testes locais de rotas e privacidade | 18 aprovados. Incluem cenários simulados das APIs e a varredura por chaves privilegiadas nos módulos do frontend. |
+| Interface pública | 8 casos aprovados, incluindo axe-core no login e reflow nas seis larguras da matriz. |
+| Preferências de acessibilidade | 9 casos aprovados. O axe-core 4.14.1 retornou zero violações no painel claro, escuro e de alto contraste. |
+| Comparação de interface autenticada | Chromium local em 390 × 844, nos temas claro e escuro, com respostas fictícias. Foram comparadas 32 capturas, incluindo capturas de login repetidas por perfil. 29 foram idênticas e três apresentaram pequenas diferenças de rasterização nas bordas do login. A navegação do histórico por teclado e a abertura do editor foram verificadas. |
+| Persistência transacional | A função foi testada com PostgreSQL local. A edição com item inválido preservou o título e os itens existentes. O acesso de leitura do paciente foi preservado, e a gravação por paciente, profissional sem vínculo ou sessão anônima foi recusada. |
+
+O novo cabeçalho de política de referência está configurado no repositório. A implantação da migração e a regressão com o Supabase e a ExerciseBank no ambiente publicado dependem de uma rodada na candidata. A modalidade de gravação anterior permanece disponível em ambientes sem a função SQL. A ExerciseBank ainda recebe o identificador pseudonimizado necessário ao fluxo atual, e a política CSP ampliada permanece em modo de observação. As inspeções manuais anteriores continuam pendentes.
+
+### Contagem de código
+
+A contagem inclui as linhas físicas dos arquivos rastreados com extensão JavaScript, HTML, CSS ou SQL, excluindo a pasta de testes. São contabilizadas linhas em branco e comentários. Documentos, relatórios e imagens ficam fora desse total.
+
+| Referência | Linhas | Diferença para a candidata |
+| --- | ---: | ---: |
+| `main` local de referência (`a903929`) | 5.162 | −518 |
+| Início desta refatoração, após a limpeza anterior (`63f7c45`) | 4.283 | +361 |
+| Candidata após o corte de duplicações (`fe0c6de`) | 4.644 | 0 |
+
+No último corte foram excluídas 62 linhas e inseridas 57, com saldo de −5. Foram removidos campos sem consumidores e unificada a atualização visual das duas escalas de dor. O calendário passou a agrupar sintomas e treinos por data uma só vez. O servidor local da candidata também retornou a política de referência esperada e serviu JavaScript e CSS idênticos ao checkout.
+
+Após o último corte, o reteste com Chromium 156.0.8078.79 manteve os 18 testes locais, os 8 casos de interface pública e os 9 casos de preferências aprovados. A nova comparação visual teve 30 de 32 capturas idênticas. As duas restantes apresentaram diferenças de 12 e 13 pixels nas bordas da tela de login, com diferença máxima de 2 por canal RGB. O histórico por teclado, a atualização das duas escalas de dor e a abertura do plano no editor foram verificados no mesmo ensaio com dados fictícios.
+
+### Redução adicional no commit `692dcee`
+
+O código da aplicação passou de 4.644 para 4.604 linhas. O diff do código excluiu 56 linhas e inseriu 16. A unificação da paleta escura economizou 25 linhas, a remoção de comentários redundantes economizou 13 e a simplificação da retentativa do clima economizou 2. A suíte de preferências ganhou duas linhas líquidas para verificar a troca de tema do sistema nos dois sentidos.
+
+Foram repetidos os 18 testes de rotas e privacidade, os 8 casos de interface pública e os 9 casos de preferências. Todos passaram. O teste isolado do clima confirmou recuperação na segunda tentativa e encerramento após duas falhas. Das 32 capturas comparadas em Chromium com dados fictícios, 31 foram idênticas. Uma captura de login apresentou diferenças em 12 pixels de borda, com variação máxima de 2 por canal RGB. Os resultados de integração real continuam pendentes nesta candidata.
+
+### Redução das duplicações do diário e do editor
+
+Entre a referência `5574ae1` e a candidata `172974d`, a aplicação passou de 4.591 para 4.558 linhas. O diff excluiu 126 linhas e inseriu 93. O modelo comum das escalas do diário reduziu 3 linhas (`249facc`), a unificação da leitura e finalização dos exercícios reduziu 21 (`cfe2570`), o fluxo compartilhado dos seletores de paciente reduziu 7 (`54671d5`) e a remoção de seletores CSS sem elementos correspondentes reduziu 2 (`172974d`). A contagem usa os mesmos tipos de arquivo das rodadas anteriores.
+
+Passaram 18 testes locais de rotas e privacidade, 8 verificações de interface pública e 9 de preferências. O cenário complementar em Chromium com dados fictícios verificou as escalas com Tab, Shift+Tab, Espaço e Enter, a inserção manual e o retorno da edição de exercício, além da sincronização dos três seletores de pacientes. Das 32 capturas pareadas, 29 foram idênticas. As três diferenças se limitaram a 12 ou 13 pixels na borda do login, com variação de até 2 por canal RGB. A integração com contas reais de teste na candidata permanece pendente.

@@ -4,7 +4,10 @@ import { test } from 'node:test';
 
 test('CT41, ausência de chaves privilegiadas reconhecíveis nos arquivos do frontend', async () => {
   const raiz = new URL('../../', import.meta.url);
-  const arquivos = (await readdir(raiz)).filter(arquivo => /\.(html|js)$/.test(arquivo));
+  const arquivosRaiz = await readdir(raiz);
+  const arquivosSrc = (await readdir(new URL('src/', raiz), { recursive: true }))
+    .map(arquivo => 'src/' + arquivo);
+  const arquivos = [...arquivosRaiz, ...arquivosSrc].filter(arquivo => /\.(html|js)$/.test(arquivo));
   assert.ok(arquivos.includes('index.html') && arquivos.includes('acesso.js'));
   const afetados = [];
   for (const arquivo of arquivos) {

@@ -1,0 +1,36 @@
+/* Acompanhamento na área do fisioterapeuta */
+.monitoring-topic {
+  margin-block-end: var(--espaco-grupo);
+}
+.monitoring-topic summary {
+  padding: 10px 14px;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  background: var(--superficie);
+}
+.monitoring-topic[open] summary { background: var(--superficie-suave); }
+.monitoring-topic > :not(summary) { margin-block-start: var(--espaco-texto); }
+.monitoring-bars {
+  display: grid;
+  gap: 12px;
+  list-style: none;
+}
+.monitoring-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
+}
+.monitoring-track {
+  display: block;
+  flex-basis: 100%;
+  block-size: 8px;
+  border-radius: 4px;
+  background: var(--superficie-neutra);
+}
+.monitoring-fill {
+  display: block;
+  block-size: 100%;
+  border-radius: inherit;
+  background: var(--destaque);
+}

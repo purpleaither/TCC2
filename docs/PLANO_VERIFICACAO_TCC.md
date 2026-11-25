@@ -65,3 +65,14 @@ CT46 compara os nomes efetivamente renderizados com o glossário cadastrado usan
 | RNF-A03 | Não funcional | Usar preferências do sistema para aparência e movimento, mantendo a reprodução da mídia demonstrativa | CT51, CT46, IM06 |
 
 A auditoria textual examinou as páginas ativas do login, do paciente e do profissional e as mensagens de transição. Rigidez, fadiga, séries, repetições, plano terapêutico, umidade relativa, pressão atmosférica e hPa recebem explicações por controles nativos. O diário descreve a escala de 0 a 10. As siglas MVP e END e o termo cinesioterapia não foram localizados como rótulos da interface ativa. O nome do fornecedor é preservado. Mensagens de acesso usam os termos e-mail, senha e serviço. A revisão terminológica dos nomes de exercícios permanece separada das orientações clínicas e prescrições.
+
+## Critérios da refatoração modular
+
+| Área | Critério de aceitação | Evidência prevista |
+| --- | --- | --- |
+| Interface | Preservar a navegação e a apresentação das telas dos dois perfis nos temas claro e escuro. | Comparação de capturas com dados fictícios e reteste de teclado, reflow e preferências. |
+| Privacidade | A varredura de chaves deve incluir os novos módulos. O encerramento da sessão deve remover os registros exibidos no DOM. | CT41 e verificação do encerramento da sessão no navegador. |
+| Persistência | A gravação de plano deve reverter integralmente quando um item falhar. A função deve respeitar os papéis e vínculos existentes. | PostgreSQL isolado com a mesma definição versionada das políticas e registros fictícios. |
+| Implantação | As auditorias devem verificar os arquivos da própria candidata, incluindo os novos módulos JavaScript e CSS. | Comparação dos arquivos servidos com os arquivos do commit no workflow candidato. |
+
+A migração `database/2026-11-25_gravacao_atomica_planos.sql` é aditiva. Para uma ativação coordenada, valide a migração no ambiente de teste, publique a função no banco correspondente e reteste a criação e a edição pela interface com contas fictícias. O cliente mantém compatibilidade com a gravação anterior quando o PostgREST retorna `PGRST202` pela ausência da função. Nesse caso, a gravação ainda usa chamadas separadas e o critério de atomicidade permanece pendente para o ambiente.
