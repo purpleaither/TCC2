@@ -1322,9 +1322,30 @@ body {
   padding-inline: 4px;
 }
 .ajuda-termo summary {
-  cursor: pointer; color: var(--titulo); font-weight: 700;
-  min-height: 1.5rem; padding: .3rem .15rem;
+  display: flex;
+  align-items: baseline;
+  gap: .45em;
+  list-style: none;
+  cursor: pointer;
+  color: var(--titulo);
+  font-weight: 700;
+  min-block-size: 44px;
+  padding: .3rem .15rem;
 }
+.ajuda-termo summary::marker { content: ""; }
+.ajuda-termo summary::-webkit-details-marker { display: none; }
+.ajuda-termo summary::before {
+  content: "";
+  flex: 0 0 .65em;
+  block-size: .65em;
+  background:
+    linear-gradient(currentColor, currentColor) center / 100% 2px no-repeat,
+    linear-gradient(currentColor, currentColor) center / 2px 100% no-repeat;
+}
+.ajuda-termo[open] summary::before {
+  background: linear-gradient(currentColor, currentColor) center / 100% 2px no-repeat;
+}
+.ajuda-termo summary:hover { text-decoration: underline; }
 .preferencias { display: grid; gap: .45rem; padding-block: .35rem; }
 .preferencias label { display: block; font-size: var(--fonte-minima); }
 .preferencias input[type="checkbox"] { accent-color: var(--destaque); }
