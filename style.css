@@ -281,16 +281,6 @@ body {
   background: var(--fundo-alerta, #fff5f5);
 }
 
-/* Botão de emergência (vermelho SAMU) */
-.btn-danger {
-  background: var(--acao-perigo);
-  color: var(--sobre-perigo);
-}
-
-.btn-danger:hover {
-  background: var(--acao-perigo-hover);
-}
-
 /* Botão desabilitado */
 .btn:disabled {
   color: var(--sobre-desabilitado);
@@ -686,57 +676,6 @@ body {
   background: var(--fundo-alerta, #fff5f5);
 }
 
-/* ---- Card de exercício ---- */
-.exercise-visual {
-  width: 100%;
-  height: 140px;
-  background: var(--superficie-suave, #f2f7f4);
-  border: 1px solid var(--linha, #d4e6dc);
-  border-radius: 6px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: var(--destaque, #006633);
-  margin: 12px 0;
-  padding: 12px;
-}
-
-.exercise-icon {
-  width: 48px;
-  height: 48px;
-  margin-bottom: 6px;
-}
-
-.exercise-visual-label {
-  font-size: var(--fonte-minima);
-  font-weight: bold;
-  color: var(--titulo, #003366);
-}
-
-/* ---- Alerta de segurança ---- */
-.alert-box {
-  background: var(--fundo-alerta, #fff3f3);
-  border: 2px solid var(--erro, #cc0000);
-  border-radius: 6px;
-  padding: 16px;
-  margin-bottom: 16px;
-}
-
-.alert-title {
-  line-height: var(--entrelinha-titulo);
-  font-weight: bold;
-  color: var(--erro, #cc0000);
-  margin-block-end: var(--espaco-texto);
-}
-
-.alert-text {
-  font-size: var(--fonte-minima);
-  color: var(--texto, #333);
-  margin-bottom: 4px;
-  line-height: var(--entrelinha-texto);
-}
-
 /* ---- Aviso sobre o uso do aplicativo ---- */
 .warning-card {
   background: var(--fundo-aviso, #fffbe6);
@@ -842,17 +781,6 @@ body {
   font-size: var(--fonte-minima);
   cursor: pointer;
 }
-/* Ícone do título da Pílula TPE */
-.tpe-title {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.tpe-title .icon {
-  width: 18px;
-  height: 18px;
-}
 .icon {
   width: 16px;
   height: 16px;
@@ -928,11 +856,7 @@ body {
 .workout-history-exercise .card-text-small{font-size:var(--fonte-minima);line-height:var(--entrelinha-texto);margin:5px 0 0}
 
 /* A biblioteca e as opções só aparecem quando solicitadas pelo fisioterapeuta. */
-#exerciseChoice[hidden],#exercisebankPanel[hidden]{display:none}
-.exercise-source-choice{margin-top:14px;padding-top:14px;border-top:1px solid var(--linha, #dfe7e2)}
-.exercise-source-choice .card-title{font-size:var(--fonte-minima);margin-bottom:10px}
-.exercise-source-choice .demo-acoes{margin-bottom:0}
-
+#exercisebankPanel[hidden]{display:none}
 /* Inserção em páginas separadas: seleção, configuração e resumo. */
 #page-exercise-source-prof .card{max-width:620px}
 #page-exercise-source-prof .card>.btn{display:block;width:100%;min-height:46px;margin:12px 0}
@@ -1045,9 +969,7 @@ body {
   --dor-moderada: #ffb464;
   --dor-intensa: #f17b72;
   --sobre-dor: #182019;
-  --acao-perigo: #cc0000;
-  --acao-perigo-hover: #aa0000;
-  --sobre-perigo: #fff;
+
   --sobre-desabilitado: var(--sobre-acao);
   --filtro-icone: none;
   --acao-restaurar: var(--erro);
@@ -1080,9 +1002,7 @@ body {
   --dor-moderada: #e3a582;
   --dor-intensa: #df919f;
   --sobre-dor: #241c27;
-  --acao-perigo: #9a344b;
-  --acao-perigo-hover: #aa4057;
-  --sobre-perigo: #fff;
+
   --sobre-desabilitado: #182033;
   --filtro-icone: invert(1);
   --imagem-logo: url("logo-escuro.svg");
@@ -1116,9 +1036,7 @@ body {
     --dor-moderada: #e3a582;
     --dor-intensa: #df919f;
     --sobre-dor: #241c27;
-    --acao-perigo: #9a344b;
-    --acao-perigo-hover: #aa4057;
-    --sobre-perigo: #fff;
+
     --sobre-desabilitado: #182033;
     --filtro-icone: invert(1);
     --imagem-logo: url("logo-escuro.svg");
@@ -1152,9 +1070,7 @@ body {
   --dor-moderada: #ffb464;
   --dor-intensa: #f17b72;
   --sobre-dor: #182019;
-  --acao-perigo: #cc0000;
-  --acao-perigo-hover: #aa0000;
-  --sobre-perigo: #fff;
+
   --sobre-desabilitado: #000;
   --filtro-icone: invert(1);
   --imagem-logo: url("logo-escuro.svg");
@@ -1193,7 +1109,7 @@ body {
 .app :is(button, input, select, textarea) { max-width: 100%; }
 :where(button, input, select, textarea) { font-size: var(--fonte-minima); }
 .app :is(button, input, select, textarea) { scroll-margin-block: 5rem 1rem; }
-.app :is(.choice-btn, .pain-scale-btn, .month-btn) { min-height: 2rem; height: auto; }
+.app :is(.choice-btn, .pain-scale-btn) { min-height: 2rem; height: auto; }
 .app .heatmap-cell { min-width: 0; height: auto; }
 :is(.heatmap-cell, .legend-color)[data-intensidade="nenhuma"] { background: var(--superficie-neutra); }
 :is(.heatmap-cell, .legend-color)[data-intensidade="leve"] { background: var(--dor-leve); }
