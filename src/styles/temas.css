@@ -41,7 +41,7 @@
   --fundo-restaurar-hover: var(--fundo-alerta);
   font-size: calc(100% * var(--escala-texto));
 }
-:root[data-tema="escuro"] {
+:root[data-tema-escuro] {
   color-scheme: dark;
   --fundo: #101521;
   --superficie: #181f2e;
@@ -73,41 +73,6 @@
   --imagem-logo: url("../../logo-escuro.svg");
   --acao-restaurar: var(--titulo);
   --fundo-restaurar-hover: var(--superficie-suave);
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-tema]), :root[data-tema="sistema"] {
-    color-scheme: dark;
-    --fundo: #101521;
-    --superficie: #181f2e;
-    --superficie-suave: #202a3c;
-    --superficie-neutra: #273247;
-    --superficie-verde: #223450;
-    --fundo-alerta: #382631;
-    --fundo-aviso: #342c24;
-    --texto: #edf2fb;
-    --texto-suave: #b9c6da;
-    --titulo: #d8e6ff;
-    --destaque: #a8caff;
-    --acao: #a8caff;
-    --acao-hover: #c4dbff;
-    --sobre-acao: #13243f;
-    --erro: #ffb7c0;
-    --borda: #7b8ca8;
-    --linha: #414e66;
-    --anel-foco: rgba(168, 202, 255, 0.22);
-    --borda-aviso: #ae875a;
-    --cor-aviso: #f4d0a1;
-    --dor-leve: #dec78c;
-    --dor-moderada: #e3a582;
-    --dor-intensa: #df919f;
-    --sobre-dor: #241c27;
-
-    --sobre-desabilitado: #182033;
-    --filtro-icone: invert(1);
-    --imagem-logo: url("../../logo-escuro.svg");
-    --acao-restaurar: var(--titulo);
-    --fundo-restaurar-hover: var(--superficie-suave);
-  }
 }
 :root[data-contraste] {
   color-scheme: dark;

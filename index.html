@@ -127,7 +127,6 @@
       <button type="button" class="btn" id="homeBtnExercicios" onclick="navegarPara('exercicios')">Ver meus exercícios</button>
     </section>
 
-    <!-- Card: Aviso -->
     <div class="warning-card">
       <h2 class="warning-title"><img src="Icones/alert-triangle.svg" alt="" class="icon">Sobre o uso do aplicativo</h2>
       <p class="warning-text">Este aplicativo complementa seu tratamento e não substitui o acompanhamento profissional presencial.</p>
@@ -141,7 +140,6 @@
     <h1 class="page-title">Meus sintomas</h1>
     <p class="page-subtitle">Registre como você está se sentindo hoje. Na escala de dor, 0 significa sem dor e 10, a maior dor da escala.</p>
 
-    <!-- Dor em repouso -->
     <div class="pain-scale">
       <div class="pain-scale-label">
         <span>Dor em repouso</span>
@@ -161,7 +159,6 @@
       </div>
     </div>
 
-    <!-- Dor ao movimento -->
     <div class="pain-scale">
       <div class="pain-scale-label">
         <span>Dor ao movimento</span>
@@ -181,7 +178,6 @@
       </div>
     </div>
 
-    <!-- Rigidez articular -->
     <div class="choices">
       <p class="choices-label">Rigidez nas articulações</p>
       <p class="card-text" id="descricaoRigidez">Sensação de que uma articulação está dura ou difícil de mover.</p>
@@ -193,7 +189,6 @@
       </div>
     </div>
 
-    <!-- Fadiga -->
     <div class="choices">
       <p class="choices-label">Cansaço (fadiga)</p>
       <p class="card-text" id="descricaoCansaco">Sensação de falta de energia.</p>
@@ -205,7 +200,6 @@
       </div>
     </div>
 
-    <!-- Humor -->
     <div class="choices">
       <p class="choices-label">Humor</p>
       <div class="mood-options" id="humorOptions">
@@ -224,7 +218,6 @@
       </div>
     </div>
 
-    <!-- Atividade física -->
     <div class="choices">
       <p class="choices-label">Atividade física realizada</p>
       <div class="choices-options" id="atividadeOptions">
@@ -235,7 +228,6 @@
       </div>
     </div>
 
-    <!-- Sinal atípico -->
     <p style="font-size:var(--fonte-minima); font-weight:bold; color:var(--titulo, #003366); margin-bottom:4px">Você percebeu algum sinal fora do comum hoje?</p>
     <p style="font-size:var(--fonte-minima); color:var(--texto-suave, #666); margin-bottom:8px">Febre, inchaço súbito ou dor extrema fora do comum.</p>
     <div class="choices">
@@ -255,14 +247,12 @@
     <h1 class="page-title">Meu histórico</h1>
     <details class="ajuda-termo"><summary>Entenda os dados do clima</summary><p>Umidade relativa indica quanto vapor de água há no ar em relação ao máximo possível naquela temperatura. Pressão atmosférica é a pressão que o ar exerce. hPa significa hectopascal, uma unidade de pressão.</p></details>
 
-    <!-- Navegação de mês -->
     <div class="heatmap-header">
       <button class="month-nav-btn" onclick="mudarMes(-1)">‹</button>
       <span class="month-label" id="mesLabel">maio 2025</span>
       <button class="month-nav-btn" onclick="mudarMes(1)">›</button>
     </div>
 
-    <!-- Visão global -->
     <div class="card">
       <h2 class="card-title">Visão global</h2>
       <p class="card-text-small" id="historicoPeriodo">1–21 de mai. · Dor ao movimento</p>
@@ -282,7 +272,6 @@
       </div>
     </div>
 
-    <!-- Filtro dor -->
     <div class="choices">
       <p class="choices-label">Visualizar dor</p>
       <div class="choices-options" id="filtDorOptions">
@@ -291,7 +280,6 @@
       </div>
     </div>
 
-    <!-- Heatmap -->
     <div class="card">
       <p class="choices-label">Dor ao movimento por dia</p>
 
@@ -307,7 +295,6 @@
         </div>
 
         <div class="heatmap-grid" id="heatmapGrid">
-          <!-- Preenchido pelo JS -->
         </div>
       </div>
 

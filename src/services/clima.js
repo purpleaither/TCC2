@@ -14,13 +14,11 @@ async function consultarClimaBrasilia() {
 
 // Tenta novamente se o serviço meteorológico estiver temporariamente indisponível.
 export async function obterClimaBrasilia() {
-  for (let tentativa = 1; tentativa <= 2; tentativa++) {
-    try {
-      return await consultarClimaBrasilia();
-    } catch (erro) {
-      if (tentativa === 2) throw erro;
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    }
+  try {
+    return await consultarClimaBrasilia();
+  } catch {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    return consultarClimaBrasilia();
   }
 }
 

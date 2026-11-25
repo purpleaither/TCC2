@@ -4,6 +4,14 @@
   const chave = 'autonomia-preferencias';
   const padrao = { tema: 'sistema', texto: '100', contraste: false, espacamento: false, movimento: false };
 
+  const temaSistema = matchMedia('(prefers-color-scheme: dark)');
+
+  function atualizarTema() {
+    const raiz = document.documentElement;
+    const tema = raiz.dataset.tema;
+    raiz.toggleAttribute('data-tema-escuro', tema === 'escuro' || (tema === 'sistema' && temaSistema.matches));
+  }
+
   function aplicar(dados) {
     const raiz = document.documentElement;
     for (const [nome, valorPadrao] of Object.entries(padrao)) {
@@ -17,8 +25,10 @@
         raiz.dataset[nome] = controle.value;
       }
     }
+    atualizarTema();
   }
 
+  temaSistema.addEventListener('change', atualizarTema);
   try {
     aplicar(JSON.parse(localStorage.getItem(chave)) ?? padrao);
   } catch {
