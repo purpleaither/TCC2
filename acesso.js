@@ -397,7 +397,8 @@ function renderPatientPlans(){
   const root=$("exNormalContainer");
   if(!root)return;
   root.replaceChildren();
-  text("homeRoutineValue",plans.length === 0 ? "Seu fisioterapeuta ainda não atribuiu um plano." : plans.length === 1 ? "1 plano atribuído" : plans.length + " planos atribuídos");
+  const homeRoutineValue = $("homeRoutineValue");
+  if (homeRoutineValue) homeRoutineValue.hidden = plans.length > 0;
   const assigned=patientExerciseAssignments();
   if(!assigned.length){
     root.append(el("h2","Nenhum exercício atribuído","card-title"),
