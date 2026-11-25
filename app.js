@@ -304,7 +304,7 @@ function verificarRegistroHoje() {
   var liberado = document.getElementById('climaLiberado');
   if (botao) {
     botao.textContent = existe ? 'Sintomas já registrados hoje ✓' : 'Registrar sintomas';
-    botao.style.background = existe ? '#4a7c59' : '';
+    botao.classList.toggle('registro-concluido', existe);
   }
   if (bloqueado) bloqueado.style.display = existe ? 'none' : 'block';
   if (liberado) liberado.style.display = existe ? 'block' : 'none';
