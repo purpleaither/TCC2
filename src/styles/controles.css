@@ -135,11 +135,13 @@
 
 .pain-scale-fill {
   height: 100%;
+  width: var(--valor-dor);
   background: var(--acao, #006633);
   border-radius: 3px;
 }
 
 .pain-scale-thumb {
+  left: calc(var(--valor-dor) - 9px);
   width: 18px;
   height: 18px;
   background: var(--superficie, white);

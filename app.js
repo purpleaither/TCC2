@@ -83,11 +83,35 @@ function alterarDor(tipo, delta) {
   const valor = Math.max(0, Math.min(10, anterior + delta));
   if (emRepouso) dorRepouso = valor;
   else dorMovimento = valor;
-  const prefixo = emRepouso ? 'restPain' : 'movPain';
-  const pct = valor * 10 + '%';
-  document.getElementById(prefixo + 'Value').textContent = valor + '/10';
-  document.getElementById(prefixo + 'Fill').style.width = pct;
-  document.getElementById(prefixo + 'Thumb').style.left = 'calc(' + pct + ' - 9px)';
+  const escala = document.querySelector(`.pain-scale[data-tipo="${tipo}"]`);
+  if (!escala) return;
+  escala.querySelector('[data-valor]').textContent = valor + '/10';
+  escala.style.setProperty('--valor-dor', valor * 10 + '%');
+}
+
+function montarDiario() {
+  const modelo = document.getElementById('modeloEscalaDor');
+  for (const lugar of document.querySelectorAll('[data-escala]')) {
+    const tipo = lugar.dataset.escala;
+    const escala = modelo.content.firstElementChild.cloneNode(true);
+    escala.dataset.tipo = tipo;
+    escala.querySelector('[data-valor]').id = tipo + 'PainValue';
+    escala.querySelector('.pain-scale-label span').textContent = lugar.textContent;
+    escala.querySelectorAll('button').forEach((botao, i) => {
+      botao.onclick = () => alterarDor(tipo, i === 0 ? -1 : 1);
+    });
+    lugar.replaceWith(escala);
+    alterarDor(tipo, 0);
+  }
+  for (const grupo of document.querySelectorAll('[data-intensidade].choices-options')) {
+    ['Nenhuma', 'Leve', 'Moderada', 'Intensa'].forEach((nome, i) => {
+      const botao = document.createElement('button');
+      botao.className = i === 1 ? 'choice-btn selected' : 'choice-btn';
+      botao.textContent = nome;
+      botao.onclick = () => selecionar(grupo.id, i);
+      grupo.append(botao);
+    });
+  }
 }
 
 function selecionar(grupoId, indice) {
@@ -140,4 +164,5 @@ function abrirRegistroDiario() {
   document.querySelector('#climaSheet .bottom-sheet-close')?.focus();
 }
 
+montarDiario();
 atualizarDataAtual();
