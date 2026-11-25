@@ -173,3 +173,17 @@ A repetição no SHA `0678598` aprovou as seis metas operacionais. As medianas f
 O ZAP 2.17.0 concluiu a auditoria isolada após a correção do diretório de preferências Java. O reteste executou quatro GET em loopback sobre a mesma versão dos arquivos e cabeçalhos da candidata, em commit com ajuste exclusivo do workflow. Os alertas de CSP ausente, proteção contra enquadramento ausente e X-Content-Type-Options ausente deixaram de aparecer. A versão do servidor Python anteriormente identificada não se aplicou ao servidor desta rodada.
 
 O ZAP registrou quatro alertas médios de política incompleta, diretiva com curinga, scripts inline e estilos inline, além de dois informativos, presença de política em modo de relatório e classificação como aplicação web moderna. O uso de modo de relatório e a compatibilidade com os controles inline existentes explicam o estágio atual da política. Esses achados não demonstram exploração nem descaracterizam a proteção de enquadramento aplicada. A verificação da prévia autenticada e o endurecimento adicional após validação em implantação permanecem pendentes. [Execução passiva](https://github.com/purpleaither/TCC2/actions/runs/45598638375) · [Relatórios HTML e JSON](https://github.com/purpleaither/TCC2/actions/runs/45598638375/artifacts/15013588229) · [Resumo](../evidencias/finalizacao-0678598/zap-resumo.json)
+
+## Refatoração modular e segurança
+
+A refatoração foi desenvolvida em branch dedicada. Foram separados os componentes de calendário, biblioteca, vídeos, planos e acompanhamento, os serviços de autenticação e dados, as ações de interface e as folhas de estilo. A ordem da cascata CSS foi preservada. O HTML de entrada permaneceu em um único arquivo para manter o carregamento estático e a estrutura inicial da aplicação.
+
+| Verificação desta rodada | Resultado observado |
+| --- | --- |
+| Testes locais de rotas e privacidade | 18 aprovados. Incluem cenários simulados das APIs e a varredura por chaves privilegiadas nos módulos do frontend. |
+| Interface pública | 8 casos aprovados, incluindo axe-core no login e reflow nas seis larguras da matriz. |
+| Preferências de acessibilidade | 9 casos aprovados. O axe-core 4.14.1 retornou zero violações no painel claro, escuro e de alto contraste. |
+| Comparação de interface autenticada | Chromium local em 390 × 844, nos temas claro e escuro, com respostas fictícias. Foram comparadas 32 capturas, incluindo capturas de login repetidas por perfil. 29 foram idênticas e três apresentaram pequenas diferenças de rasterização nas bordas do login. A navegação do histórico por teclado e a abertura do editor foram verificadas. |
+| Persistência transacional | A função foi testada com PostgreSQL local. A edição com item inválido preservou o título e os itens existentes. O acesso de leitura do paciente foi preservado, e a gravação por paciente, profissional sem vínculo ou sessão anônima foi recusada. |
+
+O novo cabeçalho de política de referência está configurado no repositório. A implantação da migração e a regressão com o Supabase e a ExerciseBank no ambiente publicado dependem de uma rodada na candidata. A modalidade de gravação anterior permanece disponível em ambientes sem a função SQL. A ExerciseBank ainda recebe o identificador pseudonimizado necessário ao fluxo atual, e a política CSP ampliada permanece em modo de observação. As inspeções manuais anteriores continuam pendentes.
