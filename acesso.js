@@ -577,6 +577,22 @@ function monitoringBars(rows, maximum, title){
   return list;
 }
 
+function monitoringTopic(key, label, panel){
+  const wrapper = el("div", undefined, "monitoring-topic");
+  const button = el("button", label, "monitoring-toggle");
+  button.type = "button";
+  panel.id = "monitoramento-" + key;
+  panel.hidden = true;
+  button.setAttribute("aria-expanded", "false");
+  button.setAttribute("aria-controls", panel.id);
+  button.addEventListener("click", () => {
+    panel.hidden = !panel.hidden;
+    button.setAttribute("aria-expanded", String(!panel.hidden));
+  });
+  wrapper.append(button, panel);
+  return wrapper;
+}
+
 function renderProfessionalMonitoring(){
   const root = $("graficosRegistrosProf");
   root.replaceChildren();
@@ -646,8 +662,7 @@ function renderProfessionalMonitoring(){
     }
     showSessions();
   }
-  root.append(workoutCard);
-  const symptoms = el("div", undefined, "monitoring-symptoms");
+  root.append(monitoringTopic("treinos", "Treinos concluídos", workoutCard));
   for (const [key, title] of [["stiffness", "Rigidez"], ["fatigue", "Cansaço (fadiga)"]]) {
     const card = el("section", undefined, "card");
     card.append(el("h3", title, "card-title"),
@@ -658,9 +673,8 @@ function renderProfessionalMonitoring(){
     }));
     card.append(rows.length ? monitoringBars(rows, levels.length - 1, title + " por dia")
       : el("p", "Nenhum relato disponível.", "card-text-small"));
-    symptoms.append(card);
+    root.append(monitoringTopic(key, title, card));
   }
-  root.append(symptoms);
 }
 
 function renderProfessionalRecords(){

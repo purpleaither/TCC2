@@ -1353,10 +1353,42 @@ body {
 }
 
 /* Acompanhamento na área do fisioterapeuta */
-.monitoring-symptoms {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
-  gap: 16px;
+.monitoring-topic {
+  margin-block-end: var(--espaco-grupo);
+}
+.monitoring-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  inline-size: 100%;
+  min-block-size: 44px;
+  padding: 10px 14px;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  background: var(--superficie);
+  color: var(--titulo);
+  font-weight: 700;
+  text-align: start;
+  cursor: pointer;
+}
+.monitoring-toggle:hover,
+.monitoring-toggle[aria-expanded="true"] {
+  background: var(--superficie-suave);
+}
+.monitoring-toggle::after {
+  content: "";
+  flex: 0 0 .65em;
+  block-size: .65em;
+  background:
+    linear-gradient(currentColor, currentColor) center / 100% 2px no-repeat,
+    linear-gradient(currentColor, currentColor) center / 2px 100% no-repeat;
+}
+.monitoring-toggle[aria-expanded="true"]::after {
+  background: linear-gradient(currentColor, currentColor) center / 100% 2px no-repeat;
+}
+.monitoring-topic > .card {
+  margin-block: var(--espaco-texto) 0;
 }
 .monitoring-bars {
   display: grid;
