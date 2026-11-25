@@ -8,7 +8,8 @@ if(simular)await p.route('**/api/weather',rota=>{
  return rota.fulfill({status:502,json:{error:'Falha meteorológica simulada'}});
 });
 const isSymptoms=r=>new URL(r.url()).pathname.endsWith('/rest/v1/symptom_records');
-p.on('response',r=>{if(isSymptoms(r)||(new URL(r.url()).pathname==='/api/weather'||new URL(r.url()).hostname==='api.open-meteo.com'))network.push({endpoint:new URL(r.url()).pathname,method:r.request().method(),status:r.status()})});
+p.on('response',r=>{if(isSymptoms(r)||(new URL(r.url()).pathname==='/api/weather'||new URL(r.url()).hostname==='api.open-meteo.com'))network.push({endpoint:new URL(r.url()).pathname,method:r.request().method(),status:r.status(),
+ tempoAteCabecalhoMs:(()=>{const t=r.request().timing();return t.responseStart>=0?Math.round(t.responseStart):null})()})});
 p.on('requestfailed',r=>{if((new URL(r.url()).pathname==='/api/weather'||new URL(r.url()).hostname==='api.open-meteo.com'))network.push({endpoint:new URL(r.url()).pathname,method:r.method(),error:r.failure()?.errorText})});
 p.on('request',r=>{if((new URL(r.url()).pathname==='/api/weather'||new URL(r.url()).hostname==='api.open-meteo.com'))network.push({endpoint:new URL(r.url()).pathname,method:r.method(),event:'request'})});
 await p.goto(process.env.TCC_BASE_URL || 'https://tcc2-lime.vercel.app/');

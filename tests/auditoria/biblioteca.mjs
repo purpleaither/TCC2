@@ -2,7 +2,6 @@ import assert from 'node:assert/strict';
 
 export async function verificarBiblioteca(pagina, casos) {
   const busca = pagina.locator('#exercisebankRefresh');
-  const status = pagina.locator('#exercisebankStatus');
   const itens = pagina.locator('#exercisebankResults .bank-result');
   const nomes = () => itens.locator('h4').allTextContents();
   const rota = '**/api/exercisebank';
@@ -10,7 +9,7 @@ export async function verificarBiblioteca(pagina, casos) {
   await pagina.route(rota, simular);
   try {
     await busca.click();
-    await status.getByText('Biblioteca temporariamente indisponível', { exact: true }).waitFor();
+    await pagina.waitForFunction(() => document.querySelector('#exercisebankStatus').textContent === 'Biblioteca temporariamente indisponível');
     assert.equal(await itens.count(), 0);
     await pagina.locator('#page-exercise-bank-prof.active').getByRole('button', { name: 'Voltar' }).click();
     await pagina.getByRole('button', { name: 'Adicionar manualmente', exact: true }).click();
@@ -21,21 +20,43 @@ export async function verificarBiblioteca(pagina, casos) {
   } finally {
     await pagina.unroute(rota, simular);
   }
+  let ponte;
+  let origem = 'candidata';
   try {
     if (!(await pagina.locator('#page-exercise-bank-prof.active').count())) {
       const voltar = pagina.locator('#page-exercise-config-prof.active').getByRole('button', { name: 'Voltar' });
       await voltar.click({ timeout: 5000 });
       await pagina.getByRole('button', { name: 'Escolher na ExerciseBank', exact: true }).click();
     }
-    const retorno = pagina.waitForResponse(r => new URL(r.url()).pathname === '/api/exercisebank' && r.request().method() === 'GET');
-    const inicio = performance.now();
-    await busca.click();
-    const resposta = await retorno;
-    const tempo = Math.round(performance.now() - inicio);
-    if (!resposta.ok()) {
-      casos.push({ id: 'CT46-catalogo-real', estado: 'bloqueado', http: resposta.status(), tempoRespostaMs: tempo });
-      return;
+    const consultar = async () => {
+      const retorno = pagina.waitForResponse(r => new URL(r.url()).pathname === '/api/exercisebank' && r.request().method() === 'GET');
+      const inicio = performance.now();
+      await busca.click();
+      const resposta = await retorno;
+      casos.push({ id: 'CT46-catalogo-real', origem, estado: resposta.ok() ? 'aprovado' : 'bloqueado',
+        http: resposta.status(), tempoRespostaMs: Math.round(performance.now() - inicio) });
+      await pagina.waitForFunction(() => !document.querySelector('#exercisebankRefresh').disabled);
+      return resposta;
+    };
+    let resposta = await consultar();
+    if (resposta.status() === 503 && process.env.TCC_BIBLIOTECA_PUBLICADA === '1') {
+      origem = 'frontend candidato com rota publicada';
+      // A chamada continua usando a conta fictícia e o serviço real da própria aplicação.
+      ponte = async interceptacao => {
+        try {
+          const respostaReal = await interceptacao.fetch({
+            url: 'https://tcc2-lime.vercel.app/api/exercisebank',
+            maxRedirects: 0, timeout: 15000,
+          });
+          await interceptacao.fulfill({ response: respostaReal });
+        } catch {
+          await interceptacao.abort();
+        }
+      };
+      await pagina.route(rota, ponte);
+      resposta = await consultar();
     }
+    if (!resposta.ok()) return;
     const { items } = await resposta.json();
     await pagina.waitForFunction(() => !document.querySelector('#exercisebankRefresh').disabled);
     const domiciliares = await nomes();
@@ -52,7 +73,7 @@ export async function verificarBiblioteca(pagina, casos) {
     ]);
     const equivalencias = items.map(item => nomesDeReferencia.get(item.name.toLowerCase())).filter(Boolean);
     assert.ok(equivalencias.every(nome => todos.includes(nome)));
-    casos.push({ id: 'CT46-nomenclatura', estado: equivalencias.length ? 'aprovado' : 'bloqueado', totalReferencias: equivalencias.length });
+    casos.push({ id: 'CT46-nomenclatura', origem, estado: equivalencias.length ? 'aprovado' : 'bloqueado', totalReferencias: equivalencias.length });
 
     await pagina.locator('#exercisebankRegion').selectOption('ombros');
     await busca.click();
@@ -65,14 +86,16 @@ export async function verificarBiblioteca(pagina, casos) {
     await pagina.locator('#exercisebankQuery').fill(todos[0]);
     await busca.click();
     await itens.getByRole('heading', { name: todos[0], exact: true }).first().waitFor();
-    casos.push({ id: 'CT46-pesquisa-filtros', estado: 'aprovado', total: todos.length, domiciliares: domiciliares.length, ombros: ombros.length });
+    casos.push({ id: 'CT46-pesquisa-filtros', origem, estado: 'aprovado', total: todos.length, domiciliares: domiciliares.length, ombros: ombros.length });
     await itens.first().getByRole('button', { name: 'Ver vídeo' }).click();
     await pagina.waitForFunction(() => {
       const video = document.querySelector('#exercisebankResults video');
       return video && !video.error && video.currentTime > 0.2;
-    }, { timeout: 15000 });
-    casos.push({ id: 'CT46-video', estado: 'aprovado' });
+    }, undefined, { timeout: 15000 });
+    casos.push({ id: 'CT46-video', origem, estado: 'aprovado' });
   } catch {
-    casos.push({ id: 'CT46-fluxo-biblioteca', estado: 'reprovado' });
+    casos.push({ id: 'CT46-fluxo-biblioteca', origem, estado: 'reprovado' });
+  } finally {
+    if (ponte) await pagina.unroute(rota, ponte);
   }
 }
