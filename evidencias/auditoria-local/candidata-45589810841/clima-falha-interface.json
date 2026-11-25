@@ -1,0 +1,65 @@
+{
+  "report": [
+    {
+      "id": "CT44-persistencia",
+      "status": "passed",
+      "expected": {
+        "pain_rest": 2,
+        "pain_movement": 5,
+        "stiffness": "Moderada",
+        "fatigue": "Leve"
+      },
+      "tempoRegistroMs": 1127
+    },
+    {
+      "id": "CT44-falha-clima",
+      "status": "passed",
+      "simulacoes": 2,
+      "semMedicao": true,
+      "avisoExibido": true
+    }
+  ],
+  "network": [
+    {
+      "endpoint": "/rest/v1/symptom_records",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "endpoint": "/api/weather",
+      "method": "GET",
+      "event": "request"
+    },
+    {
+      "endpoint": "/api/weather",
+      "method": "GET",
+      "status": 502
+    },
+    {
+      "endpoint": "/api/weather",
+      "method": "GET",
+      "event": "request"
+    },
+    {
+      "endpoint": "/api/weather",
+      "method": "GET",
+      "status": 502
+    },
+    {
+      "endpoint": "/rest/v1/symptom_records",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "endpoint": "/rest/v1/symptom_records",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "endpoint": "/rest/v1/symptom_records",
+      "method": "GET",
+      "status": 200
+    }
+  ],
+  "retention": "Registro fictício mantido por autorização"
+}

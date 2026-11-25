@@ -80,14 +80,14 @@
 
     <!-- Card: Registro diário -->
 <div class="card" id="cardRegistroDiario">
-  <h3 class="card-title">Registro diário de sintomas</h3>
+  <h2 class="card-title">Registro diário de sintomas</h2>
   <p class="card-text">Como você se sente hoje?</p>
   <button class="btn" id="btnRegistrarSintomas" onclick="navegarPara('sintomas')">Registrar sintomas</button>
 </div>
 
     <!-- Card: Clima bloqueado -->
     <div class="locked-card" id="climaBloqueado">
-      <h3 class="card-title">Informações meteorológicas</h3>
+      <h2 class="card-title">Informações meteorológicas</h2>
       <div class="lock-icon"><img src="Icones/lock.svg" alt="" class="icon"></div>
       <p class="card-text" style="font-weight:bold">Bloqueado até registrar sintomas</p>
       <p class="card-text-small">Disponível logo após preencher seu registro diário.</p>
@@ -95,7 +95,7 @@
 
     <!-- Card: Clima liberado (exibido pós-registro) -->
     <div class="weather-card" id="climaLiberado" style="display:none">
-      <h3 class="weather-title">Informações meteorológicas</h3>
+      <h2 class="weather-title">Informações meteorológicas</h2>
       <p class="weather-main">Aguardando dados do registro</p>
       <p class="weather-detail">As condições meteorológicas serão exibidas quando estiverem associadas ao registro.</p>
       <p class="card-text-small">Fonte meteorológica: Open-Meteo. Município de referência: Brasília.</p>
@@ -103,7 +103,7 @@
 
     <!-- Card: Meus exercícios -->
     <div class="card" id="homeExerciciosCard">
-      <h3 class="card-title">Meus exercícios</h3>
+      <h2 class="card-title">Meus exercícios</h2>
       <div class="routine-preview" id="homeRoutineBox">
         <p class="routine-label" id="homeRoutineLabel">Plano fisioterapêutico</p>
         <p class="routine-value" id="homeRoutineValue">Aguardando atribuição</p>
@@ -247,7 +247,7 @@
 
     <!-- Visão global -->
     <div class="card">
-      <h3 class="card-title">Visão global</h3>
+      <h2 class="card-title">Visão global</h2>
       <p class="card-text-small" id="historicoPeriodo">1–21 de mai. · Dor ao movimento</p>
       <div class="stats-row">
         <div class="stat-item">
@@ -307,7 +307,7 @@
     <div class="bottom-sheet" id="climaSheet">
       <div class="bottom-sheet-handle"></div>
       <button class="bottom-sheet-close" onclick="fecharClimaSheet()">×</button>
-      <h3 class="page-title" id="climaSheetTitle">Dia selecionado</h3>
+      <h2 class="page-title" id="climaSheetTitle">Dia selecionado</h2>
       <div style="margin-top: 16px; margin-bottom: 12px; background: #f9f9f9; padding: 12px; border-radius: 6px; border: 1px solid #eee;">
         <p style="font-size: 14px; font-weight: bold; color: #003366; margin-bottom: 10px;" id="sheetDorNivel">Dor: 0/10</p>
         <div style="display: flex; gap: 8px; font-size: 12px; color: #444;">
@@ -332,19 +332,19 @@
     <p class="page-subtitle">Educação Terapêutica do Paciente</p>
 
     <div class="card">
-      <h3 class="card-title">Compreendendo a dor</h3>
+      <h2 class="card-title">Compreendendo a dor</h2>
       <p class="card-text">A dor é um mecanismo de alarme do organismo que envolve aspectos biológicos, emocionais e do ambiente. Compreender como ela funciona ajuda a reduzir a sensibilidade do sistema nervoso e favorece a segurança nos movimentos.</p>
       <a href="#" class="card-link" onclick="event.preventDefault(); alert('Em breve: leitura completa com orientações validadas pela equipe do HUB.');">Ler artigo completo →</a>
     </div>
 
     <div class="card">
-      <h3 class="card-title">Meteoropatia: clima e sintomas</h3>
+      <h2 class="card-title">Meteoropatia: clima e sintomas</h2>
       <p class="card-text">Variações bruscas de temperatura, umidade e pressão atmosférica podem alterar a percepção de rigidez articular em algumas pessoas. Manter o corpo aquecido e ativo atenua esses desconfortos.</p>
       <a href="#" class="card-link" onclick="event.preventDefault(); alert('Em breve: leitura completa com orientações validadas pela equipe do HUB.');">Ler artigo completo →</a>
     </div>
 
     <div class="card">
-      <h3 class="card-title">Autonomia no dia a dia</h3>
+      <h2 class="card-title">Autonomia no dia a dia</h2>
       <p class="card-text">Estratégias práticas para adaptar suas tarefas domésticas e de trabalho, mantendo o movimento constante e o autocuidado após a alta hospitalar.</p>
       <a href="#" class="card-link" onclick="event.preventDefault(); alert('Em breve: leitura completa com orientações validadas pela equipe do HUB.');">Ler artigo completo →</a>
     </div>
@@ -356,7 +356,7 @@
     <h1 class="page-title">Meus exercícios</h1>
     <p class="page-subtitle">Planos individualizados definidos pelo fisioterapeuta</p>
     <div class="card" id="exNormalContainer">
-      <h3 class="card-title">Nenhum plano atribuído</h3>
+      <h2 class="card-title">Nenhum plano atribuído</h2>
       <p class="card-text">Quando o fisioterapeuta selecionar e configurar os exercícios, eles serão disponibilizados nesta área.</p>
       <p class="card-text-small">Apenas os exercícios definidos pelo fisioterapeuta vinculado serão exibidos nesta página.</p>
     </div>
@@ -369,7 +369,7 @@
     <p class="page-subtitle">Hospital Universitário de Brasília</p>
 
     <div class="card">
-      <h3 class="card-title">Meus dados</h3>
+      <h2 class="card-title">Meus dados</h2>
       <div class="contact-info-item">
         <span class="contact-info-label">Paciente</span>
         <strong id="perfilNome">Maria Silva</strong>
@@ -385,7 +385,7 @@
     </div>
 
     <div class="card">
-      <h3 class="card-title">Equipe de Fisioterapia</h3>
+      <h2 class="card-title">Equipe de Fisioterapia</h2>
       <p class="card-text" style="font-weight:bold; color:#003366">HUB / Universidade de Brasília</p>
       
       <div class="contact-info-item" style="margin-top:10px">
@@ -407,7 +407,7 @@
     </div>
 
     <div class="card" style="border-color:#ffcccc; background:#fffafa">
-      <h3 class="card-title" style="color:#cc0000">Sessão</h3>
+      <h2 class="card-title" style="color:#cc0000">Sessão</h2>
       <p class="card-text-small">Acesso por conta autenticada. Utilize apenas dados fictícios.</p>
       <button class="btn btn-outline" onclick="realizarLogout()">Encerrar sessão</button>
     </div>
@@ -419,18 +419,18 @@
     <h1 class="page-title">Painel do fisioterapeuta</h1>
     <p class="page-subtitle">Acompanhamento com contas de teste</p>
     <div class="card">
-      <h3 class="card-title" id="profGreeting">Bem-vindo(a), fisioterapeuta</h3>
+      <h2 class="card-title" id="profGreeting">Bem-vindo(a), fisioterapeuta</h2>
       <p class="card-text">Selecione um paciente vinculado para consultar registros e configurar planos terapêuticos individualizados.</p>
       <label class="form-label" for="pacienteProf">Paciente</label>
       <select class="form-input" id="pacienteProf" onchange="atualizarPacienteProfissional()"><option value="p1">Maria Silva</option><option value="p2">João Oliveira</option></select>
     </div>
     <div class="card">
-      <h3 class="card-title">Planos terapêuticos</h3>
+      <h2 class="card-title">Planos terapêuticos</h2>
       <p class="card-text">Crie e organize exercícios prescritos, com séries, repetições, duração e frequência.</p>
       <button class="btn" onclick="navegarPara('planos-prof')">Gerenciar planos</button>
     </div>
     <div class="card">
-      <h3 class="card-title">Registros de sintomas</h3>
+      <h2 class="card-title">Registros de sintomas</h2>
       <p class="card-text">Consulte os registros vinculados a este paciente.</p>
       <button class="btn" onclick="navegarPara('registros-prof')">Consultar registros</button>
     </div>
@@ -448,7 +448,7 @@
     </div>
     <div id="listaPlanosProf"></div>
     <div class="card" id="planMainActions" hidden>
-      <h3 class="card-title">Começar um plano</h3>
+      <h2 class="card-title">Começar um plano</h2>
       <button type="button" id="createPlanEntry" class="btn" onclick="criarPlanoProfissional()">Criar plano terapêutico</button>
       <p class="card-text-small">Depois de criar o plano, será possível adicionar exercícios manualmente ou pela ExerciseBank.</p>
     </div>
@@ -466,7 +466,7 @@
   <div class="page" id="page-exercise-source-prof">
     <h1 class="page-title">Adicionar exercícios</h1>
     <div class="card">
-      <h3 class="card-title">Como deseja adicionar?</h3>
+      <h2 class="card-title">Como deseja adicionar?</h2>
       <button type="button" class="btn" onclick="adicionarExercicioManual()">Adicionar manualmente</button>
       <button type="button" class="btn btn-outline" onclick="abrirBibliotecaExerciseBank()">Escolher na ExerciseBank</button>
       <button type="button" class="btn btn-outline" onclick="voltarDaEscolhaExercicios()">Voltar</button>
@@ -523,7 +523,7 @@
     <h1 class="page-title">Configurar plano</h1>
     <p class="page-subtitle">Personalize os exercícios e os parâmetros prescritos.</p>
     <div class="card">
-      <h3 class="card-title" id="tituloFormularioPlano">Criar plano terapêutico</h3>
+      <h2 class="card-title" id="tituloFormularioPlano">Criar plano terapêutico</h2>
       <form id="formPlanoProf" onsubmit="salvarPlanoProf(event)">
         <div class="form-group"><label class="form-label" for="nomePlanoProf">Nome do plano</label>
           <input class="form-input" id="nomePlanoProf" maxlength="100" required placeholder="Ex.: Mobilidade domiciliar"></div>

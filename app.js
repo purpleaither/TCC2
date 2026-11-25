@@ -239,7 +239,7 @@ function apresentarClimaNoPainel(registro) {
   var card = document.getElementById('climaLiberado');
   if (!card) return;
   card.replaceChildren();
-  var titulo = document.createElement('h3');
+  var titulo = document.createElement('h2');
   titulo.className = 'weather-title';
   titulo.textContent = 'Informações meteorológicas';
   card.append(titulo);

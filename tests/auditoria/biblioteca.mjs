@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 export async function verificarBiblioteca(pagina, casos) {
   const busca = pagina.locator('#exercisebankRefresh');
   const itens = pagina.locator('#exercisebankResults .bank-result');
-  const nomes = () => itens.locator('h4').allTextContents();
+  const nomes = () => itens.getByRole('heading').allTextContents();
   const rota = '**/api/exercisebank';
   const simular = request => request.fulfill({ status: 503, json: { error: 'Biblioteca temporariamente indisponível' } });
   await pagina.route(rota, simular);
