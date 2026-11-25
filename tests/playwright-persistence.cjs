@@ -1,12 +1,12 @@
 const {chromium}=require('playwright');
 const fs=require('node:fs');
-const base='https://tcc2-lime.vercel.app/';
+const base=process.env.TCC_BASE_URL || 'https://tcc2-lime.vercel.app/';
 const title='TESTE FICTICIO PW '+Date.now();
 const exercise='Mobilidade simulada PW';
 const report=[];
 const network=[]; let phase='preparacao';
 let browser,prof,patient,patientId;
-async function step(id,fn){try{await fn();report.push({id,status:'passed'});return true}catch(e){report.push({id,status:'failed',error:String(e.message).split('\n')[0].slice(0,200)});return false}}
+async function step(id,fn){const inicio=performance.now();try{await fn();report.push({id,status:'passed',duracaoMs:Math.round(performance.now()-inicio)});return true}catch(e){report.push({id,status:'failed',error:String(e.message).split('\n')[0].slice(0,200)});return false}}
 async function login(role,home){const p=await browser.newPage();await p.goto(base);await p.locator('#loginEmail').fill(process.env['TEST_'+role+'_EMAIL']);await p.locator('#loginSenha').fill(process.env['TEST_'+role+'_PASSWORD']);await p.locator('#loginSubmit').click({timeout:30000});await p.locator('#page-'+home+'.active').waitFor({timeout:30000});return p}
 async function nav(p,n){await p.evaluate(n=>window.navegarPara(n),n);await p.locator('#page-'+n+'.active').waitFor()}
 function card(){return prof.locator('#listaPlanosProf .card').filter({has:prof.getByText(title,{exact:true})})}

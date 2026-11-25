@@ -27,6 +27,7 @@ const roles = [
    await page.locator('#loginSubmit').click();
    await page.locator('#page-'+role.expected+'.active').waitFor({timeout:30000});
    check('Authenticated role dashboard',true);
+   await page.locator('#menuBtn').click();
    const profileMenu=page.locator('[data-perfil="'+role.name+'"]');
    check('Authorized menu is visible',await profileMenu.first().isVisible());
    const unauthorized=page.locator('[data-perfil="'+(role.name==='paciente'?'fisioterapeuta':'paciente')+'"]');
@@ -47,6 +48,14 @@ const roles = [
    await page.evaluate(()=>window.realizarLogout());
    await page.locator('#page-login.active').waitFor({timeout:15000});
    check('Logout returns login screen',true);
+   if(process.env.TCC_BASE_URL){
+    await page.reload();
+    await page.locator('#page-login.active').waitFor({timeout:15000});
+    await page.waitForFunction(()=>!document.querySelector('#loginSubmit').disabled);
+    check('Sessão encerrada após recarregar',await page.locator('#page-login.active').isVisible());
+    const sessaoPersistida=await page.evaluate(()=>Object.keys(localStorage).some(chave=>/^sb-.*-auth-token$/.test(chave)));
+    check('Sessão Supabase removida do armazenamento local',!sessaoPersistida);
+   }
   }catch(err){
    check('Test execution reached end',false,String(err.message).slice(0,900));
    try{entry.loginStatus=await page.locator('#loginStatus').innerText({timeout:1000})}catch{}

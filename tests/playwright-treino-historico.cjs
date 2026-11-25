@@ -1,6 +1,6 @@
 const {chromium}=require('playwright');
 const fs=require('node:fs');
-const base='https://tcc2-lime.vercel.app/';
+const base=process.env.TCC_BASE_URL || 'https://tcc2-lime.vercel.app/';
 const title='TESTE FICTICIO PW '+Date.now();
 const exercise='Mobilidade simulada PW';
 const report=[];
