@@ -1,0 +1,137 @@
+name: Verificação da versão candidata do TCC
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/tcc-candidata.yml'
+      - 'tests/**'
+      - '*.js'
+      - '*.html'
+      - '*.css'
+      - 'api/**'
+      - 'vercel.json'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verificacao-mvp
+  cancel-in-progress: false
+
+jobs:
+  candidata:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'verificacao-complementar-tcc'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      TCC_BASE_URL: http://127.0.0.1:8766/
+      TCC_EVIDENCIAS: test-results/candidata
+      CHROME_PATH: /usr/bin/google-chrome
+      NODE_PATH: ${{ github.workspace }}/tests/auditoria/node_modules
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Preparar checkout e servidor candidato
+        id: preparar
+        env:
+          EXERCISEBANK_API_KEY: ${{ secrets.EXERCISEBANK_API_KEY }}
+          EB_KEY: ${{ secrets.EB_KEY }}
+        run: |
+          mkdir -p "$TCC_EVIDENCIAS"
+          git rev-parse HEAD > "$TCC_EVIDENCIAS/commit.txt"
+          npm ci --prefix tests/auditoria
+          tests/auditoria/node_modules/.bin/playwright install chromium
+          node tests/auditoria/candidata.mjs > /tmp/tcc-candidata.log 2>&1 &
+          curl --retry 8 --retry-max-time 30 --retry-connrefused --fail --silent "$TCC_BASE_URL" -o /tmp/tcc-index.html
+          cmp index.html /tmp/tcc-index.html
+          for arquivo in app.js acesso.js preferencias.js style.css; do
+            curl --fail --silent "${TCC_BASE_URL}${arquivo}" -o /tmp/tcc-arquivo
+            cmp "$arquivo" /tmp/tcc-arquivo
+          done
+          if [ -n "${EXERCISEBANK_API_KEY:-${EB_KEY:-}}" ]; then
+            echo 'ExerciseBank configurada' > "$TCC_EVIDENCIAS/dependencias.txt"
+          else
+            echo 'ExerciseBank sem chave no runner' > "$TCC_EVIDENCIAS/dependencias.txt"
+          fi
+      - name: Reteste axe-core autenticado e Lighthouse por estado
+        if: steps.preparar.outcome == 'success'
+        env:
+          TEST_FISIO_EMAIL: ${{ secrets.TEST_FISIO_EMAIL }}
+          TEST_FISIO_PASSWORD: ${{ secrets.TEST_FISIO_PASSWORD }}
+          TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
+          TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
+        run: |
+          falhou=0
+          TCC_BIBLIOTECA=1 TCC_BIBLIOTECA_PUBLICADA=1 node tests/auditoria/autenticada.mjs || falhou=1
+          TCC_SNAPSHOT=mobile node tests/auditoria/autenticada.mjs || falhou=1
+          TCC_SNAPSHOT=desktop node tests/auditoria/autenticada.mjs || falhou=1
+          TCC_TEMA=escuro node tests/auditoria/autenticada.mjs || falhou=1
+          TCC_TEMA=escuro TCC_SNAPSHOT=mobile node tests/auditoria/autenticada.mjs || falhou=1
+          TCC_TEMA=escuro TCC_SNAPSHOT=desktop node tests/auditoria/autenticada.mjs || falhou=1
+          node tests/auditoria/preferencias.mjs || falhou=1
+          exit "$falhou"
+      - name: Regressão CI-01 a CI-07 e falha simulada de clima
+        if: always() && !cancelled() && steps.preparar.outcome == 'success'
+        env:
+          TEST_FISIO_EMAIL: ${{ secrets.TEST_FISIO_EMAIL }}
+          TEST_FISIO_PASSWORD: ${{ secrets.TEST_FISIO_PASSWORD }}
+          TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
+          TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
+          TEST_PACIENTEDOIS_EMAIL: ${{ secrets.TEST_PACIENTEDOIS_EMAIL }}
+          TEST_PACIENTEDOIS_PASSWORD: ${{ secrets.TEST_PACIENTEDOIS_PASSWORD }}
+        run: |
+          falhou=0
+          for bateria in smoke auth persistence sintomas-clima treino-historico seguranca; do
+            if node "tests/playwright-${bateria}.cjs" > "/tmp/tcc-${bateria}.log" 2>&1; then
+              printf '%s exit=0\n' "$bateria" >> "$TCC_EVIDENCIAS/regressao.txt"
+            else
+              printf '%s exit=1\n' "$bateria" >> "$TCC_EVIDENCIAS/regressao.txt"
+              falhou=1
+            fi
+          done
+          TCC_CLIMA_FALHA=1 node tests/playwright-sintomas-clima.cjs > /tmp/tcc-clima-falha.log 2>&1 || falhou=1
+          exit "$falhou"
+      - name: Repetir medições operacionais
+        if: always() && !cancelled() && steps.preparar.outcome == 'success'
+        env:
+          TEST_FISIO_EMAIL: ${{ secrets.TEST_FISIO_EMAIL }}
+          TEST_FISIO_PASSWORD: ${{ secrets.TEST_FISIO_PASSWORD }}
+          TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
+          TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
+        run: |
+          mkdir -p "$TCC_EVIDENCIAS/regressao"
+          cp test-results/*.json "$TCC_EVIDENCIAS/regressao/"
+          node tests/auditoria/desempenho.mjs
+      - name: Guardar testes e medições antes da auditoria passiva
+        if: always() && !cancelled()
+        uses: actions/upload-artifact@v4
+        with:
+          name: candidata-testes-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test-results/candidata/
+          retention-days: 90
+      - name: Auditoria passiva do servidor candidato
+        timeout-minutes: 4
+        if: always() && !cancelled() && steps.preparar.outcome == 'success'
+        run: |
+          sed 's/8765/8766/g' tests/auditoria/zap.yml > /tmp/zap-candidata.yml
+          docker run --rm --network host --user "$(id -u):$(id -g)" -e HOME=/tmp -e JAVA_TOOL_OPTIONS=-Duser.home=/tmp \
+            -v /tmp/zap-candidata.yml:/tmp/plano.yml:ro \
+            -v "$PWD/$TCC_EVIDENCIAS:/zap/wrk:rw" \
+            ghcr.io/zaproxy/zaproxy@sha256:9624669db72f54d86c4b46a7064518bd9bf79d8c61a4c31befa9923489f328af \
+            zap.sh -cmd -dir /tmp/zap-home -autorun /tmp/plano.yml
+      - name: Conferir cabeçalhos públicos da Vercel
+        if: always() && !cancelled()
+        run: node tests/auditoria/cabecalhos-vercel.mjs
+      - name: Guardar evidências da candidata
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: candidata-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            test-results/candidata/
+            test-results/*.json
+          retention-days: 90

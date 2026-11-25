@@ -1,0 +1,80 @@
+TAP version 13
+# Subtest: CT39-indisponivel
+ok 1 - CT39-indisponivel
+  ---
+  duration_ms: 125.78655
+  type: 'test'
+  ...
+# Subtest: CT39-conexao
+ok 2 - CT39-conexao
+  ---
+  duration_ms: 5.823387
+  type: 'test'
+  ...
+# Subtest: CT39-timeout
+ok 3 - CT39-timeout
+  ---
+  duration_ms: 3.255091
+  type: 'test'
+  ...
+# Subtest: CT39-http-429
+ok 4 - CT39-http-429
+  ---
+  duration_ms: 5.169275
+  type: 'test'
+  ...
+# Subtest: CT39-http-500
+ok 5 - CT39-http-500
+  ---
+  duration_ms: 1.334375
+  type: 'test'
+  ...
+# Subtest: CT39-resposta-invalida
+not ok 6 - CT39-resposta-invalida
+  ---
+  duration_ms: 8.608616
+  type: 'test'
+  location: '/workspace/TCC2/tests/auditoria/exercisebank.test.mjs:57:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    200 !== 502
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 502
+  actual: 200
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/TCC2/tests/auditoria/exercisebank.test.mjs:59:12)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: CT39-lista-vazia
+ok 7 - CT39-lista-vazia
+  ---
+  duration_ms: 4.349534
+  type: 'test'
+  ...
+# Subtest: CT39-sem-video
+ok 8 - CT39-sem-video
+  ---
+  duration_ms: 1.710765
+  type: 'test'
+  ...
+# Subtest: CT39-video-indisponivel
+ok 9 - CT39-video-indisponivel
+  ---
+  duration_ms: 3.003131
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 8
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 280.664362

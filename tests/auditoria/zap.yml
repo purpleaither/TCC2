@@ -1,0 +1,41 @@
+env:
+  contexts:
+    - name: login-local
+      urls:
+        - http://127.0.0.1:8765
+  parameters:
+    failOnError: true
+    failOnWarning: false
+jobs:
+  - type: passiveScan-config
+    parameters:
+      scanOnlyInScope: true
+  - type: requestor
+    requests:
+      - url: http://127.0.0.1:8765/
+        method: GET
+        responseCode: 200
+      - url: http://127.0.0.1:8765/style.css
+        method: GET
+        responseCode: 200
+      - url: http://127.0.0.1:8765/app.js
+        method: GET
+        responseCode: 200
+      - url: http://127.0.0.1:8765/acesso.js
+        method: GET
+        responseCode: 200
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 3
+  - type: report
+    parameters:
+      template: traditional-html
+      reportDir: /zap/wrk
+      reportFile: zap-login.html
+      reportTitle: Auditoria passiva do servidor local
+  - type: report
+    parameters:
+      template: traditional-json
+      reportDir: /zap/wrk
+      reportFile: zap-login.json
+      reportTitle: Auditoria passiva do servidor local

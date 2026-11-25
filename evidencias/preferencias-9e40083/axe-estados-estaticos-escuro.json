@@ -1,0 +1,50 @@
+[
+  {
+    "tela": "inicio",
+    "violacoes": []
+  },
+  {
+    "tela": "sintomas",
+    "violacoes": []
+  },
+  {
+    "tela": "historico",
+    "violacoes": []
+  },
+  {
+    "tela": "orientacoes",
+    "violacoes": []
+  },
+  {
+    "tela": "exercicios",
+    "violacoes": []
+  },
+  {
+    "tela": "contatos",
+    "violacoes": []
+  },
+  {
+    "tela": "profissional",
+    "violacoes": []
+  },
+  {
+    "tela": "planos-prof",
+    "violacoes": []
+  },
+  {
+    "tela": "editor-prof",
+    "violacoes": []
+  },
+  {
+    "tela": "exercise-bank-prof",
+    "violacoes": []
+  },
+  {
+    "tela": "exercise-config-prof",
+    "violacoes": []
+  },
+  {
+    "tela": "registros-prof",
+    "violacoes": []
+  }
+]

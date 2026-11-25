@@ -1,0 +1,62 @@
+[
+  {
+    "id": "CT48-teclado",
+    "estado": "aprovado"
+  },
+  {
+    "id": "CT49-claro",
+    "estado": "aprovado"
+  },
+  {
+    "id": "CT49-escuro",
+    "estado": "aprovado"
+  },
+  {
+    "id": "CT49-contraste",
+    "estado": "aprovado"
+  },
+  {
+    "id": "CT50-100",
+    "estado": "aprovado",
+    "raiz": 16,
+    "largura": 320,
+    "viewport": 320,
+    "letra": 1.68,
+    "transicao": "0s",
+    "campo": 294
+  },
+  {
+    "id": "CT50-125",
+    "estado": "aprovado",
+    "raiz": 20,
+    "largura": 320,
+    "viewport": 320,
+    "letra": 2.1,
+    "transicao": "0s",
+    "campo": 294
+  },
+  {
+    "id": "CT50-150",
+    "estado": "aprovado",
+    "raiz": 24,
+    "largura": 320,
+    "viewport": 320,
+    "letra": 2.52,
+    "transicao": "0s",
+    "campo": 294
+  },
+  {
+    "id": "CT50-200",
+    "estado": "aprovado",
+    "raiz": 32,
+    "largura": 320,
+    "viewport": 320,
+    "letra": 3.36,
+    "transicao": "0s",
+    "campo": 294
+  },
+  {
+    "id": "CT51-recarregar-e-restaurar",
+    "estado": "aprovado"
+  }
+]

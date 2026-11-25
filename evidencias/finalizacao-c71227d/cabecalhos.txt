@@ -1,0 +1,10 @@
+HTTP/1.1 200 OK
+Content-Security-Policy: frame-ancestors 'none'; object-src 'none'; base-uri 'self'
+X-Frame-Options: DENY
+X-Content-Type-Options: nosniff
+Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'sha256-OenIqg8fq5aqOjNBsYwVlsP1zVMyIiklyXz7AiWW5Qc='; script-src-attr 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://*.supabase.co; img-src 'self' data: https://*.exercisebank.net https://wger.de; media-src 'self' https://*.exercisebank.net https://wger.de; font-src 'self'; form-action 'self'; frame-src 'none'
+Content-Type: text/html; charset=utf-8
+Date: Wed, 25 Nov 2026 10:24:26 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+Transfer-Encoding: chunked

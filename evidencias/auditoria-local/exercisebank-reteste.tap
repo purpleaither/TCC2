@@ -1,0 +1,64 @@
+TAP version 13
+# Subtest: CT39-indisponivel
+ok 1 - CT39-indisponivel
+  ---
+  duration_ms: 82.576841
+  type: 'test'
+  ...
+# Subtest: CT39-conexao
+ok 2 - CT39-conexao
+  ---
+  duration_ms: 2.678099
+  type: 'test'
+  ...
+# Subtest: CT39-timeout
+ok 3 - CT39-timeout
+  ---
+  duration_ms: 5.514464
+  type: 'test'
+  ...
+# Subtest: CT39-http-429
+ok 4 - CT39-http-429
+  ---
+  duration_ms: 4.505413
+  type: 'test'
+  ...
+# Subtest: CT39-http-500
+ok 5 - CT39-http-500
+  ---
+  duration_ms: 1.856519
+  type: 'test'
+  ...
+# Subtest: CT39-resposta-invalida
+ok 6 - CT39-resposta-invalida
+  ---
+  duration_ms: 1.25795
+  type: 'test'
+  ...
+# Subtest: CT39-lista-vazia
+ok 7 - CT39-lista-vazia
+  ---
+  duration_ms: 2.157366
+  type: 'test'
+  ...
+# Subtest: CT39-sem-video
+ok 8 - CT39-sem-video
+  ---
+  duration_ms: 1.386963
+  type: 'test'
+  ...
+# Subtest: CT39-video-indisponivel
+ok 9 - CT39-video-indisponivel
+  ---
+  duration_ms: 2.807724
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 141.564665

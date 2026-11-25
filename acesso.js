@@ -55,8 +55,8 @@ function message(value,isError=false) {
   if(flash) {
     flash.hidden = !isAuthenticated();
     flash.textContent = value;
-    flash.style.background = isError ? "#fff0f0" : "#e8f5e9";
-    flash.style.color = isError ? "#b3261e" : "#003366";
+    flash.style.background = isError ? "var(--fundo-alerta)" : "var(--superficie-verde)";
+    flash.style.color = isError ? "var(--erro)" : "var(--titulo)";
   }
 }
 function menu() {
@@ -109,7 +109,7 @@ async function login() {
     $("loginSenha").value="";
     await openSession();
   } catch(err) {
-    message("Não foi possível entrar. Verifique as credenciais e o cadastro do perfil.",true);
+    message("Não foi possível entrar. Verifique seu e-mail e sua senha.",true);
   } finally {
     busy=false;
     $("loginSubmit").disabled=!loginReady;
@@ -402,7 +402,7 @@ function renderPatientPlans(){
   text("homeRoutineDesc",plans.length?"Acompanhe um exercício por vez, conforme a prescrição do fisioterapeuta.":"Nenhum plano foi atribuído a esta conta.");
   const assigned=patientExerciseAssignments();
   if(!assigned.length){
-    root.append(el("h3","Nenhum exercício atribuído","card-title"),
+    root.append(el("h2","Nenhum exercício atribuído","card-title"),
       el("p","Os exercícios aparecerão aqui após a prescrição profissional.","card-text"));
     return;
   }
@@ -500,7 +500,7 @@ function renderProfessionalPlans(){
   if(createEntry)createEntry.disabled=!patientId;
   for(const p of plans){
     const card=el("div",undefined,"card");
-    card.append(el("h3",p.title,"card-title"));
+    card.append(el("h2",p.title,"card-title"));
     if(p.notes)card.append(el("p",p.notes,"card-text"));
     for(const x of [...(p.plan_exercises||[])].sort((a,b)=>a.position-b.position)){
       const line=el("div",undefined,"demo-detalhe");
@@ -544,7 +544,7 @@ function renderProfessionalRecords(){
   if(!records.length)root.append(el("p","Nenhum registro disponível.","demo-vazio"));
   for(const r of records) {
     const card=el("div",undefined,"card");
-    card.append(el("h3",date(r.recorded_at),"card-title"));
+    card.append(el("h2",date(r.recorded_at),"card-title"));
     card.append(el("p","Dor em repouso: "+r.pain_rest+"/10 · Dor ao movimento: "+r.pain_movement+"/10","card-text"));
     card.append(el("p","Rigidez: "+r.stiffness+" · Fadiga: "+r.fatigue,"card-text-small"));
     const clima=mapWeather(r);
@@ -624,7 +624,7 @@ function addExercise(entry){
       externalId.value=entry.external_id;
       externalInstructions.value=entry.instructions||"";
       externalName.value=entry.exercise_name;externalSource.value=entry.exercise_source;
-      const sourceLabel=el("p",entry.exercise_source==="ExerciseBank"?"ExerciseBank · amostra Sandbox":"wger · vídeo sujeito à disponibilidade e licença","card-text-small");
+      const sourceLabel=el("p",entry.exercise_source==="ExerciseBank"?"ExerciseBank · catálogo de demonstração":"wger · vídeo sujeito à disponibilidade e licença","card-text-small");
       row.prepend(sourceLabel);
     }
     for(const k of ["series","repetitions","duration","frequency"])
@@ -689,7 +689,7 @@ function choosePlanForExerciseAddition(){
   root.replaceChildren();
   for(const plan of plans){
     const card=el("div",undefined,"card");
-    card.append(el("h3",plan.title,"card-title"));
+    card.append(el("h2",plan.title,"card-title"));
     const count=Array.isArray(plan.plan_exercises)?plan.plan_exercises.length:0;
     card.append(el("p",count+" exercício(s) no plano.","card-text-small"));
     const button=el("button","Adicionar exercícios a este plano","btn");
@@ -917,10 +917,10 @@ async function saveSymptoms(){
 
 let sampleList=null,loadingSample=false;
 async function ebCall(opts={}){
-  if(!supabase||!isAuthenticated())throw Error("Faça login para consultar a biblioteca.");
+  if(!supabase||!isAuthenticated())throw Error("Entre para consultar a biblioteca.");
   const session=await supabase.auth.getSession();
   const token=session.data?.session?.access_token;
-  if(!token)throw Error("Sessão expirada. Faça login novamente.");
+  if(!token)throw Error("Sua sessão terminou. Entre novamente.");
   const response=await fetch("/api/exercisebank",{...opts,headers:{Authorization:"Bearer "+token,...opts.headers},cache:"no-store"});
   const data=await response.json().catch(()=>({}));
   if(!response.ok)throw Error(data.error||"ExerciseBank indisponível.");
@@ -1310,7 +1310,7 @@ function renderSample(){
   filtered.forEach(x=>{
     const card=el("div",undefined,"demo-exercicio-item bank-result");
     const translated=translateExerciseName(x.name);
-    card.append(el("h4",translated,"card-title"));
+    card.append(el("h2",translated,"card-title"));
     const row=el("div",undefined,"demo-acoes");
     const preview=el("button","Ver vídeo","btn btn-outline");
     const pick=el("button","Selecionar exercício","btn");
@@ -1338,7 +1338,7 @@ async function loadExerciseMedia(id,target,button,source="ExerciseBank",autoPlay
     }else if(source==="ExerciseBank"){
       const data=await ebCall({method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({ids:[id]})});
       const item=data.data?.[id];
-      if(!item?.signed)throw Error("Vídeo não liberado no Sandbox.");
+      if(!item?.signed)throw Error("Este vídeo não está disponível no catálogo de demonstração.");
       url=item.mp4;poster=item.still;credit="ExerciseBank · link temporário";
     }
     if(!url)throw Error("Vídeo indisponível.");
@@ -1388,7 +1388,7 @@ async function init(){
   }catch(err){
     loginReady=false;
     $("loginSubmit").disabled=true;
-    message("Não foi possível conectar ao Supabase. Confira a configuração da Vercel.",true);
+    message("Não foi possível conectar ao serviço. Tente novamente mais tarde.",true);
   }
 }
 

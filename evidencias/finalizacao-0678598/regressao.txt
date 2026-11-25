@@ -1,0 +1,6 @@
+smoke exit=0
+auth exit=0
+persistence exit=1
+sintomas-clima exit=0
+treino-historico exit=0
+seguranca exit=0

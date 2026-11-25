@@ -1,0 +1,58 @@
+TAP version 13
+# Subtest: CT38-conexao (falha simulada)
+ok 1 - CT38-conexao (falha simulada)
+  ---
+  duration_ms: 2.999158
+  type: 'test'
+  ...
+# Subtest: CT38-timeout (falha simulada)
+ok 2 - CT38-timeout (falha simulada)
+  ---
+  duration_ms: 0.535066
+  type: 'test'
+  ...
+# Subtest: CT38-http-429 (falha simulada)
+ok 3 - CT38-http-429 (falha simulada)
+  ---
+  duration_ms: 111.221828
+  type: 'test'
+  ...
+# Subtest: CT38-http-500 (falha simulada)
+ok 4 - CT38-http-500 (falha simulada)
+  ---
+  duration_ms: 0.218743
+  type: 'test'
+  ...
+# Subtest: CT38-http-502 (falha simulada)
+ok 5 - CT38-http-502 (falha simulada)
+  ---
+  duration_ms: 0.403348
+  type: 'test'
+  ...
+# Subtest: CT38-http-504 (falha simulada)
+ok 6 - CT38-http-504 (falha simulada)
+  ---
+  duration_ms: 0.374925
+  type: 'test'
+  ...
+# Subtest: CT38-json-invalido (falha simulada)
+ok 7 - CT38-json-invalido (falha simulada)
+  ---
+  duration_ms: 4.484931
+  type: 'test'
+  ...
+# Subtest: CT38-parametros-ausentes (falha simulada)
+ok 8 - CT38-parametros-ausentes (falha simulada)
+  ---
+  duration_ms: 1.991115
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 201.615149

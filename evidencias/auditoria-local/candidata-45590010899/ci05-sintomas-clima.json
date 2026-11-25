@@ -1,0 +1,79 @@
+{
+  "report": [
+    {
+      "id": "CT25",
+      "status": "passed",
+      "expected": {
+        "pain_rest": 2,
+        "pain_movement": 5,
+        "stiffness": "Moderada",
+        "fatigue": "Leve"
+      },
+      "tempoRegistroMs": 17164
+    },
+    {
+      "id": "CT26",
+      "status": "failed",
+      "weather": null
+    }
+  ],
+  "network": [
+    {
+      "endpoint": "/rest/v1/symptom_records",
+      "method": "GET",
+      "status": 200,
+      "tempoAteCabecalhoMs": 101
+    },
+    {
+      "endpoint": "/api/weather",
+      "method": "GET",
+      "event": "request"
+    },
+    {
+      "endpoint": "/api/weather",
+      "method": "GET",
+      "status": 504,
+      "tempoAteCabecalhoMs": 8001
+    },
+    {
+      "endpoint": "/api/weather",
+      "method": "GET",
+      "event": "request"
+    },
+    {
+      "endpoint": "/api/weather",
+      "method": "GET",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "endpoint": "/api/weather",
+      "method": "GET",
+      "status": 504,
+      "tempoAteCabecalhoMs": 8001
+    },
+    {
+      "endpoint": "/rest/v1/symptom_records",
+      "method": "POST",
+      "status": 201,
+      "tempoAteCabecalhoMs": 96
+    },
+    {
+      "endpoint": "/rest/v1/symptom_records",
+      "method": "GET",
+      "status": 200,
+      "tempoAteCabecalhoMs": 104
+    },
+    {
+      "endpoint": "/api/weather",
+      "method": "GET",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "endpoint": "/rest/v1/symptom_records",
+      "method": "GET",
+      "status": 200,
+      "tempoAteCabecalhoMs": 90
+    }
+  ],
+  "retention": "Registro fictício mantido por autorização"
+}

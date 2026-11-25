@@ -26,3 +26,24 @@ Os relatórios completos ficam nos artefatos de cada execução por até 90 dias
 As baterias anteriores foram aprovadas em rodadas separadas após correções. A execução consolidada deve ser avaliada pelo seu próprio resultado. CI-03 e CI-04 compartilham um script. CT31 verifica o sentido inverso apenas quando o segundo paciente possui registros. CT32 testa uma tentativa de inserção indevida, não todas as operações possíveis. Os resultados não constituem certificação de segurança ou de conformidade com a LGPD.
 
 Execução anterior de segurança: https://github.com/purpleaither/TCC2/actions/runs/45450952452
+
+## Auditoria complementar
+
+O workflow Auditoria complementar do MVP serve o código do checkout em loopback, identifica o commit efetivamente carregado e anexa evidências mesmo quando alguma etapa falha. Em pull requests do próprio repositório, ele também usa as contas fictícias já cadastradas para auditar telas autenticadas com o Supabase real.
+
+Para executar a parte local em Linux, use Node.js 24, Chromium e um servidor estático. Em um terminal, inicie o servidor a partir da raiz do repositório.
+
+```sh
+python3 -m http.server 8765 --bind 127.0.0.1
+```
+
+Em outro terminal, execute as verificações. Defina `CHROME_PATH` com o caminho do navegador instalado.
+
+```sh
+npm ci --prefix tests/auditoria
+CHROME_PATH=/usr/bin/chromium node tests/auditoria/interface.mjs
+CHROME_PATH=/usr/bin/chromium node tests/auditoria/lighthouse.mjs
+node --test --test-isolation=none tests/auditoria/*.test.mjs
+```
+
+Os critérios e as limitações da metodologia estão no [plano complementar](../docs/PLANO_VERIFICACAO_TCC.md) e no [relatório de resultados](../docs/RESULTADOS_VERIFICACAO_TCC.md).

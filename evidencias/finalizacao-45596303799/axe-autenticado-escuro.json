@@ -1,0 +1,155 @@
+[
+  {
+    "id": "CT42-inicio",
+    "perfil": "paciente",
+    "tela": "inicio",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": [],
+    "tempoLoginMs": 2339
+  },
+  {
+    "id": "CT42-sintomas",
+    "perfil": "paciente",
+    "tela": "sintomas",
+    "tempoInterfaceMs": 407,
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": [
+      "color-contrast"
+    ]
+  },
+  {
+    "id": "CT42-exercicios",
+    "perfil": "paciente",
+    "tela": "exercicios",
+    "tempoInterfaceMs": 400,
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-historico",
+    "perfil": "paciente",
+    "tela": "historico",
+    "tempoInterfaceMs": 421,
+    "estado": "reprovado",
+    "versao": "4.14.1",
+    "violacoes": [
+      {
+        "regra": "color-contrast",
+        "gravidade": "serious",
+        "referencia": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=playwright",
+        "criterios": [
+          "wcag143"
+        ],
+        "elementos": [
+          [
+            "div[atributo] > .heatmap-cell-day"
+          ],
+          [
+            "div[atributo] > .heatmap-cell-value"
+          ],
+          [
+            "div[atributo] > .heatmap-cell-day"
+          ],
+          [
+            "div[atributo] > .heatmap-cell-value"
+          ],
+          [
+            "div[atributo] > .heatmap-cell-day"
+          ],
+          [
+            "div[atributo] > .heatmap-cell-value"
+          ]
+        ]
+      }
+    ],
+    "inspecao": [
+      "color-contrast"
+    ]
+  },
+  {
+    "id": "CT42-orientacoes",
+    "perfil": "paciente",
+    "tela": "orientacoes",
+    "tempoInterfaceMs": 414,
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-contatos",
+    "perfil": "paciente",
+    "tela": "contatos",
+    "tempoInterfaceMs": 423,
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-profissional",
+    "perfil": "fisioterapeuta",
+    "tela": "profissional",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": [],
+    "tempoLoginMs": 2331
+  },
+  {
+    "id": "CT42-registros-prof",
+    "perfil": "fisioterapeuta",
+    "tela": "registros-prof",
+    "tempoInterfaceMs": 401,
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-planos-prof",
+    "perfil": "fisioterapeuta",
+    "tela": "planos-prof",
+    "tempoInterfaceMs": 405,
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-editor-prof",
+    "perfil": "fisioterapeuta",
+    "tela": "editor-prof",
+    "tempoInterfaceMs": 32,
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-exercise-config-prof",
+    "perfil": "fisioterapeuta",
+    "tela": "exercise-config-prof",
+    "tempoInterfaceMs": 52,
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-exercise-bank-prof",
+    "perfil": "fisioterapeuta",
+    "tela": "exercise-bank-prof",
+    "tempoInterfaceMs": 507,
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  }
+]

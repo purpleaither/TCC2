@@ -122,7 +122,8 @@ export default async function handler(req,res){
       const params=new URLSearchParams({ids:sample.join(","),limit:String(LIMIT)});
       const response=await request(API+"/exercises?"+params,ebHeaders);
       if(!response.ok)return respond(res,response.status===429?429:502,{error:safeError(response)});
-      const candidates=Array.isArray(response.data?.data)?response.data.data:[];
+      if(!Array.isArray(response.data?.data))return respond(res,502,{error:"A ExerciseBank retornou um catálogo inválido."});
+      const candidates=response.data.data;
       const allowed=new Set(sample);
       const all=candidates.filter(ex=>allowed.has(ex.id)&&ex.media?.mp4===true).map(normalize);
       const byId=new Map(all.map(ex=>[ex.id,ex]));

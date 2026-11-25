@@ -1,0 +1,65 @@
+{
+  "report": [
+    {
+      "id": "preparacao-plano",
+      "status": "passed"
+    },
+    {
+      "id": "CT27",
+      "status": "passed",
+      "duracaoMs": 998
+    },
+    {
+      "id": "CT28",
+      "status": "passed",
+      "duracaoMs": 588
+    }
+  ],
+  "network": [
+    {
+      "phase": "preparacao",
+      "endpoint": "/rest/v1/care_plans",
+      "method": "GET",
+      "status": 200,
+      "retryAfter": null
+    },
+    {
+      "phase": "preparacao",
+      "endpoint": "/rest/v1/care_plans",
+      "method": "POST",
+      "status": 201,
+      "retryAfter": null
+    },
+    {
+      "phase": "preparacao",
+      "endpoint": "/rest/v1/plan_exercises",
+      "method": "POST",
+      "status": 201,
+      "retryAfter": null
+    },
+    {
+      "phase": "preparacao",
+      "endpoint": "/rest/v1/care_plans",
+      "method": "GET",
+      "status": 200,
+      "retryAfter": null
+    },
+    {
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "status": 200
+    }
+  ],
+  "retention": "Plano e treino fictícios mantidos"
+}

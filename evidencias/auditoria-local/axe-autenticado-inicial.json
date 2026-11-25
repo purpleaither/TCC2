@@ -1,0 +1,239 @@
+[
+  {
+    "id": "CT42-inicio",
+    "perfil": "paciente",
+    "tela": "inicio",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-sintomas",
+    "perfil": "paciente",
+    "tela": "sintomas",
+    "estado": "reprovado",
+    "versao": "4.14.1",
+    "violacoes": [
+      {
+        "regra": "color-contrast",
+        "gravidade": "serious",
+        "referencia": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=playwright",
+        "criterios": [
+          "wcag143"
+        ],
+        "elementos": [
+          [
+            ".pain-scale:nth-child(3) > .pain-scale-labels > span:nth-child(1)"
+          ],
+          [
+            ".pain-scale:nth-child(3) > .pain-scale-labels > span:nth-child(2)"
+          ],
+          [
+            ".pain-scale:nth-child(4) > .pain-scale-labels > span:nth-child(1)"
+          ],
+          [
+            ".pain-scale:nth-child(4) > .pain-scale-labels > span:nth-child(2)"
+          ]
+        ]
+      }
+    ],
+    "inspecao": [
+      "color-contrast"
+    ]
+  },
+  {
+    "id": "CT42-exercicios",
+    "perfil": "paciente",
+    "tela": "exercicios",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-historico",
+    "perfil": "paciente",
+    "tela": "historico",
+    "estado": "reprovado",
+    "versao": "4.14.1",
+    "violacoes": [
+      {
+        "regra": "color-contrast",
+        "gravidade": "serious",
+        "referencia": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=playwright",
+        "criterios": [
+          "wcag143"
+        ],
+        "elementos": [
+          [
+            ".stat-item:nth-child(1) > .stat-label"
+          ],
+          [
+            ".stat-item:nth-child(2) > .stat-label"
+          ],
+          [
+            ".stat-item:nth-child(3) > .stat-label"
+          ],
+          [
+            ".heatmap-cell:nth-child(10) > .heatmap-cell-day"
+          ],
+          [
+            ".heatmap-cell:nth-child(11) > .heatmap-cell-day"
+          ],
+          [
+            "div[atributo] > .heatmap-cell-day"
+          ],
+          [
+            ".heatmap-cell:nth-child(13) > .heatmap-cell-day"
+          ],
+          [
+            ".heatmap-cell:nth-child(14) > .heatmap-cell-day"
+          ],
+          [
+            ".heatmap-cell:nth-child(15) > .heatmap-cell-day"
+          ],
+          [
+            ".heatmap-cell:nth-child(16) > .heatmap-cell-day"
+          ],
+          [
+            ".heatmap-cell:nth-child(17) > .heatmap-cell-day"
+          ],
+          [
+            ".heatmap-cell:nth-child(18) > .heatmap-cell-day"
+          ],
+          [
+            ".heatmap-cell:nth-child(19) > .heatmap-cell-day"
+          ],
+          [
+            ".heatmap-cell:nth-child(20) > .heatmap-cell-day"
+          ],
+          [
+            ".heatmap-cell:nth-child(21) > .heatmap-cell-day"
+          ],
+          [
+            ".heatmap-cell:nth-child(22) > .heatmap-cell-day"
+          ],
+          [
+            ".heatmap-cell:nth-child(23) > .heatmap-cell-day"
+          ],
+          [
+            ".heatmap-workout-day[atributo][atributo]:nth-child(24) > .heatmap-cell-day"
+          ],
+          [
+            ".heatmap-workout-day[atributo][atributo]:nth-child(25) > .heatmap-cell-day"
+          ],
+          [
+            ".heatmap-cell:nth-child(26) > .heatmap-cell-day"
+          ],
+          [
+            ".heatmap-cell:nth-child(27) > .heatmap-cell-day"
+          ],
+          [
+            ".heatmap-cell:nth-child(28) > .heatmap-cell-day"
+          ],
+          [
+            ".heatmap-cell:nth-child(29) > .heatmap-cell-day"
+          ],
+          [
+            ".heatmap-cell:nth-child(30) > .heatmap-cell-day"
+          ]
+        ]
+      },
+      {
+        "regra": "label-content-name-mismatch",
+        "gravidade": "serious",
+        "referencia": "https://dequeuniversity.com/rules/axe/4.14/label-content-name-mismatch?application=playwright",
+        "criterios": [
+          "wcag253"
+        ],
+        "elementos": [
+          [
+            "div[atributo]"
+          ],
+          [
+            ".heatmap-workout-day[atributo][atributo]:nth-child(24)"
+          ],
+          [
+            ".heatmap-workout-day[atributo][atributo]:nth-child(25)"
+          ]
+        ]
+      }
+    ],
+    "inspecao": [
+      "color-contrast"
+    ]
+  },
+  {
+    "id": "CT42-orientacoes",
+    "perfil": "paciente",
+    "tela": "orientacoes",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-contatos",
+    "perfil": "paciente",
+    "tela": "contatos",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-profissional",
+    "perfil": "fisioterapeuta",
+    "tela": "profissional",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-registros-prof",
+    "perfil": "fisioterapeuta",
+    "tela": "registros-prof",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-planos-prof",
+    "perfil": "fisioterapeuta",
+    "tela": "planos-prof",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-editor-prof",
+    "perfil": "fisioterapeuta",
+    "tela": "editor-prof",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-exercise-config-prof",
+    "perfil": "fisioterapeuta",
+    "tela": "exercise-config-prof",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  },
+  {
+    "id": "CT42-exercise-bank-prof",
+    "perfil": "fisioterapeuta",
+    "tela": "exercise-bank-prof",
+    "estado": "aprovado",
+    "versao": "4.14.1",
+    "violacoes": [],
+    "inspecao": []
+  }
+]

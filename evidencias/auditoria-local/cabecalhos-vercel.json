@@ -1,0 +1,125 @@
+{
+  "data": "2026-11-25T09:56:30.583Z",
+  "observacoes": [
+    {
+      "ambiente": "produção",
+      "recurso": "/",
+      "http": 200,
+      "cabecalhos": {
+        "content-security-policy": null,
+        "content-security-policy-report-only": null,
+        "x-frame-options": null,
+        "x-content-type-options": null,
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "server": "envoy",
+        "x-vercel-id": true
+      },
+      "emitiuCookie": false
+    },
+    {
+      "ambiente": "produção",
+      "recurso": "style.css",
+      "http": 200,
+      "cabecalhos": {
+        "content-security-policy": null,
+        "content-security-policy-report-only": null,
+        "x-frame-options": null,
+        "x-content-type-options": null,
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "server": "envoy",
+        "x-vercel-id": true
+      },
+      "emitiuCookie": false
+    },
+    {
+      "ambiente": "produção",
+      "recurso": "app.js",
+      "http": 200,
+      "cabecalhos": {
+        "content-security-policy": null,
+        "content-security-policy-report-only": null,
+        "x-frame-options": null,
+        "x-content-type-options": null,
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "server": "envoy",
+        "x-vercel-id": true
+      },
+      "emitiuCookie": false
+    },
+    {
+      "ambiente": "produção",
+      "recurso": "acesso.js",
+      "http": 200,
+      "cabecalhos": {
+        "content-security-policy": null,
+        "content-security-policy-report-only": null,
+        "x-frame-options": null,
+        "x-content-type-options": null,
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "server": "envoy",
+        "x-vercel-id": true
+      },
+      "emitiuCookie": false
+    },
+    {
+      "ambiente": "prévia",
+      "recurso": "/",
+      "http": 302,
+      "cabecalhos": {
+        "content-security-policy": null,
+        "content-security-policy-report-only": null,
+        "x-frame-options": "DENY",
+        "x-content-type-options": null,
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "server": "envoy",
+        "x-vercel-id": true
+      },
+      "emitiuCookie": true
+    },
+    {
+      "ambiente": "prévia",
+      "recurso": "style.css",
+      "http": 302,
+      "cabecalhos": {
+        "content-security-policy": null,
+        "content-security-policy-report-only": null,
+        "x-frame-options": "DENY",
+        "x-content-type-options": null,
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "server": "envoy",
+        "x-vercel-id": true
+      },
+      "emitiuCookie": true
+    },
+    {
+      "ambiente": "prévia",
+      "recurso": "app.js",
+      "http": 302,
+      "cabecalhos": {
+        "content-security-policy": null,
+        "content-security-policy-report-only": null,
+        "x-frame-options": "DENY",
+        "x-content-type-options": null,
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "server": "envoy",
+        "x-vercel-id": true
+      },
+      "emitiuCookie": true
+    },
+    {
+      "ambiente": "prévia",
+      "recurso": "acesso.js",
+      "http": 302,
+      "cabecalhos": {
+        "content-security-policy": null,
+        "content-security-policy-report-only": null,
+        "x-frame-options": "DENY",
+        "x-content-type-options": null,
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "server": "envoy",
+        "x-vercel-id": true
+      },
+      "emitiuCookie": true
+    }
+  ]
+}

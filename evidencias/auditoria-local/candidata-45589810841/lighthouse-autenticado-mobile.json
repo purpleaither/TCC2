@@ -1,0 +1,3782 @@
+[
+  {
+    "id": "CT42-inicio",
+    "perfil": "paciente",
+    "tela": "inicio",
+    "versao": "13.6.0",
+    "pontuacao": 0.98,
+    "auditorias": {
+      "accesskeys": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-allowed-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-command-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-conditional-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-deprecated-role": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-dialog-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-hidden-body": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-hidden-focus": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-input-field-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-meter-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-progressbar-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-prohibited-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-required-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-required-children": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-required-parent": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-roles": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-text": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-toggle-field-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-tooltip-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-treeitem-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-valid-attr-value": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-valid-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "button-name": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "bypass": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "color-contrast": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "definition-list": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "dlitem": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "document-title": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "duplicate-id-aria": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "form-field-multiple-labels": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "frame-title": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "heading-order": {
+        "pontuacao": 0,
+        "estado": "binary"
+      },
+      "html-has-lang": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-lang-valid": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-xml-lang-mismatch": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "image-alt": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "input-button-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "input-image-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "label": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "link-in-text-block": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "link-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "list": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "listitem": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "meta-refresh": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "meta-viewport": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "object-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "select-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "skip-link": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "tabindex": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "target-size": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "td-headers-attr": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "th-has-data-cells": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "valid-lang": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "video-caption": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "landmark-one-main": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "autocomplete-valid": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "presentation-role-conflict": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "svg-img-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "focusable-controls": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "interactive-element-affordance": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "logical-tab-order": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "visual-order-follows-dom": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "focus-traps": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "managed-focus": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "use-landmarks": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "offscreen-content-hidden": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "custom-controls-labels": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "custom-controls-roles": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "table-duplicate-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "empty-heading": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-allowed-role": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "image-redundant-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "identical-links-same-purpose": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "label-content-name-mismatch": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "table-fake-caption": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "td-has-header": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      }
+    },
+    "estado": "reprovado",
+    "tempoLoginMs": 1352
+  },
+  {
+    "id": "CT42-sintomas",
+    "perfil": "paciente",
+    "tela": "sintomas",
+    "tempoInterfaceMs": 420,
+    "versao": "13.6.0",
+    "pontuacao": 1,
+    "auditorias": {
+      "accesskeys": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-allowed-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-command-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-conditional-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-deprecated-role": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-dialog-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-hidden-body": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-hidden-focus": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-input-field-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-meter-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-progressbar-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-prohibited-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-required-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-required-children": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-required-parent": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-roles": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-text": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-toggle-field-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-tooltip-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-treeitem-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-valid-attr-value": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-valid-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "button-name": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "bypass": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "color-contrast": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "definition-list": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "dlitem": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "document-title": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "duplicate-id-aria": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "form-field-multiple-labels": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "frame-title": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "heading-order": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-has-lang": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-lang-valid": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-xml-lang-mismatch": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "image-alt": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "input-button-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "input-image-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "label": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "link-in-text-block": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "link-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "list": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "listitem": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "meta-refresh": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "meta-viewport": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "object-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "select-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "skip-link": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "tabindex": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "target-size": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "td-headers-attr": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "th-has-data-cells": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "valid-lang": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "video-caption": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "landmark-one-main": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "autocomplete-valid": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "presentation-role-conflict": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "svg-img-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "focusable-controls": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "interactive-element-affordance": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "logical-tab-order": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "visual-order-follows-dom": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "focus-traps": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "managed-focus": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "use-landmarks": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "offscreen-content-hidden": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "custom-controls-labels": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "custom-controls-roles": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "table-duplicate-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "empty-heading": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-allowed-role": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "image-redundant-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "identical-links-same-purpose": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "label-content-name-mismatch": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "table-fake-caption": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "td-has-header": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      }
+    },
+    "estado": "aprovado"
+  },
+  {
+    "id": "CT42-exercicios",
+    "perfil": "paciente",
+    "tela": "exercicios",
+    "tempoInterfaceMs": 412,
+    "versao": "13.6.0",
+    "pontuacao": 1,
+    "auditorias": {
+      "accesskeys": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-allowed-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-command-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-conditional-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-deprecated-role": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-dialog-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-hidden-body": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-hidden-focus": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-input-field-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-meter-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-progressbar-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-prohibited-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-required-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-required-children": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-required-parent": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-roles": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-text": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-toggle-field-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-tooltip-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-treeitem-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-valid-attr-value": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-valid-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "button-name": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "bypass": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "color-contrast": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "definition-list": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "dlitem": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "document-title": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "duplicate-id-aria": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "form-field-multiple-labels": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "frame-title": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "heading-order": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-has-lang": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-lang-valid": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-xml-lang-mismatch": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "image-alt": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "input-button-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "input-image-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "label": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "link-in-text-block": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "link-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "list": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "listitem": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "meta-refresh": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "meta-viewport": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "object-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "select-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "skip-link": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "tabindex": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "target-size": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "td-headers-attr": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "th-has-data-cells": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "valid-lang": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "video-caption": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "landmark-one-main": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "autocomplete-valid": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "presentation-role-conflict": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "svg-img-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "focusable-controls": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "interactive-element-affordance": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "logical-tab-order": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "visual-order-follows-dom": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "focus-traps": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "managed-focus": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "use-landmarks": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "offscreen-content-hidden": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "custom-controls-labels": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "custom-controls-roles": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "table-duplicate-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "empty-heading": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-allowed-role": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "image-redundant-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "identical-links-same-purpose": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "label-content-name-mismatch": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "table-fake-caption": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "td-has-header": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      }
+    },
+    "estado": "aprovado"
+  },
+  {
+    "id": "CT42-historico",
+    "perfil": "paciente",
+    "tela": "historico",
+    "tempoInterfaceMs": 415,
+    "versao": "13.6.0",
+    "pontuacao": 0.98,
+    "auditorias": {
+      "accesskeys": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-allowed-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-command-name": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-conditional-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-deprecated-role": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-dialog-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-hidden-body": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-hidden-focus": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-input-field-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-meter-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-progressbar-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-prohibited-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-required-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-required-children": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-required-parent": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-roles": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-text": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-toggle-field-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-tooltip-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-treeitem-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-valid-attr-value": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-valid-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "button-name": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "bypass": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "color-contrast": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "definition-list": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "dlitem": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "document-title": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "duplicate-id-aria": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "form-field-multiple-labels": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "frame-title": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "heading-order": {
+        "pontuacao": 0,
+        "estado": "binary"
+      },
+      "html-has-lang": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-lang-valid": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-xml-lang-mismatch": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "image-alt": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "input-button-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "input-image-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "label": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "link-in-text-block": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "link-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "list": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "listitem": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "meta-refresh": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "meta-viewport": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "object-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "select-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "skip-link": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "tabindex": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "target-size": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "td-headers-attr": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "th-has-data-cells": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "valid-lang": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "video-caption": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "landmark-one-main": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "autocomplete-valid": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "presentation-role-conflict": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "svg-img-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "focusable-controls": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "interactive-element-affordance": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "logical-tab-order": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "visual-order-follows-dom": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "focus-traps": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "managed-focus": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "use-landmarks": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "offscreen-content-hidden": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "custom-controls-labels": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "custom-controls-roles": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "table-duplicate-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "empty-heading": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-allowed-role": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "image-redundant-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "identical-links-same-purpose": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "label-content-name-mismatch": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "table-fake-caption": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "td-has-header": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      }
+    },
+    "estado": "reprovado"
+  },
+  {
+    "id": "CT42-orientacoes",
+    "perfil": "paciente",
+    "tela": "orientacoes",
+    "tempoInterfaceMs": 411,
+    "versao": "13.6.0",
+    "pontuacao": 0.98,
+    "auditorias": {
+      "accesskeys": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-allowed-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-command-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-conditional-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-deprecated-role": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-dialog-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-hidden-body": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-hidden-focus": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-input-field-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-meter-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-progressbar-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-prohibited-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-required-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-required-children": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-required-parent": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-roles": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-text": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-toggle-field-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-tooltip-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-treeitem-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-valid-attr-value": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-valid-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "button-name": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "bypass": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "color-contrast": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "definition-list": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "dlitem": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "document-title": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "duplicate-id-aria": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "form-field-multiple-labels": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "frame-title": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "heading-order": {
+        "pontuacao": 0,
+        "estado": "binary"
+      },
+      "html-has-lang": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-lang-valid": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-xml-lang-mismatch": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "image-alt": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "input-button-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "input-image-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "label": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "link-in-text-block": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "link-name": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "list": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "listitem": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "meta-refresh": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "meta-viewport": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "object-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "select-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "skip-link": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "tabindex": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "target-size": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "td-headers-attr": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "th-has-data-cells": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "valid-lang": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "video-caption": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "landmark-one-main": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "autocomplete-valid": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "presentation-role-conflict": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "svg-img-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "focusable-controls": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "interactive-element-affordance": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "logical-tab-order": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "visual-order-follows-dom": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "focus-traps": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "managed-focus": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "use-landmarks": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "offscreen-content-hidden": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "custom-controls-labels": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "custom-controls-roles": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "table-duplicate-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "empty-heading": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-allowed-role": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "image-redundant-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "identical-links-same-purpose": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "label-content-name-mismatch": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "table-fake-caption": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "td-has-header": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      }
+    },
+    "estado": "reprovado"
+  },
+  {
+    "id": "CT42-contatos",
+    "perfil": "paciente",
+    "tela": "contatos",
+    "tempoInterfaceMs": 407,
+    "versao": "13.6.0",
+    "pontuacao": 0.98,
+    "auditorias": {
+      "accesskeys": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-allowed-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-command-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-conditional-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-deprecated-role": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-dialog-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-hidden-body": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-hidden-focus": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-input-field-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-meter-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-progressbar-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-prohibited-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-required-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-required-children": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-required-parent": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-roles": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-text": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-toggle-field-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-tooltip-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-treeitem-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-valid-attr-value": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-valid-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "button-name": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "bypass": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "color-contrast": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "definition-list": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "dlitem": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "document-title": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "duplicate-id-aria": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "form-field-multiple-labels": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "frame-title": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "heading-order": {
+        "pontuacao": 0,
+        "estado": "binary"
+      },
+      "html-has-lang": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-lang-valid": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-xml-lang-mismatch": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "image-alt": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "input-button-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "input-image-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "label": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "link-in-text-block": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "link-name": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "list": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "listitem": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "meta-refresh": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "meta-viewport": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "object-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "select-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "skip-link": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "tabindex": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "target-size": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "td-headers-attr": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "th-has-data-cells": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "valid-lang": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "video-caption": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "landmark-one-main": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "autocomplete-valid": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "presentation-role-conflict": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "svg-img-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "focusable-controls": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "interactive-element-affordance": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "logical-tab-order": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "visual-order-follows-dom": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "focus-traps": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "managed-focus": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "use-landmarks": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "offscreen-content-hidden": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "custom-controls-labels": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "custom-controls-roles": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "table-duplicate-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "empty-heading": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-allowed-role": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "image-redundant-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "identical-links-same-purpose": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "label-content-name-mismatch": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "table-fake-caption": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "td-has-header": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      }
+    },
+    "estado": "reprovado"
+  },
+  {
+    "id": "CT42-profissional",
+    "perfil": "fisioterapeuta",
+    "tela": "profissional",
+    "versao": "13.6.0",
+    "pontuacao": 0.98,
+    "auditorias": {
+      "accesskeys": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-allowed-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-command-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-conditional-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-deprecated-role": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-dialog-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-hidden-body": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-hidden-focus": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-input-field-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-meter-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-progressbar-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-prohibited-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-required-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-required-children": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-required-parent": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-roles": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-text": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-toggle-field-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-tooltip-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-treeitem-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-valid-attr-value": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-valid-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "button-name": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "bypass": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "color-contrast": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "definition-list": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "dlitem": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "document-title": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "duplicate-id-aria": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "form-field-multiple-labels": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "frame-title": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "heading-order": {
+        "pontuacao": 0,
+        "estado": "binary"
+      },
+      "html-has-lang": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-lang-valid": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-xml-lang-mismatch": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "image-alt": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "input-button-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "input-image-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "label": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "link-in-text-block": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "link-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "list": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "listitem": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "meta-refresh": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "meta-viewport": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "object-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "select-name": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "skip-link": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "tabindex": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "target-size": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "td-headers-attr": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "th-has-data-cells": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "valid-lang": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "video-caption": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "landmark-one-main": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "autocomplete-valid": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "presentation-role-conflict": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "svg-img-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "focusable-controls": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "interactive-element-affordance": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "logical-tab-order": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "visual-order-follows-dom": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "focus-traps": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "managed-focus": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "use-landmarks": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "offscreen-content-hidden": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "custom-controls-labels": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "custom-controls-roles": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "table-duplicate-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "empty-heading": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-allowed-role": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "image-redundant-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "identical-links-same-purpose": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "label-content-name-mismatch": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "table-fake-caption": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "td-has-header": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      }
+    },
+    "estado": "reprovado",
+    "tempoLoginMs": 838
+  },
+  {
+    "id": "CT42-registros-prof",
+    "perfil": "fisioterapeuta",
+    "tela": "registros-prof",
+    "tempoInterfaceMs": 402,
+    "versao": "13.6.0",
+    "pontuacao": 0.98,
+    "auditorias": {
+      "accesskeys": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-allowed-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-command-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-conditional-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-deprecated-role": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-dialog-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-hidden-body": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-hidden-focus": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-input-field-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-meter-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-progressbar-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-prohibited-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-required-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-required-children": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-required-parent": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-roles": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-text": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-toggle-field-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-tooltip-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-treeitem-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-valid-attr-value": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-valid-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "button-name": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "bypass": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "color-contrast": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "definition-list": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "dlitem": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "document-title": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "duplicate-id-aria": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "form-field-multiple-labels": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "frame-title": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "heading-order": {
+        "pontuacao": 0,
+        "estado": "binary"
+      },
+      "html-has-lang": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-lang-valid": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-xml-lang-mismatch": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "image-alt": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "input-button-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "input-image-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "label": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "link-in-text-block": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "link-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "list": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "listitem": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "meta-refresh": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "meta-viewport": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "object-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "select-name": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "skip-link": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "tabindex": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "target-size": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "td-headers-attr": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "th-has-data-cells": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "valid-lang": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "video-caption": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "landmark-one-main": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "autocomplete-valid": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "presentation-role-conflict": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "svg-img-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "focusable-controls": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "interactive-element-affordance": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "logical-tab-order": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "visual-order-follows-dom": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "focus-traps": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "managed-focus": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "use-landmarks": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "offscreen-content-hidden": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "custom-controls-labels": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "custom-controls-roles": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "table-duplicate-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "empty-heading": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-allowed-role": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "image-redundant-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "identical-links-same-purpose": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "label-content-name-mismatch": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "table-fake-caption": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "td-has-header": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      }
+    },
+    "estado": "reprovado"
+  },
+  {
+    "id": "CT42-planos-prof",
+    "perfil": "fisioterapeuta",
+    "tela": "planos-prof",
+    "tempoInterfaceMs": 394,
+    "versao": "13.6.0",
+    "pontuacao": 0.98,
+    "auditorias": {
+      "accesskeys": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-allowed-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-command-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-conditional-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-deprecated-role": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-dialog-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-hidden-body": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-hidden-focus": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-input-field-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-meter-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-progressbar-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-prohibited-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-required-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-required-children": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-required-parent": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-roles": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-text": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-toggle-field-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-tooltip-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-treeitem-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-valid-attr-value": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-valid-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "button-name": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "bypass": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "color-contrast": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "definition-list": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "dlitem": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "document-title": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "duplicate-id-aria": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "form-field-multiple-labels": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "frame-title": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "heading-order": {
+        "pontuacao": 0,
+        "estado": "binary"
+      },
+      "html-has-lang": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-lang-valid": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-xml-lang-mismatch": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "image-alt": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "input-button-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "input-image-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "label": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "link-in-text-block": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "link-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "list": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "listitem": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "meta-refresh": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "meta-viewport": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "object-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "select-name": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "skip-link": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "tabindex": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "target-size": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "td-headers-attr": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "th-has-data-cells": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "valid-lang": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "video-caption": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "landmark-one-main": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "autocomplete-valid": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "presentation-role-conflict": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "svg-img-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "focusable-controls": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "interactive-element-affordance": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "logical-tab-order": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "visual-order-follows-dom": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "focus-traps": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "managed-focus": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "use-landmarks": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "offscreen-content-hidden": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "custom-controls-labels": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "custom-controls-roles": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "table-duplicate-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "empty-heading": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-allowed-role": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "image-redundant-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "identical-links-same-purpose": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "label-content-name-mismatch": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "table-fake-caption": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "td-has-header": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      }
+    },
+    "estado": "reprovado"
+  },
+  {
+    "id": "CT42-editor-prof",
+    "perfil": "fisioterapeuta",
+    "tela": "editor-prof",
+    "tempoInterfaceMs": 28,
+    "versao": "13.6.0",
+    "pontuacao": 0.98,
+    "auditorias": {
+      "accesskeys": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-allowed-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-command-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-conditional-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-deprecated-role": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-dialog-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-hidden-body": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-hidden-focus": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-input-field-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-meter-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-progressbar-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-prohibited-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-required-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-required-children": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-required-parent": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-roles": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-text": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-toggle-field-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-tooltip-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-treeitem-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-valid-attr-value": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-valid-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "button-name": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "bypass": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "color-contrast": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "definition-list": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "dlitem": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "document-title": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "duplicate-id-aria": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "form-field-multiple-labels": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "frame-title": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "heading-order": {
+        "pontuacao": 0,
+        "estado": "binary"
+      },
+      "html-has-lang": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-lang-valid": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-xml-lang-mismatch": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "image-alt": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "input-button-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "input-image-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "label": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "link-in-text-block": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "link-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "list": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "listitem": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "meta-refresh": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "meta-viewport": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "object-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "select-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "skip-link": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "tabindex": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "target-size": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "td-headers-attr": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "th-has-data-cells": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "valid-lang": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "video-caption": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "landmark-one-main": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "autocomplete-valid": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "presentation-role-conflict": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "svg-img-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "focusable-controls": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "interactive-element-affordance": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "logical-tab-order": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "visual-order-follows-dom": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "focus-traps": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "managed-focus": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "use-landmarks": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "offscreen-content-hidden": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "custom-controls-labels": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "custom-controls-roles": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "table-duplicate-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "empty-heading": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-allowed-role": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "image-redundant-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "identical-links-same-purpose": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "label-content-name-mismatch": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "table-fake-caption": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "td-has-header": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      }
+    },
+    "estado": "reprovado"
+  },
+  {
+    "id": "CT42-exercise-config-prof",
+    "perfil": "fisioterapeuta",
+    "tela": "exercise-config-prof",
+    "tempoInterfaceMs": 62,
+    "versao": "13.6.0",
+    "pontuacao": 1,
+    "auditorias": {
+      "accesskeys": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-allowed-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-command-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-conditional-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-deprecated-role": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-dialog-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-hidden-body": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-hidden-focus": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-input-field-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-meter-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-progressbar-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-prohibited-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-required-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-required-children": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-required-parent": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-roles": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-text": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-toggle-field-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-tooltip-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-treeitem-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-valid-attr-value": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-valid-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "button-name": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "bypass": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "color-contrast": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "definition-list": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "dlitem": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "document-title": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "duplicate-id-aria": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "form-field-multiple-labels": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "frame-title": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "heading-order": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-has-lang": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-lang-valid": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-xml-lang-mismatch": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "image-alt": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "input-button-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "input-image-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "label": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "link-in-text-block": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "link-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "list": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "listitem": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "meta-refresh": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "meta-viewport": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "object-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "select-name": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "skip-link": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "tabindex": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "target-size": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "td-headers-attr": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "th-has-data-cells": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "valid-lang": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "video-caption": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "landmark-one-main": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "autocomplete-valid": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "presentation-role-conflict": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "svg-img-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "focusable-controls": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "interactive-element-affordance": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "logical-tab-order": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "visual-order-follows-dom": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "focus-traps": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "managed-focus": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "use-landmarks": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "offscreen-content-hidden": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "custom-controls-labels": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "custom-controls-roles": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "table-duplicate-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "empty-heading": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-allowed-role": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "image-redundant-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "identical-links-same-purpose": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "label-content-name-mismatch": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "table-fake-caption": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "td-has-header": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      }
+    },
+    "estado": "aprovado"
+  },
+  {
+    "id": "CT42-exercise-bank-prof",
+    "perfil": "fisioterapeuta",
+    "tela": "exercise-bank-prof",
+    "tempoInterfaceMs": 507,
+    "versao": "13.6.0",
+    "pontuacao": 1,
+    "auditorias": {
+      "accesskeys": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-allowed-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-command-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-conditional-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-deprecated-role": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-dialog-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-hidden-body": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-hidden-focus": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-input-field-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-meter-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-progressbar-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-prohibited-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-required-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-required-children": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-required-parent": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-roles": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-text": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-toggle-field-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-tooltip-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-treeitem-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-valid-attr-value": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "aria-valid-attr": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "button-name": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "bypass": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "color-contrast": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "definition-list": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "dlitem": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "document-title": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "duplicate-id-aria": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "form-field-multiple-labels": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "frame-title": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "heading-order": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-has-lang": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-lang-valid": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "html-xml-lang-mismatch": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "image-alt": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "input-button-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "input-image-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "label": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "link-in-text-block": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "link-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "list": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "listitem": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "meta-refresh": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "meta-viewport": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "object-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "select-name": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "skip-link": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "tabindex": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "target-size": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "td-headers-attr": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "th-has-data-cells": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "valid-lang": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "video-caption": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "landmark-one-main": {
+        "pontuacao": 1,
+        "estado": "binary"
+      },
+      "autocomplete-valid": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "presentation-role-conflict": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "svg-img-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "focusable-controls": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "interactive-element-affordance": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "logical-tab-order": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "visual-order-follows-dom": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "focus-traps": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "managed-focus": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "use-landmarks": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "offscreen-content-hidden": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "custom-controls-labels": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "custom-controls-roles": {
+        "pontuacao": null,
+        "estado": "manual"
+      },
+      "table-duplicate-name": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "empty-heading": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "aria-allowed-role": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "image-redundant-alt": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "identical-links-same-purpose": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "label-content-name-mismatch": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "table-fake-caption": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      },
+      "td-has-header": {
+        "pontuacao": null,
+        "estado": "notApplicable"
+      }
+    },
+    "estado": "aprovado"
+  }
+]

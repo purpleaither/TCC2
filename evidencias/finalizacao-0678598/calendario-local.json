@@ -1,0 +1,20 @@
+[
+  {
+    "tema": "claro",
+    "versao": "4.14.1",
+    "registros": 4,
+    "violacoes": []
+  },
+  {
+    "tema": "escuro",
+    "versao": "4.14.1",
+    "registros": 4,
+    "violacoes": []
+  },
+  {
+    "tema": "contraste",
+    "versao": "4.14.1",
+    "registros": 4,
+    "violacoes": []
+  }
+]

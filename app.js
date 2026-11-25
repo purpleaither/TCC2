@@ -147,23 +147,22 @@ function gerarHeatmap() {
     });
     var cell = document.createElement('div');
     cell.className = 'heatmap-cell';
+    var valorVisivel = treinosDoDia.length ? '✓' : '-';
 
     if (!regDoDia) {
-      cell.style.backgroundColor = '#f9f9f9';
-      cell.style.borderColor = '#ddd';
-      cell.innerHTML = '<span class="heatmap-cell-day" style="color:#888">' + i + '</span><span class="heatmap-cell-value" style="color:#888">' + (treinosDoDia.length ? '✓' : '-') + '</span>';
+      cell.style.backgroundColor = 'var(--superficie-neutra)';
+      cell.style.borderColor = 'var(--linha)';
+      cell.innerHTML = '<span class="heatmap-cell-day">' + i + '</span> <span class="heatmap-cell-value">' + valorVisivel + '</span>';
     } else {
       var v = (filtroDorVisualizacao === 0) ? regDoDia.dorRepouso : regDoDia.dorMovimento;
       totalDor += v;
       if (v > maxDor) maxDor = v;
       diasComRegistro++;
 
-      if (v === 0) cell.style.backgroundColor = '#f4f4f4';
-      else if (v <= 3) cell.style.backgroundColor = '#ffe48a';
-      else if (v <= 6) cell.style.backgroundColor = '#ffb464';
-      else cell.style.backgroundColor = '#f17b72';
+      cell.dataset.intensidade = v === 0 ? 'nenhuma' : v <= 3 ? 'leve' : v <= 6 ? 'moderada' : 'intensa';
 
-      cell.innerHTML = '<span class="heatmap-cell-day">' + i + '</span><span class="heatmap-cell-value">' + v + '/10</span>';
+      valorVisivel = v + '/10';
+      cell.innerHTML = '<span class="heatmap-cell-day">' + i + '</span> <span class="heatmap-cell-value">' + valorVisivel + '</span>';
       
       (function(dia, reg) {
         cell.onclick = function() { abrirClimaSheet(dia, reg); };
@@ -175,7 +174,7 @@ function gerarHeatmap() {
       if (regDoDia) {
         var marker = document.createElement('span');
         marker.className = 'heatmap-workout-marker';
-        marker.textContent = '✓';
+        marker.textContent = ' ✓';
         cell.appendChild(marker);
       }
     }
@@ -184,7 +183,9 @@ function gerarHeatmap() {
         cell.onclick = function() { abrirClimaSheet(dia, registro || null); };
         cell.tabIndex = 0;
         cell.setAttribute('role', 'button');
-        cell.setAttribute('aria-label', 'Ver registros do dia ' + dia + (treinosDoDia.length ? ' e treinos concluídos' : ''));
+        var marcador = registro && treinosDoDia.length ? ' ✓' : '';
+        var descricao = treinosDoDia.length ? ' e treinos concluídos' : '';
+        cell.setAttribute('aria-label', 'Ver registros do dia ' + dia + ' ' + valorVisivel + marcador + descricao);
         cell.onkeydown = function(event) {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
@@ -235,7 +236,7 @@ function apresentarClimaNoPainel(registro) {
   var card = document.getElementById('climaLiberado');
   if (!card) return;
   card.replaceChildren();
-  var titulo = document.createElement('h3');
+  var titulo = document.createElement('h2');
   titulo.className = 'weather-title';
   titulo.textContent = 'Informações meteorológicas';
   card.append(titulo);

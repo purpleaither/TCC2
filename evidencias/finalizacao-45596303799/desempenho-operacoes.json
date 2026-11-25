@@ -1,0 +1,159 @@
+{
+  "commit": "3ce36c312150ab43365bce3a1d890e58c444d73f",
+  "navegador": "145.0.7632.6",
+  "ambiente": "Ubuntu 24.04, loopback e APIs reais",
+  "rede": "Runner GitHub sem throttling",
+  "cache": "Novo Chromium por script, cache padrão dentro da operação",
+  "casos": [
+    {
+      "nome": "criar-plano",
+      "limite": 3000,
+      "medicoes": [
+        {
+          "rodada": 1,
+          "data": "2026-11-25T10:38:51.938Z",
+          "ms": 1455
+        },
+        {
+          "rodada": 2,
+          "data": "2026-11-25T10:39:31.030Z",
+          "ms": 1450
+        },
+        {
+          "rodada": 3,
+          "data": "2026-11-25T10:40:09.102Z",
+          "ms": 954
+        }
+      ],
+      "minimo": 954,
+      "maximo": 1455,
+      "mediana": 1450,
+      "estado": "aprovado"
+    },
+    {
+      "nome": "editar-plano",
+      "limite": 6000,
+      "medicoes": [
+        {
+          "rodada": 1,
+          "data": "2026-11-25T10:38:51.938Z",
+          "ms": 5684
+        },
+        {
+          "rodada": 2,
+          "data": "2026-11-25T10:39:31.030Z",
+          "ms": 5683
+        },
+        {
+          "rodada": 3,
+          "data": "2026-11-25T10:40:09.102Z",
+          "ms": 5205
+        }
+      ],
+      "minimo": 5205,
+      "maximo": 5684,
+      "mediana": 5683,
+      "estado": "aprovado"
+    },
+    {
+      "nome": "sintoma-clima",
+      "limite": 3000,
+      "medicoes": [
+        {
+          "rodada": 1,
+          "data": "2026-11-25T10:38:56.319Z",
+          "ms": 448
+        },
+        {
+          "rodada": 2,
+          "data": "2026-11-25T10:39:35.681Z",
+          "ms": 245
+        },
+        {
+          "rodada": 3,
+          "data": "2026-11-25T10:40:12.657Z",
+          "ms": 220
+        }
+      ],
+      "minimo": 220,
+      "maximo": 448,
+      "mediana": 245,
+      "estado": "aprovado"
+    },
+    {
+      "nome": "sintoma-falha",
+      "limite": 3500,
+      "medicoes": [
+        {
+          "rodada": 1,
+          "data": "2026-11-25T10:39:00.984Z",
+          "ms": 1166
+        },
+        {
+          "rodada": 2,
+          "data": "2026-11-25T10:39:41.881Z",
+          "ms": 1347
+        },
+        {
+          "rodada": 3,
+          "data": "2026-11-25T10:40:17.275Z",
+          "ms": 1374
+        }
+      ],
+      "minimo": 1166,
+      "maximo": 1374,
+      "mediana": 1347,
+      "estado": "aprovado"
+    },
+    {
+      "nome": "concluir-exercicio",
+      "limite": 3000,
+      "medicoes": [
+        {
+          "rodada": 1,
+          "data": "2026-11-25T10:39:12.669Z",
+          "ms": 1457
+        },
+        {
+          "rodada": 2,
+          "data": "2026-11-25T10:39:52.199Z",
+          "ms": 997
+        },
+        {
+          "rodada": 3,
+          "data": "2026-11-25T10:40:28.342Z",
+          "ms": 1197
+        }
+      ],
+      "minimo": 997,
+      "maximo": 1457,
+      "mediana": 1197,
+      "estado": "aprovado"
+    },
+    {
+      "nome": "consultar-historico",
+      "limite": 3000,
+      "medicoes": [
+        {
+          "rodada": 1,
+          "data": "2026-11-25T10:39:12.669Z",
+          "ms": 1279
+        },
+        {
+          "rodada": 2,
+          "data": "2026-11-25T10:39:52.199Z",
+          "ms": 673
+        },
+        {
+          "rodada": 3,
+          "data": "2026-11-25T10:40:28.342Z",
+          "ms": 1324
+        }
+      ],
+      "minimo": 673,
+      "maximo": 1324,
+      "mediana": 1279,
+      "estado": "aprovado"
+    }
+  ]
+}
