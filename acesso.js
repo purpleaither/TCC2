@@ -1,7 +1,13 @@
-"use strict";
+import { $, el, text } from './src/utils/dom.js';
+import { date, localDateKey, monitoringWeeks } from './src/utils/datas.js';
+import { levels } from './src/types/sintomas.js';
+import { criarControleDeSolicitacao } from './src/hooks/solicitacao.js';
+import { conectarBanco, consultarPerfil, consultarPacientesVinculados, autenticar, encerrarSessao, consultarUsuario, consultarSessao, observarSessao } from './src/services/banco.js';
+import { obterClimaBrasilia, mapWeather } from './src/services/clima.js';
+import { consultarDadosPaciente, registrarSintomas, registrarTreino } from './src/services/paciente.js';
+import { gravarPlano, excluirPlano } from './src/services/planos.js';
+import { consultarExerciseBank, consultarWger } from './src/services/biblioteca.js';
 
-const $ = id => document.getElementById(id);
-const levels = ["Nenhuma", "Leve", "Moderada", "Intensa"];
 const exercises = [
   {id:"e1",name:"Ponte de glúteos",area:"Musculoesquelética",info:"Elevação controlada da pelve conforme prescrição."},
   {id:"e2",name:"Mobilidade de tornozelo",area:"Musculoesquelética",info:"Flexão dorsal e plantar dentro dos limites orientados."},
@@ -20,30 +26,12 @@ let patientId = null;
 let plans = [];
 let records = [];
 let professionalWorkouts;
-let patientLoadVersion = 0;
+const cargaPaciente = criarControleDeSolicitacao();
 let editingPlan = null;
 let busy = false;
 let loginReady = false;
-let weatherColumnsAvailable = true;
+const configuracaoDados = { weatherColumnsAvailable: true };
 
-function el(tag, content, cls) {
-  const n = document.createElement(tag);
-  if (content !== undefined) n.textContent = String(content);
-  if (cls) n.className = cls;
-  return n;
-}
-function text(id,value) {
-  const n = $(id);
-  if(n) n.textContent = String(value);
-}
-function result(reply) {
-  if(reply.error) throw reply.error;
-  return reply.data;
-}
-function date(value) {
-  const d = new Date(value);
-  return Number.isNaN(d.getTime()) ? "Data indisponível" : d.toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"});
-}
 function isAuthenticated() { return !!(user && profile); }
 function isProfessional() { return isAuthenticated() && profile.role === "fisioterapeuta"; }
 function homePage() { return isProfessional() ? "profissional" : "inicio"; }
@@ -104,7 +92,7 @@ async function login() {
   $("loginSubmit").disabled=true;
   text("loginStatus", "");
   try {
-    result(await supabase.auth.signInWithPassword({email,password}));
+    await autenticar(supabase, email, password);
     $("loginSenha").value="";
     await openSession();
   } catch(err) {
@@ -117,13 +105,13 @@ async function login() {
 
 async function logout() {
   if(supabase) {
-    try { await supabase.auth.signOut(); }
+    try { await encerrarSessao(supabase); }
     catch(err) { message("Não foi possível encerrar a sessão. Tente novamente.",true); return; }
   }
   reset();
 }
 function reset() {
-  patientLoadVersion += 1;
+  cargaPaciente.invalidar();
   professionalWorkouts = undefined;
   user=null;
   profile=null;
@@ -143,17 +131,15 @@ function reset() {
   navigate("login");
 }
 async function openSession() {
-  const me = result(await supabase.auth.getUser()).user;
+  const me = await consultarUsuario(supabase);
   if(!me) {reset();return;}
-  const ownProfile=result(await supabase.from("profiles").select("id,display_name,role").eq("id",me.id).single());
+  const ownProfile=await consultarPerfil(supabase, me.id);
   if(!ownProfile || !["paciente","fisioterapeuta"].includes(ownProfile.role))throw Error("Perfil não cadastrado");
   user=me;
   profile=ownProfile;
   menu();
   if(isProfessional()) {
-    const links=result(await supabase.from("care_links").select("patient_id").eq("physiotherapist_id",user.id));
-    const ids=(links||[]).map(x=>x.patient_id);
-    patients=ids.length ? result(await supabase.from("profiles").select("id,display_name").in("id",ids)) : [];
+    patients = await consultarPacientesVinculados(supabase, user.id);
     patientId=patients[0]?.id||null;
     updatePatientSelectors();
     text("profGreeting","Olá, "+profile.display_name);
@@ -193,50 +179,8 @@ async function selectPatient(id) {
   updatePatientSelectors();
   await loadPatientData();
 }
-async function consultarClimaBrasilia() {
-  const response = await fetch("/api/weather", {
-    signal: AbortSignal.timeout(12000),
-    cache: "no-store"
-  });
-  if (!response.ok) throw Error("Serviço meteorológico indisponível");
-  const clima = await response.json();
-  if (!clima || ![clima.weather_temperature, clima.weather_humidity, clima.weather_pressure].every(Number.isFinite) ||
-      clima.weather_city !== "Brasília" || !Number.isFinite(Date.parse(clima.weather_observed_at))) {
-    throw Error("Dados meteorológicos inválidos");
-  }
-  return clima;
-}
-
-// Tenta novamente se o serviço meteorológico estiver temporariamente indisponível.
-async function obterClimaBrasilia() {
-  for (let tentativa = 1; tentativa <= 2; tentativa++) {
-    try {
-      return await consultarClimaBrasilia();
-    } catch (erro) {
-      if (tentativa === 2) throw erro;
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    }
-  }
-}
-
-function isMissingWeatherColumns(error) {
-  const code = error && error.code;
-  return code === "42703" || code === "PGRST204";
-}
-
-function mapWeather(registro) {
-  if (registro.weather_temperature == null || registro.weather_humidity == null || registro.weather_pressure == null) return null;
-  return {
-    cidade:registro.weather_city || "Brasília",
-    temperatura:registro.weather_temperature,
-    umidade:registro.weather_humidity,
-    pressao:registro.weather_pressure,
-    observadoEm:registro.weather_observed_at || registro.recorded_at
-  };
-}
-
 async function loadPatientData() {
-  const version = ++patientLoadVersion;
+  const aindaAtual = cargaPaciente.iniciar();
   const selectedPatient = patientId;
   const professional = isProfessional();
   plans=[];
@@ -249,26 +193,10 @@ async function loadPatientData() {
     return;
   }
   try {
-    const loadedPlans=result(await supabase.from("care_plans")
-      .select("id,title,notes,created_at,updated_at,plan_exercises(id,exercise_name,exercise_source,external_id,series,repetitions,duration,frequency,instructions,position)")
-      .eq("patient_id",selectedPatient).order("created_at",{ascending:false}))||[];
-    const baseFields="id,recorded_at,pain_rest,pain_movement,stiffness,fatigue";
-    const weatherFields=",weather_city,weather_temperature,weather_humidity,weather_pressure,weather_observed_at";
-    let symptomsResponse=await supabase.from("symptom_records")
-      .select(baseFields+(weatherColumnsAvailable?weatherFields:""))
-      .eq("patient_id",selectedPatient).order("recorded_at",{ascending:false}).limit(500);
-    if (symptomsResponse.error && weatherColumnsAvailable && isMissingWeatherColumns(symptomsResponse.error)) {
-      weatherColumnsAvailable=false;
-      symptomsResponse=await supabase.from("symptom_records").select(baseFields)
-        .eq("patient_id",selectedPatient).order("recorded_at",{ascending:false}).limit(500);
-    }
-    const loadedRecords = result(symptomsResponse) || [];
-    let workouts = supabase.from("workout_sessions")
-      .select(professional ? "completed_at,exercises" : "id,patient_id,completed_at,exercises")
-      .eq("patient_id", selectedPatient).order("completed_at", { ascending: false }).limit(500);
-    if (professional) workouts = workouts.gte("completed_at", monitoringWeeks()[0].toISOString());
-    const workoutResponse = await workouts;
-    if (version !== patientLoadVersion) return;
+    const { loadedPlans, loadedRecords, workoutResponse } = await consultarDadosPaciente(
+      supabase, selectedPatient, professional ? monitoringWeeks()[0] : null, configuracaoDados
+    );
+    if (!aindaAtual()) return;
     plans = loadedPlans;
     records = loadedRecords;
     if(professional){
@@ -294,7 +222,7 @@ async function loadPatientData() {
       renderPatientPlans();
     }
   } catch(err) {
-    if (version !== patientLoadVersion) return;
+    if (!aindaAtual()) return;
     if (professional) {
       professionalWorkouts = null;
       renderProfessionalRecords();
@@ -303,11 +231,6 @@ async function loadPatientData() {
   }
 }
 // Conselho educativo por sintomas do dia, sem diagnóstico nem mudança da prescrição.
-function localDateKey(value){
-  const day=new Date(value);
-  if(Number.isNaN(day.getTime()))return "";
-  return [day.getFullYear(),String(day.getMonth()+1).padStart(2,"0"),String(day.getDate()).padStart(2,"0")].join("-");
-}
 function todaysPatientSymptoms(){
   if(isProfessional()||!records.length)return null;
   const today=localDateKey(new Date());
@@ -366,7 +289,7 @@ async function completePatientWorkout(){
       external_id:exercise.external_id,series:exercise.series,repetitions:exercise.repetitions,
       duration:exercise.duration,frequency:exercise.frequency,position:exercise.position
     }));
-    result(await supabase.from("workout_sessions").insert({patient_id:user.id,exercises}));
+    await registrarTreino(supabase, user.id, exercises);
     workoutCompletedInView=true;
     await loadPatientData();
     message("Treino concluído e registrado no histórico.");
@@ -549,12 +472,6 @@ function renderProfessionalPlans(){
     root.append(card);
   }
 }
-function monitoringWeeks(){
-  const today = new Date();
-  return [27, 20, 13, 6, -1].map(offset =>
-    new Date(today.getFullYear(), today.getMonth(), today.getDate() - offset));
-}
-
 function monitoringBars(rows, maximum, title){
   const list = el("ul", undefined, "monitoring-bars");
   list.setAttribute("role", "list");
@@ -977,24 +894,14 @@ async function savePlan(event){
   if(items.some(x=>x.exercise_name.length<2||!Number.isInteger(x.series)||x.series<1||x.series>20||(!x.repetitions&&!x.duration)||!x.frequency))
     return message("Verifique o exercício, as séries, as repetições ou duração e a frequência.",true);
   busy=true;
-  let insertedId=null;
   try{
     const data={title,notes:$("orientacoesPlanoProf").value.trim(),patient_id:patientId,physiotherapist_id:user.id};
-    if(editingPlan){
-      result(await supabase.from("care_plans").update({title:data.title,notes:data.notes,updated_at:new Date().toISOString()}).eq("id",editingPlan));
-      result(await supabase.from("plan_exercises").delete().eq("plan_id",editingPlan));
-      result(await supabase.from("plan_exercises").insert(items.map(x=>({...x,plan_id:editingPlan}))));
-    }else{
-      const plan=result(await supabase.from("care_plans").insert(data).select("id").single());
-      insertedId=plan.id;
-      result(await supabase.from("plan_exercises").insert(items.map(x=>({...x,plan_id:insertedId}))));
-    }
+    await gravarPlano(supabase, editingPlan, data, items);
     clearPlanForm();
     await loadPatientData();
     navigate("planos-prof");
     message("Plano salvo para o paciente vinculado.");
   }catch(err){
-    if(insertedId)await supabase.from("care_plans").delete().eq("id",insertedId);
     message("Não foi possível salvar o plano. Verifique os dados e tente novamente.",true);
   }finally{busy=false;}
 }
@@ -1002,7 +909,7 @@ async function deletePlan(id){
   if(!isProfessional()||busy||!confirm("Excluir este plano?"))return;
   busy=true;
   try{
-    result(await supabase.from("care_plans").delete().eq("id",id));
+    await excluirPlano(supabase, id);
     clearPlanForm();
     await loadPatientData();
     message("Plano excluído.");
@@ -1025,22 +932,13 @@ async function saveSymptoms(){
       stiffness:levels[rigidezAtual]||"Leve",
       fatigue:levels[fadigaAtual]||"Leve"
     };
-    if(clima && weatherColumnsAvailable)Object.assign(registro,clima);
-    let saved=await supabase.from("symptom_records").insert(registro);
-    if(saved.error && clima && isMissingWeatherColumns(saved.error)) {
-      weatherColumnsAvailable=false;
-      saved=await supabase.from("symptom_records").insert({
-        patient_id:user.id,pain_rest:painRest,pain_movement:painMove,
-        stiffness:levels[rigidezAtual]||"Leve",
-        fatigue:levels[fadigaAtual]||"Leve"
-      });
-    }
-    result(saved);
+    if(clima && configuracaoDados.weatherColumnsAvailable)Object.assign(registro,clima);
+    await registrarSintomas(supabase, registro, clima, configuracaoDados);
     await loadPatientData();
     navigate("inicio");
-    message(clima&&weatherColumnsAvailable
+    message(clima&&configuracaoDados.weatherColumnsAvailable
       ? "Sintomas e condições meteorológicas registrados. O plano permanece inalterado."
-      : "Sintomas registrados. Clima indisponível ou atualização do banco pendente; nenhuma medição foi associada a este registro.", !(clima&&weatherColumnsAvailable));
+      : "Sintomas registrados. Clima indisponível ou atualização do banco pendente; nenhuma medição foi associada a este registro.", !(clima&&configuracaoDados.weatherColumnsAvailable));
     if(atipico===1||Math.max(painRest,painMove)>=8)
       alert("Se os sintomas forem intensos ou inesperados, procure orientação profissional. Este aplicativo não realiza triagem clínica.");
   }catch(err){message("Não foi possível salvar os sintomas. Confira a conexão.",true);}
@@ -1049,16 +947,11 @@ async function saveSymptoms(){
 
 
 let sampleList=null,loadingSample=false;
-async function ebCall(opts={}){
-  if(!supabase||!isAuthenticated())throw Error("Entre para consultar a biblioteca.");
-  const session=await supabase.auth.getSession();
-  const token=session.data?.session?.access_token;
-  if(!token)throw Error("Sua sessão terminou. Entre novamente.");
-  const response=await fetch("/api/exercisebank",{...opts,headers:{Authorization:"Bearer "+token,...opts.headers},cache:"no-store"});
-  const data=await response.json().catch(()=>({}));
-  if(!response.ok)throw Error(data.error||"ExerciseBank indisponível.");
-  return data;
+function ebCall(opts) {
+  if (!supabase || !isAuthenticated()) throw Error("Entre para consultar a biblioteca.");
+  return consultarExerciseBank(supabase, opts);
 }
+
 async function loadSample(){
   if(!isProfessional()||loadingSample)return;
   if(sampleList){renderSample();return;}
@@ -1434,8 +1327,7 @@ async function loadExerciseMedia(id,target,button,source="ExerciseBank",autoPlay
   try{
     let url,poster,credit;
     if(source==="wger"){
-      const resp=await fetch("/api/wger?id="+encodeURIComponent(id),{cache:"no-store"});
-      const data=await resp.json();if(!resp.ok)throw Error(data.error||"Vídeo indisponível.");
+      const data = await consultarWger(id);
       url=data.item?.videos?.[0]?.url;credit="Fonte: wger";
     }else if(source==="ExerciseBank"){
       const data=await ebCall({method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({ids:[id]})});
@@ -1471,20 +1363,12 @@ async function init(){
   menu();navigate("login");
   $("exercisebankRefresh")?.addEventListener("click",()=>loadSample());
   try{
-    const response=await fetch("/api/database-config",{cache:"no-store"});
-    const config=await response.json();
-    if(!response.ok||!config.configured)throw Error("Conexão indisponível");
-    const {createClient}=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
-    supabase=createClient(config.url,config.publishableKey,{
-      auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}
-    });
+    supabase = await conectarBanco();
     loginReady=true;
     $("loginSubmit").disabled=false;
     message("Entre com uma conta de teste cadastrada.");
-    const session=await supabase.auth.getSession();
-    if(session.error)throw session.error;
-    if(session.data.session)await openSession();
-    supabase.auth.onAuthStateChange((event)=>{
+    if (await consultarSessao(supabase)) await openSession();
+    observarSessao(supabase, (event) => {
       if(event==="SIGNED_OUT"&&isAuthenticated())reset();
     });
   }catch(err){
