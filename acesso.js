@@ -662,8 +662,11 @@ function renderProfessionalMonitoring(){
     }
     showSessions();
   }
-  root.append(monitoringTopic("treinos", "Treinos concluídos", workoutCard));
-  for (const [key, title] of [["stiffness", "Rigidez"], ["fatigue", "Cansaço (fadiga)"]]) {
+  root.append(monitoringTopic("treinos", "Ver treinos concluídos", workoutCard));
+  for (const [key, title, buttonLabel] of [
+    ["stiffness", "Rigidez", "Ver nível de rigidez"],
+    ["fatigue", "Cansaço (fadiga)", "Ver nível de cansaço"]
+  ]) {
     const card = el("section", undefined, "card");
     card.append(el("h3", title, "card-title"),
       el("p", "Último relato de até 7 dias com registro. Dias sem resposta ficam fora do gráfico.", "card-text"));
@@ -673,7 +676,7 @@ function renderProfessionalMonitoring(){
     }));
     card.append(rows.length ? monitoringBars(rows, levels.length - 1, title + " por dia")
       : el("p", "Nenhum relato disponível.", "card-text-small"));
-    root.append(monitoringTopic(key, title, card));
+    root.append(monitoringTopic(key, buttonLabel, card));
   }
 }
 
@@ -681,12 +684,16 @@ function renderProfessionalRecords(){
   if(!isProfessional())return;
   updatePatientSelectors();
   renderProfessionalMonitoring();
-  const root=$("listaRegistrosProf");
-  root.replaceChildren();
+  if (!patientId || professionalWorkouts === undefined) return;
+  const root = el("div", undefined, "monitoring-records");
+  root.id = "listaRegistrosProf";
+  const panel = el("section", undefined, "monitoring-records-panel");
+  panel.append(root);
+  $("graficosRegistrosProf").append(monitoringTopic("registros", "Ver registros individuais", panel));
   if(!records.length)root.append(el("p","Nenhum registro disponível.","demo-vazio"));
   for(const r of records) {
     const card=el("div",undefined,"card");
-    card.append(el("h2",date(r.recorded_at),"card-title"));
+    card.append(el("h3",date(r.recorded_at),"card-title"));
     card.append(el("p","Dor em repouso: "+r.pain_rest+"/10 · Dor ao movimento: "+r.pain_movement+"/10","card-text"));
     card.append(el("p","Rigidez: "+r.stiffness+" · Fadiga: "+r.fatigue,"card-text-small"));
     const clima=mapWeather(r);

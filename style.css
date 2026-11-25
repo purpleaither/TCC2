@@ -1387,7 +1387,8 @@ body {
 .monitoring-toggle[aria-expanded="true"]::after {
   background: linear-gradient(currentColor, currentColor) center / 100% 2px no-repeat;
 }
-.monitoring-topic > .card {
+.monitoring-topic > .card,
+.monitoring-records-panel {
   margin-block: var(--espaco-texto) 0;
 }
 .monitoring-bars {
