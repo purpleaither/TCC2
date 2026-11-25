@@ -168,7 +168,7 @@ body {
 
 .login-help {
   font-size: 11px;
-  color: #888;
+  color: #666;
   text-align: center;
   margin-top: 16px;
 }
@@ -590,6 +590,7 @@ body {
   background: white;
   z-index: 30;
   padding: 20px 0;
+  visibility: hidden;
   transition: left 0.3s ease;
   overflow-y: auto;
   display: flex;
@@ -599,6 +600,7 @@ body {
 
 .menu-drawer.open {
   left: 0;
+  visibility: visible;
 }
 
 .menu-header {
