@@ -104,7 +104,7 @@ async function login() {
   const password=$("loginSenha").value;
   busy=true;
   $("loginSubmit").disabled=true;
-  message("Verificando o acesso...");
+  text("loginStatus", "");
   try {
     result(await supabase.auth.signInWithPassword({email,password}));
     $("loginSenha").value="";

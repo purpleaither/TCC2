@@ -134,11 +134,12 @@ try {
             await pagina.locator('#preferenciaTexto').selectOption('200');
             await pagina.getByRole('checkbox', { name: 'Maior espaçamento no texto' }).check();
             await pagina.locator('#abrirAcessibilidade').click();
-            const ajuda = pagina.locator('#page-sintomas.active').getByText('O que é rigidez?', { exact: true });
-            await ajuda.click();
-            await pagina.getByText('É a sensação de que uma articulação está dura ou difícil de mover.', { exact: true }).waitFor({ state: 'visible', timeout: 5000 });
+            const diario = pagina.locator('#page-sintomas.active');
+            const rigidez = diario.locator('#descricaoRigidez');
+            await rigidez.waitFor({ state: 'visible', timeout: 5000 });
+            await diario.locator('#descricaoCansaco').waitFor({ state: 'visible', timeout: 5000 });
             const cabe = await pagina.evaluate(() => document.querySelector('.app').scrollWidth <= innerWidth);
-            await pagina.locator('#page-sintomas.active .ajuda-termo').first().screenshot({ path: pasta + '/explicacao-rigidez.png' });
+            await rigidez.screenshot({ path: pasta + '/explicacao-rigidez.png' });
             casos.push({ id: 'CT53-ajuda-mobile', estado: cabe ? 'aprovado' : 'reprovado' });
           } catch {
             casos.push({ id: 'CT53-ajuda-mobile', estado: 'reprovado' });
