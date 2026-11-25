@@ -9,6 +9,19 @@
 </head>
 <body>
 
+<details class="acessibilidade" id="acessibilidade">
+  <summary>Acessibilidade</summary>
+  <div class="acessibilidade-opcoes">
+    <div class="acessibilidade-texto" role="group" aria-label="Tamanho do texto">
+      <button type="button" id="diminuirTexto" aria-label="Diminuir tamanho do texto">A−</button>
+      <output id="tamanhoTexto" aria-live="polite">100%</output>
+      <button type="button" id="aumentarTexto" aria-label="Aumentar tamanho do texto">A+</button>
+    </div>
+    <button type="button" id="alternarContraste" aria-pressed="false">Alto contraste</button>
+    <button type="button" id="redefinirAcessibilidade">Restaurar padrão</button>
+  </div>
+</details>
+
 <div class="app">
 
   <!-- ===== CABEÇALHO (Oculto na tela de login) ===== -->
@@ -20,7 +33,7 @@
     <button class="header-perfil-btn" id="headerPerfilBtn" onclick="navegarPara(appPaginaInicial())">Perfil</button>
   </div>
 
-  <div id="authFlash" role="status" aria-live="polite" hidden style="margin:12px 16px 0;padding:12px 14px;border-radius:6px;background:#e8f5e9;color:#003366;font-size:13px"></div>
+  <div id="authFlash" role="status" aria-live="polite" hidden style="margin:12px 16px 0;padding:12px 14px;border-radius:6px;background:#e8f5e9;color:#003366;font-size:0.8125rem"></div>
 
   <!-- ===== MENU LATERAL ===== -->
   <div class="menu-overlay" id="menuOverlay"></div>
@@ -218,8 +231,8 @@
     </div>
 
     <!-- Sinal atípico -->
-    <p style="font-size:13px; font-weight:bold; color:#003366; margin-bottom:4px">Apresenta algum sinal atípico hoje?</p>
-    <p style="font-size:11px; color:#666; margin-bottom:8px">Febre, inchaço súbito ou dor extrema fora do comum.</p>
+    <p style="font-size:0.8125rem; font-weight:bold; color:#003366; margin-bottom:4px">Apresenta algum sinal atípico hoje?</p>
+    <p style="font-size:0.6875rem; color:#666; margin-bottom:8px">Febre, inchaço súbito ou dor extrema fora do comum.</p>
     <div class="choices">
       <div class="choices-options" id="atipicoOptions">
         <button class="choice-btn selected" onclick="selecionar('atipicoOptions', 0)">Não</button>
@@ -291,7 +304,7 @@
         <!-- Preenchido pelo JS -->
       </div>
 
-      <p class="choices-label" style="font-size:12px">Nível de dor</p>
+      <p class="choices-label" style="font-size:0.75rem">Nível de dor</p>
       <div class="heatmap-legend">
         <div class="legend-item"><div class="legend-color" style="background:#f4f4f4"></div> 0 · Sem dor</div>
         <div class="legend-item"><div class="legend-color" style="background:#ffe48a"></div> 1–3 · Leve</div>
@@ -299,7 +312,7 @@
         <div class="legend-item"><div class="legend-color" style="background:#f17b72"></div> 7–10 · Intensa</div>
       </div>
 
-      <p style="font-size:11px; color:#666">Toque em um dia com registro ou treino concluído para consultar os detalhes e a ficha realizada.</p>
+      <p style="font-size:0.6875rem; color:#666">Toque em um dia com registro ou treino concluído para consultar os detalhes e a ficha realizada.</p>
     </div>
 
     <!-- Bottom sheet: Clima do dia selecionado -->
@@ -308,17 +321,17 @@
       <button class="bottom-sheet-close" onclick="fecharClimaSheet()">×</button>
       <h3 class="page-title" id="climaSheetTitle">Dia selecionado</h3>
       <div style="margin-top: 16px; margin-bottom: 12px; background: #f9f9f9; padding: 12px; border-radius: 6px; border: 1px solid #eee;">
-        <p style="font-size: 14px; font-weight: bold; color: #003366; margin-bottom: 10px;" id="sheetDorNivel">Dor: 0/10</p>
-        <div style="display: flex; gap: 8px; font-size: 12px; color: #444;">
+        <p style="font-size: 0.875rem; font-weight: bold; color: #003366; margin-bottom: 10px;" id="sheetDorNivel">Dor: 0/10</p>
+        <div style="display: flex; gap: 8px; font-size: 0.75rem; color: #444;">
           <div style="flex: 1;"><strong>Rigidez:</strong><br><span id="sheetRigidez">-</span></div>
           <div style="flex: 1;"><strong>Fadiga:</strong><br><span id="sheetFadiga">-</span></div>
           <div style="flex: 1;"><strong>Humor:</strong><br><span id="sheetHumor">-</span></div>
         </div>
       </div>
 
-      <h3 class="weather-title" style="font-size:13px">Resumo Meteorológico</h3>
-      <p style="font-size:13px; line-height:1.4; color:#333;" id="sheetClimaDesc">Não há dados meteorológicos salvos para este registro.</p>
-      <p style="font-size:11px; color:#888; margin-top:16px; line-height:1.4">Clima e dor podem coincidir temporalmente, sem que isso comprove uma relação direta de causa e efeito.</p>
+      <h3 class="weather-title" style="font-size:0.8125rem">Resumo Meteorológico</h3>
+      <p style="font-size:0.8125rem; line-height:1.4; color:#333;" id="sheetClimaDesc">Não há dados meteorológicos salvos para este registro.</p>
+      <p style="font-size:0.6875rem; color:#888; margin-top:16px; line-height:1.4">Clima e dor podem coincidir temporalmente, sem que isso comprove uma relação direta de causa e efeito.</p>
       <section id="sheetWorkoutHistory" class="workout-history-details" aria-label="Ficha dos treinos concluídos"></section>
     </div>
 
@@ -553,6 +566,7 @@
 
 </div><!-- Fim de .app -->
 
+<script src="acessibilidade.js"></script>
 <script src="app.js"></script>
 <script type="module" src="acesso.js"></script>
 </body>
