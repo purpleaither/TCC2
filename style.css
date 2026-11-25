@@ -18,15 +18,12 @@ body {
   color: var(--texto, #333);
 }
 
-/* ---- Container do app (simula celular) ---- */
+/* ---- Container do app ---- */
 .app {
-  max-width: 390px;
-  margin: 0 auto;
   min-height: 100vh;
   background: var(--superficie, white);
   position: relative;
   overflow-x: hidden;
-  box-shadow: 0 0 15px rgba(0,0,0,0.08);
 }
 
 /* ---- Cabeçalho (header) ---- */
@@ -1237,7 +1234,7 @@ body {
 .accessibilidade {
   position: fixed;
   z-index: 12;
-  inset-inline-end: max(12px, calc((100% - 390px) / 2 + 12px), env(safe-area-inset-right, 0px));
+  inset-inline-end: max(12px, env(safe-area-inset-right, 0px));
   inset-block-end: calc(12px + env(safe-area-inset-bottom, 0px));
   max-inline-size: calc(100% - 32px);
   color: var(--texto);
@@ -1305,3 +1302,33 @@ body {
 .ajuda-termo { margin: .2rem 0 .65rem; }
 .ajuda-termo summary { font-size: .8125rem; }
 .ajuda-termo p { font-size: .8125rem; line-height:var(--entrelinha-texto); color: var(--texto); }
+
+@media (min-width: 640px) {
+  .app {
+    --largura-conteudo: 1080px;
+    --margem-lateral: clamp(24px, 4vw, 40px);
+  }
+
+  .header {
+    padding-inline: max(var(--margem-lateral), calc((100% - var(--largura-conteudo)) / 2 + var(--margem-lateral)));
+  }
+
+  .page {
+    max-inline-size: var(--largura-conteudo);
+    margin-inline: auto;
+    padding: 32px var(--margem-lateral);
+  }
+
+  #page-login {
+    max-inline-size: 560px;
+  }
+
+  .bottom-sheet {
+    max-inline-size: 720px;
+  }
+
+  .app .heatmap-cell {
+    aspect-ratio: auto;
+    min-block-size: 3.75rem;
+  }
+}
