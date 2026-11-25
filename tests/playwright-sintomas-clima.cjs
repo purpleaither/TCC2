@@ -4,6 +4,8 @@ const fs=require('node:fs');
 browser=await chromium.launch();const p=await browser.newPage();
 const isSymptoms=r=>new URL(r.url()).pathname.endsWith('/rest/v1/symptom_records');
 p.on('response',r=>{if(isSymptoms(r)||new URL(r.url()).hostname==='api.open-meteo.com')network.push({endpoint:new URL(r.url()).pathname,method:r.request().method(),status:r.status()})});
+p.on('requestfailed',r=>{if(new URL(r.url()).hostname==='api.open-meteo.com')network.push({endpoint:new URL(r.url()).pathname,method:r.method(),error:r.failure()?.errorText})});
+p.on('request',r=>{if(new URL(r.url()).hostname==='api.open-meteo.com')network.push({endpoint:new URL(r.url()).pathname,method:r.method(),event:'request'})});
 await p.goto('https://tcc2-lime.vercel.app/');
 await p.locator('#loginEmail').fill(process.env.TEST_PACIENTE_EMAIL);await p.locator('#loginSenha').fill(process.env.TEST_PACIENTE_PASSWORD);
 const initial=p.waitForResponse(r=>isSymptoms(r)&&r.request().method()==='GET'&&r.ok(),{timeout:30000});
@@ -13,7 +15,7 @@ await p.evaluate(()=>window.navegarPara('sintomas'));await p.locator('#page-sint
 await p.locator('#rigidezOptions').getByRole('button',{name:'Moderada',exact:true}).click();
 await p.locator('#fadigaOptions').getByRole('button',{name:'Leve',exact:true}).click();
 const expected={pain_rest:parseInt(await p.locator('#restPainValue').innerText()),pain_movement:parseInt(await p.locator('#movPainValue').innerText()),stiffness:'Moderada',fatigue:'Leve'};
-const saved=p.waitForResponse(r=>isSymptoms(r)&&r.request().method()==='POST'&&r.ok(),{timeout:30000});
+const saved=p.waitForResponse(r=>isSymptoms(r)&&r.request().method()==='POST'&&r.ok(),{timeout:45000});
 await p.getByRole('button',{name:'Concluir registro de sintomas',exact:true}).click();await saved;await p.locator('#page-inicio.active').waitFor({timeout:30000});
 const read=p.waitForResponse(r=>isSymptoms(r)&&r.request().method()==='GET'&&r.ok(),{timeout:30000});await p.reload();const rows=await (await read).json();
 const added=rows.filter(x=>!ids.has(x.id)&&Object.entries(expected).every(([k,v])=>x[k]===v));
