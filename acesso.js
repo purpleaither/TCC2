@@ -192,27 +192,17 @@ async function selectPatient(id) {
   await loadPatientData();
 }
 async function consultarClimaBrasilia() {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 10000);
-  try {
-    const endpoint = "https://api.open-meteo.com/v1/forecast?latitude=-15.7801&longitude=-47.9292&current=temperature_2m,relative_humidity_2m,surface_pressure&timezone=America%2FSao_Paulo";
-    const response = await fetch(endpoint,{signal:controller.signal,cache:"no-store"});
-    if (!response.ok) throw Error("Serviço meteorológico indisponível");
-    const payload = await response.json();
-    const current = payload.current;
-    if (!current || ![current.temperature_2m,current.relative_humidity_2m,current.surface_pressure].every(Number.isFinite)) {
-      throw Error("Medições meteorológicas inválidas");
-    }
-    return {
-      weather_city:"Brasília",
-      weather_temperature:current.temperature_2m,
-      weather_humidity:Math.round(current.relative_humidity_2m),
-      weather_pressure:current.surface_pressure,
-      weather_observed_at:current.time ? new Date(current.time + (payload.utc_offset_seconds===-10800?"-03:00":"Z")).toISOString() : new Date().toISOString()
-    };
-  } finally {
-    clearTimeout(timeout);
+  const response = await fetch("/api/weather", {
+    signal: AbortSignal.timeout(12000),
+    cache: "no-store"
+  });
+  if (!response.ok) throw Error("Serviço meteorológico indisponível");
+  const clima = await response.json();
+  if (!clima || ![clima.weather_temperature, clima.weather_humidity, clima.weather_pressure].every(Number.isFinite) ||
+      clima.weather_city !== "Brasília" || !Number.isFinite(Date.parse(clima.weather_observed_at))) {
+    throw Error("Dados meteorológicos inválidos");
   }
+  return clima;
 }
 
 // Tenta novamente se o serviço meteorológico estiver temporariamente indisponível.
