@@ -1,0 +1,101 @@
+{
+  "execucao": "45534080183",
+  "commitCheckout": "9cc3dc28b59645ee1913cade148bb1099745d564",
+  "versao": "2.17.0",
+  "alvo": "servidor estático em loopback",
+  "alertas": [
+    {
+      "regra": "Content Security Policy (CSP) Header Not Set",
+      "risco": "Medium (High)",
+      "codigoConfianca": "3",
+      "ocorrencias": 1,
+      "evidencia": [
+        {
+          "rota": "/",
+          "cabecalho": ""
+        }
+      ],
+      "triagem": "Cabeçalho ausente no servidor estático. Aplicabilidade à Vercel requer confirmação."
+    },
+    {
+      "regra": "Missing Anti-clickjacking Header",
+      "risco": "Medium (Medium)",
+      "codigoConfianca": "2",
+      "ocorrencias": 1,
+      "evidencia": [
+        {
+          "rota": "/",
+          "cabecalho": "x-frame-options"
+        }
+      ],
+      "triagem": "Proteção ausente na resposta HTML local. Aplicabilidade à Vercel requer confirmação."
+    },
+    {
+      "regra": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "risco": "Low (High)",
+      "codigoConfianca": "3",
+      "ocorrencias": 4,
+      "evidencia": [
+        {
+          "rota": "/",
+          "cabecalho": "",
+          "valor": "SimpleHTTP/0.6 Python/3.14.4"
+        },
+        {
+          "rota": "/acesso.js",
+          "cabecalho": "",
+          "valor": "SimpleHTTP/0.6 Python/3.14.4"
+        },
+        {
+          "rota": "/app.js",
+          "cabecalho": "",
+          "valor": "SimpleHTTP/0.6 Python/3.14.4"
+        },
+        {
+          "rota": "/style.css",
+          "cabecalho": "",
+          "valor": "SimpleHTTP/0.6 Python/3.14.4"
+        }
+      ],
+      "triagem": "Versão exposta pelo servidor Python utilizado no teste. Evidência do ambiente local."
+    },
+    {
+      "regra": "X-Content-Type-Options Header Missing",
+      "risco": "Low (Medium)",
+      "codigoConfianca": "2",
+      "ocorrencias": 4,
+      "evidencia": [
+        {
+          "rota": "/",
+          "cabecalho": "x-content-type-options"
+        },
+        {
+          "rota": "/acesso.js",
+          "cabecalho": "x-content-type-options"
+        },
+        {
+          "rota": "/app.js",
+          "cabecalho": "x-content-type-options"
+        },
+        {
+          "rota": "/style.css",
+          "cabecalho": "x-content-type-options"
+        }
+      ],
+      "triagem": "Cabeçalho ausente nos recursos locais. Aplicabilidade à Vercel requer confirmação."
+    },
+    {
+      "regra": "Modern Web Application",
+      "risco": "Informational (Medium)",
+      "codigoConfianca": "2",
+      "ocorrencias": 1,
+      "evidencia": [
+        {
+          "rota": "/",
+          "cabecalho": ""
+        }
+      ],
+      "triagem": "Observação informativa sobre um link com JavaScript."
+    }
+  ]
+}
