@@ -750,16 +750,19 @@ body {
   line-height: var(--entrelinha-texto);
 }
 
-/* ---- Aviso (card com ⚠) ---- */
+/* ---- Aviso sobre o uso do aplicativo ---- */
 .warning-card {
   background: var(--fundo-aviso, #fffbe6);
   border: 1px solid var(--borda-aviso);
   border-radius: 6px;
-  padding: 12px 16px;
+  padding: 16px;
   margin-bottom: 16px;
 }
 
 .warning-title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--espaco-texto);
   line-height: var(--entrelinha-titulo);
   color: var(--cor-aviso);
   font-weight: bold;
@@ -767,25 +770,35 @@ body {
   margin-block-end: var(--espaco-texto);
 }
 
+.warning-title .icon {
+  flex: 0 0 1em;
+  inline-size: 1em;
+  block-size: 1em;
+  align-self: flex-start;
+  margin-block-start: 0.125em;
+}
+
 .warning-text {
   font-size: var(--fonte-minima);
   color: var(--texto-suave, #666);
-  line-height: var(--entrelinha-rotulo);
+  line-height: var(--entrelinha-texto);
 }
 
 /* ---- Rotina de exercícios (card na tela início) ---- */
 .routine-preview {
-  background: transparent;
-  border-radius: 4px;
-  padding: 10px;
-  margin-bottom: 10px;
-   text-align: left;
+  display: grid;
+  gap: var(--espaco-valor-rotulo);
+  margin-block-end: var(--espaco-grupo);
+}
+
+@media (min-width: 640px) {
+  #homeBtnExercicios { inline-size: auto; }
 }
 
 .routine-label {
   font-size: var(--fonte-minima);
   font-weight: bold;
-  margin-bottom: 2px;
+  line-height: var(--entrelinha-titulo);
   color: var(--titulo, #003366);
 }
 

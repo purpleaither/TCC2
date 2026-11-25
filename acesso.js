@@ -397,7 +397,7 @@ function renderPatientPlans(){
   const root=$("exNormalContainer");
   if(!root)return;
   root.replaceChildren();
-  text("homeRoutineValue",plans.length?plans.length+" plano(s) atribuído(s)":"Aguardando atribuição");
+  text("homeRoutineValue",plans.length === 0 ? "Aguardando atribuição" : plans.length === 1 ? "1 plano atribuído" : plans.length + " planos atribuídos");
   text("homeRoutineLabel","Plano fisioterapêutico");
   text("homeRoutineDesc",plans.length?"Acompanhe um exercício por vez, conforme a prescrição do fisioterapeuta.":"Nenhum plano foi atribuído a esta conta.");
   const assigned=patientExerciseAssignments();
