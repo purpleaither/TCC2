@@ -12,15 +12,18 @@
 <div class="app">
 
   <!-- ===== CABEÇALHO (Oculto na tela de login) ===== -->
-  <div class="header" id="appHeader" style="display:none">
-    <button class="header-menu-btn" id="menuBtn">☰ Menu</button>
-    <div class="header-brand" onclick="navegarPara(appPaginaInicial())">
-      <img src="logo.svg" alt="Logo Autonomia em Movimento" class="header-logo">
-    </div>
-    <button class="header-perfil-btn" id="headerPerfilBtn" onclick="navegarPara(appPaginaInicial())">Perfil</button>
-  </div>
+  <header class="header" id="appHeader" style="display:none">
+    <button type="button" class="header-menu-btn" id="menuBtn" aria-controls="menuDrawer" aria-expanded="false">
+      <span class="header-menu-icon" aria-hidden="true"></span>
+      <span>Menu</span>
+    </button>
+    <button type="button" class="header-brand" aria-label="Ir para o início" onclick="navegarPara(appPaginaInicial())">
+      <img src="logo.svg" alt="" class="header-logo">
+    </button>
+    <button type="button" class="header-perfil-btn" id="headerPerfilBtn" onclick="navegarPara('conta')">Minha conta</button>
+  </header>
 
-  <div id="authFlash" role="status" aria-live="polite" hidden style="margin:12px 16px 0;padding:12px 14px;border-radius:6px;background:var(--superficie-verde, #e8f5e9);color:var(--titulo, #003366);font-size:0.8125rem"></div>
+  <div id="authFlash" role="status" aria-live="polite" hidden style="margin:12px 16px 0;padding:12px 14px;border-radius:6px;background:var(--superficie-verde, #e8f5e9);color:var(--titulo, #003366);font-size:var(--fonte-minima)"></div>
 
   <!-- ===== MENU LATERAL ===== -->
   <div class="menu-overlay" id="menuOverlay"></div>
@@ -35,7 +38,7 @@
       <button class="menu-item" data-perfil="paciente" onclick="navegarPara('historico')">Meu histórico</button>
       <button class="menu-item" data-perfil="paciente" onclick="navegarPara('orientacoes')">Orientações</button>
       <button class="menu-item" data-perfil="paciente" onclick="navegarPara('exercicios')">Meus exercícios</button>
-      <button class="menu-item" data-perfil="paciente" onclick="navegarPara('contatos')">Contatos do HUB</button>
+      <button class="menu-item" data-perfil="paciente" onclick="navegarPara('contatos')">Minha conta</button>
       <button class="menu-item" data-perfil="fisioterapeuta" onclick="navegarPara('profissional')">Painel profissional</button>
       <button class="menu-item" data-perfil="fisioterapeuta" onclick="navegarPara('planos-prof')">Gerenciar planos</button>
       <button class="menu-item" data-perfil="fisioterapeuta" onclick="navegarPara('registros-prof')">Registros dos pacientes</button>
@@ -48,7 +51,8 @@
   <details class="accessibilidade" id="painelAcessibilidade">
     <summary id="abrirAcessibilidade">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><circle cx="12" cy="4" r="2"/><path d="M4 9h16M12 7v7m0 0-4 7m4-7 4 7"/></svg>
-      Acessibilidade
+      <span class="accessibilidade-abrir">Abrir acessibilidade</span>
+      <span class="accessibilidade-fechar">Fechar acessibilidade</span>
     </summary>
     <form class="preferencias" id="preferenciasAcessibilidade">
       <label for="preferenciaTexto">Tamanho do texto
@@ -106,43 +110,19 @@
     <h1 class="page-title">Olá, <span id="userNameDisplay">Maria</span></h1>
     <p class="page-subtitle" id="currentDateDisplay">Carregando data...</p>
 
-    <!-- Card: Registro diário -->
-<div class="card" id="cardRegistroDiario">
-  <h2 class="card-title">Registro diário de sintomas</h2>
-  <p class="card-text">Como você se sente hoje?</p>
-  <button class="btn" id="btnRegistrarSintomas" onclick="navegarPara('sintomas')">Registrar sintomas</button>
-</div>
+    <section id="cardRegistroDiario" aria-labelledby="registroDiarioTitulo">
+      <h2 class="card-title" id="registroDiarioTitulo">Registro de sintomas</h2>
+      <button type="button" class="btn" id="btnRegistrarSintomas" onclick="abrirRegistroDiario()">Registrar sintomas</button>
+    </section>
 
-    <!-- Card: Clima bloqueado -->
-    <div class="locked-card" id="climaBloqueado">
-      <h2 class="card-title">Informações meteorológicas</h2>
-      <div class="lock-icon"><img src="Icones/lock.svg" alt="" class="icon"></div>
-      <p class="card-text" style="font-weight:bold">Bloqueado até registrar sintomas</p>
-      <p class="card-text-small">Disponível logo após preencher seu registro diário.</p>
-    </div>
-
-    <!-- Card: Clima liberado (exibido pós-registro) -->
-    <div class="weather-card" id="climaLiberado" style="display:none">
-      <h2 class="weather-title">Informações meteorológicas</h2>
-      <p class="weather-main">Aguardando dados do registro</p>
-      <p class="weather-detail">As condições meteorológicas serão exibidas quando estiverem associadas ao registro.</p>
-      <p class="card-text-small">Fonte meteorológica: Open-Meteo. Município de referência: Brasília.</p>
-    </div>
-
-    <!-- Card: Meus exercícios -->
-    <div class="card" id="homeExerciciosCard">
-      <h2 class="card-title">Meus exercícios</h2>
-      <div class="routine-preview" id="homeRoutineBox">
-        <p class="routine-label" id="homeRoutineLabel">Plano fisioterapêutico</p>
-        <p class="routine-value" id="homeRoutineValue">Aguardando atribuição</p>
-        <p class="card-text-small" id="homeRoutineDesc" style="margin-top:4px">Os exercícios serão definidos pelo fisioterapeuta. Ainda não existe um plano atribuído neste protótipo.</p>
-      </div>
-      <button class="btn" id="homeBtnExercicios" onclick="navegarPara('exercicios')">Ver meus exercícios</button>
-    </div>
+    <section aria-labelledby="homeExerciciosTitulo">
+      <h2 class="card-title" id="homeExerciciosTitulo">Meus exercícios</h2>
+      <button type="button" class="btn" id="homeBtnExercicios" onclick="navegarPara('exercicios')">Ver meus exercícios</button>
+    </section>
 
     <!-- Card: Aviso -->
     <div class="warning-card">
-      <p class="warning-title"><img src="Icones/alert-triangle.svg" alt="" class="icon">Aviso</p>
+      <h2 class="warning-title"><img src="Icones/alert-triangle.svg" alt="" class="icon">Sobre o uso do aplicativo</h2>
       <p class="warning-text">Este aplicativo complementa seu tratamento e não substitui o acompanhamento profissional presencial.</p>
     </div>
 
@@ -197,7 +177,7 @@
     <!-- Rigidez articular -->
     <div class="choices">
       <p class="choices-label">Rigidez nas articulações</p>
-      <details class="ajuda-termo"><summary>O que é rigidez?</summary><p>É a sensação de que uma articulação está dura ou difícil de mover.</p></details>
+      <p class="card-text" id="descricaoRigidez">Sensação de que uma articulação está dura ou difícil de mover.</p>
       <div class="choices-options" id="rigidezOptions">
         <button class="choice-btn" onclick="selecionar('rigidezOptions', 0)">Nenhuma</button>
         <button class="choice-btn selected" onclick="selecionar('rigidezOptions', 1)">Leve</button>
@@ -209,7 +189,7 @@
     <!-- Fadiga -->
     <div class="choices">
       <p class="choices-label">Cansaço (fadiga)</p>
-      <details class="ajuda-termo"><summary>O que é fadiga?</summary><p>É a sensação de cansaço ou falta de energia.</p></details>
+      <p class="card-text" id="descricaoCansaco">Sensação de falta de energia.</p>
       <div class="choices-options" id="fadigaOptions">
         <button class="choice-btn" onclick="selecionar('fadigaOptions', 0)">Nenhuma</button>
         <button class="choice-btn selected" onclick="selecionar('fadigaOptions', 1)">Leve</button>
@@ -249,8 +229,8 @@
     </div>
 
     <!-- Sinal atípico -->
-    <p style="font-size:0.8125rem; font-weight:bold; color:var(--titulo, #003366); margin-bottom:4px">Você percebeu algum sinal fora do comum hoje?</p>
-    <p style="font-size:0.6875rem; color:var(--texto-suave, #666); margin-bottom:8px">Febre, inchaço súbito ou dor extrema fora do comum.</p>
+    <p style="font-size:var(--fonte-minima); font-weight:bold; color:var(--titulo, #003366); margin-bottom:4px">Você percebeu algum sinal fora do comum hoje?</p>
+    <p style="font-size:var(--fonte-minima); color:var(--texto-suave, #666); margin-bottom:8px">Febre, inchaço súbito ou dor extrema fora do comum.</p>
     <div class="choices">
       <div class="choices-options" id="atipicoOptions">
         <button class="choice-btn selected" onclick="selecionar('atipicoOptions', 0)">Não</button>
@@ -267,7 +247,6 @@
 
     <h1 class="page-title">Meu histórico</h1>
     <details class="ajuda-termo"><summary>Entenda os dados do clima</summary><p>Umidade relativa indica quanto vapor de água há no ar em relação ao máximo possível naquela temperatura. Pressão atmosférica é a pressão que o ar exerce. hPa significa hectopascal, uma unidade de pressão.</p></details>
-    <p class="page-subtitle">Acompanhe a evolução da sua dor ao longo do mês</p>
 
     <!-- Navegação de mês -->
     <div class="heatmap-header">
@@ -309,29 +288,31 @@
     <div class="card">
       <p class="choices-label">Dor ao movimento por dia</p>
 
-      <div class="heatmap-weekdays">
-        <span class="heatmap-weekday">S</span>
-        <span class="heatmap-weekday">T</span>
-        <span class="heatmap-weekday">Q</span>
-        <span class="heatmap-weekday">Q</span>
-        <span class="heatmap-weekday">S</span>
-        <span class="heatmap-weekday">S</span>
-        <span class="heatmap-weekday">D</span>
+      <div class="heatmap-scroll" role="region" aria-label="Calendário do histórico" tabindex="0">
+        <div class="heatmap-weekdays">
+          <span class="heatmap-weekday">S</span>
+          <span class="heatmap-weekday">T</span>
+          <span class="heatmap-weekday">Q</span>
+          <span class="heatmap-weekday">Q</span>
+          <span class="heatmap-weekday">S</span>
+          <span class="heatmap-weekday">S</span>
+          <span class="heatmap-weekday">D</span>
+        </div>
+
+        <div class="heatmap-grid" id="heatmapGrid">
+          <!-- Preenchido pelo JS -->
+        </div>
       </div>
 
-      <div class="heatmap-grid" id="heatmapGrid">
-        <!-- Preenchido pelo JS -->
-      </div>
-
-      <p class="choices-label" style="font-size:0.75rem">Nível de dor</p>
+      <p class="choices-label" style="font-size:var(--fonte-minima)">Nível de dor</p>
       <div class="heatmap-legend">
-        <div class="legend-item"><div class="legend-color" style="background:var(--superficie-neutra, #f4f4f4)"></div> 0 · Sem dor</div>
-        <div class="legend-item"><div class="legend-color" style="background:#ffe48a"></div> 1–3 · Leve</div>
-        <div class="legend-item"><div class="legend-color" style="background:#ffb464"></div> 4–6 · Moderada</div>
-        <div class="legend-item"><div class="legend-color" style="background:#f17b72"></div> 7–10 · Intensa</div>
+        <div class="legend-item"><div class="legend-color" data-intensidade="nenhuma"></div> 0 · Sem dor</div>
+        <div class="legend-item"><div class="legend-color" data-intensidade="leve"></div> 1–3 · Leve</div>
+        <div class="legend-item"><div class="legend-color" data-intensidade="moderada"></div> 4–6 · Moderada</div>
+        <div class="legend-item"><div class="legend-color" data-intensidade="intensa"></div> 7–10 · Intensa</div>
       </div>
 
-      <p style="font-size:0.6875rem; color:var(--texto-suave, #666)">Toque em um dia com registro ou treino concluído para consultar os detalhes e a ficha realizada.</p>
+      <p style="font-size:var(--fonte-minima); color:var(--texto-suave, #666)">Toque em um dia com registro ou treino concluído para consultar os detalhes e a ficha realizada.</p>
     </div>
 
     <!-- Bottom sheet: Clima do dia selecionado -->
@@ -340,17 +321,17 @@
       <button class="bottom-sheet-close" onclick="fecharClimaSheet()">×</button>
       <h2 class="page-title" id="climaSheetTitle">Dia selecionado</h2>
       <div style="margin-top: 16px; margin-bottom: 12px; background: var(--superficie-neutra, #f9f9f9); padding: 12px; border-radius: 6px; border: 1px solid var(--linha, #eee);">
-        <p style="font-size: 0.875rem; font-weight: bold; color: var(--titulo, #003366); margin-bottom: 10px;" id="sheetDorNivel">Dor: 0/10</p>
-        <div style="display: flex; gap: 8px; font-size: 0.75rem; color: var(--texto, #444);">
+        <p style="font-size: var(--fonte-minima); font-weight: bold; color: var(--titulo, #003366); margin-bottom: 10px;" id="sheetDorNivel">Dor: 0/10</p>
+        <div style="display: flex; gap: 8px; font-size: var(--fonte-minima); color: var(--texto, #444);">
           <div style="flex: 1;"><strong>Rigidez:</strong><br><span id="sheetRigidez">-</span></div>
           <div style="flex: 1;"><strong>Fadiga:</strong><br><span id="sheetFadiga">-</span></div>
           <div style="flex: 1;"><strong>Humor:</strong><br><span id="sheetHumor">-</span></div>
         </div>
       </div>
 
-      <h3 class="weather-title" style="font-size:0.8125rem">Resumo Meteorológico</h3>
-      <p style="font-size:0.8125rem; line-height:1.4; color:var(--texto, #333);" id="sheetClimaDesc">Não há dados meteorológicos salvos para este registro.</p>
-      <p style="font-size:0.6875rem; color:var(--texto-suave, #888); margin-top:16px; line-height:1.4">Clima e dor podem coincidir temporalmente, sem que isso comprove uma relação direta de causa e efeito.</p>
+      <h3 class="weather-title" style="font-size:var(--fonte-minima)">Resumo Meteorológico</h3>
+      <p style="font-size:var(--fonte-minima); line-height:1.4; color:var(--texto, #333);" id="sheetClimaDesc">Não há dados meteorológicos salvos para este registro.</p>
+      <p style="font-size:var(--fonte-minima); color:var(--texto-suave, #888); margin-top:16px; line-height:1.4">Clima e dor podem coincidir temporalmente, sem que isso comprove uma relação direta de causa e efeito.</p>
       <section id="sheetWorkoutHistory" class="workout-history-details" aria-label="Ficha dos treinos concluídos"></section>
     </div>
 
@@ -385,8 +366,7 @@
   <!-- ===== TELA 5.0: MEUS EXERCÍCIOS ===== -->
   <div class="page" id="page-exercicios">
     <h1 class="page-title">Meus exercícios</h1>
-    <details class="ajuda-termo"><summary>Entenda seu plano de exercícios</summary><p>O plano terapêutico reúne os exercícios definidos pelo fisioterapeuta. Repetições indicam quantas vezes fazer o movimento. Uma série é um grupo de repetições.</p></details>
-    <p class="page-subtitle">Planos individualizados definidos pelo fisioterapeuta</p>
+    <p class="page-subtitle">O plano terapêutico reúne os exercícios definidos pelo fisioterapeuta. Repetições indicam quantas vezes fazer o movimento. Uma série é um grupo de repetições.</p>
     <div class="card" id="exNormalContainer">
       <h2 class="card-title">Nenhum plano atribuído</h2>
       <p class="card-text">Quando o fisioterapeuta selecionar e configurar os exercícios, eles serão disponibilizados nesta área.</p>
@@ -394,11 +374,10 @@
     </div>
   </div>
 
-  <!-- ===== TELA 6.0: CONTATOS DO HUB ===== -->
+  <!-- ===== TELA 6.0: MINHA CONTA ===== -->
   <div class="page" id="page-contatos">
 
-    <h1 class="page-title">Contatos do HUB / UnB</h1>
-    <p class="page-subtitle">Hospital Universitário de Brasília</p>
+    <h1 class="page-title">Minha conta</h1>
 
     <div class="card">
       <h2 class="card-title">Meus dados</h2>
@@ -417,7 +396,7 @@
     </div>
 
     <div class="card">
-      <h2 class="card-title">Equipe de Fisioterapia</h2>
+      <h2 class="card-title">Contatos do HUB</h2>
       <p class="card-text" style="font-weight:bold; color:var(--titulo, #003366)">HUB / Universidade de Brasília</p>
       
       <div class="contact-info-item" style="margin-top:10px">
@@ -574,14 +553,13 @@
   <!-- ===== REGISTROS DE SINTOMAS DO PROFISSIONAL ===== -->
   <div class="page" id="page-registros-prof">
     <h1 class="page-title">Registros dos pacientes</h1>
-    <p class="page-subtitle">Consulta de informações fictícias, sem avaliação automática</p>
     <div class="card">
       <label class="form-label" for="pacienteRegistrosProf">Paciente</label>
       <select id="pacienteRegistrosProf" class="form-input" onchange="trocarPacienteRegistrosProf()">
         <option value="p1">Maria Silva</option><option value="p2">João Oliveira</option>
       </select>
     </div>
-    <div id="listaRegistrosProf"></div>
+    <div id="graficosRegistrosProf"></div>
   </div>
 
   </main>

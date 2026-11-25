@@ -19,6 +19,8 @@ let patients = [];
 let patientId = null;
 let plans = [];
 let records = [];
+let professionalWorkouts;
+let patientLoadVersion = 0;
 let editingPlan = null;
 let busy = false;
 let loginReady = false;
@@ -59,11 +61,12 @@ function menu() {
   document.querySelectorAll("[data-perfil]").forEach(item=>{
     item.style.display = isAuthenticated() && item.dataset.perfil === profile.role ? "" : "none";
   });
-  text("headerPerfilBtn",isProfessional() ? "Profissional" : "Perfil");
+  text("headerPerfilBtn",isProfessional() ? "Profissional" : "Minha conta");
 }
 function navigate(page) {
   if(!isAuthenticated()) page="login";
   else {
+    if (page === "conta") page = isProfessional() ? "profissional" : "contatos";
     const allowed = isProfessional()
       ? ["profissional","planos-prof","exercise-target-prof","exercise-source-prof","exercise-bank-prof","exercise-config-prof","editor-prof","registros-prof"]
       : ["inicio","sintomas","historico","orientacoes","exercicios","contatos"];
@@ -99,7 +102,7 @@ async function login() {
   const password=$("loginSenha").value;
   busy=true;
   $("loginSubmit").disabled=true;
-  message("Verificando o acesso...");
+  text("loginStatus", "");
   try {
     result(await supabase.auth.signInWithPassword({email,password}));
     $("loginSenha").value="";
@@ -120,6 +123,8 @@ async function logout() {
   reset();
 }
 function reset() {
+  patientLoadVersion += 1;
+  professionalWorkouts = undefined;
   user=null;
   profile=null;
   patients=[];
@@ -159,9 +164,10 @@ async function openSession() {
     patientId=user.id;
     aplicarUsuarioNaInterface(profile.display_name);
     await loadPatientData();
-    navigate("inicio");
+    navigate(location.hash === "#conta" ? "conta" : "inicio");
   }
-  message("Acesso autenticado. Utilize somente dados fictícios.");
+  if (location.hash === "#conta") history.replaceState(history.state, "", location.pathname + location.search);
+  text("loginStatus", "Entre com uma conta de teste cadastrada.");
 }
 function updatePatientSelectors() {
   for(const id of ["pacienteProf","pacientePlanoProf","pacienteRegistrosProf"]) {
@@ -230,38 +236,47 @@ function mapWeather(registro) {
 }
 
 async function loadPatientData() {
+  const version = ++patientLoadVersion;
+  const selectedPatient = patientId;
+  const professional = isProfessional();
   plans=[];
   records=[];
-  if(!patientId){
+  professionalWorkouts = undefined;
+  if (professional && selectedPatient) renderProfessionalRecords();
+  if(!selectedPatient){
     renderProfessionalPlans();
     renderProfessionalRecords();
     return;
   }
   try {
-    plans=result(await supabase.from("care_plans")
+    const loadedPlans=result(await supabase.from("care_plans")
       .select("id,title,notes,created_at,updated_at,plan_exercises(id,exercise_name,exercise_source,external_id,series,repetitions,duration,frequency,instructions,position)")
-      .eq("patient_id",patientId).order("created_at",{ascending:false}))||[];
+      .eq("patient_id",selectedPatient).order("created_at",{ascending:false}))||[];
     const baseFields="id,recorded_at,pain_rest,pain_movement,stiffness,fatigue";
     const weatherFields=",weather_city,weather_temperature,weather_humidity,weather_pressure,weather_observed_at";
     let symptomsResponse=await supabase.from("symptom_records")
       .select(baseFields+(weatherColumnsAvailable?weatherFields:""))
-      .eq("patient_id",patientId).order("recorded_at",{ascending:false}).limit(500);
+      .eq("patient_id",selectedPatient).order("recorded_at",{ascending:false}).limit(500);
     if (symptomsResponse.error && weatherColumnsAvailable && isMissingWeatherColumns(symptomsResponse.error)) {
       weatherColumnsAvailable=false;
       symptomsResponse=await supabase.from("symptom_records").select(baseFields)
-        .eq("patient_id",patientId).order("recorded_at",{ascending:false}).limit(500);
+        .eq("patient_id",selectedPatient).order("recorded_at",{ascending:false}).limit(500);
     }
-    records=result(symptomsResponse)||[];
-    if(!isProfessional()){
-      const workoutResponse=await supabase.from("workout_sessions")
-        .select("id,patient_id,completed_at,exercises")
-        .eq("patient_id",user.id).order("completed_at",{ascending:false}).limit(500);
-      treinosConcluidos=workoutResponse.error?[]:(workoutResponse.data||[]);
-    }
-    if(isProfessional()){
+    const loadedRecords = result(symptomsResponse) || [];
+    let workouts = supabase.from("workout_sessions")
+      .select(professional ? "completed_at,exercises" : "id,patient_id,completed_at,exercises")
+      .eq("patient_id", selectedPatient).order("completed_at", { ascending: false }).limit(500);
+    if (professional) workouts = workouts.gte("completed_at", monitoringWeeks()[0].toISOString());
+    const workoutResponse = await workouts;
+    if (version !== patientLoadVersion) return;
+    plans = loadedPlans;
+    records = loadedRecords;
+    if(professional){
+      professionalWorkouts = workoutResponse.error ? null : (workoutResponse.data || []);
       renderProfessionalPlans();
       renderProfessionalRecords();
     } else {
+      treinosConcluidos = workoutResponse.error ? [] : (workoutResponse.data || []);
       registrosUsuario=records.slice().reverse().map(r=>({
         data:r.recorded_at,
         dorRepouso:r.pain_rest,
@@ -279,6 +294,11 @@ async function loadPatientData() {
       renderPatientPlans();
     }
   } catch(err) {
+    if (version !== patientLoadVersion) return;
+    if (professional) {
+      professionalWorkouts = null;
+      renderProfessionalRecords();
+    }
     message("Não foi possível consultar os dados do paciente. Verifique a conexão e as permissões.",true);
   }
 }
@@ -393,9 +413,6 @@ function renderPatientPlans(){
   const root=$("exNormalContainer");
   if(!root)return;
   root.replaceChildren();
-  text("homeRoutineValue",plans.length?plans.length+" plano(s) atribuído(s)":"Aguardando atribuição");
-  text("homeRoutineLabel","Plano fisioterapêutico");
-  text("homeRoutineDesc",plans.length?"Acompanhe um exercício por vez, conforme a prescrição do fisioterapeuta.":"Nenhum plano foi atribuído a esta conta.");
   const assigned=patientExerciseAssignments();
   if(!assigned.length){
     root.append(el("h2","Nenhum exercício atribuído","card-title"),
@@ -532,15 +549,135 @@ function renderProfessionalPlans(){
     root.append(card);
   }
 }
+function monitoringWeeks(){
+  const today = new Date();
+  return [27, 20, 13, 6, -1].map(offset =>
+    new Date(today.getFullYear(), today.getMonth(), today.getDate() - offset));
+}
+
+function monitoringBars(rows, maximum, title){
+  const list = el("ul", undefined, "monitoring-bars");
+  list.setAttribute("role", "list");
+  list.setAttribute("aria-label", title);
+  for (const row of rows) {
+    const item = el("li", undefined, "monitoring-bar");
+    item.append(el("span", row.label), el("strong", row.text));
+    const track = el("span", undefined, "monitoring-track");
+    track.setAttribute("aria-hidden", "true");
+    const fill = el("span", undefined, "monitoring-fill");
+    fill.style.inlineSize = (row.value / maximum * 100) + "%";
+    track.append(fill);
+    item.append(track);
+    list.append(item);
+  }
+  return list;
+}
+
+function monitoringTopic(label, panel){
+  const details = el("details", undefined, "monitoring-topic");
+  details.append(el("summary", label), panel);
+  return details;
+}
+
+function renderProfessionalMonitoring(){
+  const root = $("graficosRegistrosProf");
+  root.replaceChildren();
+  if (!patientId) return;
+  if (professionalWorkouts === undefined) {
+    root.append(el("p", "Carregando acompanhamento…", "card-text"));
+    return;
+  }
+
+  root.append(el("h2", "Acompanhamento do paciente", "card-title"));
+  const windows = monitoringWeeks();
+  const shortDate = new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit" });
+  const latestByDay = new Map();
+  for (const record of records) {
+    const day = localDateKey(record.recorded_at);
+    if (day && !latestByDay.has(day)) latestByDay.set(day, record);
+  }
+  const recent = [...latestByDay.values()].slice(0, 7).reverse();
+  const workoutCard = el("section", undefined, "card");
+  workoutCard.append(el("h3", "Treinos concluídos por semana", "card-title"),
+    el("p", "Últimos 28 dias, incluindo hoje. Cada treino conta uma vez no gráfico.", "card-text"));
+  if (professionalWorkouts === null) {
+    workoutCard.append(el("p", "Não foi possível carregar os treinos.", "card-text-small"));
+  } else {
+    const planOptions = new Map(plans.map(plan => [plan.id, plan.title]));
+    for (const session of professionalWorkouts) {
+      for (const exercise of session.exercises || []) {
+        if (exercise.plan_id && !planOptions.has(exercise.plan_id)) {
+          planOptions.set(exercise.plan_id, exercise.plan_title || "Plano anterior");
+        }
+      }
+    }
+    const select = el("select", undefined, "form-input");
+    select.id = "monitoramentoPlano";
+    const all = el("option", "Todos os planos");
+    all.value = "";
+    select.append(all);
+    for (const [id, title] of planOptions) {
+      const option = el("option", title);
+      option.value = id;
+      select.append(option);
+    }
+    const filter = el("label", "Plano", "form-group form-label");
+    filter.append(select);
+    const output = el("div");
+    output.setAttribute("aria-live", "polite");
+    const showSessions = () => {
+      const counts = [0, 0, 0, 0];
+      for (const session of professionalWorkouts) {
+        if (select.value && !session.exercises?.some(exercise => exercise.plan_id === select.value)) continue;
+        const time = new Date(session.completed_at);
+        const week = counts.findIndex((_, index) => time >= windows[index] && time < windows[index + 1]);
+        if (week >= 0) counts[week] += 1;
+      }
+      const rows = counts.map((count, index) => {
+        const lastDay = new Date(windows[index + 1]);
+        lastDay.setDate(lastDay.getDate() - 1);
+        return { label: shortDate.format(windows[index]) + " a " + shortDate.format(lastDay),
+          text: count + (count === 1 ? " treino" : " treinos"), value: count };
+      });
+      output.replaceChildren(monitoringBars(rows, Math.max(1, ...counts), "Treinos concluídos por período"));
+    };
+    select.addEventListener("change", showSessions);
+    workoutCard.append(filter, output);
+    if (professionalWorkouts.length === 500) {
+      workoutCard.append(el("p", "O gráfico considera até os 500 treinos mais recentes do período.", "card-text-small"));
+    }
+    showSessions();
+  }
+  root.append(monitoringTopic("Ver treinos concluídos", workoutCard));
+  for (const [key, title, buttonLabel] of [
+    ["stiffness", "Rigidez", "Ver nível de rigidez"],
+    ["fatigue", "Cansaço (fadiga)", "Ver nível de cansaço"]
+  ]) {
+    const card = el("section", undefined, "card");
+    card.append(el("h3", title, "card-title"),
+      el("p", "Último relato de até 7 dias com registro. Dias sem resposta ficam fora do gráfico.", "card-text"));
+    const rows = recent.filter(record => levels.includes(record[key])).map(record => ({
+      label: shortDate.format(new Date(record.recorded_at)),
+      text: record[key], value: levels.indexOf(record[key])
+    }));
+    card.append(rows.length ? monitoringBars(rows, levels.length - 1, title + " por dia")
+      : el("p", "Nenhum relato disponível.", "card-text-small"));
+    root.append(monitoringTopic(buttonLabel, card));
+  }
+}
+
 function renderProfessionalRecords(){
   if(!isProfessional())return;
   updatePatientSelectors();
-  const root=$("listaRegistrosProf");
-  root.replaceChildren();
+  renderProfessionalMonitoring();
+  if (!patientId || professionalWorkouts === undefined) return;
+  const root = el("div");
+  root.id = "listaRegistrosProf";
+  $("graficosRegistrosProf").append(monitoringTopic("Ver registros individuais", root));
   if(!records.length)root.append(el("p","Nenhum registro disponível.","demo-vazio"));
   for(const r of records) {
     const card=el("div",undefined,"card");
-    card.append(el("h2",date(r.recorded_at),"card-title"));
+    card.append(el("h3",date(r.recorded_at),"card-title"));
     card.append(el("p","Dor em repouso: "+r.pain_rest+"/10 · Dor ao movimento: "+r.pain_movement+"/10","card-text"));
     card.append(el("p","Rigidez: "+r.stiffness+" · Fadiga: "+r.fatigue,"card-text-small"));
     const clima=mapWeather(r);

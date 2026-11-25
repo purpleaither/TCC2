@@ -36,7 +36,7 @@ function aplicarUsuarioNaInterface(nome) {
 
 function mostrarCabecalho(visivel) {
   var header = document.getElementById('appHeader');
-  if (header) header.style.display = visivel ? 'flex' : 'none';
+  if (header) header.style.display = visivel ? 'grid' : 'none';
 }
 
 function navegarPara(pagina) {
@@ -49,8 +49,9 @@ function navegarPara(pagina) {
 function alternarMenu() {
   var drawer = document.getElementById('menuDrawer');
   var overlay = document.getElementById('menuOverlay');
-  if (drawer) drawer.classList.toggle('open');
-  if (overlay) overlay.classList.toggle('open');
+  var aberto = drawer ? drawer.classList.toggle('open') : false;
+  if (overlay) overlay.classList.toggle('open', aberto);
+  document.getElementById('menuBtn')?.setAttribute('aria-expanded', String(aberto));
 }
 
 function fecharMenu() {
@@ -58,6 +59,7 @@ function fecharMenu() {
   var overlay = document.getElementById('menuOverlay');
   if (drawer) drawer.classList.remove('open');
   if (overlay) overlay.classList.remove('open');
+  document.getElementById('menuBtn')?.setAttribute('aria-expanded', 'false');
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -140,12 +142,13 @@ function gerarHeatmap() {
     });
     var cell = document.createElement('div');
     cell.className = 'heatmap-cell';
-    var valorVisivel = treinosDoDia.length ? '✓' : '-';
+    var valorVisivel = treinosDoDia.length ? '' : '-';
 
     if (!regDoDia) {
       cell.style.backgroundColor = 'var(--superficie-neutra)';
       cell.style.borderColor = 'var(--linha)';
-      cell.innerHTML = '<span class="heatmap-cell-day">' + i + '</span> <span class="heatmap-cell-value">' + valorVisivel + '</span>';
+      cell.innerHTML = '<span class="heatmap-cell-day">' + i + '</span>' +
+        (valorVisivel ? ' <span class="heatmap-cell-value">' + valorVisivel + '</span>' : '');
     } else {
       var v = (filtroDorVisualizacao === 0) ? regDoDia.dorRepouso : regDoDia.dorMovimento;
       totalDor += v;
@@ -161,21 +164,14 @@ function gerarHeatmap() {
     if (treinosDoDia.length) {
       cell.classList.add('heatmap-workout-day');
       cell.title = treinosDoDia.length + ' treino(s) concluído(s)';
-      if (regDoDia) {
-        var marker = document.createElement('span');
-        marker.className = 'heatmap-workout-marker';
-        marker.textContent = ' ✓';
-        cell.appendChild(marker);
-      }
     }
     if (regDoDia || treinosDoDia.length) {
       (function(dia, registro) {
         cell.onclick = function() { abrirClimaSheet(dia, registro || null); };
         cell.tabIndex = 0;
         cell.setAttribute('role', 'button');
-        var marcador = registro && treinosDoDia.length ? ' ✓' : '';
         var descricao = treinosDoDia.length ? ' e treinos concluídos' : '';
-        cell.setAttribute('aria-label', 'Ver registros do dia ' + dia + ' ' + valorVisivel + marcador + descricao);
+        cell.setAttribute('aria-label', 'Ver registros do dia ' + dia + (valorVisivel ? ' ' + valorVisivel : '') + descricao);
         cell.onkeydown = function(event) {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
@@ -222,35 +218,6 @@ function fecharClimaSheet() {
   if (sheet) sheet.classList.remove('open');
 }
 
-function apresentarClimaNoPainel(registro) {
-  var card = document.getElementById('climaLiberado');
-  if (!card) return;
-  card.replaceChildren();
-  var titulo = document.createElement('h2');
-  titulo.className = 'weather-title';
-  titulo.textContent = 'Informações meteorológicas';
-  card.append(titulo);
-
-  var main = document.createElement('p');
-  main.className = 'weather-main';
-  var detalhe = document.createElement('p');
-  detalhe.className = 'weather-detail';
-  var observacao = document.createElement('p');
-  observacao.className = 'card-text-small';
-
-  var clima = registro && registro.clima;
-  if (clima && clima.temperatura != null && clima.umidade != null && clima.pressao != null) {
-    main.textContent = '☀ ' + (clima.cidade || 'Brasília') + ' · ' + clima.temperatura + ' °C';
-    detalhe.textContent = 'Umidade: ' + clima.umidade + '% · Pressão: ' + clima.pressao + ' hPa';
-    observacao.textContent = 'Condições registradas em ' + new Date(clima.observadoEm || registro.data).toLocaleString('pt-BR') + '. Fonte: Open-Meteo.';
-  } else {
-    main.textContent = 'Dados meteorológicos não disponíveis';
-    detalhe.textContent = 'Não foi possível associar informações meteorológicas a este registro.';
-    observacao.textContent = 'Os sintomas permanecem salvos. O clima não será substituído por uma medição de outra data.';
-  }
-  card.append(main, detalhe, observacao);
-}
-
 function abrirClimaSheet(dia, reg) {
   var nomesMes = ['jan.', 'fev.', 'mar.', 'abr.', 'mai.', 'jun.', 'jul.', 'ago.', 'set.', 'out.', 'nov.', 'dez.'];
   var titulo = document.getElementById('climaSheetTitle');
@@ -284,26 +251,32 @@ function abrirClimaSheet(dia, reg) {
   if (sheet) sheet.classList.add('open');
 }
 
-function verificarRegistroHoje() {
-  var hoje = new Date().toDateString();
-  var existe = registrosUsuario.some(function(r) {
-    return new Date(r.data).toDateString() === hoje;
+function obterRegistroHoje(hoje) {
+  return registrosUsuario.findLast(function(registro) {
+    return new Date(registro.data).toDateString() === hoje.toDateString();
   });
+}
+
+function verificarRegistroHoje() {
   var botao = document.getElementById('btnRegistrarSintomas');
-  var bloqueado = document.getElementById('climaBloqueado');
-  var liberado = document.getElementById('climaLiberado');
   if (botao) {
-    botao.textContent = existe ? 'Sintomas já registrados hoje ✓' : 'Registrar sintomas';
-    botao.style.background = existe ? '#4a7c59' : '';
+    botao.textContent = obterRegistroHoje(new Date())
+      ? 'Ver meu registro de sintomas'
+      : 'Registrar sintomas';
   }
-  if (bloqueado) bloqueado.style.display = existe ? 'none' : 'block';
-  if (liberado) liberado.style.display = existe ? 'block' : 'none';
-  if (existe) {
-    var hojeRegistro = registrosUsuario.slice().reverse().find(function(r) {
-      return new Date(r.data).toDateString() === hoje;
-    });
-    apresentarClimaNoPainel(hojeRegistro);
+}
+
+function abrirRegistroDiario() {
+  var hoje = new Date();
+  var registro = obterRegistroHoje(hoje);
+  if (!registro) {
+    navegarPara('sintomas');
+    return;
   }
+  mesAtual = hoje;
+  navegarPara('historico');
+  abrirClimaSheet(hoje.getDate(), registro);
+  document.querySelector('#climaSheet .bottom-sheet-close')?.focus();
 }
 
 atualizarDataAtual();

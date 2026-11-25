@@ -11,7 +11,7 @@ const contexto = await navegador.newContext({ viewport: { width: 320, height: 76
 const pagina = await contexto.newPage();
 const casos = [];
 const painel = pagina.locator('#painelAcessibilidade');
-const abrir = pagina.getByText('Acessibilidade', { exact: true });
+const abrir = pagina.locator('#abrirAcessibilidade');
 const tema = pagina.getByLabel('Aparência');
 const texto = pagina.getByLabel('Tamanho do texto');
 const raiz = pagina.locator('html');
@@ -27,10 +27,12 @@ async function verificar(id, executar) {
 try {
   await pagina.goto(base);
   await verificar('CT48-teclado', async () => {
+    assert.equal(await abrir.innerText(), 'Abrir acessibilidade');
     await pagina.keyboard.press('Tab');
     assert.equal(await abrir.evaluate(el => el === document.activeElement), true);
     await pagina.keyboard.press('Enter');
     assert.equal(await painel.evaluate(el => el.open), true);
+    assert.equal(await abrir.innerText(), 'Fechar acessibilidade');
     await pagina.keyboard.press('Tab');
     assert.equal(await texto.evaluate(el => el === document.activeElement), true);
     await pagina.keyboard.press('Escape');
