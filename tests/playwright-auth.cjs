@@ -45,6 +45,14 @@ const roles = [
      check('Exercises screen accessible',await page.locator('#page-exercicios.active').count()===1);
    }
    check('No uncaught page errors',entry.errors.length===0,entry.errors.join(' | ').slice(0,500));
+   const painel=page.locator('#abrirAcessibilidade');
+   const testarPreferencias=Boolean(process.env.TCC_BASE_URL && await painel.count());
+   if(testarPreferencias){
+    await painel.click();
+    await page.locator('#preferenciaTexto').selectOption('150');
+    await page.locator('#preferenciaTema').selectOption('escuro');
+    await painel.click();
+   }
    await page.evaluate(()=>window.realizarLogout());
    await page.locator('#page-login.active').waitFor({timeout:15000});
    check('Logout returns login screen',true);
@@ -53,6 +61,7 @@ const roles = [
     await page.locator('#page-login.active').waitFor({timeout:15000});
     await page.waitForFunction(()=>!document.querySelector('#loginSubmit').disabled);
     check('Sessão encerrada após recarregar',await page.locator('#page-login.active').isVisible());
+    if(testarPreferencias)check('CT52, preferências preservadas após sair',await page.locator('html').getAttribute('data-texto')==='150' && await page.locator('html').getAttribute('data-tema')==='escuro');
     const sessaoPersistida=await page.evaluate(()=>Object.keys(localStorage).some(chave=>/^sb-.*-auth-token$/.test(chave)));
     check('Sessão Supabase removida do armazenamento local',!sessaoPersistida);
    }

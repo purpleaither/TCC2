@@ -150,8 +150,8 @@ function gerarHeatmap() {
     var valorVisivel = treinosDoDia.length ? '✓' : '-';
 
     if (!regDoDia) {
-      cell.style.backgroundColor = '#f9f9f9';
-      cell.style.borderColor = '#ddd';
+      cell.style.backgroundColor = 'var(--superficie-neutra)';
+      cell.style.borderColor = 'var(--linha)';
       cell.innerHTML = '<span class="heatmap-cell-day">' + i + '</span> <span class="heatmap-cell-value">' + valorVisivel + '</span>';
     } else {
       var v = (filtroDorVisualizacao === 0) ? regDoDia.dorRepouso : regDoDia.dorMovimento;
@@ -159,7 +159,7 @@ function gerarHeatmap() {
       if (v > maxDor) maxDor = v;
       diasComRegistro++;
 
-      if (v === 0) cell.style.backgroundColor = '#f4f4f4';
+      if (v === 0) cell.style.backgroundColor = 'var(--superficie-neutra)';
       else if (v <= 3) cell.style.backgroundColor = '#ffe48a';
       else if (v <= 6) cell.style.backgroundColor = '#ffb464';
       else cell.style.backgroundColor = '#f17b72';

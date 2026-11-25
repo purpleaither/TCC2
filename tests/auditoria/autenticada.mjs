@@ -7,7 +7,8 @@ import { verificarBiblioteca } from './biblioteca.mjs';
 const pasta = process.env.TCC_EVIDENCIAS ?? 'test-results/auditoria';
 const base = process.env.TCC_BASE_URL ?? 'http://127.0.0.1:8765/';
 const modo = process.env.TCC_SNAPSHOT;
-const evidencias = modo ? 'lighthouse-autenticado-' + modo : 'axe-autenticado';
+const tema = process.env.TCC_TEMA;
+const evidencias = (modo ? 'lighthouse-autenticado-' + modo : 'axe-autenticado') + (tema ? '-' + tema : '');
 const configuracaoReal = 'https://tcc2-lime.vercel.app/api/database-config';
 const casos = [];
 const politica = [];
@@ -104,6 +105,11 @@ try {
         await rota.fulfill({ response: resposta });
       });
       await pagina.goto(base);
+      if (tema) {
+        await pagina.locator('#abrirAcessibilidade').click();
+        await pagina.locator('#preferenciaTema').selectOption(tema);
+        await pagina.locator('#abrirAcessibilidade').click();
+      }
       await pagina.locator('#loginEmail').fill(email);
       await pagina.locator('#loginSenha').fill(senha);
       const inicioLogin = performance.now();
@@ -121,6 +127,21 @@ try {
             casos.push({ id: 'CT47-teclado-escala', estado: 'aprovado', ...await verificarTeclado(pagina, pasta) });
           } catch {
             casos.push({ id: 'CT47-teclado-escala', estado: 'reprovado' });
+          }
+          try {
+            await pagina.setViewportSize({ width: 320, height: 760 });
+            await pagina.locator('#abrirAcessibilidade').click();
+            await pagina.locator('#preferenciaTexto').selectOption('200');
+            await pagina.getByRole('checkbox', { name: 'Maior espaçamento no texto' }).check();
+            await pagina.locator('#abrirAcessibilidade').click();
+            const ajuda = pagina.locator('#page-sintomas.active').getByText('O que é rigidez?', { exact: true });
+            await ajuda.click();
+            await pagina.getByText('É a sensação de que uma articulação está dura ou difícil de mover.', { exact: true }).waitFor({ state: 'visible', timeout: 5000 });
+            const cabe = await pagina.evaluate(() => document.querySelector('.app').scrollWidth <= innerWidth);
+            await pagina.locator('#page-sintomas.active .ajuda-termo').first().screenshot({ path: pasta + '/explicacao-rigidez.png' });
+            casos.push({ id: 'CT53-ajuda-mobile', estado: cabe ? 'aprovado' : 'reprovado' });
+          } catch {
+            casos.push({ id: 'CT53-ajuda-mobile', estado: 'reprovado' });
           }
         }
       } else {
@@ -149,7 +170,7 @@ try {
   await navegador.close();
   if (puppeteer) puppeteer.disconnect();
   if (chrome) await chrome.kill();
-  if (!modo) await writeFile(pasta + '/csp-navegador.json', JSON.stringify(politica, null, 2));
+  if (!modo) await writeFile(pasta + '/csp-navegador' + (tema ? '-' + tema : '') + '.json', JSON.stringify(politica, null, 2));
   await writeFile(pasta + '/' + evidencias + '.json', JSON.stringify(casos, null, 2));
 }
 if (casos.some(caso => caso.estado !== 'aprovado')) process.exitCode = 1;

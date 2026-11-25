@@ -13,8 +13,8 @@
 
 body {
   font-family: Arial, sans-serif;
-  background: #f0f2f5;
-  color: #333;
+  background: var(--fundo, #f0f2f5);
+  color: var(--texto, #333);
 }
 
 /* ---- Container do app (simula celular) ---- */
@@ -22,7 +22,7 @@ body {
   max-width: 390px;
   margin: 0 auto;
   min-height: 100vh;
-  background: white;
+  background: var(--superficie, white);
   position: relative;
   overflow-x: hidden;
   box-shadow: 0 0 15px rgba(0,0,0,0.08);
@@ -34,8 +34,8 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 10px 16px;
-  border-bottom: 1px solid #e0e0e0;
-  background: white;
+  border-bottom: 1px solid var(--linha, #e0e0e0);
+  background: var(--superficie, white);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -44,9 +44,9 @@ body {
 .header-menu-btn {
   background: none;
   border: none;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: bold;
-  color: #003366;
+  color: var(--titulo, #003366);
   cursor: pointer;
   padding: 6px 0;
 }
@@ -65,17 +65,17 @@ body {
 }
 
 .header-title {
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: bold;
-  color: #003366;
+  color: var(--titulo, #003366);
 }
 
 .header-perfil-btn {
   background: none;
   border: none;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: bold;
-  color: #003366;
+  color: var(--titulo, #003366);
   cursor: pointer;
   padding: 6px 0;
 }
@@ -110,15 +110,15 @@ body {
 }
 
 .login-title {
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: bold;
-  color: #003366;
+  color: var(--titulo, #003366);
   margin-bottom: 4px;
 }
 
 .login-sub {
-  font-size: 13px;
-  color: #666;
+  font-size: 0.8125rem;
+  color: var(--texto-suave, #666);
 }
 
 .login-form {
@@ -131,80 +131,80 @@ body {
 
 .form-label {
   display: block;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: bold;
-  color: #003366;
+  color: var(--titulo, #003366);
   margin-bottom: 6px;
 }
 
 .form-input {
   width: 100%;
   padding: 12px 14px;
-  font-size: 14px;
-  border: 1px solid #ccc;
+  font-size: 0.875rem;
+  border: 1px solid var(--borda, #ccc);
   border-radius: 6px;
   outline: none;
-  background: #fff;
-  color: #333;
+  background: var(--superficie, #fff);
+  color: var(--texto, #333);
 }
 
 .form-input:focus {
-  border-color: #006633;
+  border-color: var(--destaque, #006633);
   box-shadow: 0 0 0 2px rgba(0, 102, 51, 0.15);
 }
 
 .form-remember {
   display: flex;
   align-items: center;
-  font-size: 13px;
-  color: #555;
+  font-size: 0.8125rem;
+  color: var(--texto-suave, #555);
   margin-bottom: 16px;
 }
 
 .form-remember input {
   margin-right: 8px;
-  accent-color: #006633;
+  accent-color: var(--destaque, #006633);
 }
 
 .login-help {
-  font-size: 11px;
-  color: #666;
+  font-size: 0.6875rem;
+  color: var(--texto-suave, #666);
   text-align: center;
   margin-top: 16px;
 }
 
 /* ---- Cards ---- */
 .card {
-  border: 1px solid #ddd;
+  border: 1px solid var(--linha, #ddd);
   border-radius: 6px;
   padding: 16px;
   margin-bottom: 16px;
-  background: white;
+  background: var(--superficie, white);
 }
 
 .card-title {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: bold;
-  color: #003366;
+  color: var(--titulo, #003366);
   margin-bottom: 8px;
 }
 
 .card-text {
-  font-size: 13px;
-  color: #333;
+  font-size: 0.8125rem;
+  color: var(--texto, #333);
   margin-bottom: 8px;
   line-height: 1.4;
 }
 
 .card-text-small {
-  font-size: 11px;
-  color: #666;
+  font-size: 0.6875rem;
+  color: var(--texto-suave, #666);
 }
 
 .card-link {
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: bold;
-  color: #006633;
+  color: var(--destaque, #006633);
   text-decoration: none;
   display: inline-block;
   margin-top: 4px;
@@ -212,15 +212,15 @@ body {
 
 /* ---- Títulos das páginas ---- */
 .page-title {
-  font-size: 19px;
+  font-size: 1.1875rem;
   font-weight: bold;
-  color: #003366;
+  color: var(--titulo, #003366);
   margin-bottom: 4px;
 }
 
 .page-subtitle {
-  font-size: 12px;
-  color: #666;
+  font-size: 0.75rem;
+  color: var(--texto-suave, #666);
   margin-bottom: 16px;
 }
 
@@ -229,11 +229,11 @@ body {
   display: block;
   width: 100%;
   padding: 12px;
-  background: #006633;
-  color: white;
+  background: var(--acao, #006633);
+  color: var(--sobre-acao, white);
   border: none;
   border-radius: 6px;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: bold;
   cursor: pointer;
   text-align: center;
@@ -241,32 +241,32 @@ body {
 }
 
 .btn:hover {
-  background: #005528;
+  background: var(--acao-hover, #005528);
 }
 
 /* Botão de contorno (outline / sair) */
 .btn-outline {
-  background: white;
-  color: #cc0000;
-  border: 1px solid #cc0000;
+  background: var(--superficie, white);
+  color: var(--erro, #cc0000);
+  border: 1px solid var(--erro, #cc0000);
 }
 
 .btn-outline:hover {
-  background: #fff5f5;
+  background: var(--fundo-alerta, #fff5f5);
 }
 
 /* Botão de emergência (vermelho SAMU) */
 .btn-danger {
-  background: #cc0000;
+  background: var(--erro, #cc0000);
 }
 
 .btn-danger:hover {
-  background: #aa0000;
+  background: var(--erro, #aa0000);
 }
 
 /* Botão desabilitado */
 .btn:disabled {
-  background: #999;
+  background: var(--texto-suave, #999);
   cursor: not-allowed;
 }
 
@@ -276,9 +276,9 @@ body {
 }
 
 .pain-scale-label {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: bold;
-  color: #003366;
+  color: var(--titulo, #003366);
   margin-bottom: 6px;
   display: flex;
   justify-content: space-between;
@@ -293,10 +293,10 @@ body {
 .pain-scale-btn {
   width: 44px;
   height: 44px;
-  background: #f0f0f0;
-  border: 1px solid #ccc;
+  background: var(--superficie-neutra, #f0f0f0);
+  border: 1px solid var(--borda, #ccc);
   border-radius: 4px;
-  font-size: 22px;
+  font-size: 1.375rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -304,28 +304,28 @@ body {
 }
 
 .pain-scale-btn:hover {
-  background: #e0e0e0;
+  background: var(--linha, #e0e0e0);
 }
 
 .pain-scale-bar {
   flex: 1;
   height: 6px;
-  background: #ddd;
+  background: var(--linha, #ddd);
   border-radius: 3px;
   position: relative;
 }
 
 .pain-scale-fill {
   height: 100%;
-  background: #006633;
+  background: var(--acao, #006633);
   border-radius: 3px;
 }
 
 .pain-scale-thumb {
   width: 18px;
   height: 18px;
-  background: white;
-  border: 2px solid #006633;
+  background: var(--superficie, white);
+  border: 2px solid var(--destaque, #006633);
   border-radius: 50%;
   position: absolute;
   top: -6px;
@@ -334,8 +334,8 @@ body {
 .pain-scale-labels {
   display: flex;
   justify-content: space-between;
-  font-size: 10px;
-  color: #666;
+  font-size: 0.625rem;
+  color: var(--texto-suave, #666);
   margin-top: 4px;
 }
 
@@ -345,9 +345,9 @@ body {
 }
 
 .choices-label {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: bold;
-  color: #003366;
+  color: var(--titulo, #003366);
   margin-bottom: 8px;
 }
 
@@ -359,19 +359,19 @@ body {
 .choice-btn {
   flex: 1;
   padding: 10px 4px;
-  background: white;
-  border: 1px solid #ccc;
+  background: var(--superficie, white);
+  border: 1px solid var(--borda, #ccc);
   border-radius: 4px;
-  font-size: 11px;
+  font-size: 0.6875rem;
   cursor: pointer;
   text-align: center;
 }
 
 .choice-btn.selected {
-  background: #e8f5e9;
-  border: 2px solid #006633;
+  background: var(--superficie-verde, #e8f5e9);
+  border: 2px solid var(--destaque, #006633);
   font-weight: bold;
-  color: #006633;
+  color: var(--destaque, #006633);
 }
 
 /* ---- Humor (rostos) ---- */
@@ -383,33 +383,33 @@ body {
 .mood-btn {
   flex: 1;
   padding: 10px;
-  background: white;
-  border: 1px solid #ccc;
+  background: var(--superficie, white);
+  border: 1px solid var(--borda, #ccc);
   border-radius: 4px;
   cursor: pointer;
   text-align: center;
 }
 
 .mood-btn.selected {
-  background: #e8f5e9;
-  border: 2px solid #006633;
+  background: var(--superficie-verde, #e8f5e9);
+  border: 2px solid var(--destaque, #006633);
   font-weight: bold;
 }
 
 .mood-emoji {
-  font-size: 24px;
+  font-size: 1.5rem;
   display: block;
   margin-bottom: 4px;
 }
 
 .mood-label {
-  font-size: 11px;
+  font-size: 0.6875rem;
 }
 
 /* ---- Bloqueio meteorológico ---- */
 .locked-card {
   background: transparent;
-  border: 1px solid #ddd;
+  border: 1px solid var(--linha, #ddd);
   border-radius: 6px;
   padding: 16px;
   margin-bottom: 16px;
@@ -417,14 +417,14 @@ body {
 }
 
 .lock-icon {
-  font-size: 22px;
+  font-size: 1.375rem;
   margin-bottom: 6px;
 }
 
 /* ---- Info meteorológica (desbloqueada) ---- */
 .weather-card {
   background: transparent;
-  border: 1px solid #ddd;
+  border: 1px solid var(--linha, #ddd);
   border-radius: 6px;
   padding: 16px;
   margin-bottom: 16px;
@@ -432,21 +432,21 @@ body {
 }
 
 .weather-title {
-  font-size: 14px; /* Adicionado para igualar aos outros cards */
+  font-size: 0.875rem; /* Adicionado para igualar aos outros cards */
   font-weight: bold;
-  color: #003366;
+  color: var(--titulo, #003366);
   margin-bottom: 6px;
 }
 
 .weather-main {
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: bold;
   margin-bottom: 4px;
 }
 
 .weather-detail {
-  font-size: 12px;
-  color: #666;
+  font-size: 0.75rem;
+  color: var(--texto-suave, #666);
 }
 
 /* ---- Heatmap (meu histórico) ---- */
@@ -460,17 +460,17 @@ body {
 .month-nav-btn {
   width: 40px;
   height: 40px;
-  background: white;
-  border: 1px solid #ccc;
+  background: var(--superficie, white);
+  border: 1px solid var(--borda, #ccc);
   border-radius: 4px;
-  font-size: 20px;
+  font-size: 1.25rem;
   cursor: pointer;
 }
 
 .month-label {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: bold;
-  color: #003366;
+  color: var(--titulo, #003366);
 }
 
 .stats-row {
@@ -485,14 +485,14 @@ body {
 }
 
 .stat-value {
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: bold;
-  color: #003366;
+  color: var(--titulo, #003366);
 }
 
 .stat-label {
-  font-size: 10px;
-  color: #666;
+  font-size: 0.625rem;
+  color: var(--texto-suave, #666);
 }
 
 .heatmap-weekdays {
@@ -504,9 +504,9 @@ body {
 
 .heatmap-weekday {
   text-align: center;
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: bold;
-  color: #666;
+  color: var(--texto-suave, #666);
 }
 
 .heatmap-grid {
@@ -518,29 +518,29 @@ body {
 
 .heatmap-cell {
   aspect-ratio: 1;
-  border: 1px solid #ccc;
+  border: 1px solid var(--borda, #ccc);
   border-radius: 3px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 10px;
-   background: #f4f4f4;
+  font-size: 0.625rem;
+   background: var(--superficie-neutra, #f4f4f4);
 }
 
 .heatmap-cell:hover {
-  border-color: #006633;
+  border-color: var(--destaque, #006633);
   border-width: 2px;
 }
 
 .heatmap-cell-day {
-  font-size: 9px;
-  color: #333;
+  font-size: 0.5625rem;
+  color: var(--texto, #333);
 }
 
 .heatmap-cell-value {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: bold;
 }
 
@@ -555,13 +555,13 @@ body {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 11px;
+  font-size: 0.6875rem;
 }
 
 .legend-color {
   width: 14px;
   height: 14px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--borda, #ccc);
   border-radius: 2px;
 }
 
@@ -587,7 +587,7 @@ body {
   left: -280px;
   width: 280px;
   height: 100vh;
-  background: white;
+  background: var(--superficie, white);
   z-index: 30;
   padding: 20px 0;
   visibility: hidden;
@@ -617,9 +617,9 @@ body {
 }
 
 .menu-title {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: bold;
-  color: #003366;
+  color: var(--titulo, #003366);
 }
 
 .menu-items-list {
@@ -632,56 +632,56 @@ body {
   padding: 15px 20px;
   background: none;
   border: none;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--linha, #eee);
   text-align: left;
-  font-size: 14px;
-  color: #333;
+  font-size: 0.875rem;
+  color: var(--texto, #333);
   cursor: pointer;
 }
 
 .menu-item:hover {
-  background: #f5f5f5;
+  background: var(--superficie-neutra, #f5f5f5);
 }
 
 .menu-item.active {
-  background: #e8f5e9;
+  background: var(--superficie-verde, #e8f5e9);
   font-weight: bold;
-  color: #006633;
-  border-left: 3px solid #006633;
+  color: var(--destaque, #006633);
+  border-left: 3px solid var(--destaque, #006633);
 }
 
 .menu-footer {
   padding: 16px 20px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--linha, #eee);
 }
 
 .menu-logout-btn {
   width: 100%;
   padding: 10px;
-  background: white;
-  border: 1px solid #cc0000;
-  color: #cc0000;
+  background: var(--superficie, white);
+  border: 1px solid var(--erro, #cc0000);
+  color: var(--erro, #cc0000);
   border-radius: 4px;
   font-weight: bold;
   cursor: pointer;
 }
 
 .menu-logout-btn:hover {
-  background: #fff5f5;
+  background: var(--fundo-alerta, #fff5f5);
 }
 
 /* ---- Card de exercício ---- */
 .exercise-visual {
   width: 100%;
   height: 140px;
-  background: #f2f7f4;
-  border: 1px solid #d4e6dc;
+  background: var(--superficie-suave, #f2f7f4);
+  border: 1px solid var(--linha, #d4e6dc);
   border-radius: 6px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #006633;
+  color: var(--destaque, #006633);
   margin: 12px 0;
   padding: 12px;
 }
@@ -693,15 +693,15 @@ body {
 }
 
 .exercise-visual-label {
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: bold;
-  color: #003366;
+  color: var(--titulo, #003366);
 }
 
 /* ---- Alerta de segurança ---- */
 .alert-box {
-  background: #fff3f3;
-  border: 2px solid #cc0000;
+  background: var(--fundo-alerta, #fff3f3);
+  border: 2px solid var(--erro, #cc0000);
   border-radius: 6px;
   padding: 16px;
   margin-bottom: 16px;
@@ -709,20 +709,20 @@ body {
 
 .alert-title {
   font-weight: bold;
-  color: #cc0000;
+  color: var(--erro, #cc0000);
   margin-bottom: 8px;
 }
 
 .alert-text {
-  font-size: 13px;
-  color: #333;
+  font-size: 0.8125rem;
+  color: var(--texto, #333);
   margin-bottom: 4px;
   line-height: 1.4;
 }
 
 /* ---- Aviso (card com ⚠) ---- */
 .warning-card {
-  background: #fffbe6;
+  background: var(--fundo-aviso, #fffbe6);
   border: 1px solid #e6d600;
   border-radius: 6px;
   padding: 12px 16px;
@@ -731,13 +731,13 @@ body {
 
 .warning-title {
   font-weight: bold;
-  font-size: 12px;
+  font-size: 0.75rem;
   margin-bottom: 4px;
 }
 
 .warning-text {
-  font-size: 11px;
-  color: #666;
+  font-size: 0.6875rem;
+  color: var(--texto-suave, #666);
   line-height: 1.4;
 }
 
@@ -751,28 +751,28 @@ body {
 }
 
 .routine-label {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: bold;
   margin-bottom: 2px;
-  color: #003366;
+  color: var(--titulo, #003366);
 }
 
 .routine-value {
-  font-size: 13px;
-  color: #333;
+  font-size: 0.8125rem;
+  color: var(--texto, #333);
 }
 
 /* ---- Lista de dados paciente / contatos ---- */
 .contact-info-item {
   margin-bottom: 10px;
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.4;
 }
 
 .contact-info-label {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: bold;
-  color: #003366;
+  color: var(--titulo, #003366);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   display: block;
@@ -787,8 +787,8 @@ body {
   transform: translateX(-50%);
   max-width: 390px;
   width: 100%;
-  background: white;
-  border-top: 1px solid #ccc;
+  background: var(--superficie, white);
+  border-top: 1px solid var(--borda, #ccc);
   border-radius: 16px 16px 0 0;
   padding: 20px;
   z-index: 15;
@@ -803,7 +803,7 @@ body {
 .bottom-sheet-handle {
   width: 40px;
   height: 4px;
-  background: #ccc;
+  background: var(--borda, #ccc);
   border-radius: 2px;
   margin: 0 auto 16px;
 }
@@ -813,11 +813,11 @@ body {
   top: 16px;
   right: 16px;
   background: none;
-  border: 1px solid #ccc;
+  border: 1px solid var(--borda, #ccc);
   width: 36px;
   height: 36px;
   border-radius: 4px;
-  font-size: 18px;
+  font-size: 1.125rem;
   cursor: pointer;
 }
 /* Ícone do título da Pílula TPE */
@@ -841,39 +841,39 @@ body {
 
 
 /* Fase 2: componentes mantêm a paleta e linguagem visual originais. */
-.demo-exercicio-item{border:1px solid #dfe7e2;border-radius:6px;padding:12px;margin-bottom:12px;background:#fafcfa}
+.demo-exercicio-item{border:1px solid var(--linha, #dfe7e2);border-radius:6px;padding:12px;margin-bottom:12px;background:var(--superficie-suave, #fafcfa)}
 .demo-exercicio-item .form-group{margin-bottom:10px}
 .demo-exercicio-item .form-input{min-width:0}
 .demo-grid-parametros{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .demo-acoes{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
 .demo-acoes .btn{width:auto;margin-top:0;flex:1}
-.demo-detalhe{background:#f6faf7;border-left:3px solid #006633;padding:10px;margin:9px 0;line-height:1.5;font-size:12px}
-.demo-vazio{color:#69756e;font-size:13px;padding:12px 0}
-#page-profissional select,#page-planos-prof select,#page-registros-prof select{background:#fff}
+.demo-detalhe{background:var(--superficie-suave, #f6faf7);border-left:3px solid var(--destaque, #006633);padding:10px;margin:9px 0;line-height:1.5;font-size:0.75rem}
+.demo-vazio{color:var(--texto-suave, #69756e);font-size:0.8125rem;padding:12px 0}
+#page-profissional select,#page-planos-prof select,#page-registros-prof select{background:var(--superficie, #fff)}
 @media(max-width:340px){.demo-grid-parametros{grid-template-columns:1fr}.demo-acoes{flex-direction:column}}
 
 .bank-result{margin-top:12px}
-.bank-result .card-title{font-size:14px;line-height:1.4}
+.bank-result .card-title{font-size:0.875rem;line-height:1.4}
 .bank-result .card-text-small{margin:7px 0;line-height:1.55}
 .bank-media{max-width:100%;margin-top:10px}
-.bank-media video,.bank-media img{width:100%;max-height:260px;object-fit:contain;display:block;background:#f5f7f5;border:1px solid #e0e7e1;border-radius:6px}
+.bank-media video,.bank-media img{width:100%;max-height:260px;object-fit:contain;display:block;background:var(--superficie-suave, #f5f7f5);border:1px solid var(--linha, #e0e7e1);border-radius:6px}
 .bank-media .card-text-small{padding:8px 0}
 #exercisebankPanel .demo-acoes{display:flex;flex-wrap:wrap}
 #exercisebankMore{margin-top:10px}
 
 
 /* Prescrição individual: leitura prioritária para o paciente. */
-#page-exercicios .patient-exercise-card{background:#fff;border:1px solid #dce9e0;border-radius:12px;padding:16px;min-width:0}
-#page-exercicios .patient-plan-title{font-size:13px;color:#466654;font-weight:600;margin:0 0 6px}
-#page-exercicios .patient-exercise-progress{font-size:14px;color:#006633;font-weight:700;margin:0 0 10px}
-#page-exercicios .patient-exercise-title{font-size:clamp(21px,5vw,27px);line-height:1.25;color:#003366;margin:0 0 14px}
+#page-exercicios .patient-exercise-card{background:var(--superficie, #fff);border:1px solid var(--linha, #dce9e0);border-radius:12px;padding:16px;min-width:0}
+#page-exercicios .patient-plan-title{font-size:0.8125rem;color:var(--texto-suave, #466654);font-weight:600;margin:0 0 6px}
+#page-exercicios .patient-exercise-progress{font-size:0.875rem;color:var(--destaque, #006633);font-weight:700;margin:0 0 10px}
+#page-exercicios .patient-exercise-title{font-size:clamp(1.3125rem,calc(5vw * var(--escala-texto)),1.6875rem);line-height:1.25;color:var(--titulo, #003366);margin:0 0 14px}
 #page-exercicios .patient-exercise-video{margin:0 0 16px}
-#page-exercicios .patient-exercise-video video{width:100%;max-height:320px;aspect-ratio:16 / 9;background:#f2f5f3;border-radius:10px;object-fit:contain}
+#page-exercicios .patient-exercise-video video{width:100%;max-height:320px;aspect-ratio:16 / 9;background:var(--superficie-suave, #f2f5f3);border-radius:10px;object-fit:contain}
 #page-exercicios .patient-exercise-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0 16px}
-#page-exercicios .patient-exercise-metric{padding:14px 12px;background:#f0f8f3;border:1px solid #cfe2d5;border-radius:10px;min-width:0}
-#page-exercicios .patient-exercise-metric-label{display:block;font-size:13px;font-weight:600;color:#375946;margin-bottom:5px}
-#page-exercicios .patient-exercise-metric-value{display:block;font-size:clamp(19px,5vw,26px);line-height:1.15;font-weight:800;color:#003366;overflow-wrap:anywhere}
-#page-exercicios .patient-exercise-instructions{font-size:15px;line-height:1.6;margin:0 0 14px}
+#page-exercicios .patient-exercise-metric{padding:14px 12px;background:var(--superficie-suave, #f0f8f3);border:1px solid var(--linha, #cfe2d5);border-radius:10px;min-width:0}
+#page-exercicios .patient-exercise-metric-label{display:block;font-size:0.8125rem;font-weight:600;color:var(--texto-suave, #375946);margin-bottom:5px}
+#page-exercicios .patient-exercise-metric-value{display:block;font-size:clamp(1.1875rem,calc(5vw * var(--escala-texto)),1.625rem);line-height:1.15;font-weight:800;color:var(--titulo, #003366);overflow-wrap:anywhere}
+#page-exercicios .patient-exercise-instructions{font-size:0.9375rem;line-height:1.6;margin:0 0 14px}
 #page-exercicios .patient-exercise-card .demo-acoes{margin-top:14px}
 #page-exercicios .patient-exercise-card .demo-acoes .btn{min-height:44px}
 @media(max-width:340px){
@@ -883,33 +883,33 @@ body {
 }
 
 /* Conselhos curtos de educação terapêutica na tela do exercício. */
-#page-exercicios .patient-tpe-advice{margin:8px 0 18px;padding:14px 15px;border-left:4px solid #006633;border-radius:8px;background:#f0f8f3}
-#page-exercicios .patient-tpe-label{display:inline-block;color:#006633;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
-#page-exercicios .patient-tpe-heading{font-size:16px;line-height:1.4;color:#003366;margin:0 0 6px}
-#page-exercicios .patient-tpe-text{font-size:14px;line-height:1.6;color:#2c4539;margin:0 0 8px}
-#page-exercicios .patient-tpe-link{background:none;border:0;padding:5px 0;color:#006633;text-align:left;text-decoration:underline;cursor:pointer;font-size:13px;font-weight:700}
-#page-exercicios .patient-tpe-link:focus-visible{outline:2px solid #003366;outline-offset:3px}
+#page-exercicios .patient-tpe-advice{margin:8px 0 18px;padding:14px 15px;border-left:4px solid var(--destaque, #006633);border-radius:8px;background:var(--superficie-suave, #f0f8f3)}
+#page-exercicios .patient-tpe-label{display:inline-block;color:var(--destaque, #006633);font-weight:800;font-size:0.75rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+#page-exercicios .patient-tpe-heading{font-size:1rem;line-height:1.4;color:var(--titulo, #003366);margin:0 0 6px}
+#page-exercicios .patient-tpe-text{font-size:0.875rem;line-height:1.6;color:var(--texto, #2c4539);margin:0 0 8px}
+#page-exercicios .patient-tpe-link{background:none;border:0;padding:5px 0;color:var(--destaque, #006633);text-align:left;text-decoration:underline;cursor:pointer;font-size:0.8125rem;font-weight:700}
+#page-exercicios .patient-tpe-link:focus-visible{outline:2px solid var(--titulo, #003366);outline-offset:3px}
 
 /* Conclusão do treino e ficha preservada no histórico diário. */
-#page-exercicios .patient-workout-finish{display:block;width:100%;margin-top:15px;min-height:50px;font-size:16px;font-weight:800}
+#page-exercicios .patient-workout-finish{display:block;width:100%;margin-top:15px;min-height:50px;font-size:1rem;font-weight:800}
 #page-exercicios .patient-workout-finish:disabled{opacity:.8;cursor:default}
-.heatmap-workout-day{box-shadow:inset 0 0 0 2px #006633;position:relative;cursor:pointer}
-.heatmap-workout-marker{position:absolute;right:2px;top:1px;font-size:10px;font-weight:800;color:#006633;line-height:1}
-.heatmap-cell[role="button"]:focus-visible{outline:3px solid #003366;outline-offset:2px}
+.heatmap-workout-day{box-shadow:inset 0 0 0 2px var(--destaque, #006633);position:relative;cursor:pointer}
+.heatmap-workout-marker{position:absolute;right:2px;top:1px;font-size:0.625rem;font-weight:800;color:var(--destaque, #006633);line-height:1}
+.heatmap-cell[role="button"]:focus-visible{outline:3px solid var(--titulo, #003366);outline-offset:2px}
 #climaSheet{max-height:85vh;overflow-y:auto}
-.workout-history-details{margin-top:16px;border-top:1px solid #e0e7e1;padding-top:15px}
-.workout-history-details .card-title{font-size:16px;color:#003366}
-.workout-history-session{padding:12px;margin:10px 0;background:#f6faf7;border:1px solid #d5e5d9;border-radius:8px}
-.workout-history-time{font-size:13px;font-weight:800;color:#006633;margin:0 0 10px}
-.workout-history-exercise{padding:10px 0;border-top:1px solid #d8e6dc}
-.workout-history-name{display:block;font-size:14px;line-height:1.35;color:#003366}
-.workout-history-plan{display:block;font-size:12px;color:#567061;margin:3px 0}
-.workout-history-exercise .card-text-small{font-size:13px;line-height:1.5;margin:5px 0 0}
+.workout-history-details{margin-top:16px;border-top:1px solid var(--linha, #e0e7e1);padding-top:15px}
+.workout-history-details .card-title{font-size:1rem;color:var(--titulo, #003366)}
+.workout-history-session{padding:12px;margin:10px 0;background:var(--superficie-suave, #f6faf7);border:1px solid var(--linha, #d5e5d9);border-radius:8px}
+.workout-history-time{font-size:0.8125rem;font-weight:800;color:var(--destaque, #006633);margin:0 0 10px}
+.workout-history-exercise{padding:10px 0;border-top:1px solid var(--linha, #d8e6dc)}
+.workout-history-name{display:block;font-size:0.875rem;line-height:1.35;color:var(--titulo, #003366)}
+.workout-history-plan{display:block;font-size:0.75rem;color:var(--texto-suave, #567061);margin:3px 0}
+.workout-history-exercise .card-text-small{font-size:0.8125rem;line-height:1.5;margin:5px 0 0}
 
 /* A biblioteca e as opções só aparecem quando solicitadas pelo fisioterapeuta. */
 #exerciseChoice[hidden],#exercisebankPanel[hidden]{display:none}
-.exercise-source-choice{margin-top:14px;padding-top:14px;border-top:1px solid #dfe7e2}
-.exercise-source-choice .card-title{font-size:16px;margin-bottom:10px}
+.exercise-source-choice{margin-top:14px;padding-top:14px;border-top:1px solid var(--linha, #dfe7e2)}
+.exercise-source-choice .card-title{font-size:1rem;margin-bottom:10px}
 .exercise-source-choice .demo-acoes{margin-bottom:0}
 
 /* Inserção em páginas separadas: seleção, configuração e resumo. */
@@ -919,29 +919,29 @@ body {
 #page-exercise-config-prof #exerciseConfigRow>.demo-exercicio-item{margin-bottom:16px}
 #page-exercise-config-prof .card>.btn{min-height:46px}
 #page-exercise-bank-prof>.btn{margin-bottom:12px}
-#page-editor-prof .exercise-summary-item{border:1px solid #dfe7e2;background:#fafcfa;border-radius:8px;padding:12px;margin:10px 0}
-#page-editor-prof .exercise-summary-name{font-size:16px;line-height:1.4;display:block;color:#003366}
-#page-editor-prof .exercise-summary-item .card-text-small{font-size:13px;line-height:1.5;margin:6px 0}
+#page-editor-prof .exercise-summary-item{border:1px solid var(--linha, #dfe7e2);background:var(--superficie-suave, #fafcfa);border-radius:8px;padding:12px;margin:10px 0}
+#page-editor-prof .exercise-summary-name{font-size:1rem;line-height:1.4;display:block;color:var(--titulo, #003366)}
+#page-editor-prof .exercise-summary-item .card-text-small{font-size:0.8125rem;line-height:1.5;margin:6px 0}
 #page-editor-prof .exercise-summary-item .demo-acoes{margin:8px 0 0}
 #page-editor-prof #itensPlanoProf[hidden]{display:none}
 
 /* Ações principais após a lista de planos e escolha do plano de destino. */
 #planMainActions .btn{display:block;width:100%;min-height:46px;margin:10px 0}
 #planMainActions .btn:disabled{opacity:.5;cursor:not-allowed}
-#planMainActions #addExerciseEntryHint{font-size:13px;line-height:1.5;margin-top:8px}
+#planMainActions #addExerciseEntryHint{font-size:0.8125rem;line-height:1.5;margin-top:8px}
 #page-exercise-target-prof .card{margin-bottom:12px}
 #page-exercise-target-prof .card .btn{margin-top:12px}
 
 /* Ações dos planos sempre logo abaixo de Editar e Excluir. */
 #planMainActions[hidden]{display:none}
-#page-planos-prof .plan-card-add-actions{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 0;padding-top:12px;border-top:1px solid #dfe7e2}
+#page-planos-prof .plan-card-add-actions{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 0;padding-top:12px;border-top:1px solid var(--linha, #dfe7e2)}
 #page-planos-prof .plan-card-add-actions .btn{flex:1 1 180px;min-height:46px;width:auto;margin:0}
 @media(max-width:390px){#page-planos-prof .plan-card-add-actions{flex-direction:column}#page-planos-prof .plan-card-add-actions .btn{flex:auto;width:100%}}
 
 /* Leitura ampliada dos exercícios na primeira tela de gerenciamento de planos. */
-#page-planos-prof #listaPlanosProf .demo-detalhe{font-size:16px;line-height:1.6;padding:14px;margin:12px 0}
-#page-planos-prof #listaPlanosProf .plan-exercise-name{display:block;color:#003366;font-size:18px;line-height:1.4;font-weight:750;overflow-wrap:anywhere;margin-bottom:6px}
-#page-planos-prof #listaPlanosProf .plan-exercise-prescription{font-size:16px;line-height:1.6;margin:0;color:#253c30;overflow-wrap:anywhere}
+#page-planos-prof #listaPlanosProf .demo-detalhe{font-size:1rem;line-height:1.6;padding:14px;margin:12px 0}
+#page-planos-prof #listaPlanosProf .plan-exercise-name{display:block;color:var(--titulo, #003366);font-size:1.125rem;line-height:1.4;font-weight:750;overflow-wrap:anywhere;margin-bottom:6px}
+#page-planos-prof #listaPlanosProf .plan-exercise-prescription{font-size:1rem;line-height:1.6;margin:0;color:var(--texto, #253c30);overflow-wrap:anywhere}
 
 /* Ajuste responsivo: a biblioteca deve caber na largura disponível do dispositivo. */
 #page-exercise-bank-prof,
@@ -987,3 +987,153 @@ body {
   #page-exercise-bank-prof #exercisebankPanel{padding:12px}
   #page-exercise-bank-prof .bank-result .demo-acoes{grid-template-columns:minmax(0,1fr)}
 }
+
+/* Preferências locais de leitura e aparência. */
+:root {
+  --escala-texto: 1;
+  color-scheme: light;
+  --fundo: #f0f2f5;
+  --superficie: #ffffff;
+  --superficie-suave: #f6faf7;
+  --superficie-neutra: #f4f4f4;
+  --superficie-verde: #e8f5e9;
+  --fundo-alerta: #fff5f5;
+  --fundo-aviso: #fffbe6;
+  --texto: #333333;
+  --texto-suave: #666666;
+  --titulo: #003366;
+  --destaque: #006633;
+  --acao: #006633;
+  --acao-hover: #005528;
+  --sobre-acao: #ffffff;
+  --erro: #cc0000;
+  --borda: #cccccc;
+  --linha: #dfe7e2;
+  font-size: calc(100% * var(--escala-texto));
+}
+:root[data-tema="escuro"] {
+  color-scheme: dark;
+  --fundo: #101814;
+  --superficie: #19241f;
+  --superficie-suave: #22352a;
+  --superficie-neutra: #26332c;
+  --superficie-verde: #284437;
+  --fundo-alerta: #432628;
+  --fundo-aviso: #40361a;
+  --texto: #edf5ef;
+  --texto-suave: #b9cfc1;
+  --titulo: #b7dcff;
+  --destaque: #89e4ae;
+  --acao: #19623f;
+  --acao-hover: #23744d;
+  --sobre-acao: #ffffff;
+  --erro: #ffb4b4;
+  --borda: #718779;
+  --linha: #43574b;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema]), :root[data-tema="sistema"] {
+    color-scheme: dark;
+  --fundo: #101814;
+  --superficie: #19241f;
+  --superficie-suave: #22352a;
+  --superficie-neutra: #26332c;
+  --superficie-verde: #284437;
+  --fundo-alerta: #432628;
+  --fundo-aviso: #40361a;
+  --texto: #edf5ef;
+  --texto-suave: #b9cfc1;
+  --titulo: #b7dcff;
+  --destaque: #89e4ae;
+  --acao: #19623f;
+  --acao-hover: #23744d;
+  --sobre-acao: #ffffff;
+  --erro: #ffb4b4;
+  --borda: #718779;
+  --linha: #43574b;
+  }
+}
+:root[data-contraste] {
+  color-scheme: dark;
+  --fundo: #000;
+  --superficie: #000;
+  --superficie-suave: #111;
+  --superficie-neutra: #111;
+  --superficie-verde: #111;
+  --fundo-alerta: #111;
+  --fundo-aviso: #111;
+  --texto: #fff;
+  --texto-suave: #fff;
+  --titulo: #fff;
+  --destaque: #8fffbd;
+  --acao: #9dffc4;
+  --acao-hover: #d1ffe1;
+  --sobre-acao: #000;
+  --erro: #ffb4b4;
+  --borda: #fff;
+  --linha: #aaa;
+}
+:root[data-texto="125"] { --escala-texto: 1.25; }
+:root[data-texto="150"] { --escala-texto: 1.5; }
+:root[data-texto="200"] { --escala-texto: 2; }
+:root[data-espacamento] .app,
+:root[data-espacamento] .app :is(button, input, label, select, textarea, p, li, h1, h2, h3, summary) {
+  line-height: 1.5 !important;
+  letter-spacing: .12em !important;
+  word-spacing: .16em !important;
+}
+:root[data-movimento] .app *,
+:root[data-movimento] .app *::before,
+:root[data-movimento] .app *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .app *, .app *::before, .app *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+.app :focus-visible {
+  outline: 3px solid var(--titulo);
+  outline-offset: 2px;
+}
+.app { overflow-wrap: anywhere; }
+.app :is(button, input, select, textarea) { max-width: 100%; }
+.app :is(button, input, select, textarea) { scroll-margin-block: 5rem 1rem; }
+.app :is(.choice-btn, .pain-scale-btn, .month-btn) { min-height: 2rem; height: auto; }
+.app .heatmap-cell { min-width: 0; height: auto; }
+.app .heatmap-cell[style*="ffe48a"],
+.app .heatmap-cell[style*="ffb464"],
+.app .heatmap-cell[style*="f17b72"] { color: #182019; }
+.app .heatmap-cell[style*="ffe48a"] .heatmap-cell-day,
+.app .heatmap-cell[style*="ffb464"] .heatmap-cell-day,
+.app .heatmap-cell[style*="f17b72"] .heatmap-cell-day { color: inherit; }
+:root[data-texto="200"] .header,
+:root[data-espacamento] .header { position: static; flex-wrap: wrap; }
+:root[data-texto="200"] .choices-options,
+:root[data-espacamento] .choices-options { flex-wrap: wrap; }
+:root[data-texto="200"] .heatmap-grid,
+:root[data-espacamento] .heatmap-grid { gap: 2px; }
+.accessibilidade { margin: .5rem 1rem; }
+.accessibilidade summary, .ajuda-termo summary {
+  cursor: pointer; color: var(--titulo); font-weight: 700;
+  min-height: 1.5rem; padding: .3rem .15rem;
+}
+.accessibilidade summary svg {
+  width: 1em; height: 1em; vertical-align: -.15em; margin-inline-end: .2em;
+}
+.accessibilidade[open] {
+  padding: .65rem; border: 1px solid var(--borda);
+  border-radius: .5rem; background: var(--superficie-suave);
+}
+.preferencias { display: grid; gap: .45rem; padding-block: .35rem; }
+.preferencias label { display: block; font-size: .875rem; }
+.preferencias input[type="checkbox"] { accent-color: var(--destaque); }
+.preferencias .form-input { margin-block-start: .25rem; }
+.preferencias .btn { margin-block-start: .3rem; }
+.ajuda-termo { margin: .2rem 0 .65rem; }
+.ajuda-termo summary { font-size: .8125rem; }
+.ajuda-termo p { font-size: .8125rem; line-height: 1.5; color: var(--texto); }

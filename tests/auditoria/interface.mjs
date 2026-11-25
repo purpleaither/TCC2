@@ -71,6 +71,8 @@ try {
       });
       const semFoco = await assinatura();
       await pagina.keyboard.press('Tab');
+      assert.equal(await pagina.locator(':focus').getAttribute('id'), 'abrirAcessibilidade');
+      await pagina.keyboard.press('Tab');
       const primeiro = await pagina.locator(':focus').evaluate(el => ({ id: el.id, classe: el.className }));
       assert.equal(primeiro.id, 'loginEmail', JSON.stringify(primeiro));
       assert.notDeepEqual(await assinatura(), semFoco, 'O foco deve alterar o indicador visual');

@@ -48,7 +48,7 @@ jobs:
           node tests/auditoria/candidata.mjs > /tmp/tcc-candidata.log 2>&1 &
           curl --retry 8 --retry-max-time 30 --retry-connrefused --fail --silent "$TCC_BASE_URL" -o /tmp/tcc-index.html
           cmp index.html /tmp/tcc-index.html
-          for arquivo in app.js acesso.js style.css; do
+          for arquivo in app.js acesso.js preferencias.js style.css; do
             curl --fail --silent "${TCC_BASE_URL}${arquivo}" -o /tmp/tcc-arquivo
             cmp "$arquivo" /tmp/tcc-arquivo
           done
@@ -69,6 +69,10 @@ jobs:
           TCC_BIBLIOTECA=1 TCC_BIBLIOTECA_PUBLICADA=1 node tests/auditoria/autenticada.mjs || falhou=1
           TCC_SNAPSHOT=mobile node tests/auditoria/autenticada.mjs || falhou=1
           TCC_SNAPSHOT=desktop node tests/auditoria/autenticada.mjs || falhou=1
+          TCC_TEMA=escuro node tests/auditoria/autenticada.mjs || falhou=1
+          TCC_TEMA=escuro TCC_SNAPSHOT=mobile node tests/auditoria/autenticada.mjs || falhou=1
+          TCC_TEMA=escuro TCC_SNAPSHOT=desktop node tests/auditoria/autenticada.mjs || falhou=1
+          node tests/auditoria/preferencias.mjs || falhou=1
           exit "$falhou"
       - name: Regressão CI-01 a CI-07 e falha simulada de clima
         if: always() && !cancelled() && steps.preparar.outcome == 'success'
