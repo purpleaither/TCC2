@@ -199,3 +199,5 @@ A contagem inclui as linhas físicas dos arquivos rastreados com extensão JavaS
 | Candidata após o corte de duplicações (`fe0c6de`) | 4.644 | 0 |
 
 No último corte foram excluídas 62 linhas e inseridas 57, com saldo de −5. Foram removidos campos sem consumidores e unificada a atualização visual das duas escalas de dor. O calendário passou a agrupar sintomas e treinos por data uma só vez. O servidor local da candidata também retornou a política de referência esperada e serviu JavaScript e CSS idênticos ao checkout.
+
+Após o último corte, o reteste com Chromium 156.0.8078.79 manteve os 18 testes locais, os 8 casos de interface pública e os 9 casos de preferências aprovados. A nova comparação visual teve 30 de 32 capturas idênticas. As duas restantes apresentaram diferenças de 12 e 13 pixels nas bordas da tela de login, com diferença máxima de 2 por canal RGB. O histórico por teclado, a atualização das duas escalas de dor e a abertura do plano no editor foram verificados no mesmo ensaio com dados fictícios.
