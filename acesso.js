@@ -577,20 +577,10 @@ function monitoringBars(rows, maximum, title){
   return list;
 }
 
-function monitoringTopic(key, label, panel){
-  const wrapper = el("div", undefined, "monitoring-topic");
-  const button = el("button", label, "monitoring-toggle");
-  button.type = "button";
-  panel.id = "monitoramento-" + key;
-  panel.hidden = true;
-  button.setAttribute("aria-expanded", "false");
-  button.setAttribute("aria-controls", panel.id);
-  button.addEventListener("click", () => {
-    panel.hidden = !panel.hidden;
-    button.setAttribute("aria-expanded", String(!panel.hidden));
-  });
-  wrapper.append(button, panel);
-  return wrapper;
+function monitoringTopic(label, panel){
+  const details = el("details", undefined, "monitoring-topic");
+  details.append(el("summary", label), panel);
+  return details;
 }
 
 function renderProfessionalMonitoring(){
@@ -662,7 +652,7 @@ function renderProfessionalMonitoring(){
     }
     showSessions();
   }
-  root.append(monitoringTopic("treinos", "Ver treinos concluídos", workoutCard));
+  root.append(monitoringTopic("Ver treinos concluídos", workoutCard));
   for (const [key, title, buttonLabel] of [
     ["stiffness", "Rigidez", "Ver nível de rigidez"],
     ["fatigue", "Cansaço (fadiga)", "Ver nível de cansaço"]
@@ -676,7 +666,7 @@ function renderProfessionalMonitoring(){
     }));
     card.append(rows.length ? monitoringBars(rows, levels.length - 1, title + " por dia")
       : el("p", "Nenhum relato disponível.", "card-text-small"));
-    root.append(monitoringTopic(key, buttonLabel, card));
+    root.append(monitoringTopic(buttonLabel, card));
   }
 }
 
@@ -685,11 +675,9 @@ function renderProfessionalRecords(){
   updatePatientSelectors();
   renderProfessionalMonitoring();
   if (!patientId || professionalWorkouts === undefined) return;
-  const root = el("div", undefined, "monitoring-records");
+  const root = el("div");
   root.id = "listaRegistrosProf";
-  const panel = el("section", undefined, "monitoring-records-panel");
-  panel.append(root);
-  $("graficosRegistrosProf").append(monitoringTopic("registros", "Ver registros individuais", panel));
+  $("graficosRegistrosProf").append(monitoringTopic("Ver registros individuais", root));
   if(!records.length)root.append(el("p","Nenhum registro disponível.","demo-vazio"));
   for(const r of records) {
     const card=el("div",undefined,"card");
