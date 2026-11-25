@@ -1,0 +1,26 @@
+{
+  "url": "http://127.0.0.1:8765/",
+  "date": "2026-11-25T02:32:09.640Z",
+  "scenarios": [
+    {
+      "name": "desktop",
+      "httpStatus": 200,
+      "title": "Autonomia em Movimento — HUB / UnB",
+      "visibleText": "Autonomia em Movimento\n\nContinuidade do cuidado fisioterapêutico\n\nE-mail\nSenha\nEntrar\n\nNão foi possível conectar ao Supabase. Confira a configuração da Vercel.\n\nProtótipo acadêmico para demonstração com contas e dados fictícios. Não utilize dados reais de saúde.",
+      "hasForm": true,
+      "horizontalOverflow": false,
+      "pageErrors": [],
+      "ok": true
+    },
+    {
+      "name": "mobile",
+      "httpStatus": 200,
+      "title": "Autonomia em Movimento — HUB / UnB",
+      "visibleText": "Autonomia em Movimento\n\nContinuidade do cuidado fisioterapêutico\n\nE-mail\nSenha\nEntrar\n\nNão foi possível conectar ao Supabase. Confira a configuração da Vercel.\n\nProtótipo acadêmico para demonstração com contas e dados fictícios. Não utilize dados reais de saúde.",
+      "hasForm": true,
+      "horizontalOverflow": false,
+      "pageErrors": [],
+      "ok": true
+    }
+  ]
+}

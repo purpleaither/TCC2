@@ -39,6 +39,14 @@ jobs:
           curl --retry 10 --retry-connrefused --fail --silent http://127.0.0.1:8765/ > /dev/null
       - name: CI-08 e CI-10, axe-core, teclado e larguras
         run: node tests/auditoria/interface.mjs
+      - name: CI-08, telas autenticadas com contas fictícias
+        if: always() && !cancelled() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          TEST_FISIO_EMAIL: ${{ secrets.TEST_FISIO_EMAIL }}
+          TEST_FISIO_PASSWORD: ${{ secrets.TEST_FISIO_PASSWORD }}
+          TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
+          TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
+        run: node tests/auditoria/autenticada.mjs
       - name: CI-09 e CI-11, Lighthouse
         if: always() && !cancelled()
         run: node tests/auditoria/lighthouse.mjs
