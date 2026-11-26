@@ -1214,7 +1214,7 @@ body {
   box-shadow: 0 3px 12px rgb(0 0 0 / .18);
 }
 .libras-flutuante:hover { background: var(--superficie-suave); }
-.libras-flutuante .icon { inline-size: 24px; block-size: 24px; }
+
 
 .accessibilidade {
   position: fixed;
