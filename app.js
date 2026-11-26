@@ -199,7 +199,11 @@ function gerarHeatmap() {
 
     cell.appendChild(Object.assign(document.createElement('span'), {className: 'heatmap-cell-day', textContent: i}));
     const marcador = Number.isFinite(nota) ? nota : regDoDia ? '•' : valorVisivel;
-    if (marcador !== '') cell.appendChild(Object.assign(document.createElement('span'), {className: 'heatmap-cell-value', textContent: marcador}));
+    if (marcador !== '') {
+      const valor = Object.assign(document.createElement('span'), {className: 'heatmap-cell-value', textContent: marcador});
+      if (marcador === '•') valor.setAttribute('aria-hidden', 'true');
+      cell.append(' ', valor);
+    }
     if (treinosDoDia.length) {
       cell.classList.add('heatmap-workout-day');
       cell.title = treinosDoDia.length + ' treino(s) concluído(s)';
@@ -210,6 +214,7 @@ function gerarHeatmap() {
         cell.tabIndex = 0;
         cell.setAttribute('role', 'button');
         var descricao = treinosDoDia.length ? ' e treinos concluídos' : '';
+        if (registro && !Number.isFinite(nota)) cell.setAttribute('aria-description', 'Sintomas registrados sem nota de dor');
         cell.setAttribute('aria-label', 'Ver registros do dia ' + dia + (valorVisivel ? ' ' + valorVisivel : '') + descricao);
         cell.onkeydown = function(event) {
           if (event.key === 'Enter' || event.key === ' ') {
