@@ -421,7 +421,7 @@ function renderWorkoutDay(year,month,day){
     root.append(card);
   }
 }
-function renderPatientPlans(){
+function renderPatientPlans(animar=false){
   if(!isAuthenticated()||isProfessional())return;
   const root=$("exNormalContainer");
   if(!root)return;
@@ -435,6 +435,7 @@ function renderPatientPlans(){
   currentPatientExercise=Math.max(0,Math.min(currentPatientExercise,assigned.length-1));
   const {plan,exercise}=assigned[currentPatientExercise];
   const card=el("div",undefined,"patient-exercise-card");
+  if(animar)card.classList.add("patient-exercise-transition");
   card.append(el("p",plan.title,"patient-plan-title"));
   const progress=el("p","Exercício "+(currentPatientExercise+1)+" de "+assigned.length,"patient-exercise-progress");
   progress.setAttribute("role","status");
@@ -464,19 +465,21 @@ function renderPatientPlans(){
     metrics.append(tile);
   }
   card.append(metrics);
-  const advice=patientTpeAdviceForToday();
-  const adviceBox=el("aside",undefined,"patient-tpe-advice");
-  adviceBox.setAttribute("aria-label","Conselho de educação terapêutica");
-  adviceBox.append(
-    el("span","Conselho","patient-tpe-label"),
-    el("h3",advice.title,"patient-tpe-heading"),
-    el("p",advice.body,"patient-tpe-text")
-  );
-  const moreAdvice=el("button","Saiba mais em Aprender a cuidar","patient-tpe-link");
-  moreAdvice.type="button";
-  moreAdvice.addEventListener("click",()=>navigate("orientacoes"));
-  adviceBox.append(moreAdvice);
-  card.append(adviceBox);
+  if(currentPatientExercise===0){
+    const advice=patientTpeAdviceForToday();
+    const adviceBox=el("aside",undefined,"patient-tpe-advice");
+    adviceBox.setAttribute("aria-label","Conselho de educação terapêutica");
+    adviceBox.append(
+      el("span","Conselho","patient-tpe-label"),
+      el("h3",advice.title,"patient-tpe-heading"),
+      el("p",advice.body,"patient-tpe-text")
+    );
+    const moreAdvice=el("button","Saiba mais em Aprender a cuidar","patient-tpe-link");
+    moreAdvice.type="button";
+    moreAdvice.addEventListener("click",()=>navigate("orientacoes"));
+    adviceBox.append(moreAdvice);
+    card.append(adviceBox);
+  }
   // Instruções clínicas individuais continuam disponíveis; descrições automáticas
   // em inglês do banco de vídeos não são apresentadas como orientação ao paciente.
   if(exercise.instructions && exercise.exercise_source!=="ExerciseBank")
@@ -488,13 +491,13 @@ function renderPatientPlans(){
     previous.type="button";
     previous.disabled=currentPatientExercise===0;
     previous.addEventListener("click",()=>{
-      if(currentPatientExercise>0){currentPatientExercise--;renderPatientPlans();}
+      if(currentPatientExercise>0){currentPatientExercise--;renderPatientPlans(true);}
     });
     const next=el("button","Próximo","btn");
     next.type="button";
     next.disabled=currentPatientExercise===assigned.length-1;
     next.addEventListener("click",()=>{
-      if(currentPatientExercise<assigned.length-1){currentPatientExercise++;renderPatientPlans();}
+      if(currentPatientExercise<assigned.length-1){currentPatientExercise++;renderPatientPlans(true);}
     });
     actions.append(previous,next);
     card.append(actions);

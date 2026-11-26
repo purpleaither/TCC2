@@ -924,6 +924,11 @@ body {
 
 /* Prescrição individual: leitura prioritária para o paciente. */
 #page-exercicios .patient-exercise-card{background:var(--superficie, #fff);border:1px solid var(--linha, #dce9e0);border-radius:12px;padding:16px;min-width:0}
+#page-exercicios .patient-exercise-transition { animation: exercicio-aparecer .2s ease-out; }
+@keyframes exercicio-aparecer {
+  from { opacity: .65; }
+  to { opacity: 1; }
+}
 #page-exercicios .patient-plan-title{font-size:var(--fonte-minima);color:var(--texto-suave, #466654);font-weight:600;margin:0 0 6px}
 #page-exercicios .patient-exercise-progress{font-size:var(--fonte-minima);color:var(--destaque, #006633);font-weight:700;margin:0 0 10px}
 #page-exercicios .patient-exercise-title{font-size:clamp(1.3125rem,calc(5vw * var(--escala-texto)),1.6875rem);line-height:var(--entrelinha-titulo);color:var(--titulo, #003366);margin:0 0 14px}
