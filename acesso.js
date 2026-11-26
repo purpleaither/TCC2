@@ -66,7 +66,6 @@ function menu() {
   document.querySelectorAll("[data-perfil]").forEach(item=>{
     item.style.display = isAuthenticated() && item.dataset.perfil === profile.role ? "" : "none";
   });
-  text("headerPerfilBtn",isProfessional() ? "Profissional" : "Minha conta");
 }
 function navigate(page) {
   if(!isAuthenticated()) page="login";
