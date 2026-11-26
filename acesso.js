@@ -811,6 +811,10 @@ function openExerciseSourceOptions(){
 }
 function backFromExerciseSource(){
   navigate(exerciseReturnPage);
+  if(exerciseReturnPage==="editor-prof"&&!editingPlan&&!$("itensPlanoProf").children.length){
+    mostrarEtapaPlano(false);
+    $("nomePlanoProf").focus();
+  }
 }
 function addManualExerciseFromOptions(){
   if(!isProfessional())return;
@@ -886,7 +890,8 @@ function avancarPlano(){
   if(!nome.reportValidity())return;
   if(nome.value.trim().length<2){nome.focus();return message("Informe o nome do plano.",true);}
   mostrarEtapaPlano(true);
-  $("tituloFormularioPlano").focus();
+  openExerciseSourceOptions();
+  $("tituloOrigemExercicios").focus();
 }
 function createPlanFromScratch(){
   if(!isProfessional())return;
