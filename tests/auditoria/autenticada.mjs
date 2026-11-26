@@ -123,7 +123,7 @@ try {
           await auditar(pagina, perfil.nome, tela, () => navegar(pagina, tela));
           if (tela === 'sintomas') {
             const avancar = () => pagina.locator('#diarioProximo').click();
-            await auditar(pagina, perfil.nome, 'sintomas-sensacoes', avancar, '#diarioSensacoesTitulo');
+            await auditar(pagina, perfil.nome, 'sintomas-sensacoes', avancar, '#descricaoRigidez');
             await auditar(pagina, perfil.nome, 'sintomas-sinais', async () => {
               await pagina.locator('#rigidezOptions button').first().click();
               await pagina.locator('#fadigaOptions button').first().click();
