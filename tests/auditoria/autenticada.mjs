@@ -124,7 +124,11 @@ try {
           if (tela === 'sintomas') {
             const avancar = () => pagina.locator('#diarioProximo').click();
             await auditar(pagina, perfil.nome, 'sintomas-sensacoes', avancar, '#diarioSensacoesTitulo');
-            await auditar(pagina, perfil.nome, 'sintomas-sinais', avancar, '#diarioSinaisTitulo');
+            await auditar(pagina, perfil.nome, 'sintomas-sinais', async () => {
+              await pagina.locator('#humorOptions button').first().click();
+              await pagina.locator('#atividadeOptions button').first().click();
+              await avancar();
+            }, '#diarioSinaisTitulo');
           }
         }
         if (!modo && process.env.TCC_BIBLIOTECA === '1') {

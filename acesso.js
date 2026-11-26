@@ -148,7 +148,7 @@ function reset() {
   workoutCompletedInView=false;
   treinosConcluidos=[];
   registrosUsuario=[];
-  limparRespostasOpcionais();
+  limparRespostasBemEstar();
   menu();
   $("loginSenha").value="";
   const flash=$("authFlash");
@@ -1048,7 +1048,7 @@ async function saveSymptoms(){
     }
     result(saved);
     if (user !== paciente) return;
-    limparRespostasOpcionais();
+    limparRespostasBemEstar();
     await loadPatientData();
     navigate("inicio");
     message(clima&&weatherColumnsAvailable

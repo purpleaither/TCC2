@@ -126,6 +126,7 @@ function definirEtapaDiario(indice, focar = false) {
   const etapas = document.querySelectorAll('#page-sintomas [data-etapa-diario]');
   if (!etapas[indice]) return;
   etapaDiario = indice;
+  document.getElementById('diarioErro').hidden = true;
   etapas.forEach((etapa, posicao) => { etapa.hidden = posicao !== indice; });
   document.getElementById('diarioEtapa').textContent = 'Etapa ' + (indice + 1) + ' de ' + etapas.length;
   document.getElementById('diarioVoltar').hidden = indice === 0;
@@ -138,10 +139,19 @@ function definirEtapaDiario(indice, focar = false) {
 }
 
 function mudarEtapaDiario(delta) {
+  if (etapaDiario === 1 && delta > 0 && (humorAtual === null || atividadeAtual === null)) {
+    const erro = document.getElementById('diarioErro');
+    erro.textContent = humorAtual === null && atividadeAtual === null
+      ? 'Escolha seu humor e seu nível de atividade física.'
+      : humorAtual === null ? 'Escolha seu humor.' : 'Escolha seu nível de atividade física.';
+    erro.hidden = false;
+    erro.focus();
+    return;
+  }
   definirEtapaDiario(etapaDiario + delta, true);
 }
 
-function limparRespostasOpcionais() {
+function limparRespostasBemEstar() {
   humorAtual = atividadeAtual = null;
   document.querySelectorAll('#humorOptions .selected, #atividadeOptions .selected')
     .forEach(botao => botao.classList.remove('selected'));

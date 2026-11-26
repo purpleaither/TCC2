@@ -19,6 +19,8 @@ await p.locator('#loginSubmit').click();await p.locator('#page-inicio.active').w
 const before=await (await initial).json();const ids=new Set(before.map(x=>x.id));
 await p.evaluate(()=>window.navegarPara('sintomas'));await p.locator('#page-sintomas.active').waitFor();
 await p.locator('#diarioProximo').click();
+await p.locator('#diarioProximo').click();
+if(!(await p.locator('#diarioErro').isVisible())) throw Error('O diário avançou sem humor e atividade física');
 await p.locator('#rigidezOptions').getByRole('button',{name:'Moderada',exact:true}).click();
 await p.locator('#fadigaOptions').getByRole('button',{name:'Leve',exact:true}).click();
 await p.locator('#humorOptions').getByRole('button',{name:'Desanimado',exact:true}).click();

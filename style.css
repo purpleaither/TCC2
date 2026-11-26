@@ -322,7 +322,15 @@ body {
   cursor: not-allowed;
 }
 
+#page-sintomas.page { padding-block-end: 5rem; }
 #page-sintomas [hidden] { display: none; }
+#diarioErro { color: var(--erro); }
+#page-sintomas :is(.pain-scale-label, .pain-scale-labels, .mood-options) {
+  flex-wrap: wrap;
+  gap: .375rem .75rem;
+}
+#page-sintomas .pain-scale-labels span { flex: 1 1 max-content; }
+#page-sintomas :is(.choice-btn, .mood-btn) { flex: 1 1 auto; }
 
 /* ---- Escala de dor (EVA) ---- */
 .pain-scale {
