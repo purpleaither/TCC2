@@ -186,6 +186,7 @@ function gerarHeatmap() {
     });
     var cell = document.createElement('div');
     cell.className = 'heatmap-cell';
+    if (i === 1) cell.style.gridColumnStart = (new Date(mesAtual.getFullYear(), mesAtual.getMonth(), 1).getDay() + 6) % 7 + 1;
     var valorVisivel = treinosDoDia.length ? '' : '-';
 
     if (!regDoDia) {
@@ -202,7 +203,7 @@ function gerarHeatmap() {
       cell.dataset.intensidade = v === 0 ? 'nenhuma' : v <= 3 ? 'leve' : v <= 6 ? 'moderada' : 'intensa';
 
       valorVisivel = v + '/10';
-      cell.innerHTML = '<span class="heatmap-cell-day">' + i + '</span> <span class="heatmap-cell-value">' + valorVisivel + '</span>';
+      cell.innerHTML = '<span class="heatmap-cell-day">' + i + '</span> <span class="heatmap-cell-value">' + v + '</span>';
       
       (function(dia, reg) {
         cell.onclick = function() { abrirClimaSheet(dia, reg); };

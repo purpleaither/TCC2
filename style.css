@@ -325,12 +325,19 @@ body {
 #page-sintomas.page { padding-block-end: 5rem; }
 #page-sintomas [hidden] { display: none; }
 #diarioErro { color: var(--erro); }
-#page-sintomas :is(.pain-scale-label, .pain-scale-labels, .mood-options) {
+#page-sintomas :is(.pain-scale-label, .pain-scale-labels) {
   flex-wrap: wrap;
   gap: .375rem .75rem;
 }
 #page-sintomas .pain-scale-labels span { flex: 1 1 max-content; }
-#page-sintomas :is(.choice-btn, .mood-btn) { flex: 1 1 auto; }
+#page-sintomas :is(.choices-options, .mood-options) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 6.5em), 1fr));
+}
+#page-sintomas :is(.choice-btn, .mood-btn) {
+  min-block-size: 44px;
+  overflow-wrap: anywhere;
+}
 
 /* ---- Escala de dor (EVA) ---- */
 .pain-scale {
@@ -484,10 +491,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: .5rem;
   margin-bottom: 12px;
 }
 
 .month-nav-btn {
+  flex: 0 0 40px;
   width: 40px;
   height: 40px;
   background: var(--superficie, white);
@@ -498,6 +507,7 @@ body {
 }
 
 .month-label {
+  text-align: center;
   font-size: var(--fonte-minima);
   font-weight: bold;
   color: var(--titulo, #003366);
@@ -505,6 +515,7 @@ body {
 
 .stats-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 16px;
 }
@@ -514,7 +525,7 @@ body {
 }
 
 .stat-item {
-  flex: 1;
+  flex: 1 1 6em;
   min-inline-size: 0;
   text-align: center;
 }
@@ -533,22 +544,19 @@ body {
   color: var(--texto-suave, #666);
 }
 
-.heatmap-scroll {
-  overflow-x: auto;
+.heatmap-calendario {
   margin-block-end: var(--espaco-grupo);
   padding: 4px;
 }
 
-.heatmap-scroll :is(.heatmap-weekdays, .heatmap-grid) {
-  min-inline-size: 21rem;
-}
-
-.heatmap-weekdays {
+.heatmap-weekdays,
+.heatmap-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 4px;
-  margin-bottom: 4px;
+  gap: clamp(2px, 1vw, 4px);
 }
+
+.heatmap-weekdays { margin-bottom: 4px; }
 
 .heatmap-weekday {
   text-align: center;
@@ -557,13 +565,9 @@ body {
   color: var(--texto-suave, #666);
 }
 
-.heatmap-grid {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 4px;
-}
-
 .heatmap-cell {
+  inline-size: 100%;
+  min-block-size: 2.5em;
   aspect-ratio: 1;
   border: 1px solid var(--borda, #ccc);
   border-radius: 3px;
@@ -1254,8 +1258,6 @@ body {
 :root[data-texto="150"] .heatmap-cell,
 :root[data-texto="200"] .heatmap-cell,
 :root[data-espacamento] .heatmap-cell { aspect-ratio: auto; }
-:root[data-texto="200"] .heatmap-grid,
-:root[data-espacamento] .heatmap-grid { gap: 2px; }
 /* Reserva espaço para o controle fixo no fim das telas. */
 .app { padding-block-end: calc(5rem + env(safe-area-inset-bottom, 0px)); }
 :root { scroll-padding-block-end: calc(5rem + env(safe-area-inset-bottom, 0px)); }

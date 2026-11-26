@@ -266,9 +266,9 @@
 
     <!-- Navegação de mês -->
     <div class="heatmap-header">
-      <button class="month-nav-btn" onclick="mudarMes(-1)">‹</button>
+      <button class="month-nav-btn" aria-label="Mês anterior" onclick="mudarMes(-1)">‹</button>
       <span class="month-label" id="mesLabel"></span>
-      <button class="month-nav-btn" onclick="mudarMes(1)">›</button>
+      <button class="month-nav-btn" aria-label="Próximo mês" onclick="mudarMes(1)">›</button>
     </div>
 
     <!-- Visão global -->
@@ -304,7 +304,7 @@
     <div class="card">
       <p class="choices-label">Calendário de sintomas</p>
 
-      <div class="heatmap-scroll" role="region" aria-label="Calendário de sintomas" tabindex="0">
+      <div class="heatmap-calendario" role="region" aria-label="Calendário de sintomas">
         <div class="heatmap-weekdays">
           <span class="heatmap-weekday">S</span>
           <span class="heatmap-weekday">T</span>
@@ -320,7 +320,7 @@
         </div>
       </div>
 
-      <p class="choices-label" style="font-size:var(--fonte-minima)">Nível de dor</p>
+      <p class="choices-label" style="font-size:var(--fonte-minima)">Nível de dor (0 a 10)</p>
       <div class="heatmap-legend">
         <div class="legend-item"><div class="legend-color" data-intensidade="nenhuma"></div> 0 · Sem dor</div>
         <div class="legend-item"><div class="legend-color" data-intensidade="leve"></div> 1–3 · Leve</div>
