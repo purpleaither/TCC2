@@ -133,107 +133,116 @@
 
     <h1 class="page-title">Registrar sintomas</h1>
 
-    <!-- Dor em repouso -->
-    <div class="pain-scale">
-      <div class="pain-scale-label">
-        <span>Dor em repouso</span>
-        <span id="restPainValue">2/10</span>
-      </div>
-      <div class="pain-scale-controls">
-        <button class="pain-scale-btn" onclick="alterarDor('rest', -1)">−</button>
-        <div class="pain-scale-bar">
-          <div class="pain-scale-fill" id="restPainFill" style="width:20%"></div>
-          <div class="pain-scale-thumb" id="restPainThumb" style="left:calc(20% - 9px)"></div>
+    <section class="card" aria-labelledby="diarioDorTitulo">
+      <h2 class="card-title" id="diarioDorTitulo">Dor</h2>
+      <!-- Dor em repouso -->
+      <div class="pain-scale">
+        <div class="pain-scale-label">
+          <span>Dor em repouso</span>
+          <span id="restPainValue">2/10</span>
         </div>
-        <button class="pain-scale-btn" onclick="alterarDor('rest', 1)">+</button>
-      </div>
-      <div class="pain-scale-labels">
-        <span>0 = sem dor</span>
-        <span>10 = pior dor que você consegue imaginar</span>
-      </div>
-    </div>
-
-    <!-- Dor ao se movimentar -->
-    <div class="pain-scale">
-      <div class="pain-scale-label">
-        <span>Dor ao se movimentar</span>
-        <span id="movPainValue">5/10</span>
-      </div>
-      <div class="pain-scale-controls">
-        <button class="pain-scale-btn" onclick="alterarDor('mov', -1)">−</button>
-        <div class="pain-scale-bar">
-          <div class="pain-scale-fill" id="movPainFill" style="width:50%"></div>
-          <div class="pain-scale-thumb" id="movPainThumb" style="left:calc(50% - 9px)"></div>
+        <div class="pain-scale-controls">
+          <button class="pain-scale-btn" onclick="alterarDor('rest', -1)">−</button>
+          <div class="pain-scale-bar">
+            <div class="pain-scale-fill" id="restPainFill" style="width:20%"></div>
+            <div class="pain-scale-thumb" id="restPainThumb" style="left:calc(20% - 9px)"></div>
+          </div>
+          <button class="pain-scale-btn" onclick="alterarDor('rest', 1)">+</button>
         </div>
-        <button class="pain-scale-btn" onclick="alterarDor('mov', 1)">+</button>
+        <div class="pain-scale-labels">
+          <span>0 = sem dor</span>
+          <span>10 = pior dor que você consegue imaginar</span>
+        </div>
       </div>
-      <div class="pain-scale-labels">
-        <span>0 = sem dor</span>
-        <span>10 = pior dor que você consegue imaginar</span>
-      </div>
-    </div>
 
-    <!-- Rigidez articular -->
-    <div class="choices">
-      <p class="choices-label" id="descricaoRigidez">Sensação de articulações duras ou difíceis de mexer</p>
-      <div class="choices-options" id="rigidezOptions">
-        <button class="choice-btn" onclick="selecionar('rigidezOptions', 0)">Nenhuma</button>
-        <button class="choice-btn selected" onclick="selecionar('rigidezOptions', 1)">Leve</button>
-        <button class="choice-btn" onclick="selecionar('rigidezOptions', 2)">Moderada</button>
-        <button class="choice-btn" onclick="selecionar('rigidezOptions', 3)">Intensa</button>
+      <!-- Dor ao se movimentar -->
+      <div class="pain-scale">
+        <div class="pain-scale-label">
+          <span>Dor ao se movimentar</span>
+          <span id="movPainValue">5/10</span>
+        </div>
+        <div class="pain-scale-controls">
+          <button class="pain-scale-btn" onclick="alterarDor('mov', -1)">−</button>
+          <div class="pain-scale-bar">
+            <div class="pain-scale-fill" id="movPainFill" style="width:50%"></div>
+            <div class="pain-scale-thumb" id="movPainThumb" style="left:calc(50% - 9px)"></div>
+          </div>
+          <button class="pain-scale-btn" onclick="alterarDor('mov', 1)">+</button>
+        </div>
+        <div class="pain-scale-labels">
+          <span>0 = sem dor</span>
+          <span>10 = pior dor que você consegue imaginar</span>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Fadiga -->
-    <div class="choices">
-      <p class="choices-label" id="descricaoCansaco">Sensação de falta de energia</p>
-      <div class="choices-options" id="fadigaOptions">
-        <button class="choice-btn" onclick="selecionar('fadigaOptions', 0)">Nenhuma</button>
-        <button class="choice-btn selected" onclick="selecionar('fadigaOptions', 1)">Leve</button>
-        <button class="choice-btn" onclick="selecionar('fadigaOptions', 2)">Moderada</button>
-        <button class="choice-btn" onclick="selecionar('fadigaOptions', 3)">Intensa</button>
+    <section class="card" aria-labelledby="diarioSensacoesTitulo">
+      <h2 class="card-title" id="diarioSensacoesTitulo">Como você se sentiu</h2>
+      <!-- Rigidez articular -->
+      <div class="choices">
+        <p class="choices-label" id="descricaoRigidez">Sensação de articulações duras ou difíceis de mexer</p>
+        <div class="choices-options" id="rigidezOptions">
+          <button class="choice-btn" onclick="selecionar('rigidezOptions', 0)">Nenhuma</button>
+          <button class="choice-btn selected" onclick="selecionar('rigidezOptions', 1)">Leve</button>
+          <button class="choice-btn" onclick="selecionar('rigidezOptions', 2)">Moderada</button>
+          <button class="choice-btn" onclick="selecionar('rigidezOptions', 3)">Intensa</button>
+        </div>
       </div>
-    </div>
 
-    <!-- Humor -->
-    <div class="choices">
-      <p class="choices-label">Humor (opcional)</p>
-      <div class="mood-options" id="humorOptions">
-        <button class="mood-btn" onclick="selecionar('humorOptions', 0)">
-          <span class="mood-emoji"><img src="Icones/mood-smile.svg" alt="" class="icon"></span>
-          <span class="mood-label">Bem</span>
-        </button>
-        <button class="mood-btn" onclick="selecionar('humorOptions', 1)">
-          <span class="mood-emoji"><img src="Icones/mood-empty.svg" alt="" class="icon"></span>
-          <span class="mood-label">Regular</span>
-        </button>
-        <button class="mood-btn" onclick="selecionar('humorOptions', 2)">
-          <span class="mood-emoji"><img src="Icones/mood-sad.svg" alt="" class="icon"></span>
-          <span class="mood-label">Desanimado</span>
-        </button>
+      <!-- Fadiga -->
+      <div class="choices">
+        <p class="choices-label" id="descricaoCansaco">Sensação de falta de energia</p>
+        <div class="choices-options" id="fadigaOptions">
+          <button class="choice-btn" onclick="selecionar('fadigaOptions', 0)">Nenhuma</button>
+          <button class="choice-btn selected" onclick="selecionar('fadigaOptions', 1)">Leve</button>
+          <button class="choice-btn" onclick="selecionar('fadigaOptions', 2)">Moderada</button>
+          <button class="choice-btn" onclick="selecionar('fadigaOptions', 3)">Intensa</button>
+        </div>
       </div>
-    </div>
 
-    <!-- Atividade física -->
-    <div class="choices">
-      <p class="choices-label">Nível de atividade física (opcional)</p>
-      <div class="choices-options" id="atividadeOptions">
-        <button class="choice-btn" onclick="selecionar('atividadeOptions', 0)">Nenhuma</button>
-        <button class="choice-btn" onclick="selecionar('atividadeOptions', 1)">Leve</button>
-        <button class="choice-btn" onclick="selecionar('atividadeOptions', 2)">Moderada</button>
-        <button class="choice-btn" onclick="selecionar('atividadeOptions', 3)">Intensa</button>
+      <!-- Humor -->
+      <div class="choices">
+        <p class="choices-label">Humor (opcional)</p>
+        <div class="mood-options" id="humorOptions">
+          <button class="mood-btn" onclick="selecionar('humorOptions', 0)">
+            <span class="mood-emoji"><img src="Icones/mood-smile.svg" alt="" class="icon"></span>
+            <span class="mood-label">Bem</span>
+          </button>
+          <button class="mood-btn" onclick="selecionar('humorOptions', 1)">
+            <span class="mood-emoji"><img src="Icones/mood-empty.svg" alt="" class="icon"></span>
+            <span class="mood-label">Regular</span>
+          </button>
+          <button class="mood-btn" onclick="selecionar('humorOptions', 2)">
+            <span class="mood-emoji"><img src="Icones/mood-sad.svg" alt="" class="icon"></span>
+            <span class="mood-label">Desanimado</span>
+          </button>
+        </div>
       </div>
-    </div>
 
-    <!-- Sinal atípico -->
-    <p style="font-size:var(--fonte-minima); font-weight:bold; color:var(--titulo, #003366); margin-bottom:4px">Você percebeu algum sinal fora do comum hoje?</p>
-    <p style="font-size:var(--fonte-minima); color:var(--texto-suave, #666); margin-bottom:8px">Febre, inchaço súbito ou dor extrema fora do comum.</p>
-    <div class="choices">
-      <div class="choices-options" id="atipicoOptions">
-        <button class="choice-btn selected" onclick="selecionar('atipicoOptions', 0)">Não</button>
-        <button class="choice-btn" onclick="selecionar('atipicoOptions', 1)">Sim</button>
+      <!-- Atividade física -->
+      <div class="choices">
+        <p class="choices-label">Nível de atividade física (opcional)</p>
+        <div class="choices-options" id="atividadeOptions">
+          <button class="choice-btn" onclick="selecionar('atividadeOptions', 0)">Nenhuma</button>
+          <button class="choice-btn" onclick="selecionar('atividadeOptions', 1)">Leve</button>
+          <button class="choice-btn" onclick="selecionar('atividadeOptions', 2)">Moderada</button>
+          <button class="choice-btn" onclick="selecionar('atividadeOptions', 3)">Intensa</button>
+        </div>
       </div>
-    </div>
+    </section>
+
+    <section class="card" aria-labelledby="diarioSinaisTitulo">
+      <h2 class="card-title" id="diarioSinaisTitulo">Sinais fora do comum</h2>
+      <!-- Sinal atípico -->
+      <p style="font-size:var(--fonte-minima); font-weight:bold; color:var(--titulo, #003366); margin-bottom:4px">Você percebeu algum sinal fora do comum hoje?</p>
+      <p style="font-size:var(--fonte-minima); color:var(--texto-suave, #666); margin-bottom:8px">Febre, inchaço súbito ou dor extrema fora do comum.</p>
+      <div class="choices">
+        <div class="choices-options" id="atipicoOptions">
+          <button class="choice-btn selected" onclick="selecionar('atipicoOptions', 0)">Não</button>
+          <button class="choice-btn" onclick="selecionar('atipicoOptions', 1)">Sim</button>
+        </div>
+      </div>
+    </section>
 
     <button class="btn" onclick="concluirRegistro()">Concluir registro de sintomas</button>
 
