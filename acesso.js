@@ -666,7 +666,8 @@ function renderProfessionalMonitoring(){
   root.append(monitoringTopic("Ver treinos concluídos", workoutCard));
   for (const [key, title, buttonLabel] of [
     ["stiffness", "Rigidez", "Ver nível de rigidez"],
-    ["fatigue", "Cansaço (fadiga)", "Ver nível de cansaço"]
+    ["fatigue", "Cansaço (fadiga)", "Ver nível de cansaço"],
+    ["activity_level", "Nível de atividade física", "Ver nível de atividade física"]
   ]) {
     const card = el("section", undefined, "card");
     card.append(el("h3", title, "card-title"),
