@@ -86,8 +86,8 @@ jobs:
 
           const casos = JSON.parse(readFileSync(process.env.TCC_EVIDENCIAS + '/axe-autenticado.json'));
           const biblioteca = casos.filter(({ id }) => /^CT4[56]-/.test(id));
-          for (const { id, origem, estado, http } of biblioteca) {
-            console.log([id, origem, estado, http].filter(Boolean).join(' · '));
+          for (const { id, origem, estado, http, etapa, statusFornecedor, motivo } of biblioteca) {
+            console.log([id, origem, estado, http, etapa, statusFornecedor, motivo].filter(Boolean).join(' · '));
           }
           assert.ok(biblioteca.some(({ id, origem, estado }) =>
             id === 'CT46-catalogo-real' && origem === 'candidata' && estado === 'aprovado'),

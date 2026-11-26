@@ -22,6 +22,11 @@ function safeError(response){
   if(response.status===429)return "Limite de requisições da ExerciseBank atingido.";
   return "Não foi possível consultar a ExerciseBank.";
 }
+function upstreamError(res, response, etapa) {
+  return respond(res, response.status === 429 ? 429 : 502, {
+    error: safeError(response), etapa, statusFornecedor: response.status
+  });
+}
 async function authenticatedUser(req){
   const url=(process.env.SUPABASE_URL||process.env.NEXT_PUBLIC_SUPABASE_URL||"").trim().replace(/\/$/,"");
   const key=(process.env.SUPABASE_PUBLISHABLE_KEY||process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY||"").trim();
@@ -77,7 +82,7 @@ export default async function handler(req,res){
     if(!session)return respond(res,401,{error:"Acesso autenticado necessário."});
     const ebHeaders={Authorization:"Bearer "+apiKey};
     const meta=await request(API+"/meta",ebHeaders);
-    if(!meta.ok)return respond(res,meta.status===429?429:502,{error:safeError(meta)});
+    if(!meta.ok)return upstreamError(res, meta, "metadados");
     const sample=sampleIds(meta.data);
     if(!sample.length)return respond(res,502,{error:"A ExerciseBank não retornou a lista de amostra do Sandbox."});
 
@@ -85,7 +90,7 @@ export default async function handler(req,res){
       if(session.role!=="fisioterapeuta")return respond(res,403,{error:"Auditoria disponível apenas para o fisioterapeuta."});
       const params=new URLSearchParams({ids:sample.join(","),limit:String(LIMIT)});
       const catalog=await request(API+"/exercises?"+params,ebHeaders);
-      if(!catalog.ok)return respond(res,catalog.status===429?429:502,{error:safeError(catalog)});
+      if(!catalog.ok)return upstreamError(res, catalog, "catalogo");
       const catalogItems=Array.isArray(catalog.data?.data)?catalog.data.data:[];
       const catalogue=new Map(catalogItems.filter(ex=>sample.includes(ex.id)).map(ex=>[ex.id,normalize(ex)]));
       const viewer="tcc_"+createHash("sha256").update(session.id).digest("hex").slice(0,32);
@@ -94,7 +99,7 @@ export default async function handler(req,res){
         headers:{"Content-Type":"application/json","X-End-User":viewer,"X-End-User-Role":"coach"},
         body:JSON.stringify({ids:sample,kinds:["mp4"],ttl:900})
       });
-      if(!media.ok)return respond(res,media.status===429?429:502,{error:safeError(media)});
+      if(!media.ok)return upstreamError(res, media, "videos");
       const mediaMap=media.data?.data||{};
       const rows=sample.map(id=>{
         const ex=catalogue.get(id);
@@ -121,7 +126,7 @@ export default async function handler(req,res){
       if(session.role!=="fisioterapeuta")return respond(res,403,{error:"A seleção de exercícios é exclusiva do fisioterapeuta."});
       const params=new URLSearchParams({ids:sample.join(","),limit:String(LIMIT)});
       const response=await request(API+"/exercises?"+params,ebHeaders);
-      if(!response.ok)return respond(res,response.status===429?429:502,{error:safeError(response)});
+      if(!response.ok)return upstreamError(res, response, "catalogo");
       if(!Array.isArray(response.data?.data))return respond(res,502,{error:"A ExerciseBank retornou um catálogo inválido."});
       const candidates=response.data.data;
       const allowed=new Set(sample);
@@ -147,7 +152,7 @@ export default async function handler(req,res){
       },
       body:JSON.stringify({ids,kinds:["mp4","still"],ttl:900})
     });
-    if(!media.ok)return respond(res,media.status===429?429:502,{error:safeError(media)});
+    if(!media.ok)return upstreamError(res, media, "videos");
     const result={};
     for(const id of ids){
       const mediaItem=media.data?.data?.[id]||{};

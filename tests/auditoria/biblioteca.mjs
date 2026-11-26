@@ -34,8 +34,16 @@ export async function verificarBiblioteca(pagina, casos) {
       const inicio = performance.now();
       await busca.click();
       const resposta = await retorno;
+      const falha = resposta.ok() ? null : await resposta.json().catch(() => null);
+      const motivo = [
+        'A ExerciseBank não retornou a lista de amostra do Sandbox.',
+        'A ExerciseBank retornou um catálogo inválido.',
+        'Falha temporária na conexão com a ExerciseBank.',
+      ].find(texto => texto === falha?.error);
+      const etapa = ['metadados', 'catalogo', 'videos'].find(valor => valor === falha?.etapa);
+      const statusFornecedor = Number.isInteger(falha?.statusFornecedor) ? falha.statusFornecedor : undefined;
       casos.push({ id: 'CT46-catalogo-real', origem, estado: resposta.ok() ? 'aprovado' : 'bloqueado',
-        http: resposta.status(), tempoRespostaMs: Math.round(performance.now() - inicio) });
+        http: resposta.status(), etapa, statusFornecedor, motivo, tempoRespostaMs: Math.round(performance.now() - inicio) });
       await pagina.waitForFunction(() => !document.querySelector('#exercisebankRefresh').disabled);
       return resposta;
     };
