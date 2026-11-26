@@ -67,24 +67,24 @@ jobs:
           EB_KEY: ${{ secrets.EB_KEY }}
         run: |
           node --input-type=module <<'JS' > "$TCC_EVIDENCIAS/exercisebank-conexao.json"
-          const valor = process.env.EXERCISEBANK_API_KEY?.trim() || process.env.EB_KEY?.trim();
-          const resultado = { etapa: 'credencial', estado: 'ausente' };
+          import { chaveExerciseBank } from './api/exercisebank.js';
+
+          const valores = [process.env.EXERCISEBANK_API_KEY, process.env.EB_KEY];
+          const valor = chaveExerciseBank(...valores);
+          const resultado = { etapa: 'credencial', estado: valores.some(valor => valor?.trim()) ? 'formato-invalido' : 'ausente' };
           if (valor) {
-            resultado.estado = 'formato-invalido';
-            if (/^[A-Za-z0-9._~+/-]+=*$/.test(valor)) {
-              resultado.etapa = 'metadados';
-              try {
-                const resposta = await fetch('https://exercisebank.net/v1/meta', {
-                  headers: { Accept: 'application/json', Authorization: 'Bearer ' + valor },
-                  redirect: 'manual',
-                  signal: AbortSignal.timeout(10000)
-                });
-                resultado.estado = 'resposta-http';
-                resultado.http = resposta.status;
-                await resposta.body?.cancel().catch(() => {});
-              } catch (erro) {
-                resultado.estado = erro.name === 'TimeoutError' ? 'tempo-limite' : 'falha-de-transporte';
-              }
+            resultado.etapa = 'metadados';
+            try {
+              const resposta = await fetch('https://exercisebank.net/v1/meta', {
+                headers: { Accept: 'application/json', Authorization: 'Bearer ' + valor },
+                redirect: 'manual',
+                signal: AbortSignal.timeout(10000)
+              });
+              resultado.estado = 'resposta-http';
+              resultado.http = resposta.status;
+              await resposta.body?.cancel().catch(() => {});
+            } catch (erro) {
+              resultado.estado = erro.name === 'TimeoutError' ? 'tempo-limite' : 'falha-de-transporte';
             }
           }
           console.log(JSON.stringify(resultado));

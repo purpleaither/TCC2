@@ -72,11 +72,23 @@ function normalize(ex){
     home:homeExercise(ex)
   };
 }
+export function chaveExerciseBank(...valores) {
+  for (const valor of valores) {
+    const chave = valor?.trim()
+      .replace(/^(?:EXERCISEBANK_API_KEY|EB_KEY)\s*=\s*/, "")
+      .replace(/^(["'])([^\r\n]*)\1$/, "$2")
+      .trim()
+      .replace(/^Bearer[ \t]+/i, "");
+    if (/^[A-Za-z0-9._~+/-]+=*$/.test(chave ?? "")) return chave;
+  }
+  return null;
+}
+
 export default async function handler(req,res){
   res.setHeader("Allow","GET, POST");
   if(!["GET","POST"].includes(req.method))return respond(res,405,{error:"Método não permitido."});
-  const apiKey = process.env.EXERCISEBANK_API_KEY?.trim() || process.env.EB_KEY?.trim();
-  if(!apiKey)return respond(res,503,{error:"Configure EXERCISEBANK_API_KEY na Vercel para consultar os 50 vídeos do Sandbox."});
+  const apiKey = chaveExerciseBank(process.env.EXERCISEBANK_API_KEY, process.env.EB_KEY);
+  if(!apiKey)return respond(res,503,{error:"Configure uma chave válida da ExerciseBank para consultar os 50 vídeos do Sandbox."});
   let etapa = "sessao";
   try{
     const session=await authenticatedUser(req);
