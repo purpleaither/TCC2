@@ -682,7 +682,7 @@ function renderProfessionalRecords(){
   for(const r of records) {
     const card=el("div",undefined,"card");
     card.append(el("h3",date(r.recorded_at),"card-title"));
-    card.append(el("p","Dor em repouso: "+r.pain_rest+"/10 · Dor ao movimento: "+r.pain_movement+"/10","card-text"));
+    card.append(el("p","Dor em repouso: "+r.pain_rest+"/10 · Dor ao se movimentar: "+r.pain_movement+"/10","card-text"));
     card.append(el("p","Rigidez: "+r.stiffness+" · Fadiga: "+r.fatigue,"card-text-small"));
     const clima=mapWeather(r);
     if(clima)card.append(el("p","Clima registrado em "+date(clima.observadoEm)+": "+clima.temperatura+" °C · "+clima.umidade+"% · "+clima.pressao+" hPa ("+clima.cidade+")","card-text-small"));

@@ -200,7 +200,7 @@ function gerarHeatmap() {
 
   var lblFiltro = document.getElementById('historicoPeriodo');
   if (lblFiltro) {
-    var textoFiltro = (filtroDorVisualizacao === 0) ? 'Dor em repouso' : 'Dor ao movimento';
+    var textoFiltro = (filtroDorVisualizacao === 0) ? 'Dor em repouso' : 'Dor ao se movimentar';
     lblFiltro.textContent = 'Mês de ' + nomes[mesAtual.getMonth()] + ' · ' + textoFiltro;
   }
 
@@ -234,7 +234,7 @@ function abrirClimaSheet(dia, reg) {
   if (titulo) titulo.textContent = 'Registro do dia ' + dia + ' de ' + nomesMes[mesAtual.getMonth()];
 
   var dor = document.getElementById('sheetDorNivel');
-  if (dor) dor.textContent = 'Dor ao movimento: ' + (reg ? reg.dorMovimento + '/10 (Repouso: ' + reg.dorRepouso + '/10)' : 'Nenhum registro de dor neste dia');
+  if (dor) dor.textContent = 'Dor ao se movimentar: ' + (reg ? reg.dorMovimento + '/10 (Repouso: ' + reg.dorRepouso + '/10)' : 'Nenhum registro de dor neste dia');
 
   var intensidade = ['Nenhuma', 'Leve', 'Moderada', 'Intensa'];
   var rigidez = document.getElementById('sheetRigidez');

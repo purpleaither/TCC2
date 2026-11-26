@@ -131,8 +131,7 @@
   <!-- ===== TELA 2.0: REGISTRO DE SINTOMAS ===== -->
   <div class="page" id="page-sintomas">
 
-    <h1 class="page-title">Meus sintomas</h1>
-    <p class="page-subtitle">Registre como você está se sentindo hoje. Na escala de dor, 0 significa sem dor e 10, a maior dor da escala.</p>
+    <h1 class="page-title">Registrar sintomas</h1>
 
     <!-- Dor em repouso -->
     <div class="pain-scale">
@@ -149,15 +148,15 @@
         <button class="pain-scale-btn" onclick="alterarDor('rest', 1)">+</button>
       </div>
       <div class="pain-scale-labels">
-        <span>0 — Sem dor</span>
-        <span>10 — Dor máxima</span>
+        <span>0 = sem dor</span>
+        <span>10 = pior dor que você consegue imaginar</span>
       </div>
     </div>
 
-    <!-- Dor ao movimento -->
+    <!-- Dor ao se movimentar -->
     <div class="pain-scale">
       <div class="pain-scale-label">
-        <span>Dor ao movimento</span>
+        <span>Dor ao se movimentar</span>
         <span id="movPainValue">5/10</span>
       </div>
       <div class="pain-scale-controls">
@@ -169,15 +168,14 @@
         <button class="pain-scale-btn" onclick="alterarDor('mov', 1)">+</button>
       </div>
       <div class="pain-scale-labels">
-        <span>0 — Sem dor</span>
-        <span>10 — Dor máxima</span>
+        <span>0 = sem dor</span>
+        <span>10 = pior dor que você consegue imaginar</span>
       </div>
     </div>
 
     <!-- Rigidez articular -->
     <div class="choices">
-      <p class="choices-label">Rigidez nas articulações</p>
-      <p class="card-text" id="descricaoRigidez">Sensação de que uma articulação está dura ou difícil de mover.</p>
+      <p class="choices-label" id="descricaoRigidez">Sensação de articulações duras ou difíceis de mexer</p>
       <div class="choices-options" id="rigidezOptions">
         <button class="choice-btn" onclick="selecionar('rigidezOptions', 0)">Nenhuma</button>
         <button class="choice-btn selected" onclick="selecionar('rigidezOptions', 1)">Leve</button>
@@ -188,8 +186,7 @@
 
     <!-- Fadiga -->
     <div class="choices">
-      <p class="choices-label">Cansaço (fadiga)</p>
-      <p class="card-text" id="descricaoCansaco">Sensação de falta de energia.</p>
+      <p class="choices-label" id="descricaoCansaco">Sensação de falta de energia</p>
       <div class="choices-options" id="fadigaOptions">
         <button class="choice-btn" onclick="selecionar('fadigaOptions', 0)">Nenhuma</button>
         <button class="choice-btn selected" onclick="selecionar('fadigaOptions', 1)">Leve</button>
@@ -280,7 +277,7 @@
       <p class="choices-label">Visualizar dor</p>
       <div class="choices-options" id="filtDorOptions">
         <button class="choice-btn" onclick="selecionar('filtDorOptions', 0)">Em repouso</button>
-        <button class="choice-btn selected" onclick="selecionar('filtDorOptions', 1)">Ao movimento</button>
+        <button class="choice-btn selected" onclick="selecionar('filtDorOptions', 1)">Ao se movimentar</button>
       </div>
     </div>
 
