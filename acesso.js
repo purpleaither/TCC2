@@ -729,7 +729,6 @@ function addExercise(entry){
   remove.addEventListener("click",()=>{row.remove();updatePlanEditorSummary();});
   row.append(remove);
   $("itensPlanoProf").append(row);
-  updatePlanEditorSummary();
   if(entry){
     if(name.readOnly){
       const sourceLabel=el("p",entry.exercise_source==="ExerciseBank"?"ExerciseBank · catálogo de demonstração":"wger · vídeo sujeito à disponibilidade e licença","card-text-small");
@@ -749,15 +748,9 @@ function exerciseNameFromRow(row){
 function updatePlanEditorSummary(){
   const stored=$("itensPlanoProf");
   const rows=Array.from(stored?.children||[]).filter(row=>row.classList.contains("demo-exercicio-item"));
-  text("resumoEtapaPlano",rows.length+
-    (rows.length===1?" exercício adicionado ao plano.":" exercícios adicionados ao plano."));
+  $("salvarPlanoBtn").hidden=!rows.length;
   const list=$("resumoExerciciosPlano");
-  if(!list)return;
   list.replaceChildren();
-  if(!rows.length){
-    list.append(el("p","Adicione exercícios para montar a ficha.","card-text-small"));
-    return;
-  }
   rows.forEach((row,index)=>{
     const item=el("div",undefined,"exercise-summary-item");
     const heading=el("strong",(index+1)+". "+(exerciseNameFromRow(row)||"Exercício sem nome"),"exercise-summary-name");
@@ -884,6 +877,7 @@ function mostrarEtapaPlano(exercicios){
   $("etapaExerciciosPlano").hidden=!exercicios;
   $("avancarPlanoProf").hidden=exercicios;
   $("voltarDadosPlano").hidden=!!editingPlan;
+  $("cancelarPlanoBtn").hidden=exercicios&&!editingPlan;
   text("tituloFormularioPlano",editingPlan?"Editar plano terapêutico":exercicios?"Adicionar exercícios":"Criar plano terapêutico");
 }
 function avancarPlano(){

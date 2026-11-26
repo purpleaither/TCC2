@@ -507,14 +507,13 @@
         </div>
         <button type="button" class="btn" id="avancarPlanoProf" onclick="avancarPlano()">Próximo</button>
         <div id="etapaExerciciosPlano" hidden>
-          <p class="card-text-small" id="resumoEtapaPlano">Nenhum exercício adicionado.</p>
           <div id="resumoExerciciosPlano" class="exercise-plan-summary"></div>
           <div id="itensPlanoProf" hidden></div>
           <button type="button" class="btn btn-outline" onclick="abrirOpcoesExercicios()">+ Adicionar exercícios</button>
-          <button type="submit" class="btn">Salvar plano</button>
-          <button type="button" class="btn btn-outline" id="voltarDadosPlano" onclick="mostrarEtapaPlano(false)">Voltar ao nome e orientações</button>
+          <button type="submit" class="btn" id="salvarPlanoBtn" hidden>Salvar plano</button>
+          <button type="button" class="btn btn-outline" id="voltarDadosPlano" onclick="mostrarEtapaPlano(false)">Voltar</button>
         </div>
-        <button type="button" class="btn btn-outline" onclick="cancelarFormularioPlano()">Cancelar edição</button>
+        <button type="button" class="btn btn-outline" id="cancelarPlanoBtn" onclick="cancelarFormularioPlano()">Cancelar edição</button>
       </form>
     </div>
   </div>
