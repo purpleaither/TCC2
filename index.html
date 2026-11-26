@@ -444,6 +444,11 @@
   <!-- ===== ESCOLHA DO TIPO DE EXERCÍCIO ===== -->
   <div class="page" id="page-exercise-source-prof">
     <h1 class="page-title" id="tituloOrigemExercicios" tabindex="-1">Adicionar exercícios</h1>
+    <details class="card monitoring-topic" data-exercicios-selecionados hidden open>
+      <summary>Exercícios adicionados</summary>
+      <ul class="exercicios-selecionados-lista"></ul>
+      <button type="button" class="btn btn-outline" onclick="voltarDaEscolhaExercicios()">Revisar plano</button>
+    </details>
     <div class="card">
       <h2 class="card-title">Como deseja adicionar?</h2>
       <button type="button" class="btn" onclick="adicionarExercicioManual()">Adicionar manualmente</button>
@@ -455,6 +460,11 @@
   <!-- ===== CATÁLOGO EXERCISEBANK ===== -->
   <div class="page" id="page-exercise-bank-prof">
     <h1 class="page-title">Biblioteca ExerciseBank</h1>
+    <details class="card monitoring-topic" data-exercicios-selecionados hidden open>
+      <summary>Exercícios adicionados</summary>
+      <ul class="exercicios-selecionados-lista"></ul>
+      <button type="button" class="btn btn-outline" onclick="voltarDaEscolhaExercicios()">Revisar plano</button>
+    </details>
         <div class="card" id="exercisebankPanel">
           <div class="form-group">
             <label class="form-label" for="exercisebankQuery">Pesquisar exercício</label>

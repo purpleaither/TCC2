@@ -749,6 +749,11 @@ function updatePlanEditorSummary(){
   const stored=$("itensPlanoProf");
   const rows=Array.from(stored?.children||[]).filter(row=>row.classList.contains("demo-exercicio-item"));
   $("salvarPlanoBtn").hidden=!rows.length;
+  for(const painel of document.querySelectorAll("[data-exercicios-selecionados]")){
+    painel.hidden=!rows.length;
+    painel.querySelector("summary").textContent="Exercícios adicionados ("+rows.length+")";
+    painel.querySelector("ul").replaceChildren(...rows.map(row=>el("li",exerciseNameFromRow(row))));
+  }
   const list=$("resumoExerciciosPlano");
   list.replaceChildren();
   rows.forEach((row,index)=>{
