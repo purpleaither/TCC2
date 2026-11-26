@@ -296,7 +296,6 @@ async function loadPatientData() {
         dorMovimento:r.pain_movement,
         comparacaoParado:r.pain_rest_comparison,
         comparacaoMovimento:r.pain_movement_comparison,
-        maiorDor:Math.max(r.pain_rest,r.pain_movement),
         rigidez:Math.max(0,levels.indexOf(r.stiffness)),
         fadiga:Math.max(0,levels.indexOf(r.fatigue)),
         humor:r.mood,
@@ -335,8 +334,7 @@ function patientTpeAdviceForToday(){
     title:"Conselho geral",
     body:"O registro de sintomas de hoje ainda não foi realizado. Observe como você se sente e siga o plano combinado com seu fisioterapeuta; o conselho será ajustado após o registro."
   };
-  const rest=Number(record.pain_rest), movement=Number(record.pain_movement);
-  const intensity=Math.max(Number.isFinite(rest)?rest:0,Number.isFinite(movement)?movement:0);
+  const intensity=Math.max(...[record.pain_rest, record.pain_movement].filter(Number.isFinite));
   const stiffness=String(record.stiffness||"").toLowerCase();
   const fatigue=String(record.fatigue||"").toLowerCase();
   if(intensity>=8)return {
@@ -357,7 +355,7 @@ function patientTpeAdviceForToday(){
   };
   return {
     title:"Autonomia no dia a dia",
-    body:"Seu registro de hoje indica sintomas menos intensos. Continue observando como se sente e siga o ritmo e os exercícios indicados pelo fisioterapeuta, sem aumentar a carga por conta própria."
+    body:"Continue observando como se sente e siga o ritmo e os exercícios indicados pelo fisioterapeuta, sem aumentar a carga por conta própria."
   };
 }
 let currentPatientExercise=0;
@@ -696,7 +694,7 @@ function renderProfessionalRecords(){
   for(const r of records) {
     const card=el("div",undefined,"card");
     card.append(el("h3",date(r.recorded_at),"card-title"));
-    card.append(el("p","Dor em repouso: "+r.pain_rest+"/10 · Dor ao se movimentar: "+r.pain_movement+"/10","card-text"));
+    card.append(el("p","Quando ficou parado: "+resumirDor(r.pain_rest,r.pain_rest_comparison)+" | Ao se mexer: "+resumirDor(r.pain_movement,r.pain_movement_comparison),"card-text"));
     card.append(el("p","Rigidez: "+r.stiffness+" · Fadiga: "+r.fatigue,"card-text-small"));
     card.append(el("p","Humor: "+(r.mood ?? "Não registrado")+
       " · Nível de atividade física: "+(r.activity_level ?? "Não registrado"),"card-text-small"));
@@ -1033,9 +1031,8 @@ async function saveSymptoms(){
   if(!isAuthenticated()||isProfessional()||busy)return;
   busy=true;
   const paciente = user;
-  const painRest = dorRepouso, painMove = dorMovimento;
   const registro = {
-    patient_id: paciente.id, pain_rest: painRest, pain_movement: painMove,
+    patient_id: paciente.id,
     stiffness: levels[rigidezAtual],
     fatigue: levels[fadigaAtual],
     pain_rest_comparison: $("dorParadoComparacao").querySelector(".selected")?.value ?? null,
@@ -1060,7 +1057,7 @@ async function saveSymptoms(){
     message(clima&&weatherColumnsAvailable
       ? "Sintomas e condições meteorológicas registrados. O plano permanece inalterado."
       : "Sintomas registrados. Clima indisponível ou atualização do banco pendente; nenhuma medição foi associada a este registro.", !(clima&&weatherColumnsAvailable));
-    if(atipico===1||Math.max(painRest,painMove)>=8)
+    if(atipico===1)
       alert("Se os sintomas forem intensos ou inesperados, procure orientação profissional. Este aplicativo não realiza triagem clínica.");
   }catch(err){message("Não foi possível salvar os sintomas. Confira a conexão.",true);}
   finally{busy=false;}

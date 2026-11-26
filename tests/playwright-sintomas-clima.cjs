@@ -18,9 +18,10 @@ const initial=p.waitForResponse(r=>isSymptoms(r)&&r.request().method()==='GET'&&
 await p.locator('#loginSubmit').click();await p.locator('#page-inicio.active').waitFor({timeout:30000});
 const before=await (await initial).json();const ids=new Set(before.map(x=>x.id));
 await p.evaluate(()=>window.navegarPara('sintomas'));await p.locator('#page-sintomas.active').waitFor();
-if(await p.locator('#page-sintomas .selected').count() ||
-   await p.locator('#restPainValue').innerText()!=='0/10' || await p.locator('#movPainValue').innerText()!=='0/10')
+if(await p.locator('#page-sintomas .selected').count() || await p.locator('#restPainValue,#movPainValue').count())
   throw Error('O formulário abriu com respostas preenchidas');
+await p.locator('#dorParadoComparacao').getByRole('button',{name:'A mesma dor'}).click();
+await p.locator('#dorMovimentoComparacao').getByRole('button',{name:'Menos dor'}).click();
 await p.locator('#diarioProximo').click();
 await p.locator('#diarioProximo').click();
 if(!(await p.locator('#diarioErro').isVisible())) throw Error('O diário avançou sem humor e atividade física');
@@ -28,7 +29,7 @@ await p.locator('#rigidezOptions').getByRole('button',{name:'Moderada',exact:tru
 await p.locator('#fadigaOptions').getByRole('button',{name:'Leve',exact:true}).click();
 await p.locator('#humorOptions').getByRole('button',{name:'Desanimado',exact:true}).click();
 await p.locator('#atividadeOptions').getByRole('button',{name:'Moderada',exact:true}).click();
-const expected={pain_rest:parseInt(await p.locator('#restPainValue').innerText()),pain_movement:parseInt(await p.locator('#movPainValue').innerText()),stiffness:'Moderada',fatigue:'Leve',mood:'Desanimado',activity_level:'Moderada'};
+const expected={pain_rest:null,pain_movement:null,pain_rest_comparison:'A mesma dor',pain_movement_comparison:'Menos dor',stiffness:'Moderada',fatigue:'Leve',mood:'Desanimado',activity_level:'Moderada'};
 await p.locator('#diarioVoltar').click();
 await p.locator('#diarioProximo').click();
 if(!(await p.locator('#humorOptions').getByRole('button',{name:'Desanimado',exact:true}).and(p.locator('.selected')).isVisible()) ||
@@ -48,6 +49,9 @@ if(added.length!==1)throw Error('Novo registro não identificado univocamente ap
 await p.locator('#page-inicio.active').waitFor({timeout:30000});
 await p.locator('#btnRegistrarSintomas').click();
 await p.locator('#climaSheet.open').waitFor();
+const resumoDor=await p.locator('#sheetDorNivel').innerText();
+if(!resumoDor.includes('A mesma dor') || !resumoDor.includes('Menos dor') || resumoDor.includes('/10'))
+  throw Error('Comparação de dor incorreta no histórico');
 if(await p.locator('#sheetHumor').innerText()!==expected.mood ||
    await p.locator('#sheetAtividade').innerText()!==expected.activity_level)
   throw Error('Humor ou atividade física ausente no calendário após recarregar');

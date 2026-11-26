@@ -7,8 +7,6 @@ var registrosUsuario = [];
 var treinosConcluidos = [];
 
 var usuarioAtual = null;
-var dorRepouso = 0;
-var dorMovimento = 0;
 var atipico = null;
 var rigidezAtual = null;
 var fadigaAtual = null;
@@ -84,16 +82,6 @@ function atualizarDataAtual() {
   el.textContent = diasSemana[hoje.getDay()] + ', ' + hoje.getDate() + ' de ' + meses[hoje.getMonth()] + ' de ' + hoje.getFullYear();
 }
 
-function alterarDor(tipo, delta) {
-  if (tipo === 'rest') {
-    dorRepouso = Math.max(0, Math.min(10, dorRepouso + delta));
-    document.getElementById('restPainValue').textContent = dorRepouso + '/10';
-  } else {
-    dorMovimento = Math.max(0, Math.min(10, dorMovimento + delta));
-    document.getElementById('movPainValue').textContent = dorMovimento + '/10';
-  }
-}
-
 function selecionar(grupoId, indice) {
   var grupo = document.getElementById(grupoId);
   if (!grupo) return;
@@ -155,8 +143,6 @@ function mudarEtapaDiario(delta) {
 }
 
 function limparRegistroDiario() {
-  alterarDor('rest', -10);
-  alterarDor('mov', -10);
   rigidezAtual = fadigaAtual = humorAtual = atividadeAtual = atipico = null;
   document.querySelectorAll('#page-sintomas .selected').forEach(botao => {
     botao.classList.remove('selected');
@@ -181,7 +167,7 @@ function gerarHeatmap() {
   if (!grid) return;
   grid.innerHTML = '';
 
-  var totalDor = 0, maxDor = 0, diasComRegistro = 0;
+  var totalDor = 0, maxDor = 0, diasComRegistro = 0, diasComNota = 0;
   var numDias = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + 1, 0).getDate();
 
   for (var i = 1; i <= numDias; i++) {
@@ -199,26 +185,21 @@ function gerarHeatmap() {
     if (i === 1) cell.style.gridColumnStart = (new Date(mesAtual.getFullYear(), mesAtual.getMonth(), 1).getDay() + 6) % 7 + 1;
     var valorVisivel = treinosDoDia.length ? '' : '-';
 
-    if (!regDoDia) {
-      cell.style.backgroundColor = 'var(--superficie-neutra)';
-      cell.style.borderColor = 'var(--linha)';
-      cell.innerHTML = '<span class="heatmap-cell-day">' + i + '</span>' +
-        (valorVisivel ? ' <span class="heatmap-cell-value">' + valorVisivel + '</span>' : '');
-    } else {
-      var v = (filtroDorVisualizacao === 0) ? regDoDia.dorRepouso : regDoDia.dorMovimento;
-      totalDor += v;
-      if (v > maxDor) maxDor = v;
-      diasComRegistro++;
-
-      cell.dataset.intensidade = v === 0 ? 'nenhuma' : v <= 3 ? 'leve' : v <= 6 ? 'moderada' : 'intensa';
-
-      valorVisivel = v + '/10';
-      cell.innerHTML = '<span class="heatmap-cell-day">' + i + '</span> <span class="heatmap-cell-value">' + v + '</span>';
-      
-      (function(dia, reg) {
-        cell.onclick = function() { abrirClimaSheet(dia, reg); };
-      })(i, regDoDia);
+    const nota = filtroDorVisualizacao === 0 ? regDoDia?.dorRepouso : regDoDia?.dorMovimento;
+    if (regDoDia) diasComRegistro++;
+    if (Number.isFinite(nota)) {
+      totalDor += nota;
+      maxDor = Math.max(maxDor, nota);
+      diasComNota++;
+      cell.dataset.intensidade = nota === 0 ? 'nenhuma' : nota <= 3 ? 'leve' : nota <= 6 ? 'moderada' : 'intensa';
+      valorVisivel = nota + '/10';
+    } else if (regDoDia) {
+      valorVisivel = '';
     }
+
+    cell.appendChild(Object.assign(document.createElement('span'), {className: 'heatmap-cell-day', textContent: i}));
+    const marcador = Number.isFinite(nota) ? nota : regDoDia ? '•' : valorVisivel;
+    if (marcador !== '') cell.appendChild(Object.assign(document.createElement('span'), {className: 'heatmap-cell-value', textContent: marcador}));
     if (treinosDoDia.length) {
       cell.classList.add('heatmap-workout-day');
       cell.title = treinosDoDia.length + ' treino(s) concluído(s)';
@@ -254,14 +235,13 @@ function gerarHeatmap() {
 
   var statsElements = document.querySelectorAll('.stat-value');
   if (statsElements.length >= 3) {
-    if (diasComRegistro > 0) {
-      statsElements[0].textContent = (totalDor / diasComRegistro).toFixed(1).replace('.', ',') + '/10';
+    statsElements[2].textContent = diasComRegistro;
+    if (diasComNota > 0) {
+      statsElements[0].textContent = (totalDor / diasComNota).toFixed(1).replace('.', ',') + '/10';
       statsElements[1].textContent = maxDor + '/10';
-      statsElements[2].textContent = diasComRegistro;
     } else {
       statsElements[0].textContent = '-';
       statsElements[1].textContent = '-';
-      statsElements[2].textContent = '0';
     }
   }
 }
@@ -269,6 +249,10 @@ function gerarHeatmap() {
 function mudarMes(delta) {
   mesAtual = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + delta, 1);
   gerarHeatmap();
+}
+
+function resumirDor(nota, comparacao) {
+  return [Number.isFinite(nota) ? nota + '/10' : '', comparacao].filter(Boolean).join(' · ') || 'Não registrada';
 }
 
 function fecharClimaSheet() {
@@ -283,8 +267,8 @@ function abrirClimaSheet(dia, reg) {
 
   var dor = document.getElementById('sheetDorNivel');
   if (dor) dor.textContent = reg
-    ? 'Dor quando você ficou parado: ' + reg.dorRepouso + '/10' + (reg.comparacaoParado ? ' · ' + reg.comparacaoParado : '') +
-      ' | Dor ao se mexer: ' + reg.dorMovimento + '/10' + (reg.comparacaoMovimento ? ' · ' + reg.comparacaoMovimento : '')
+    ? 'Quando ficou parado: ' + resumirDor(reg.dorRepouso, reg.comparacaoParado) +
+      ' | Ao se mexer: ' + resumirDor(reg.dorMovimento, reg.comparacaoMovimento)
     : 'Nenhum registro de dor neste dia';
 
   var intensidade = ['Nenhuma', 'Leve', 'Moderada', 'Intensa'];

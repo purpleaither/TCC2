@@ -143,20 +143,8 @@
       <h2 class="card-title" id="diarioDorTitulo" tabindex="-1" aria-describedby="diarioEtapa">Dor</h2>
       <!-- Dor quando você ficou parado -->
       <div class="pain-scale">
-        <div class="pain-scale-label">
-          <span>Dor quando você ficou parado</span>
-        </div>
-        <div class="pain-scale-controls">
-          <button class="pain-scale-btn" aria-label="Diminuir a nota da dor quando ficou parado" onclick="alterarDor('rest', -1)">−</button>
-          <output id="restPainValue" aria-label="Nota da dor quando ficou parado">0/10</output>
-          <button class="pain-scale-btn" aria-label="Aumentar a nota da dor quando ficou parado" onclick="alterarDor('rest', 1)">+</button>
-        </div>
-        <div class="pain-scale-labels">
-          <span>0 = sem dor</span>
-          <span>10 = pior dor que você consegue imaginar</span>
-        </div>
-        <p class="choices-label" id="dorParadoComparacaoTitulo">Foi diferente da sua dor de costume?</p>
-        <div class="choices-options pain-comparison" id="dorParadoComparacao" role="group" aria-labelledby="dorParadoComparacaoTitulo" aria-description="quando ficou parado">
+        <p class="choices-label" id="dorParadoComparacaoTitulo">Quando ficou parado, como foi a dor em relação à de costume?</p>
+        <div class="choices-options pain-comparison" id="dorParadoComparacao" role="group" aria-labelledby="dorParadoComparacaoTitulo">
           <button type="button" class="choice-btn" value="Menos dor" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 0)">Menos dor</button>
           <button type="button" class="choice-btn" value="A mesma dor" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 1)">A mesma dor</button>
           <button type="button" class="choice-btn" value="Mais dor" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 2)">Mais dor</button>
@@ -166,18 +154,7 @@
 
       <!-- Dor ao se mexer -->
       <div class="pain-scale">
-        <div class="pain-scale-label">
-          <span id="dorMovimentoComparacaoTitulo">Ao se mexer hoje, como foi a dor em relação à de costume?</span>
-        </div>
-        <div class="pain-scale-controls">
-          <button class="pain-scale-btn" aria-label="Diminuir a nota da dor ao se mexer" onclick="alterarDor('mov', -1)">−</button>
-          <output id="movPainValue" aria-label="Nota da dor ao se mexer">0/10</output>
-          <button class="pain-scale-btn" aria-label="Aumentar a nota da dor ao se mexer" onclick="alterarDor('mov', 1)">+</button>
-        </div>
-        <div class="pain-scale-labels">
-          <span>0 = sem dor</span>
-          <span>10 = pior dor que você consegue imaginar</span>
-        </div>
+        <p class="choices-label" id="dorMovimentoComparacaoTitulo">Ao se mexer hoje, como foi a dor em relação à de costume?</p>
         <div class="choices-options pain-comparison" id="dorMovimentoComparacao" role="group" aria-labelledby="dorMovimentoComparacaoTitulo">
           <button type="button" class="choice-btn" value="Menos dor" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 0)">Menos dor</button>
           <button type="button" class="choice-btn" value="A mesma dor" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 1)">A mesma dor</button>

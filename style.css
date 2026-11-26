@@ -325,13 +325,7 @@ body {
 #page-sintomas.page { padding-block-end: 5rem; }
 #page-sintomas [hidden] { display: none; }
 #page-sintomas [data-etapa-diario]:first-of-type { border-color: transparent; }
-#page-sintomas .pain-scale-labels { margin-block-end: .75rem; }
 #diarioErro { color: var(--erro); }
-#page-sintomas :is(.pain-scale-label, .pain-scale-labels) {
-  flex-wrap: wrap;
-  gap: .375rem .75rem;
-}
-#page-sintomas .pain-scale-labels span { flex: 1 1 max-content; }
 #page-sintomas :is(.choices-options, .mood-options) {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 6.5em), 1fr));
@@ -345,52 +339,6 @@ body {
 /* ---- Escala de dor (EVA) ---- */
 .pain-scale {
   margin-bottom: 20px;
-}
-
-.pain-scale-label {
-  font-size: var(--fonte-minima);
-  font-weight: bold;
-  color: var(--titulo, #003366);
-  margin-bottom: 6px;
-  display: flex;
-  justify-content: space-between;
-}
-
-.pain-scale-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.pain-scale-btn {
-  width: 44px;
-  height: 44px;
-  background: var(--superficie-neutra, #f0f0f0);
-  border: 1px solid transparent;
-  border-radius: 4px;
-  font-size: 1.375rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.pain-scale-btn:hover {
-  background: var(--linha, #e0e0e0);
-}
-
-.pain-scale-controls output {
-  min-inline-size: 4ch;
-  text-align: center;
-  font-weight: bold;
-}
-
-.pain-scale-labels {
-  display: flex;
-  justify-content: space-between;
-  font-size: var(--fonte-minima);
-  color: var(--texto-suave, #666);
-  margin-top: 4px;
 }
 
 /* ---- Opções de escolha (Choices) ---- */
@@ -1219,7 +1167,7 @@ body {
 .app :is(button, input, select, textarea) { max-width: 100%; }
 :where(button, input, select, textarea) { font-size: var(--fonte-minima); }
 .app :is(button, input, select, textarea) { scroll-margin-block: 5rem 1rem; }
-.app :is(.choice-btn, .pain-scale-btn, .month-btn) { min-height: 2rem; height: auto; }
+.app :is(.choice-btn, .month-btn) { min-height: 2rem; height: auto; }
 .app .heatmap-cell { min-width: 0; height: auto; }
 :is(.heatmap-cell, .legend-color)[data-intensidade="nenhuma"] { background: var(--superficie-neutra); }
 :is(.heatmap-cell, .legend-color)[data-intensidade="leve"] { background: var(--dor-leve); }
