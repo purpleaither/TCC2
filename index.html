@@ -48,9 +48,13 @@
     </div>
   </div>
 
-  <a class="libras-flutuante" href="/vlibras.html" target="_blank" rel="noopener noreferrer" aria-label="Abrir VLibras (nova aba)" title="VLibras">
+  <button type="button" class="libras-flutuante" id="abrirVLibras" aria-label="Abrir VLibras" aria-haspopup="dialog" aria-controls="painelVLibras" title="VLibras">
     <img src="Icones/vlibras-access.svg" width="40" height="40" alt="">
-  </a>
+  </button>
+  <dialog class="painel-libras" id="painelVLibras" aria-label="VLibras">
+    <form method="dialog"><button type="submit">Fechar VLibras</button></form>
+    <iframe title="Widget oficial do VLibras" sandbox="allow-scripts" referrerpolicy="no-referrer"></iframe>
+  </dialog>
 
   <details class="accessibilidade" id="painelAcessibilidade">
     <summary id="abrirAcessibilidade">
