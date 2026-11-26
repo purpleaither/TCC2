@@ -24,10 +24,6 @@ let patientLoadVersion = 0;
 let editingPlan = null;
 let busy = false;
 let loginReady = false;
-let bankItems=[];
-let bankOffset=0;
-let bankQuery="";
-let bankBusy=false;
 let weatherColumnsAvailable = true;
 
 function el(tag, content, cls) {
@@ -1063,9 +1059,9 @@ async function ebCall(opts={}){
   if(!response.ok)throw Error(data.error||"ExerciseBank indisponível.");
   return data;
 }
-async function loadSample(force=false){
+async function loadSample(){
   if(!isProfessional()||loadingSample)return;
-  if(sampleList&&!force){renderSample();return;}
+  if(sampleList){renderSample();return;}
   loadingSample=true;$("exercisebankRefresh").disabled=true;
   text("exercisebankStatus","Carregando exercícios...");
   try{
@@ -1407,13 +1403,6 @@ function translateExerciseName(name){
 function isExerciseNameTranslated(name){
   return EXERCISE_PT_LOOKUP.has(normalizeExerciseName(name));
 }
-const EQUIPMENT_PT={
-  bodyweight:"Peso corporal",mat:"Colchonete",chair:"Cadeira",
-  "exercise-mat":"Colchonete","yoga-mat":"Colchonete",
-  "resistance-band":"Faixa elástica","elastic-band":"Faixa elástica",
-  dumbbell:"Halter",barbell:"Barra",bench:"Banco",cable:"Cabo",
-  machine:"Máquina",kettlebell:"Kettlebell",none:"Sem equipamentos"
-};
 function exerciseRegions(ex){
   const primary=Array.isArray(ex.primaryMuscles)?ex.primaryMuscles:[];
   const secondary=Array.isArray(ex.secondaryMuscles)?ex.secondaryMuscles:[];
@@ -1422,8 +1411,6 @@ function exerciseRegions(ex){
   const secondaryRegions=[...new Set(secondary.map(resolve).filter(Boolean))];
   return regions.length?regions:secondaryRegions.length?secondaryRegions:["nao-classificados"];
 }
-function equipmentLabel(value){return EQUIPMENT_PT[String(value||"").toLowerCase()]||String(value);}
-function regionText(ex){return exerciseRegions(ex).map(key=>BODY_REGION_LABELS[key]).join(", ");}
 function renderSample(){
   if(!isProfessional()||!sampleList)return;
   const q=$("exercisebankQuery").value.trim().toLocaleLowerCase("pt-BR");
@@ -1533,8 +1520,6 @@ window.AppAuth={login,logout,navigate,saveSymptoms,isProfessional,renderWorkoutD
 window.atualizarPacienteProfissional=()=>selectPatient($("pacienteProf").value);
 window.trocarPacientePlanoProf=()=>selectPatient($("pacientePlanoProf").value);
 window.trocarPacienteRegistrosProf=()=>selectPatient($("pacienteRegistrosProf").value);
-window.adicionarExercicioPlano=()=>addExercise();
-window.limparFormularioPlano=clearPlanForm;
 window.cancelarFormularioPlano=cancelPlanEditor;
 window.criarPlanoProfissional=createPlanFromScratch;
 window.abrirOpcoesExercicios=openExerciseSourceOptions;
