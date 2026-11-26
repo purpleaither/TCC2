@@ -197,7 +197,7 @@
 
       <!-- Fadiga -->
       <div class="choices">
-        <p class="choices-label" id="descricaoCansaco">Sensação de falta de energia</p>
+        <p class="choices-label" id="descricaoCansaco"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="7" width="16" height="10" rx="2"/><path d="M22 10v4M6 10v4"/></svg> Sensação de falta de energia</p>
         <div class="choices-options" id="fadigaOptions">
           <button class="choice-btn" onclick="selecionar('fadigaOptions', 0)">Nenhuma</button>
           <button class="choice-btn" onclick="selecionar('fadigaOptions', 1)">Leve</button>
@@ -208,7 +208,7 @@
 
       <!-- Humor -->
       <div class="choices">
-        <p class="choices-label">Humor</p>
+        <p class="choices-label"><img src="Icones/mood-smile.svg" alt="" class="icon"> Humor</p>
         <div class="mood-options" id="humorOptions">
           <button class="mood-btn" onclick="selecionar('humorOptions', 0)">
             <span class="mood-emoji"><img src="Icones/mood-smile.svg" alt="" class="icon"></span>
@@ -227,7 +227,7 @@
 
       <!-- Atividade física -->
       <div class="choices">
-        <p class="choices-label">Nível de atividade física</p>
+        <p class="choices-label"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="13" cy="4" r="2"/><path d="m7 10 4-2 3 4 4 1m-7-5-2 6-4 5m4-5 5 2 2 5"/></svg> Nível de atividade física</p>
         <div class="choices-options" id="atividadeOptions">
           <button class="choice-btn" onclick="selecionar('atividadeOptions', 0)">Nenhuma</button>
           <button class="choice-btn" onclick="selecionar('atividadeOptions', 1)">Leve</button>
@@ -240,7 +240,7 @@
     <section class="card" data-etapa-diario aria-labelledby="diarioSinaisTitulo" hidden>
       <h2 class="card-title" id="diarioSinaisTitulo" tabindex="-1" aria-describedby="diarioEtapa">Sinais fora do comum</h2>
       <!-- Sinal atípico -->
-      <p style="font-size:var(--fonte-minima); font-weight:bold; color:var(--titulo, #003366); margin-bottom:4px">Você percebeu algum sinal fora do comum hoje?</p>
+      <p class="choices-label"><img src="Icones/alert-triangle.svg" alt="" class="icon"> Você percebeu algum sinal fora do comum hoje?</p>
       <p style="font-size:var(--fonte-minima); color:var(--texto-suave, #666); margin-bottom:8px">Febre, inchaço súbito ou dor extrema fora do comum.</p>
       <div class="choices">
         <div class="choices-options" id="atipicoOptions">

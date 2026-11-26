@@ -567,7 +567,7 @@ body {
 
 .heatmap-cell {
   inline-size: 100%;
-  min-block-size: 2.5em;
+  min-block-size: 3.25em;
   aspect-ratio: 1;
   border: 1px solid var(--borda, #ccc);
   border-radius: 3px;
@@ -1389,7 +1389,7 @@ body {
 
   .app .heatmap-cell {
     aspect-ratio: auto;
-    min-block-size: 3.75rem;
+    min-block-size: 4.5rem;
   }
 }
 
