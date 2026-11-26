@@ -1,6 +1,15 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import handler from '../../api/exercisebank.js';
+import handler, { chaveExerciseBank } from '../../api/exercisebank.js';
+
+test('Normaliza somente formatos reconhecidos da chave ExerciseBank', () => {
+  const chave = 'chave-ficticia_123';
+  assert.equal(chaveExerciseBank(chave), chave);
+  assert.equal(chaveExerciseBank(' EXERCISEBANK_API_KEY="Bearer ' + chave + '" '), chave);
+  assert.equal(chaveExerciseBank("descrição sem chave", chave), chave);
+  assert.equal(chaveExerciseBank("chave\nsegunda-linha"), null);
+  assert.equal(chaveExerciseBank(undefined, ''), null);
+});
 
 // Todas as respostas deste arquivo pertencem a cenários simulados.
 async function consultar(t, respostaExterna, corpo) {

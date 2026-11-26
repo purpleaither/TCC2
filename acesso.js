@@ -24,10 +24,6 @@ let patientLoadVersion = 0;
 let editingPlan = null;
 let busy = false;
 let loginReady = false;
-let bankItems=[];
-let bankOffset=0;
-let bankQuery="";
-let bankBusy=false;
 let weatherColumnsAvailable = true;
 
 function el(tag, content, cls) {
@@ -285,12 +281,8 @@ async function loadPatientData() {
         data:r.recorded_at,
         dorRepouso:r.pain_rest,
         dorMovimento:r.pain_movement,
-        maiorDor:Math.max(r.pain_rest,r.pain_movement),
         rigidez:Math.max(0,levels.indexOf(r.stiffness)),
         fadiga:Math.max(0,levels.indexOf(r.fatigue)),
-        humor:1,
-        atividade:0,
-        sinalAtipico:false,
         clima:mapWeather(r)
       }));
       gerarHeatmap();
@@ -711,11 +703,8 @@ function addExercise(entry){
   const externalInstructions=el("input");
   externalInstructions.name="externalInstructions";
   externalInstructions.type="hidden";
-  const externalName=el("input");
-  externalName.name="externalName";
-  externalName.type="hidden";
   const externalSource=el("input");externalSource.name="externalSource";externalSource.type="hidden";
-  row.append(externalId,externalInstructions,externalName,externalSource);
+  row.append(externalId,externalInstructions,externalSource);
   const customName=el("input",undefined,"form-input");
   customName.name="customName";
   customName.placeholder="Nome do exercício";
@@ -727,7 +716,7 @@ function addExercise(entry){
     customName.required=select.value==="other";
     externalId.value="";
     externalInstructions.value="";
-    externalName.value="";externalSource.value="";
+    externalSource.value="";
   });
   const params=el("div",undefined,"demo-grid-parametros");
   for(const [key,title,type,value] of [
@@ -760,7 +749,7 @@ function addExercise(entry){
     if(["ExerciseBank","wger"].includes(entry.exercise_source)&&entry.external_id){
       externalId.value=entry.external_id;
       externalInstructions.value=entry.instructions||"";
-      externalName.value=entry.exercise_name;externalSource.value=entry.exercise_source;
+      externalSource.value=entry.exercise_source;
       const sourceLabel=el("p",entry.exercise_source==="ExerciseBank"?"ExerciseBank · catálogo de demonstração":"wger · vídeo sujeito à disponibilidade e licença","card-text-small");
       row.prepend(sourceLabel);
     }
@@ -1063,9 +1052,9 @@ async function ebCall(opts={}){
   if(!response.ok)throw Error(data.error||"ExerciseBank indisponível.");
   return data;
 }
-async function loadSample(force=false){
+async function loadSample(){
   if(!isProfessional()||loadingSample)return;
-  if(sampleList&&!force){renderSample();return;}
+  if(sampleList){renderSample();return;}
   loadingSample=true;$("exercisebankRefresh").disabled=true;
   text("exercisebankStatus","Carregando exercícios...");
   try{
@@ -1407,13 +1396,6 @@ function translateExerciseName(name){
 function isExerciseNameTranslated(name){
   return EXERCISE_PT_LOOKUP.has(normalizeExerciseName(name));
 }
-const EQUIPMENT_PT={
-  bodyweight:"Peso corporal",mat:"Colchonete",chair:"Cadeira",
-  "exercise-mat":"Colchonete","yoga-mat":"Colchonete",
-  "resistance-band":"Faixa elástica","elastic-band":"Faixa elástica",
-  dumbbell:"Halter",barbell:"Barra",bench:"Banco",cable:"Cabo",
-  machine:"Máquina",kettlebell:"Kettlebell",none:"Sem equipamentos"
-};
 function exerciseRegions(ex){
   const primary=Array.isArray(ex.primaryMuscles)?ex.primaryMuscles:[];
   const secondary=Array.isArray(ex.secondaryMuscles)?ex.secondaryMuscles:[];
@@ -1422,8 +1404,6 @@ function exerciseRegions(ex){
   const secondaryRegions=[...new Set(secondary.map(resolve).filter(Boolean))];
   return regions.length?regions:secondaryRegions.length?secondaryRegions:["nao-classificados"];
 }
-function equipmentLabel(value){return EQUIPMENT_PT[String(value||"").toLowerCase()]||String(value);}
-function regionText(ex){return exerciseRegions(ex).map(key=>BODY_REGION_LABELS[key]).join(", ");}
 function renderSample(){
   if(!isProfessional()||!sampleList)return;
   const q=$("exercisebankQuery").value.trim().toLocaleLowerCase("pt-BR");
@@ -1533,8 +1513,6 @@ window.AppAuth={login,logout,navigate,saveSymptoms,isProfessional,renderWorkoutD
 window.atualizarPacienteProfissional=()=>selectPatient($("pacienteProf").value);
 window.trocarPacientePlanoProf=()=>selectPatient($("pacientePlanoProf").value);
 window.trocarPacienteRegistrosProf=()=>selectPatient($("pacienteRegistrosProf").value);
-window.adicionarExercicioPlano=()=>addExercise();
-window.limparFormularioPlano=clearPlanForm;
 window.cancelarFormularioPlano=cancelPlanEditor;
 window.criarPlanoProfissional=createPlanFromScratch;
 window.abrirOpcoesExercicios=openExerciseSourceOptions;

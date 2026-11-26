@@ -6,16 +6,11 @@
 var registrosUsuario = [];
 var treinosConcluidos = [];
 
-var usuarioAtual = null;
 var dorRepouso = 2;
 var dorMovimento = 5;
 var atipico = 0;
 var rigidezAtual = 1;
 var fadigaAtual = 1;
-var humorAtual = 1;
-var atividadeAtual = 1;
-var treinoConcluido = false;
-var registroEnviadoHoje = false;
 var mesAtual = new Date(); 
 var filtroDorVisualizacao = 1; // 0 = Repouso, 1 = Movimento
 
@@ -110,8 +105,6 @@ function selecionar(grupoId, indice) {
   switch (grupoId) {
     case 'rigidezOptions': rigidezAtual = indice; break;
     case 'fadigaOptions': fadigaAtual = indice; break;
-    case 'humorOptions': humorAtual = indice; break;
-    case 'atividadeOptions': atividadeAtual = indice; break;
     case 'atipicoOptions': atipico = indice; break;
     case 'filtDorOptions': 
       filtroDorVisualizacao = indice; 
@@ -166,10 +159,7 @@ function gerarHeatmap() {
 
       valorVisivel = v + '/10';
       cell.innerHTML = '<span class="heatmap-cell-day">' + i + '</span> <span class="heatmap-cell-value">' + valorVisivel + '</span>';
-      
-      (function(dia, reg) {
-        cell.onclick = function() { abrirClimaSheet(dia, reg); };
-      })(i, regDoDia);
+
     }
     if (treinosDoDia.length) {
       cell.classList.add('heatmap-workout-day');

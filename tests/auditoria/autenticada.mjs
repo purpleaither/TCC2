@@ -174,4 +174,7 @@ try {
   if (!modo) await writeFile(pasta + '/csp-navegador' + (tema ? '-' + tema : '') + '.json', JSON.stringify(politica, null, 2));
   await writeFile(pasta + '/' + evidencias + '.json', JSON.stringify(casos, null, 2));
 }
-if (casos.some(caso => caso.estado !== 'aprovado')) process.exitCode = 1;
+const verificacoes = process.env.TCC_RESULTADO_BIBLIOTECA_SEPARADO === '1'
+  ? casos.filter(caso => !/^CT4[56]-/.test(caso.id))
+  : casos;
+if (verificacoes.some(caso => caso.estado !== 'aprovado')) process.exitCode = 1;

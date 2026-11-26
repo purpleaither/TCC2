@@ -22,6 +22,11 @@ function safeError(response){
   if(response.status===429)return "Limite de requisições da ExerciseBank atingido.";
   return "Não foi possível consultar a ExerciseBank.";
 }
+function upstreamError(res, response, etapa) {
+  return respond(res, response.status === 429 ? 429 : 502, {
+    error: safeError(response), etapa, statusFornecedor: response.status
+  });
+}
 async function authenticatedUser(req){
   const url=(process.env.SUPABASE_URL||process.env.NEXT_PUBLIC_SUPABASE_URL||"").trim().replace(/\/$/,"");
   const key=(process.env.SUPABASE_PUBLISHABLE_KEY||process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY||"").trim();
@@ -67,34 +72,50 @@ function normalize(ex){
     home:homeExercise(ex)
   };
 }
+export function chaveExerciseBank(...valores) {
+  for (const valor of valores) {
+    const chave = valor?.trim()
+      .replace(/^(?:EXERCISEBANK_API_KEY|EB_KEY)\s*=\s*/, "")
+      .replace(/^(["'])([^\r\n]*)\1$/, "$2")
+      .trim()
+      .replace(/^Bearer[ \t]+/i, "");
+    if (/^[A-Za-z0-9._~+/-]+=*$/.test(chave ?? "")) return chave;
+  }
+  return null;
+}
+
 export default async function handler(req,res){
   res.setHeader("Allow","GET, POST");
   if(!["GET","POST"].includes(req.method))return respond(res,405,{error:"Método não permitido."});
-  const apiKey=process.env.EXERCISEBANK_API_KEY||process.env.EB_KEY;
-  if(!apiKey)return respond(res,503,{error:"Configure EXERCISEBANK_API_KEY na Vercel para consultar os 50 vídeos do Sandbox."});
+  const apiKey = chaveExerciseBank(process.env.EXERCISEBANK_API_KEY, process.env.EB_KEY);
+  if(!apiKey)return respond(res,503,{error:"Configure uma chave válida da ExerciseBank para consultar os 50 vídeos do Sandbox."});
+  let etapa = "sessao";
   try{
     const session=await authenticatedUser(req);
     if(!session)return respond(res,401,{error:"Acesso autenticado necessário."});
     const ebHeaders={Authorization:"Bearer "+apiKey};
+    etapa = "metadados";
     const meta=await request(API+"/meta",ebHeaders);
-    if(!meta.ok)return respond(res,meta.status===429?429:502,{error:safeError(meta)});
+    if(!meta.ok)return upstreamError(res, meta, "metadados");
     const sample=sampleIds(meta.data);
     if(!sample.length)return respond(res,502,{error:"A ExerciseBank não retornou a lista de amostra do Sandbox."});
 
     if(req.method==="POST"&&req.body?.action==="audit"){
       if(session.role!=="fisioterapeuta")return respond(res,403,{error:"Auditoria disponível apenas para o fisioterapeuta."});
       const params=new URLSearchParams({ids:sample.join(","),limit:String(LIMIT)});
+      etapa = "catalogo";
       const catalog=await request(API+"/exercises?"+params,ebHeaders);
-      if(!catalog.ok)return respond(res,catalog.status===429?429:502,{error:safeError(catalog)});
+      if(!catalog.ok)return upstreamError(res, catalog, "catalogo");
       const catalogItems=Array.isArray(catalog.data?.data)?catalog.data.data:[];
       const catalogue=new Map(catalogItems.filter(ex=>sample.includes(ex.id)).map(ex=>[ex.id,normalize(ex)]));
       const viewer="tcc_"+createHash("sha256").update(session.id).digest("hex").slice(0,32);
+      etapa = "videos";
       const media=await request(API+"/media/urls",ebHeaders,{
         method:"POST",
         headers:{"Content-Type":"application/json","X-End-User":viewer,"X-End-User-Role":"coach"},
         body:JSON.stringify({ids:sample,kinds:["mp4"],ttl:900})
       });
-      if(!media.ok)return respond(res,media.status===429?429:502,{error:safeError(media)});
+      if(!media.ok)return upstreamError(res, media, "videos");
       const mediaMap=media.data?.data||{};
       const rows=sample.map(id=>{
         const ex=catalogue.get(id);
@@ -120,8 +141,9 @@ export default async function handler(req,res){
     if(req.method==="GET"){
       if(session.role!=="fisioterapeuta")return respond(res,403,{error:"A seleção de exercícios é exclusiva do fisioterapeuta."});
       const params=new URLSearchParams({ids:sample.join(","),limit:String(LIMIT)});
+      etapa = "catalogo";
       const response=await request(API+"/exercises?"+params,ebHeaders);
-      if(!response.ok)return respond(res,response.status===429?429:502,{error:safeError(response)});
+      if(!response.ok)return upstreamError(res, response, "catalogo");
       if(!Array.isArray(response.data?.data))return respond(res,502,{error:"A ExerciseBank retornou um catálogo inválido."});
       const candidates=response.data.data;
       const allowed=new Set(sample);
@@ -135,9 +157,11 @@ export default async function handler(req,res){
     if(!Array.isArray(ids)||ids.length<1||ids.length>12||ids.some(id=>typeof id!=="string"||!IDENTIFIER.test(id)))
       return respond(res,400,{error:"Informe de 1 a 12 IDs válidos."});
     if(ids.some(id=>!sample.includes(id)))return respond(res,403,{error:"Um ou mais vídeos não estão liberados no Sandbox."});
+    etapa = "atribuicao";
     if(session.role==="paciente"&&!(await isAssigned(session,ids)))
       return respond(res,403,{error:"Este vídeo não foi atribuído ao paciente."});
     const viewer="tcc_"+createHash("sha256").update(session.id).digest("hex").slice(0,32);
+    etapa = "videos";
     const media=await request(API+"/media/urls",ebHeaders,{
       method:"POST",
       headers:{
@@ -147,7 +171,7 @@ export default async function handler(req,res){
       },
       body:JSON.stringify({ids,kinds:["mp4","still"],ttl:900})
     });
-    if(!media.ok)return respond(res,media.status===429?429:502,{error:safeError(media)});
+    if(!media.ok)return upstreamError(res, media, "videos");
     const result={};
     for(const id of ids){
       const mediaItem=media.data?.data?.[id]||{};
@@ -155,6 +179,9 @@ export default async function handler(req,res){
     }
     return respond(res,200,{data:result});
   }catch(err){
-    return respond(res,502,{error:"Falha temporária na conexão com a ExerciseBank."});
+    const codigo = err.cause?.code || err.code;
+    const tipoFalha = /^[A-Z][A-Z0-9_]{2,50}$/.test(codigo ?? "")
+      ? codigo : err.name === "TimeoutError" ? "TIMEOUT" : "SEM_CODIGO";
+    return respond(res,502,{error:"Falha temporária na conexão com a ExerciseBank.", etapa, tipoFalha});
   }
 }
