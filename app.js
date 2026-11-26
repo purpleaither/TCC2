@@ -106,6 +106,7 @@ function selecionar(grupoId, indice) {
   var botoes = grupo.querySelectorAll('.choice-btn, .mood-btn');
   botoes.forEach(function(botao) { botao.classList.remove('selected'); });
   if (botoes[indice]) botoes[indice].classList.add('selected');
+  grupo.querySelectorAll('[aria-pressed]').forEach(botao => botao.setAttribute('aria-pressed', String(botao.classList.contains('selected'))));
 
   switch (grupoId) {
     case 'rigidezOptions': rigidezAtual = indice; break;
@@ -163,7 +164,10 @@ function limparRegistroDiario() {
   alterarDor('rest', -10);
   alterarDor('mov', -10);
   rigidezAtual = fadigaAtual = humorAtual = atividadeAtual = atipico = null;
-  document.querySelectorAll('#page-sintomas .selected').forEach(botao => botao.classList.remove('selected'));
+  document.querySelectorAll('#page-sintomas .selected').forEach(botao => {
+    botao.classList.remove('selected');
+    if (botao.hasAttribute('aria-pressed')) botao.setAttribute('aria-pressed', 'false');
+  });
 }
 
 function concluirRegistro() {
@@ -284,7 +288,10 @@ function abrirClimaSheet(dia, reg) {
   if (titulo) titulo.textContent = 'Registro do dia ' + dia + ' de ' + nomesMes[mesAtual.getMonth()];
 
   var dor = document.getElementById('sheetDorNivel');
-  if (dor) dor.textContent = 'Dor ao se movimentar: ' + (reg ? reg.dorMovimento + '/10 (Repouso: ' + reg.dorRepouso + '/10)' : 'Nenhum registro de dor neste dia');
+  if (dor) dor.textContent = reg
+    ? 'Dor quando você ficou parado: ' + reg.dorRepouso + '/10' + (reg.comparacaoParado ? ' · ' + reg.comparacaoParado : '') +
+      ' | Dor ao se mexer: ' + reg.dorMovimento + '/10' + (reg.comparacaoMovimento ? ' · ' + reg.comparacaoMovimento : '')
+    : 'Nenhum registro de dor neste dia';
 
   var intensidade = ['Nenhuma', 'Leve', 'Moderada', 'Intensa'];
   var rigidez = document.getElementById('sheetRigidez');

@@ -265,7 +265,7 @@ async function loadPatientData() {
     const loadedPlans=result(await supabase.from("care_plans")
       .select("id,title,notes,created_at,updated_at,plan_exercises(id,exercise_name,exercise_source,external_id,series,repetitions,duration,frequency,instructions,position)")
       .eq("patient_id",selectedPatient).order("created_at",{ascending:false}))||[];
-    const baseFields="id,recorded_at,pain_rest,pain_movement,stiffness,fatigue,mood,activity_level";
+    const baseFields="id,recorded_at,pain_rest,pain_movement,stiffness,fatigue,mood,activity_level,pain_rest_comparison,pain_movement_comparison";
     const weatherFields=",weather_city,weather_temperature,weather_humidity,weather_pressure,weather_observed_at";
     let symptomsResponse=await supabase.from("symptom_records")
       .select(baseFields+(weatherColumnsAvailable?weatherFields:""))
@@ -294,6 +294,8 @@ async function loadPatientData() {
         data:r.recorded_at,
         dorRepouso:r.pain_rest,
         dorMovimento:r.pain_movement,
+        comparacaoParado:r.pain_rest_comparison,
+        comparacaoMovimento:r.pain_movement_comparison,
         maiorDor:Math.max(r.pain_rest,r.pain_movement),
         rigidez:Math.max(0,levels.indexOf(r.stiffness)),
         fadiga:Math.max(0,levels.indexOf(r.fatigue)),
@@ -1036,6 +1038,8 @@ async function saveSymptoms(){
     patient_id: paciente.id, pain_rest: painRest, pain_movement: painMove,
     stiffness: levels[rigidezAtual],
     fatigue: levels[fadigaAtual],
+    pain_rest_comparison: $("dorParadoComparacao").querySelector(".selected")?.value ?? null,
+    pain_movement_comparison: $("dorMovimentoComparacao").querySelector(".selected")?.value ?? null,
     mood: moods[humorAtual] ?? null,
     activity_level: levels[atividadeAtual] ?? null
   };

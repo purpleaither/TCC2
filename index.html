@@ -159,6 +159,13 @@
           <span>0 = sem dor</span>
           <span>10 = pior dor que você consegue imaginar</span>
         </div>
+        <p class="choices-label" id="dorParadoComparacaoTitulo">Foi diferente da sua dor de costume?</p>
+        <div class="choices-options pain-comparison" id="dorParadoComparacao" role="group" aria-labelledby="dorParadoComparacaoTitulo" aria-description="quando ficou parado">
+          <button type="button" class="choice-btn" value="Menos dor" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 0)">Menos dor</button>
+          <button type="button" class="choice-btn" value="A mesma dor" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 1)">A mesma dor</button>
+          <button type="button" class="choice-btn" value="Mais dor" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 2)">Mais dor</button>
+          <button type="button" class="choice-btn" value="Não sei comparar" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 3)">Não sei comparar</button>
+        </div>
       </div>
 
       <!-- Dor ao se mexer -->
@@ -178,6 +185,13 @@
         <div class="pain-scale-labels">
           <span>0 = sem dor</span>
           <span>10 = pior dor que você consegue imaginar</span>
+        </div>
+        <p class="choices-label" id="dorMovimentoComparacaoTitulo">Foi diferente da sua dor de costume?</p>
+        <div class="choices-options pain-comparison" id="dorMovimentoComparacao" role="group" aria-labelledby="dorMovimentoComparacaoTitulo" aria-description="ao se mexer">
+          <button type="button" class="choice-btn" value="Menos dor" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 0)">Menos dor</button>
+          <button type="button" class="choice-btn" value="A mesma dor" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 1)">A mesma dor</button>
+          <button type="button" class="choice-btn" value="Mais dor" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 2)">Mais dor</button>
+          <button type="button" class="choice-btn" value="Não sei comparar" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 3)">Não sei comparar</button>
         </div>
       </div>
     </section>
