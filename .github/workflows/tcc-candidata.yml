@@ -60,6 +60,42 @@ jobs:
           else
             echo 'ExerciseBank sem chave no runner' > "$TCC_EVIDENCIAS/dependencias.txt"
           fi
+      - name: Diagnosticar credencial e conexão da ExerciseBank
+        if: steps.preparar.outcome == 'success'
+        env:
+          EXERCISEBANK_API_KEY: ${{ secrets.EXERCISEBANK_API_KEY }}
+          EB_KEY: ${{ secrets.EB_KEY }}
+        run: |
+          node --input-type=module <<'JS' > "$TCC_EVIDENCIAS/exercisebank-conexao.json"
+          const valor = process.env.EXERCISEBANK_API_KEY?.trim() || process.env.EB_KEY?.trim();
+          const resultado = { etapa: 'credencial', estado: 'ausente' };
+          if (valor) {
+            resultado.estado = 'formato-invalido';
+            if (/^[A-Za-z0-9._~+/-]+=*$/.test(valor)) {
+              resultado.etapa = 'metadados';
+              try {
+                const resposta = await fetch('https://exercisebank.net/v1/meta', {
+                  headers: { Accept: 'application/json', Authorization: 'Bearer ' + valor },
+                  redirect: 'manual',
+                  signal: AbortSignal.timeout(10000)
+                });
+                resultado.estado = 'resposta-http';
+                resultado.http = resposta.status;
+                await resposta.body?.cancel().catch(() => {});
+              } catch (erro) {
+                resultado.estado = erro.name === 'TimeoutError' ? 'tempo-limite' : 'falha-de-transporte';
+              }
+            }
+          }
+          console.log(JSON.stringify(resultado));
+          JS
+      - name: Guardar diagnóstico de conexão
+        if: steps.preparar.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: diagnostico-conexao-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test-results/candidata/exercisebank-conexao.json
+          retention-days: 90
       - name: Reteste axe-core autenticado e Lighthouse por estado
         if: steps.preparar.outcome == 'success'
         env:
