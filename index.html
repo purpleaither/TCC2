@@ -238,7 +238,6 @@
   <div class="page" id="page-historico">
 
     <h1 class="page-title">Meu histórico</h1>
-    <details class="ajuda-termo"><summary>Entenda os dados do clima</summary><p>Umidade relativa indica quanto vapor de água há no ar em relação ao máximo possível naquela temperatura. Pressão atmosférica é a pressão que o ar exerce. hPa significa hectopascal, uma unidade de pressão.</p></details>
 
     <!-- Navegação de mês -->
     <div class="heatmap-header">
@@ -247,39 +246,9 @@
       <button class="month-nav-btn" aria-label="Próximo mês" onclick="mudarMes(1)">›</button>
     </div>
 
-    <!-- Visão global -->
-    <div class="card">
-      <h2 class="card-title">Visão global</h2>
-      <p class="card-text-small" id="historicoPeriodo"></p>
-      <div class="stats-row">
-        <div class="stat-item">
-          <div class="stat-value"></div>
-          <div class="stat-label">Média da dor</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-value"></div>
-          <div class="stat-label">Pico de dor</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-value"></div>
-          <div class="stat-label">Dias registrados</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Filtro dor -->
-    <div class="choices">
-      <div class="choices-options" id="filtDorOptions">
-        <button class="choice-btn" onclick="selecionar('filtDorOptions', 0)">Em repouso</button>
-        <button class="choice-btn selected" onclick="selecionar('filtDorOptions', 1)">Ao se movimentar</button>
-      </div>
-    </div>
-
-    <!-- Heatmap -->
-    <div class="card">
-      <p class="choices-label">Calendário de sintomas</p>
-
-      <div class="heatmap-calendario" role="region" aria-label="Calendário de sintomas">
+    <section class="card" aria-labelledby="tituloCalendarioAtividades">
+      <h2 class="card-title" id="tituloCalendarioAtividades">Calendário de atividades</h2>
+      <div class="heatmap-calendario">
         <div class="heatmap-weekdays">
           <span class="heatmap-weekday">S</span>
           <span class="heatmap-weekday">T</span>
@@ -289,43 +258,48 @@
           <span class="heatmap-weekday">S</span>
           <span class="heatmap-weekday">D</span>
         </div>
+        <div class="heatmap-grid" id="calendarioAtividades"></div>
+      </div>
+    </section>
 
-        <div class="heatmap-grid" id="heatmapGrid">
-          <!-- Preenchido pelo JS -->
+    <section class="card" aria-labelledby="tituloCalendarioSintomas">
+      <h2 class="card-title" id="tituloCalendarioSintomas">Calendário de sintomas</h2>
+      <div class="heatmap-calendario">
+        <div class="heatmap-weekdays">
+          <span class="heatmap-weekday">S</span>
+          <span class="heatmap-weekday">T</span>
+          <span class="heatmap-weekday">Q</span>
+          <span class="heatmap-weekday">Q</span>
+          <span class="heatmap-weekday">S</span>
+          <span class="heatmap-weekday">S</span>
+          <span class="heatmap-weekday">D</span>
         </div>
+        <div class="heatmap-grid" id="heatmapGrid"></div>
       </div>
-
-      <p class="choices-label" style="font-size:var(--fonte-minima)">Nível de dor (0 a 10)</p>
-      <div class="heatmap-legend">
-        <div class="legend-item"><div class="legend-color" data-intensidade="nenhuma"></div> 0 · Sem dor</div>
-        <div class="legend-item"><div class="legend-color" data-intensidade="leve"></div> 1–3 · Leve</div>
-        <div class="legend-item"><div class="legend-color" data-intensidade="moderada"></div> 4–6 · Moderada</div>
-        <div class="legend-item"><div class="legend-color" data-intensidade="intensa"></div> 7–10 · Intensa</div>
-      </div>
-
-      <p style="font-size:var(--fonte-minima); color:var(--texto-suave, #666)">Toque em um dia com registro ou treino concluído para consultar os detalhes e a ficha realizada.</p>
-    </div>
+    </section>
 
     <!-- Bottom sheet: Clima do dia selecionado -->
     <div class="bottom-sheet" id="climaSheet">
       <div class="bottom-sheet-handle"></div>
       <button class="bottom-sheet-close" onclick="fecharClimaSheet()">×</button>
       <h2 class="page-title" id="climaSheetTitle">Dia selecionado</h2>
-      <div style="margin-top: 16px; margin-bottom: 12px; background: var(--superficie-neutra, #f9f9f9); padding: 12px; border-radius: 6px; border: 1px solid var(--linha, #eee);">
-        <p style="font-size: var(--fonte-minima); font-weight: bold; color: var(--titulo, #003366); margin-bottom: 10px;" id="sheetDorNivel">Dor: 0/10</p>
-        <div style="display: flex; gap: 8px; font-size: var(--fonte-minima); color: var(--texto, #444);">
-          <div style="flex: 1;"><strong>Rigidez:</strong><br><span id="sheetRigidez">-</span></div>
-          <div style="flex: 1;"><strong>Fadiga:</strong><br><span id="sheetFadiga">-</span></div>
+      <div id="sheetSintomas">
+        <div style="margin-top: 16px; margin-bottom: 12px; background: var(--superficie-neutra, #f9f9f9); padding: 12px; border-radius: 6px; border: 1px solid var(--linha, #eee);">
+          <p style="font-size: var(--fonte-minima); font-weight: bold; color: var(--titulo, #003366); margin-bottom: 10px;" id="sheetDorNivel"></p>
+          <div style="display: flex; gap: 8px; font-size: var(--fonte-minima); color: var(--texto, #444);">
+            <div style="flex: 1;"><strong>Rigidez:</strong><br><span id="sheetRigidez">-</span></div>
+            <div style="flex: 1;"><strong>Fadiga:</strong><br><span id="sheetFadiga">-</span></div>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; font-size: var(--fonte-minima); color: var(--texto, #444); margin-top: 8px;">
+            <div style="flex: 1;"><strong>Humor:</strong><br><span id="sheetHumor">-</span></div>
+            <div style="flex: 1;"><strong>Nível de atividade física:</strong><br><span id="sheetAtividade">-</span></div>
+          </div>
         </div>
-        <div style="display: flex; flex-wrap: wrap; gap: 8px; font-size: var(--fonte-minima); color: var(--texto, #444); margin-top: 8px;">
-          <div style="flex: 1;"><strong>Humor:</strong><br><span id="sheetHumor">-</span></div>
-          <div style="flex: 1;"><strong>Nível de atividade física:</strong><br><span id="sheetAtividade">-</span></div>
-        </div>
-      </div>
 
-      <h3 class="weather-title" style="font-size:var(--fonte-minima)">Resumo Meteorológico</h3>
-      <p style="font-size:var(--fonte-minima); line-height:1.4; color:var(--texto, #333);" id="sheetClimaDesc">Não há dados meteorológicos salvos para este registro.</p>
-      <p style="font-size:var(--fonte-minima); color:var(--texto-suave, #888); margin-top:16px; line-height:1.4">Clima e dor podem coincidir temporalmente, sem que isso comprove uma relação direta de causa e efeito.</p>
+        <h3 class="weather-title" style="font-size:var(--fonte-minima)">Resumo Meteorológico</h3>
+        <p style="font-size:var(--fonte-minima); line-height:1.4; color:var(--texto, #333);" id="sheetClimaDesc">Não há dados meteorológicos salvos para este registro.</p>
+        <p style="font-size:var(--fonte-minima); color:var(--texto-suave, #888); margin-top:16px; line-height:1.4">Clima e dor podem coincidir temporalmente, sem que isso comprove uma relação direta de causa e efeito.</p>
+      </div>
       <section id="sheetWorkoutHistory" class="workout-history-details" aria-label="Ficha dos treinos concluídos"></section>
     </div>
 

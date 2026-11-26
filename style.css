@@ -448,37 +448,6 @@ body {
   color: var(--titulo, #003366);
 }
 
-.stats-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-#historicoPeriodo + .stats-row {
-  margin-block-start: var(--espaco-grupo);
-}
-
-.stat-item {
-  flex: 1 1 6em;
-  min-inline-size: 0;
-  text-align: center;
-}
-
-.stat-value {
-  line-height: var(--entrelinha-valor);
-  margin-block-end: var(--espaco-valor-rotulo);
-  font-size: var(--fonte-minima);
-  font-weight: bold;
-  color: var(--titulo, #003366);
-}
-
-.stat-label {
-  line-height: var(--entrelinha-rotulo);
-  font-size: var(--fonte-minima);
-  color: var(--texto-suave, #666);
-}
-
 .heatmap-calendario {
   margin-block-end: var(--espaco-grupo);
   padding: 4px;
@@ -510,47 +479,19 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+  color: var(--texto, #333);
   font-size: var(--fonte-minima);
-   background: var(--superficie-neutra, #f4f4f4);
+  background: var(--superficie-neutra, #f4f4f4);
 }
 
-.heatmap-cell:hover {
+button.heatmap-cell {
+  box-shadow: inset 0 0 0 2px var(--destaque);
+  cursor: pointer;
+}
+
+button.heatmap-cell:hover {
   border-color: var(--destaque, #006633);
   border-width: 2px;
-}
-
-.heatmap-cell-day {
-  font-size: var(--fonte-minima);
-  color: var(--texto, #333);
-}
-
-.heatmap-cell-value {
-  max-inline-size: 100%;
-  font-size: var(--fonte-minima);
-  font-weight: bold;
-}
-
-.heatmap-legend {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 12px;
-}
-
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: var(--fonte-minima);
-}
-
-.legend-color {
-  flex-shrink: 0;
-  width: 14px;
-  height: 14px;
-  border: 1px solid var(--borda, #ccc);
-  border-radius: 2px;
 }
 
 /* ---- Menu lateral ---- */
@@ -893,8 +834,7 @@ body {
 /* Conclusão do treino e ficha preservada no histórico diário. */
 #page-exercicios .patient-workout-finish{display:block;width:100%;margin-top:15px;min-height:50px;font-size:var(--fonte-minima);font-weight:800}
 #page-exercicios .patient-workout-finish:disabled{opacity:.8;cursor:default}
-.heatmap-workout-day{box-shadow:inset 0 0 0 2px var(--destaque, #006633);position:relative;cursor:pointer}
-.heatmap-cell[role="button"]:focus-visible{outline:3px solid var(--titulo, #003366);outline-offset:2px}
+button.heatmap-cell:focus-visible{outline:3px solid var(--titulo, #003366);outline-offset:2px}
 #climaSheet{max-height:85vh;overflow-y:auto}
 .workout-history-details{margin-top:16px;border-top:1px solid var(--linha, #e0e7e1);padding-top:15px}
 .workout-history-details .card-title{font-size:var(--fonte-minima);color:var(--titulo, #003366)}
@@ -1173,28 +1113,8 @@ body {
 .app :is(button, input, select, textarea) { scroll-margin-block: 5rem 1rem; }
 .app :is(.choice-btn, .month-btn) { min-height: 2rem; height: auto; }
 .app .heatmap-cell { min-width: 0; height: auto; }
-:is(.heatmap-cell, .legend-color)[data-intensidade="nenhuma"] { background: var(--superficie-neutra); }
-:is(.heatmap-cell, .legend-color)[data-intensidade="leve"] { background: var(--dor-leve); }
-:is(.heatmap-cell, .legend-color)[data-intensidade="moderada"] { background: var(--dor-moderada); }
-:is(.heatmap-cell, .legend-color)[data-intensidade="intensa"] { background: var(--dor-intensa); }
-.heatmap-cell[data-intensidade]:not([data-intensidade="nenhuma"]) { color: var(--sobre-dor); }
-.heatmap-cell[data-intensidade]:not([data-intensidade="nenhuma"]) .heatmap-cell-day {
-  color: inherit;
-}
 :root[data-texto="200"] .header,
 :root[data-espacamento] .header { position: static; }
-:root[data-texto="200"] .stats-row {
-  flex-direction: column;
-  gap: var(--espaco-texto);
-}
-:root[data-texto="200"] .stat-item {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0 var(--espaco-texto);
-  text-align: start;
-}
-:root[data-texto="200"] .stat-value { margin-block-end: 0; }
 :root[data-texto="150"] .heatmap-cell,
 :root[data-texto="200"] .heatmap-cell,
 :root[data-espacamento] .heatmap-cell { aspect-ratio: auto; }
