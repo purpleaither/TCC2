@@ -198,10 +198,9 @@ function gerarHeatmap() {
     }
 
     cell.appendChild(Object.assign(document.createElement('span'), {className: 'heatmap-cell-day', textContent: i}));
-    const marcador = Number.isFinite(nota) ? nota : regDoDia ? '•' : valorVisivel;
+    const marcador = Number.isFinite(nota) ? nota : valorVisivel;
     if (marcador !== '') {
       const valor = Object.assign(document.createElement('span'), {className: 'heatmap-cell-value', textContent: marcador});
-      if (marcador === '•') valor.setAttribute('aria-hidden', 'true');
       cell.append(' ', valor);
     }
     if (treinosDoDia.length) {
