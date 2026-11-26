@@ -75,12 +75,14 @@ function normalize(ex){
 export default async function handler(req,res){
   res.setHeader("Allow","GET, POST");
   if(!["GET","POST"].includes(req.method))return respond(res,405,{error:"Método não permitido."});
-  const apiKey=process.env.EXERCISEBANK_API_KEY||process.env.EB_KEY;
+  const apiKey = process.env.EXERCISEBANK_API_KEY?.trim() || process.env.EB_KEY?.trim();
   if(!apiKey)return respond(res,503,{error:"Configure EXERCISEBANK_API_KEY na Vercel para consultar os 50 vídeos do Sandbox."});
+  let etapa = "sessao";
   try{
     const session=await authenticatedUser(req);
     if(!session)return respond(res,401,{error:"Acesso autenticado necessário."});
     const ebHeaders={Authorization:"Bearer "+apiKey};
+    etapa = "metadados";
     const meta=await request(API+"/meta",ebHeaders);
     if(!meta.ok)return upstreamError(res, meta, "metadados");
     const sample=sampleIds(meta.data);
@@ -89,11 +91,13 @@ export default async function handler(req,res){
     if(req.method==="POST"&&req.body?.action==="audit"){
       if(session.role!=="fisioterapeuta")return respond(res,403,{error:"Auditoria disponível apenas para o fisioterapeuta."});
       const params=new URLSearchParams({ids:sample.join(","),limit:String(LIMIT)});
+      etapa = "catalogo";
       const catalog=await request(API+"/exercises?"+params,ebHeaders);
       if(!catalog.ok)return upstreamError(res, catalog, "catalogo");
       const catalogItems=Array.isArray(catalog.data?.data)?catalog.data.data:[];
       const catalogue=new Map(catalogItems.filter(ex=>sample.includes(ex.id)).map(ex=>[ex.id,normalize(ex)]));
       const viewer="tcc_"+createHash("sha256").update(session.id).digest("hex").slice(0,32);
+      etapa = "videos";
       const media=await request(API+"/media/urls",ebHeaders,{
         method:"POST",
         headers:{"Content-Type":"application/json","X-End-User":viewer,"X-End-User-Role":"coach"},
@@ -125,6 +129,7 @@ export default async function handler(req,res){
     if(req.method==="GET"){
       if(session.role!=="fisioterapeuta")return respond(res,403,{error:"A seleção de exercícios é exclusiva do fisioterapeuta."});
       const params=new URLSearchParams({ids:sample.join(","),limit:String(LIMIT)});
+      etapa = "catalogo";
       const response=await request(API+"/exercises?"+params,ebHeaders);
       if(!response.ok)return upstreamError(res, response, "catalogo");
       if(!Array.isArray(response.data?.data))return respond(res,502,{error:"A ExerciseBank retornou um catálogo inválido."});
@@ -140,9 +145,11 @@ export default async function handler(req,res){
     if(!Array.isArray(ids)||ids.length<1||ids.length>12||ids.some(id=>typeof id!=="string"||!IDENTIFIER.test(id)))
       return respond(res,400,{error:"Informe de 1 a 12 IDs válidos."});
     if(ids.some(id=>!sample.includes(id)))return respond(res,403,{error:"Um ou mais vídeos não estão liberados no Sandbox."});
+    etapa = "atribuicao";
     if(session.role==="paciente"&&!(await isAssigned(session,ids)))
       return respond(res,403,{error:"Este vídeo não foi atribuído ao paciente."});
     const viewer="tcc_"+createHash("sha256").update(session.id).digest("hex").slice(0,32);
+    etapa = "videos";
     const media=await request(API+"/media/urls",ebHeaders,{
       method:"POST",
       headers:{
@@ -160,6 +167,9 @@ export default async function handler(req,res){
     }
     return respond(res,200,{data:result});
   }catch(err){
-    return respond(res,502,{error:"Falha temporária na conexão com a ExerciseBank."});
+    const codigo = err.cause?.code || err.code;
+    const tipoFalha = /^[A-Z][A-Z0-9_]{2,50}$/.test(codigo ?? "")
+      ? codigo : err.name === "TimeoutError" ? "TIMEOUT" : "SEM_CODIGO";
+    return respond(res,502,{error:"Falha temporária na conexão com a ExerciseBank.", etapa, tipoFalha});
   }
 }

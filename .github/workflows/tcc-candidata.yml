@@ -86,8 +86,8 @@ jobs:
 
           const casos = JSON.parse(readFileSync(process.env.TCC_EVIDENCIAS + '/axe-autenticado.json'));
           const biblioteca = casos.filter(({ id }) => /^CT4[56]-/.test(id));
-          for (const { id, origem, estado, http, etapa, statusFornecedor, motivo } of biblioteca) {
-            console.log([id, origem, estado, http, etapa, statusFornecedor, motivo].filter(Boolean).join(' · '));
+          for (const { id, origem, estado, http, etapa, statusFornecedor, tipoFalha, motivo } of biblioteca) {
+            console.log([id, origem, estado, http, etapa, statusFornecedor, tipoFalha, motivo].filter(Boolean).join(' · '));
           }
           assert.ok(biblioteca.some(({ id, origem, estado }) =>
             id === 'CT46-catalogo-real' && origem === 'candidata' && estado === 'aprovado'),
@@ -99,6 +99,13 @@ jobs:
           assert.ok(biblioteca.every(({ estado }) => estado === 'aprovado'),
             'Há verificações da ExerciseBank reprovadas ou bloqueadas');
           JS
+      - name: Guardar diagnóstico do catálogo
+        if: always() && !cancelled() && steps.preparar.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: diagnostico-catalogo-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test-results/candidata/axe-autenticado.json
+          retention-days: 90
       - name: Regressão CI-01 a CI-07 e falha simulada de clima
         if: always() && !cancelled() && steps.preparar.outcome == 'success'
         env:

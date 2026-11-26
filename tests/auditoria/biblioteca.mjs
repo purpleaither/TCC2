@@ -40,10 +40,11 @@ export async function verificarBiblioteca(pagina, casos) {
         'A ExerciseBank retornou um catálogo inválido.',
         'Falha temporária na conexão com a ExerciseBank.',
       ].find(texto => texto === falha?.error);
-      const etapa = ['metadados', 'catalogo', 'videos'].find(valor => valor === falha?.etapa);
+      const etapa = ['sessao', 'metadados', 'catalogo', 'atribuicao', 'videos'].find(valor => valor === falha?.etapa);
       const statusFornecedor = Number.isInteger(falha?.statusFornecedor) ? falha.statusFornecedor : undefined;
+      const tipoFalha = /^[A-Z][A-Z0-9_]{2,50}$/.test(falha?.tipoFalha ?? '') ? falha.tipoFalha : undefined;
       casos.push({ id: 'CT46-catalogo-real', origem, estado: resposta.ok() ? 'aprovado' : 'bloqueado',
-        http: resposta.status(), etapa, statusFornecedor, motivo, tempoRespostaMs: Math.round(performance.now() - inicio) });
+        http: resposta.status(), etapa, statusFornecedor, tipoFalha, motivo, tempoRespostaMs: Math.round(performance.now() - inicio) });
       await pagina.waitForFunction(() => !document.querySelector('#exercisebankRefresh').disabled);
       return resposta;
     };
