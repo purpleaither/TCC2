@@ -150,6 +150,22 @@ body {
   margin-bottom: 24px;
 }
 
+.login-libras {
+  display: inline-flex;
+  align-items: center;
+  gap: .5em;
+  min-block-size: 44px;
+  max-inline-size: 100%;
+  margin-block-start: .75rem;
+  padding: .35em .8em;
+  border: 1px solid currentColor;
+  border-radius: 8px;
+  color: var(--titulo);
+  font-weight: bold;
+}
+
+.login-libras .icon { flex: none; inline-size: 1.25em; block-size: 1.25em; }
+
 .login-logo {
   width: 90px;
   height: 90px;
