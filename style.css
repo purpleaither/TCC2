@@ -324,7 +324,11 @@ body {
 
 #page-sintomas.page { padding-block-end: 5rem; }
 #page-sintomas [hidden] { display: none; }
-#page-sintomas [data-etapa-diario]:first-of-type { border-color: transparent; }
+#page-sintomas [data-etapa-diario] { border-color: transparent; }
+:root:not([data-contraste]) #page-sintomas :is(.choice-btn, .mood-btn):not(.selected) {
+  border-color: transparent;
+  background: var(--superficie-neutra);
+}
 #diarioErro { color: var(--erro); }
 #page-sintomas :is(.choices-options, .mood-options) {
   display: grid;
