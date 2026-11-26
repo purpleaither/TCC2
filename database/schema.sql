@@ -47,6 +47,8 @@ create table if not exists public.symptom_records (
  pain_movement smallint not null check (pain_movement between 0 and 10),
  stiffness text not null check (stiffness in ('Nenhuma','Leve','Moderada','Intensa')),
  fatigue text not null check (fatigue in ('Nenhuma','Leve','Moderada','Intensa')),
+ mood text check (mood in ('Bem', 'Regular', 'Desanimado')),
+ activity_level text check (activity_level in ('Nenhuma', 'Leve', 'Moderada', 'Intensa')),
  weather_city text,
  weather_temperature numeric(5,2),
  weather_humidity smallint check (weather_humidity is null or weather_humidity between 0 and 100),

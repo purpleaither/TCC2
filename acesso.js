@@ -2,6 +2,7 @@
 
 const $ = id => document.getElementById(id);
 const levels = ["Nenhuma", "Leve", "Moderada", "Intensa"];
+const moods = ["Bem", "Regular", "Desanimado"];
 const exercises = [
   {id:"e1",name:"Ponte de glúteos",area:"Musculoesquelética",info:"Elevação controlada da pelve conforme prescrição."},
   {id:"e2",name:"Mobilidade de tornozelo",area:"Musculoesquelética",info:"Flexão dorsal e plantar dentro dos limites orientados."},
@@ -140,6 +141,7 @@ function reset() {
   workoutCompletedInView=false;
   treinosConcluidos=[];
   registrosUsuario=[];
+  limparRespostasOpcionais();
   menu();
   $("loginSenha").value="";
   const flash=$("authFlash");
@@ -256,7 +258,7 @@ async function loadPatientData() {
     const loadedPlans=result(await supabase.from("care_plans")
       .select("id,title,notes,created_at,updated_at,plan_exercises(id,exercise_name,exercise_source,external_id,series,repetitions,duration,frequency,instructions,position)")
       .eq("patient_id",selectedPatient).order("created_at",{ascending:false}))||[];
-    const baseFields="id,recorded_at,pain_rest,pain_movement,stiffness,fatigue";
+    const baseFields="id,recorded_at,pain_rest,pain_movement,stiffness,fatigue,mood,activity_level";
     const weatherFields=",weather_city,weather_temperature,weather_humidity,weather_pressure,weather_observed_at";
     let symptomsResponse=await supabase.from("symptom_records")
       .select(baseFields+(weatherColumnsAvailable?weatherFields:""))
@@ -288,8 +290,8 @@ async function loadPatientData() {
         maiorDor:Math.max(r.pain_rest,r.pain_movement),
         rigidez:Math.max(0,levels.indexOf(r.stiffness)),
         fadiga:Math.max(0,levels.indexOf(r.fatigue)),
-        humor:1,
-        atividade:0,
+        humor:r.mood,
+        atividade:r.activity_level,
         sinalAtipico:false,
         clima:mapWeather(r)
       }));
@@ -684,6 +686,8 @@ function renderProfessionalRecords(){
     card.append(el("h3",date(r.recorded_at),"card-title"));
     card.append(el("p","Dor em repouso: "+r.pain_rest+"/10 · Dor ao se movimentar: "+r.pain_movement+"/10","card-text"));
     card.append(el("p","Rigidez: "+r.stiffness+" · Fadiga: "+r.fatigue,"card-text-small"));
+    card.append(el("p","Humor: "+(r.mood ?? "Não registrado")+
+      " · Nível de atividade física: "+(r.activity_level ?? "Não registrado"),"card-text-small"));
     const clima=mapWeather(r);
     if(clima)card.append(el("p","Clima registrado em "+date(clima.observadoEm)+": "+clima.temperatura+" °C · "+clima.umidade+"% · "+clima.pressao+" hPa ("+clima.cidade+")","card-text-small"));
     root.append(card);
@@ -1016,30 +1020,28 @@ async function deletePlan(id){
 async function saveSymptoms(){
   if(!isAuthenticated()||isProfessional()||busy)return;
   busy=true;
-  const painRest=dorRepouso,painMove=dorMovimento;
-  try{
-    let clima=null;
-    try {
-      clima=await obterClimaBrasilia();
-    } catch(err) {
-      clima=null;
-    }
-    const registro={
-      patient_id:user.id,pain_rest:painRest,pain_movement:painMove,
-      stiffness:levels[rigidezAtual]||"Leve",
-      fatigue:levels[fadigaAtual]||"Leve"
-    };
-    if(clima && weatherColumnsAvailable)Object.assign(registro,clima);
-    let saved=await supabase.from("symptom_records").insert(registro);
-    if(saved.error && clima && isMissingWeatherColumns(saved.error)) {
-      weatherColumnsAvailable=false;
-      saved=await supabase.from("symptom_records").insert({
-        patient_id:user.id,pain_rest:painRest,pain_movement:painMove,
-        stiffness:levels[rigidezAtual]||"Leve",
-        fatigue:levels[fadigaAtual]||"Leve"
-      });
+  const paciente = user;
+  const painRest = dorRepouso, painMove = dorMovimento;
+  const registro = {
+    patient_id: paciente.id, pain_rest: painRest, pain_movement: painMove,
+    stiffness: levels[rigidezAtual] || "Leve",
+    fatigue: levels[fadigaAtual] || "Leve",
+    mood: moods[humorAtual] ?? null,
+    activity_level: levels[atividadeAtual] ?? null
+  };
+  try {
+    const clima = await obterClimaBrasilia().catch(() => null);
+    if (user !== paciente) return;
+    const associarClima = clima && weatherColumnsAvailable;
+    let saved = await supabase.from("symptom_records").insert(associarClima ? {...registro, ...clima} : registro);
+    if (saved.error && associarClima && isMissingWeatherColumns(saved.error)) {
+      if (user !== paciente) return;
+      weatherColumnsAvailable = false;
+      saved = await supabase.from("symptom_records").insert(registro);
     }
     result(saved);
+    if (user !== paciente) return;
+    limparRespostasOpcionais();
     await loadPatientData();
     navigate("inicio");
     message(clima&&weatherColumnsAvailable

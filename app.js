@@ -12,8 +12,8 @@ var dorMovimento = 5;
 var atipico = 0;
 var rigidezAtual = 1;
 var fadigaAtual = 1;
-var humorAtual = 1;
-var atividadeAtual = 1;
+var humorAtual = null;
+var atividadeAtual = null;
 var treinoConcluido = false;
 var registroEnviadoHoje = false;
 var mesAtual = new Date(); 
@@ -118,6 +118,12 @@ function selecionar(grupoId, indice) {
       gerarHeatmap(); 
       break;
   }
+}
+
+function limparRespostasOpcionais() {
+  humorAtual = atividadeAtual = null;
+  document.querySelectorAll('#humorOptions .selected, #atividadeOptions .selected')
+    .forEach(botao => botao.classList.remove('selected'));
 }
 
 function concluirRegistro(event) {
@@ -242,7 +248,9 @@ function abrirClimaSheet(dia, reg) {
   var humor = document.getElementById('sheetHumor');
   if (rigidez) rigidez.textContent = (reg ? intensidade[reg.rigidez] : null) || 'Não registrado';
   if (fadiga) fadiga.textContent = (reg ? intensidade[reg.fadiga] : null) || 'Não registrado';
-  if (humor) humor.textContent = 'Não registrado';
+  if (humor) humor.textContent = reg?.humor ?? 'Não registrado';
+  const atividade = document.getElementById('sheetAtividade');
+  if (atividade) atividade.textContent = reg?.atividade ?? 'Não registrada';
 
   var resumo = document.getElementById('sheetClimaDesc');
   if (resumo) {

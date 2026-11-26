@@ -197,13 +197,13 @@
 
     <!-- Humor -->
     <div class="choices">
-      <p class="choices-label">Humor</p>
+      <p class="choices-label">Humor (opcional)</p>
       <div class="mood-options" id="humorOptions">
         <button class="mood-btn" onclick="selecionar('humorOptions', 0)">
           <span class="mood-emoji"><img src="Icones/mood-smile.svg" alt="" class="icon"></span>
           <span class="mood-label">Bem</span>
         </button>
-        <button class="mood-btn selected" onclick="selecionar('humorOptions', 1)">
+        <button class="mood-btn" onclick="selecionar('humorOptions', 1)">
           <span class="mood-emoji"><img src="Icones/mood-empty.svg" alt="" class="icon"></span>
           <span class="mood-label">Regular</span>
         </button>
@@ -216,10 +216,10 @@
 
     <!-- Atividade física -->
     <div class="choices">
-      <p class="choices-label">Atividade física realizada</p>
+      <p class="choices-label">Nível de atividade física (opcional)</p>
       <div class="choices-options" id="atividadeOptions">
         <button class="choice-btn" onclick="selecionar('atividadeOptions', 0)">Nenhuma</button>
-        <button class="choice-btn selected" onclick="selecionar('atividadeOptions', 1)">Leve</button>
+        <button class="choice-btn" onclick="selecionar('atividadeOptions', 1)">Leve</button>
         <button class="choice-btn" onclick="selecionar('atividadeOptions', 2)">Moderada</button>
         <button class="choice-btn" onclick="selecionar('atividadeOptions', 3)">Intensa</button>
       </div>
@@ -322,7 +322,10 @@
         <div style="display: flex; gap: 8px; font-size: var(--fonte-minima); color: var(--texto, #444);">
           <div style="flex: 1;"><strong>Rigidez:</strong><br><span id="sheetRigidez">-</span></div>
           <div style="flex: 1;"><strong>Fadiga:</strong><br><span id="sheetFadiga">-</span></div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; font-size: var(--fonte-minima); color: var(--texto, #444); margin-top: 8px;">
           <div style="flex: 1;"><strong>Humor:</strong><br><span id="sheetHumor">-</span></div>
+          <div style="flex: 1;"><strong>Nível de atividade física:</strong><br><span id="sheetAtividade">-</span></div>
         </div>
       </div>
 

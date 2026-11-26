@@ -20,7 +20,9 @@ const before=await (await initial).json();const ids=new Set(before.map(x=>x.id))
 await p.evaluate(()=>window.navegarPara('sintomas'));await p.locator('#page-sintomas.active').waitFor();
 await p.locator('#rigidezOptions').getByRole('button',{name:'Moderada',exact:true}).click();
 await p.locator('#fadigaOptions').getByRole('button',{name:'Leve',exact:true}).click();
-const expected={pain_rest:parseInt(await p.locator('#restPainValue').innerText()),pain_movement:parseInt(await p.locator('#movPainValue').innerText()),stiffness:'Moderada',fatigue:'Leve'};
+await p.locator('#humorOptions').getByRole('button',{name:'Desanimado',exact:true}).click();
+await p.locator('#atividadeOptions').getByRole('button',{name:'Moderada',exact:true}).click();
+const expected={pain_rest:parseInt(await p.locator('#restPainValue').innerText()),pain_movement:parseInt(await p.locator('#movPainValue').innerText()),stiffness:'Moderada',fatigue:'Leve',mood:'Desanimado',activity_level:'Moderada'};
 const saved=p.waitForResponse(r=>isSymptoms(r)&&r.request().method()==='POST'&&r.ok(),{timeout:45000});
 const inicioRegistro=performance.now();
 await p.getByRole('button',{name:'Concluir registro de sintomas',exact:true}).click();await saved;const tempoRegistroMs=Math.round(performance.now()-inicioRegistro);await p.locator('#page-inicio.active').waitFor({timeout:30000});
@@ -28,6 +30,12 @@ const aviso=simular&&await p.locator('#authFlash').textContent();
 const read=p.waitForResponse(r=>isSymptoms(r)&&r.request().method()==='GET'&&r.ok(),{timeout:30000});await p.reload();const rows=await (await read).json();
 const added=rows.filter(x=>!ids.has(x.id)&&Object.entries(expected).every(([k,v])=>x[k]===v));
 if(added.length!==1)throw Error('Novo registro não identificado univocamente após recarregar');
+await p.locator('#page-inicio.active').waitFor({timeout:30000});
+await p.locator('#btnRegistrarSintomas').click();
+await p.locator('#climaSheet.open').waitFor();
+if(await p.locator('#sheetHumor').innerText()!==expected.mood ||
+   await p.locator('#sheetAtividade').innerText()!==expected.activity_level)
+  throw Error('Humor ou atividade física ausente no calendário após recarregar');
 report.push({id:simular?'CT44-persistencia':'CT25',status:'passed',expected,tempoRegistroMs});
 const x=added[0];const weather=['weather_temperature','weather_humidity','weather_pressure'].every(k=>typeof x[k]==='number'&&Number.isFinite(x[k]))&&!!x.weather_city&&Number.isFinite(Date.parse(x.weather_observed_at));
 if(simular){
