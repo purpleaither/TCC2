@@ -1224,6 +1224,7 @@ body {
   max-inline-size: calc(100% - 32px);
   color: var(--texto);
 }
+.accessibilidade:not([open]) { max-inline-size: calc(100% - 80px); }
 .accessibilidade summary {
   display: flex;
   list-style: none;
