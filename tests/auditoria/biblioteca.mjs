@@ -14,7 +14,7 @@ export async function verificarBiblioteca(pagina, casos) {
     assert.equal(await itens.count(), 0);
     await pagina.locator('#page-exercise-bank-prof.active').getByRole('button', { name: 'Voltar' }).click();
     await pagina.getByRole('button', { name: 'Adicionar manualmente', exact: true }).click();
-    await pagina.locator('#exerciseConfigRow [name=exercise]').waitFor();
+    await pagina.locator('#exerciseConfigRow [name=customName]').waitFor();
     casos.push({ id: 'CT45-falha-biblioteca', estado: 'aprovado' });
   } catch {
     casos.push({ id: 'CT45-falha-biblioteca', estado: 'reprovado' });

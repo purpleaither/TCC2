@@ -3,16 +3,6 @@
 const $ = id => document.getElementById(id);
 const levels = ["Nenhuma", "Leve", "Moderada", "Intensa"];
 const moods = ["Bem", "Regular", "Desanimado"];
-const exercises = [
-  {id:"e1",name:"Ponte de glúteos",area:"Musculoesquelética",info:"Elevação controlada da pelve conforme prescrição."},
-  {id:"e2",name:"Mobilidade de tornozelo",area:"Musculoesquelética",info:"Flexão dorsal e plantar dentro dos limites orientados."},
-  {id:"e3",name:"Extensão ativa de joelho",area:"Musculoesquelética",info:"Extensão de joelho em posição sentada."},
-  {id:"e4",name:"Abdução de quadril em pé",area:"Musculoesquelética",info:"Movimento lateral do quadril com apoio estável."},
-  {id:"e5",name:"Sentar e levantar",area:"Funcional",info:"Movimento em cadeira estável conforme orientação."},
-  {id:"e6",name:"Respiração diafragmática",area:"Respiratória",info:"Respiração em posição confortável conforme orientação profissional."},
-  {id:"e7",name:"Expiração com lábios semicerrados",area:"Respiratória",info:"Expiração controlada sem esforço excessivo, quando indicada."}
-];
-
 let supabase = null;
 let user = null;
 let profile = null;
@@ -706,43 +696,18 @@ function renderProfessionalRecords(){
 function addExercise(entry){
   if(!isProfessional())return;
   const row=el("div",undefined,"demo-exercicio-item");
-  const label=el("label","Exercício","form-label");
-  const select=el("select",undefined,"form-input");
-  select.name="exercise";
-  for(const x of exercises){
-    const option=el("option",x.name+" · "+x.area);
-    option.value=x.id;
-    select.append(option);
-  }
-  const custom=el("option","Outro exercício (digitar nome)");
-  custom.value="other";
-  select.append(custom);
-  label.append(select);
+  const label=el("label","Nome do exercício","form-label");
+  const name=el("input",undefined,"form-input");
+  name.name="customName";
+  name.maxLength=160;
+  name.required=true;
+  name.value=entry?.exercise_name??"";
+  name.readOnly=!!entry?.external_id;
+  label.append(name);
   row.append(label);
-  const externalId=el("input");
-  externalId.name="externalId";
-  externalId.type="hidden";
-  const externalInstructions=el("input");
-  externalInstructions.name="externalInstructions";
-  externalInstructions.type="hidden";
-  const externalName=el("input");
-  externalName.name="externalName";
-  externalName.type="hidden";
-  const externalSource=el("input");externalSource.name="externalSource";externalSource.type="hidden";
-  row.append(externalId,externalInstructions,externalName,externalSource);
-  const customName=el("input",undefined,"form-input");
-  customName.name="customName";
-  customName.placeholder="Nome do exercício";
-  customName.maxLength=160;
-  customName.hidden=true;
-  row.append(customName);
-  select.addEventListener("change",()=>{
-    customName.hidden=select.value!=="other";
-    customName.required=select.value==="other";
-    externalId.value="";
-    externalInstructions.value="";
-    externalName.value="";externalSource.value="";
-  });
+  row.dataset.externalId=entry?.external_id??"";
+  row.dataset.exerciseSource=entry?.exercise_source??"manual";
+  row.dataset.instructions=entry?.instructions??"";
   const params=el("div",undefined,"demo-grid-parametros");
   for(const [key,title,type,value] of [
     ["series","Séries","number",2],
@@ -766,15 +731,7 @@ function addExercise(entry){
   $("itensPlanoProf").append(row);
   updatePlanEditorSummary();
   if(entry){
-    const existing=["ExerciseBank","wger"].includes(entry.exercise_source)?null:exercises.find(x=>x.name===entry.exercise_name);
-    select.value=existing?existing.id:"other";
-    customName.value=entry.exercise_name;
-    customName.hidden=!!existing;
-    customName.required=!existing;
-    if(["ExerciseBank","wger"].includes(entry.exercise_source)&&entry.external_id){
-      externalId.value=entry.external_id;
-      externalInstructions.value=entry.instructions||"";
-      externalName.value=entry.exercise_name;externalSource.value=entry.exercise_source;
+    if(name.readOnly){
       const sourceLabel=el("p",entry.exercise_source==="ExerciseBank"?"ExerciseBank · catálogo de demonstração":"wger · vídeo sujeito à disponibilidade e licença","card-text-small");
       row.prepend(sourceLabel);
     }
@@ -787,11 +744,7 @@ let pendingExerciseRow=null;
 let pendingExercisePlaceholder=null;
 let camposExercicioAntes=[];
 function exerciseNameFromRow(row){
-  const selected=row.querySelector('[name="exercise"]');
-  const custom=row.querySelector('[name="customName"]');
-  return (
-    selected?.value==="other" ? custom?.value.trim() : exercises.find(x=>x.id===selected?.value)?.name
-  )||"Exercício sem nome";
+  return row.querySelector('[name="customName"]').value.trim();
 }
 function updatePlanEditorSummary(){
   const stored=$("itensPlanoProf");
@@ -807,7 +760,7 @@ function updatePlanEditorSummary(){
   }
   rows.forEach((row,index)=>{
     const item=el("div",undefined,"exercise-summary-item");
-    const heading=el("strong",(index+1)+". "+exerciseNameFromRow(row),"exercise-summary-name");
+    const heading=el("strong",(index+1)+". "+(exerciseNameFromRow(row)||"Exercício sem nome"),"exercise-summary-name");
     const detail=el("p",[
       "Séries: "+(row.querySelector('[name="series"]')?.value||"–"),
       "Repetições: "+(row.querySelector('[name="repetitions"]')?.value||"–"),
@@ -869,11 +822,7 @@ function backFromExerciseSource(){
 function addManualExerciseFromOptions(){
   if(!isProfessional())return;
   addExercise();
-  const row=$("itensPlanoProf").lastElementChild;
-  const select=row.querySelector('[name="exercise"]');
-  select.value="other";
-  select.dispatchEvent(new Event("change"));
-  openExerciseConfiguration(row);
+  openExerciseConfiguration($("itensPlanoProf").lastElementChild);
 }
 function openExerciseBankFromOptions(){
   if(!isProfessional())return;
@@ -885,7 +834,7 @@ function openExerciseConfiguration(row,existing=false){
   pendingExerciseRow=row;
   pendingExercisePlaceholder=existing?document.createElement("span"):null;
   if(existing)row.before(pendingExercisePlaceholder);
-  camposExercicioAntes=existing ? [...row.querySelectorAll("input, select")].map(campo=>[campo,campo.value,campo.hidden,campo.required]) : [];
+  camposExercicioAntes=existing ? [...row.querySelectorAll("input")].map(campo=>[campo,campo.value]) : [];
   $("exerciseConfigRow").append(row);
   const remove=row.querySelector("button.btn-outline");
   if(remove)remove.hidden=true;
@@ -895,13 +844,11 @@ function openExerciseConfiguration(row,existing=false){
 function finishExerciseInsertion(){
   if(!pendingExerciseRow)return;
   const row=pendingExerciseRow;
-  const select=row.querySelector('[name="exercise"]');
-  const custom=row.querySelector('[name="customName"]');
   const series=Number(row.querySelector('[name="series"]')?.value);
   const repeats=row.querySelector('[name="repetitions"]')?.value.trim()||"";
   const duration=row.querySelector('[name="duration"]')?.value.trim()||"";
   const frequency=row.querySelector('[name="frequency"]')?.value.trim()||"";
-  const name=select?.value==="other"?custom?.value.trim():exerciseNameFromRow(row);
+  const name=exerciseNameFromRow(row);
   if(!name||name.length<2||!Number.isInteger(series)||series<1||series>20||(!repeats&&!duration)||!frequency){
     text("erroConfigExercicio","Informe o exercício, as séries, as repetições ou duração e a frequência.");
     return;
@@ -924,7 +871,7 @@ function backFromExerciseConfiguration(){
   if(!pendingExerciseRow)return;
   const remove=pendingExerciseRow.querySelector("button.btn-outline");
   if(remove)remove.hidden=false;
-  for(const [campo,value,hidden,required] of camposExercicioAntes)Object.assign(campo,{value,hidden,required});
+  for(const [campo,value] of camposExercicioAntes)campo.value=value;
   if(pendingExercisePlaceholder)pendingExercisePlaceholder.replaceWith(pendingExerciseRow);
   else pendingExerciseRow.remove();
   pendingExerciseRow=null;
@@ -990,18 +937,15 @@ function editPlan(id){
 function readExercises(){
   return Array.from($("itensPlanoProf").children).map((row,i)=>{
     const v=key=>row.querySelector('[name="'+key+'"]').value.trim();
-    const selected=exercises.find(x=>x.id===v("exercise"));
-    const bankId=v("externalId");
-    const name=selected?selected.name:v("customName");
     return {
-      exercise_name:name,
-      exercise_source:bankId?(row.querySelector("[name=externalSource]")?.value||"ExerciseBank"):"manual",
-      external_id:bankId||null,
+      exercise_name:exerciseNameFromRow(row),
+      exercise_source:row.dataset.exerciseSource,
+      external_id:row.dataset.externalId||null,
       series:Number(v("series")),
       repetitions:v("repetitions"),
       duration:v("duration"),
       frequency:v("frequency"),
-      instructions:bankId?v("externalInstructions"):(selected?selected.info:""),
+      instructions:row.dataset.instructions,
       position:i
     };
   });
