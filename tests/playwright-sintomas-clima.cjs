@@ -31,7 +31,7 @@ await p.locator('#atividadeOptions').getByRole('button',{name:'Moderada',exact:t
 const expected={pain_rest:parseInt(await p.locator('#restPainValue').innerText()),pain_movement:parseInt(await p.locator('#movPainValue').innerText()),stiffness:'Moderada',fatigue:'Leve',mood:'Desanimado',activity_level:'Moderada'};
 await p.locator('#diarioVoltar').click();
 await p.locator('#diarioProximo').click();
-if(!(await p.locator('#humorOptions .selected').getByText('Desanimado').isVisible()) ||
+if(!(await p.locator('#humorOptions').getByRole('button',{name:'Desanimado',exact:true}).and(p.locator('.selected')).isVisible()) ||
    !(await p.locator('#atividadeOptions .selected').getByText('Moderada').isVisible()))
   throw Error('O diário perdeu as respostas ao voltar de etapa');
 await p.locator('#diarioProximo').click();

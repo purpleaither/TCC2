@@ -475,9 +475,7 @@ body {
   margin-bottom: 4px;
 }
 
-.mood-label {
-  font-size: var(--fonte-minima);
-}
+#page-sintomas .mood-emoji .icon { width: 1.25em; height: 1.25em; }
 
 .weather-title {
   font-size: var(--fonte-minima); /* Adicionado para igualar aos outros cards */
