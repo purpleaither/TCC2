@@ -526,7 +526,17 @@ function renderProfessionalPlans(){
         const view=el("button","Ver demonstração","btn btn-outline");
         view.type="button";
         const media=el("div",undefined,"bank-media");
-        view.addEventListener("click",()=>loadExerciseMedia(x.external_id,media,view,x.exercise_source,true));
+        view.setAttribute("aria-expanded","false");
+        view.addEventListener("click",()=>{
+          const abrir=view.getAttribute("aria-expanded")==="false";
+          view.setAttribute("aria-expanded",String(abrir));
+          view.textContent=abrir?"Ocultar demonstração":"Ver demonstração";
+          if(abrir)loadExerciseMedia(x.external_id,media,view,x.exercise_source,true);
+          else{
+            media.querySelector("video")?.pause();
+            media.replaceChildren();
+          }
+        });
         line.append(view,media);
       }
       card.append(line);
