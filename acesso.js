@@ -281,12 +281,8 @@ async function loadPatientData() {
         data:r.recorded_at,
         dorRepouso:r.pain_rest,
         dorMovimento:r.pain_movement,
-        maiorDor:Math.max(r.pain_rest,r.pain_movement),
         rigidez:Math.max(0,levels.indexOf(r.stiffness)),
         fadiga:Math.max(0,levels.indexOf(r.fatigue)),
-        humor:1,
-        atividade:0,
-        sinalAtipico:false,
         clima:mapWeather(r)
       }));
       gerarHeatmap();
@@ -707,11 +703,8 @@ function addExercise(entry){
   const externalInstructions=el("input");
   externalInstructions.name="externalInstructions";
   externalInstructions.type="hidden";
-  const externalName=el("input");
-  externalName.name="externalName";
-  externalName.type="hidden";
   const externalSource=el("input");externalSource.name="externalSource";externalSource.type="hidden";
-  row.append(externalId,externalInstructions,externalName,externalSource);
+  row.append(externalId,externalInstructions,externalSource);
   const customName=el("input",undefined,"form-input");
   customName.name="customName";
   customName.placeholder="Nome do exercício";
@@ -723,7 +716,7 @@ function addExercise(entry){
     customName.required=select.value==="other";
     externalId.value="";
     externalInstructions.value="";
-    externalName.value="";externalSource.value="";
+    externalSource.value="";
   });
   const params=el("div",undefined,"demo-grid-parametros");
   for(const [key,title,type,value] of [
@@ -756,7 +749,7 @@ function addExercise(entry){
     if(["ExerciseBank","wger"].includes(entry.exercise_source)&&entry.external_id){
       externalId.value=entry.external_id;
       externalInstructions.value=entry.instructions||"";
-      externalName.value=entry.exercise_name;externalSource.value=entry.exercise_source;
+      externalSource.value=entry.exercise_source;
       const sourceLabel=el("p",entry.exercise_source==="ExerciseBank"?"ExerciseBank · catálogo de demonstração":"wger · vídeo sujeito à disponibilidade e licença","card-text-small");
       row.prepend(sourceLabel);
     }
