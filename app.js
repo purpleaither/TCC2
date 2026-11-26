@@ -328,14 +328,3 @@ function abrirRegistroDiario() {
 
 atualizarDataAtual();
 gerarHeatmap();
-
-const abrirVLibras = document.getElementById('abrirVLibras');
-const painelVLibras = document.getElementById('painelVLibras');
-if (abrirVLibras && painelVLibras) {
-  const quadro = painelVLibras.querySelector('iframe');
-  abrirVLibras.addEventListener('click', () => {
-    quadro.src = 'https://vlibras.gov.br/app/';
-    painelVLibras.showModal();
-  });
-  painelVLibras.addEventListener('close', () => quadro.removeAttribute('src'));
-}
