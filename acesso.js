@@ -918,8 +918,6 @@ function finishExerciseInsertion(){
   camposExercicioAntes=[];
   $("exerciseConfigDialog").close();
   updatePlanEditorSummary();
-  navigate("editor-prof");
-  $("tituloFormularioPlano").focus();
   message("Exercício inserido. Revise a quantidade e salve o plano quando terminar.");
 }
 function backFromExerciseConfiguration(){
