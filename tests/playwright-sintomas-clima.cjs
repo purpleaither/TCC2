@@ -18,6 +18,9 @@ const initial=p.waitForResponse(r=>isSymptoms(r)&&r.request().method()==='GET'&&
 await p.locator('#loginSubmit').click();await p.locator('#page-inicio.active').waitFor({timeout:30000});
 const before=await (await initial).json();const ids=new Set(before.map(x=>x.id));
 await p.evaluate(()=>window.navegarPara('sintomas'));await p.locator('#page-sintomas.active').waitFor();
+if(await p.locator('#page-sintomas .selected').count() ||
+   await p.locator('#restPainValue').innerText()!=='0/10' || await p.locator('#movPainValue').innerText()!=='0/10')
+  throw Error('O formulário abriu com respostas preenchidas');
 await p.locator('#diarioProximo').click();
 await p.locator('#diarioProximo').click();
 if(!(await p.locator('#diarioErro').isVisible())) throw Error('O diário avançou sem humor e atividade física');
@@ -32,6 +35,9 @@ if(!(await p.locator('#humorOptions .selected').getByText('Desanimado').isVisibl
    !(await p.locator('#atividadeOptions .selected').getByText('Moderada').isVisible()))
   throw Error('O diário perdeu as respostas ao voltar de etapa');
 await p.locator('#diarioProximo').click();
+await p.locator('#diarioSalvar').click();
+if(!(await p.locator('#diarioErro').isVisible())) throw Error('O diário aceitou o envio sem resposta sobre sinais');
+await p.locator('#atipicoOptions').getByRole('button',{name:'Não',exact:true}).click();
 const saved=p.waitForResponse(r=>isSymptoms(r)&&r.request().method()==='POST'&&r.ok(),{timeout:45000});
 const inicioRegistro=performance.now();
 await p.getByRole('button',{name:'Concluir registro de sintomas',exact:true}).click();await saved;const tempoRegistroMs=Math.round(performance.now()-inicioRegistro);await p.locator('#page-inicio.active').waitFor({timeout:30000});

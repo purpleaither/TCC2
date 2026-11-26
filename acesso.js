@@ -97,7 +97,7 @@ function navigate(page) {
   }
   if(page==="registros-prof")renderProfessionalRecords();
   if(page==="exercicios")renderPatientPlans();
-  if(page==="sintomas")definirEtapaDiario(0, true);
+  if(page==="sintomas"){limparRegistroDiario();definirEtapaDiario(0, true);}
   if(page==="historico")gerarHeatmap();
   window.scrollTo(0,0);
 }
@@ -148,7 +148,7 @@ function reset() {
   workoutCompletedInView=false;
   treinosConcluidos=[];
   registrosUsuario=[];
-  limparRespostasBemEstar();
+  limparRegistroDiario();
   menu();
   $("loginSenha").value="";
   const flash=$("authFlash");
@@ -1031,8 +1031,8 @@ async function saveSymptoms(){
   const painRest = dorRepouso, painMove = dorMovimento;
   const registro = {
     patient_id: paciente.id, pain_rest: painRest, pain_movement: painMove,
-    stiffness: levels[rigidezAtual] || "Leve",
-    fatigue: levels[fadigaAtual] || "Leve",
+    stiffness: levels[rigidezAtual],
+    fatigue: levels[fadigaAtual],
     mood: moods[humorAtual] ?? null,
     activity_level: levels[atividadeAtual] ?? null
   };
@@ -1048,7 +1048,6 @@ async function saveSymptoms(){
     }
     result(saved);
     if (user !== paciente) return;
-    limparRespostasBemEstar();
     await loadPatientData();
     navigate("inicio");
     message(clima&&weatherColumnsAvailable

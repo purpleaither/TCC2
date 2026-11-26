@@ -7,11 +7,11 @@ var registrosUsuario = [];
 var treinosConcluidos = [];
 
 var usuarioAtual = null;
-var dorRepouso = 2;
-var dorMovimento = 5;
-var atipico = 0;
-var rigidezAtual = 1;
-var fadigaAtual = 1;
+var dorRepouso = 0;
+var dorMovimento = 0;
+var atipico = null;
+var rigidezAtual = null;
+var fadigaAtual = null;
 var humorAtual = null;
 var atividadeAtual = null;
 var treinoConcluido = false;
@@ -138,27 +138,39 @@ function definirEtapaDiario(indice, focar = false) {
   }
 }
 
+function mostrarErroDiario(mensagem) {
+  const erro = document.getElementById('diarioErro');
+  erro.textContent = mensagem;
+  erro.hidden = false;
+  erro.focus();
+}
+
 function mudarEtapaDiario(delta) {
-  if (etapaDiario === 1 && delta > 0 && (humorAtual === null || atividadeAtual === null)) {
-    const erro = document.getElementById('diarioErro');
-    erro.textContent = humorAtual === null && atividadeAtual === null
-      ? 'Escolha seu humor e seu nível de atividade física.'
-      : humorAtual === null ? 'Escolha seu humor.' : 'Escolha seu nível de atividade física.';
-    erro.hidden = false;
-    erro.focus();
-    return;
+  if (etapaDiario === 1 && delta > 0) {
+    const faltando = [
+      [rigidezAtual, 'rigidez'], [fadigaAtual, 'cansaço'],
+      [humorAtual, 'humor'], [atividadeAtual, 'nível de atividade física']
+    ].filter(([valor]) => valor === null).map(([, rotulo]) => rotulo);
+    if (faltando.length) {
+      mostrarErroDiario('Responda sobre ' + faltando.join(', ') + ' para continuar.');
+      return;
+    }
   }
   definirEtapaDiario(etapaDiario + delta, true);
 }
 
-function limparRespostasBemEstar() {
-  humorAtual = atividadeAtual = null;
-  document.querySelectorAll('#humorOptions .selected, #atividadeOptions .selected')
-    .forEach(botao => botao.classList.remove('selected'));
+function limparRegistroDiario() {
+  alterarDor('rest', -10);
+  alterarDor('mov', -10);
+  rigidezAtual = fadigaAtual = humorAtual = atividadeAtual = atipico = null;
+  document.querySelectorAll('#page-sintomas .selected').forEach(botao => botao.classList.remove('selected'));
 }
 
-function concluirRegistro(event) {
-  if (event) event.preventDefault();
+function concluirRegistro() {
+  if (atipico === null) {
+    mostrarErroDiario('Informe se você percebeu algum sinal fora do comum.');
+    return;
+  }
   if (window.AppAuth) return window.AppAuth.saveSymptoms();
 }
 

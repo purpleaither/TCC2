@@ -125,6 +125,8 @@ try {
             const avancar = () => pagina.locator('#diarioProximo').click();
             await auditar(pagina, perfil.nome, 'sintomas-sensacoes', avancar, '#diarioSensacoesTitulo');
             await auditar(pagina, perfil.nome, 'sintomas-sinais', async () => {
+              await pagina.locator('#rigidezOptions button').first().click();
+              await pagina.locator('#fadigaOptions button').first().click();
               await pagina.locator('#humorOptions button').first().click();
               await pagina.locator('#atividadeOptions button').first().click();
               await avancar();
