@@ -162,12 +162,17 @@ try {
         await auditar(pagina, perfil.nome, 'planos-prof', () => navegar(pagina, 'planos-prof'));
         await auditar(pagina, perfil.nome, 'editor-prof', () => pagina.locator('#page-planos-prof').getByRole('button', { name: 'Criar plano terapêutico' }).filter({ visible: true }).first().click({ timeout: 8000 }));
         await auditar(pagina, perfil.nome, 'exercise-config-prof', async () => {
+          await pagina.locator('#nomePlanoProf').fill('Plano fictício de auditoria');
+          await pagina.locator('#avancarPlanoProf').click();
           await pagina.getByRole('button', { name: '+ Adicionar exercícios', exact: true }).click({ timeout: 8000 });
           await pagina.getByRole('button', { name: 'Adicionar manualmente', exact: true }).click({ timeout: 8000 });
-        });
+        }, '#exerciseConfigDialog[open]');
         await auditar(pagina, perfil.nome, 'exercise-bank-prof', async () => {
+          await pagina.locator('#exerciseConfigDialog').getByRole('button', { name: 'Voltar' }).click();
           await navegar(pagina, 'planos-prof');
           await pagina.locator('#page-planos-prof').getByRole('button', { name: 'Criar plano terapêutico' }).filter({ visible: true }).first().click({ timeout: 8000 });
+          await pagina.locator('#nomePlanoProf').fill('Plano fictício de auditoria');
+          await pagina.locator('#avancarPlanoProf').click();
           await pagina.getByRole('button', { name: '+ Adicionar exercícios', exact: true }).click({ timeout: 8000 });
           await pagina.getByRole('button', { name: 'Escolher na ExerciseBank', exact: true }).click({ timeout: 8000 });
         });

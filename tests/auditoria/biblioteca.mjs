@@ -25,7 +25,7 @@ export async function verificarBiblioteca(pagina, casos) {
   let origem = 'candidata';
   try {
     if (!(await pagina.locator('#page-exercise-bank-prof.active').count())) {
-      const voltar = pagina.locator('#page-exercise-config-prof.active').getByRole('button', { name: 'Voltar' });
+      const voltar = pagina.locator('#exerciseConfigDialog[open]').getByRole('button', { name: 'Voltar' });
       await voltar.click({ timeout: 5000 });
       await pagina.getByRole('button', { name: 'Escolher na ExerciseBank', exact: true }).click();
     }

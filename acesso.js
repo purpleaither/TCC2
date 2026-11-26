@@ -73,7 +73,7 @@ function navigate(page) {
   else {
     if (page === "conta") page = isProfessional() ? "profissional" : "contatos";
     const allowed = isProfessional()
-      ? ["profissional","planos-prof","exercise-target-prof","exercise-source-prof","exercise-bank-prof","exercise-config-prof","editor-prof","registros-prof"]
+      ? ["profissional","planos-prof","exercise-target-prof","exercise-source-prof","exercise-bank-prof","editor-prof","registros-prof"]
       : ["inicio","sintomas","historico","orientacoes","exercicios","contatos"];
     if(!allowed.includes(page)) page=homePage();
   }
@@ -81,7 +81,7 @@ function navigate(page) {
   mostrarCabecalho(page!=="login");
   document.querySelectorAll(".menu-item").forEach(item=>{
     const selected=item.getAttribute("onclick")==="navegarPara('"+(
-      ["editor-prof","exercise-target-prof","exercise-source-prof","exercise-bank-prof","exercise-config-prof"].includes(page)?"planos-prof":page
+      ["editor-prof","exercise-target-prof","exercise-source-prof","exercise-bank-prof"].includes(page)?"planos-prof":page
     )+"')";
     item.classList.toggle("active",selected);
     if(selected)item.setAttribute("aria-current","page");
@@ -143,7 +143,7 @@ function reset() {
   patientId=null;
   plans=[];
   records=[];
-  editingPlan=null;
+  clearPlanForm();
   currentPatientExercise=0;
   workoutCompletedInView=false;
   treinosConcluidos=[];
@@ -784,8 +784,8 @@ function addExercise(entry){
 }
 let exerciseReturnPage="planos-prof";
 let pendingExerciseRow=null;
-let pendingExerciseOrigin="exercise-source-prof";
 let pendingExercisePlaceholder=null;
+let camposExercicioAntes=[];
 function exerciseNameFromRow(row){
   const selected=row.querySelector('[name="exercise"]');
   const custom=row.querySelector('[name="customName"]');
@@ -817,7 +817,7 @@ function updatePlanEditorSummary(){
     const actions=el("div",undefined,"demo-acoes");
     const edit=el("button","Editar exercício","btn btn-outline");
     edit.type="button";
-    edit.addEventListener("click",()=>openExerciseConfiguration(row,"editor-prof",true));
+    edit.addEventListener("click",()=>openExerciseConfiguration(row,true));
     const remove=el("button","Remover","btn btn-outline");
     remove.type="button";
     remove.addEventListener("click",()=>{row.remove();updatePlanEditorSummary();});
@@ -873,23 +873,24 @@ function addManualExerciseFromOptions(){
   const select=row.querySelector('[name="exercise"]');
   select.value="other";
   select.dispatchEvent(new Event("change"));
-  openExerciseConfiguration(row,"exercise-source-prof",false);
+  openExerciseConfiguration(row);
 }
 function openExerciseBankFromOptions(){
   if(!isProfessional())return;
   navigate("exercise-bank-prof");
 }
-function openExerciseConfiguration(row,origin,existing=false){
+function openExerciseConfiguration(row,existing=false){
   if(!isProfessional()||!row)return;
   if(pendingExerciseRow)return;
   pendingExerciseRow=row;
-  pendingExerciseOrigin=origin;
   pendingExercisePlaceholder=existing?document.createElement("span"):null;
   if(existing)row.before(pendingExercisePlaceholder);
+  camposExercicioAntes=existing ? [...row.querySelectorAll("input, select")].map(campo=>[campo,campo.value,campo.hidden,campo.required]) : [];
   $("exerciseConfigRow").append(row);
   const remove=row.querySelector("button.btn-outline");
   if(remove)remove.hidden=true;
-  navigate("exercise-config-prof");
+  text("erroConfigExercicio","");
+  $("exerciseConfigDialog").showModal();
 }
 function finishExerciseInsertion(){
   if(!pendingExerciseRow)return;
@@ -902,7 +903,7 @@ function finishExerciseInsertion(){
   const frequency=row.querySelector('[name="frequency"]')?.value.trim()||"";
   const name=select?.value==="other"?custom?.value.trim():exerciseNameFromRow(row);
   if(!name||name.length<2||!Number.isInteger(series)||series<1||series>20||(!repeats&&!duration)||!frequency){
-    message("Informe o exercício, as séries, as repetições ou duração e a frequência.",true);
+    text("erroConfigExercicio","Informe o exercício, as séries, as repetições ou duração e a frequência.");
     return;
   }
   const remove=row.querySelector("button.btn-outline");
@@ -914,20 +915,39 @@ function finishExerciseInsertion(){
   }
   pendingExerciseRow=null;
   pendingExercisePlaceholder=null;
+  camposExercicioAntes=[];
+  $("exerciseConfigDialog").close();
   updatePlanEditorSummary();
   navigate("editor-prof");
+  $("tituloFormularioPlano").focus();
   message("Exercício inserido. Revise a quantidade e salve o plano quando terminar.");
 }
 function backFromExerciseConfiguration(){
-  if(!pendingExerciseRow)return navigate("exercise-source-prof");
+  if(!pendingExerciseRow)return;
   const remove=pendingExerciseRow.querySelector("button.btn-outline");
   if(remove)remove.hidden=false;
+  for(const [campo,value,hidden,required] of camposExercicioAntes)Object.assign(campo,{value,hidden,required});
   if(pendingExercisePlaceholder)pendingExercisePlaceholder.replaceWith(pendingExerciseRow);
   else pendingExerciseRow.remove();
   pendingExerciseRow=null;
   pendingExercisePlaceholder=null;
-  updatePlanEditorSummary();
-  navigate(pendingExerciseOrigin);
+  camposExercicioAntes=[];
+  $("exerciseConfigDialog").close();
+}
+function mostrarEtapaPlano(exercicios){
+  $("dadosPlanoProf").hidden=exercicios&&!editingPlan;
+  $("etapaExerciciosPlano").hidden=!exercicios;
+  $("avancarPlanoProf").hidden=exercicios;
+  $("voltarDadosPlano").hidden=!!editingPlan;
+  text("tituloFormularioPlano",editingPlan?"Editar plano terapêutico":exercicios?"Adicionar exercícios":"Criar plano terapêutico");
+}
+function avancarPlano(){
+  if(!isProfessional()||!patientId)return;
+  const nome=$("nomePlanoProf");
+  if(!nome.reportValidity())return;
+  if(nome.value.trim().length<2){nome.focus();return message("Informe o nome do plano.",true);}
+  mostrarEtapaPlano(true);
+  $("tituloFormularioPlano").focus();
 }
 function createPlanFromScratch(){
   if(!isProfessional())return;
@@ -954,7 +974,9 @@ function clearPlanForm(){
   $("formPlanoProf").reset();
   $("itensPlanoProf").replaceChildren();
   updatePlanEditorSummary();
-  text("tituloFormularioPlano","Criar plano terapêutico");
+  camposExercicioAntes=[];
+  $("exerciseConfigDialog").close();
+  mostrarEtapaPlano(false);
 }
 function editPlan(id){
   const plan=plans.find(p=>p.id===id);
@@ -964,7 +986,7 @@ function editPlan(id){
   $("nomePlanoProf").value=plan.title;
   $("orientacoesPlanoProf").value=plan.notes||"";
   for(const x of [...(plan.plan_exercises||[])].sort((a,b)=>a.position-b.position))addExercise(x);
-  text("tituloFormularioPlano","Editar plano terapêutico");
+  mostrarEtapaPlano(true);
   navigate("editor-prof");
 }
 function readExercises(){
@@ -989,6 +1011,7 @@ function readExercises(){
 async function savePlan(event){
   if(event)event.preventDefault();
   if(!isProfessional()||!patientId||busy)return;
+  if($("etapaExerciciosPlano").hidden)return avancarPlano();
   const title=$("nomePlanoProf").value.trim();
   const items=readExercises();
   if(title.length<2||!items.length)return message("Informe um nome e pelo menos um exercício.",true);
@@ -1470,7 +1493,7 @@ function renderSample(){
       addExercise({exercise_name:translated,exercise_source:"ExerciseBank",
         external_id:x.id,instructions:x.description||"",series:2,
         repetitions:"10",duration:"",frequency:"3 vezes por semana"});
-      openExerciseConfiguration($("itensPlanoProf").lastElementChild,"exercise-bank-prof",false);
+      openExerciseConfiguration($("itensPlanoProf").lastElementChild);
     });
     row.append(preview,pick);card.append(row,media);root.append(card);
   });
@@ -1516,6 +1539,10 @@ async function loadExerciseMedia(id,target,button,source="ExerciseBank",autoPlay
 
 async function init(){
   menu();navigate("login");
+  $("exerciseConfigDialog").addEventListener("cancel",event=>{
+    event.preventDefault();
+    backFromExerciseConfiguration();
+  });
   $("exercisebankRefresh")?.addEventListener("click",()=>loadSample());
   try{
     const response=await fetch("/api/database-config",{cache:"no-store"});
@@ -1557,4 +1584,9 @@ window.voltarDaConfiguracaoExercicio=backFromExerciseConfiguration;
 window.adicionarExercicioManual=addManualExerciseFromOptions;
 window.abrirBibliotecaExerciseBank=openExerciseBankFromOptions;
 window.salvarPlanoProf=savePlan;
+window.avancarPlano=avancarPlano;
+window.mostrarEtapaPlano=etapa=>{
+  mostrarEtapaPlano(etapa);
+  $("nomePlanoProf").focus();
+};
 document.addEventListener("DOMContentLoaded",init);

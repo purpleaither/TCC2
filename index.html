@@ -486,33 +486,34 @@
 
   </div>
 
-  <!-- ===== INSERÇÃO DO EXERCÍCIO ===== -->
-  <div class="page" id="page-exercise-config-prof">
-    <h1 class="page-title">Configurar exercício</h1>
-    <p class="page-subtitle">Defina as séries, repetições, duração e frequência.</p>
-    <div class="card">
-      <div id="exerciseConfigRow"></div>
-      <button type="button" class="btn" onclick="concluirInsercaoExercicio()">Concluir inserção</button>
-      <button type="button" class="btn btn-outline" onclick="voltarDaConfiguracaoExercicio()">Voltar</button>
-    </div>
-  </div>
+  <dialog id="exerciseConfigDialog" class="card" aria-labelledby="tituloConfigExercicio">
+    <h2 class="card-title" id="tituloConfigExercicio">Configurar exercício</h2>
+    <div id="exerciseConfigRow"></div>
+    <p id="erroConfigExercicio" class="card-text-small" role="alert"></p>
+    <button type="button" class="btn" onclick="concluirInsercaoExercicio()">Concluir inserção</button>
+    <button type="button" class="btn btn-outline" onclick="voltarDaConfiguracaoExercicio()">Voltar</button>
+  </dialog>
 
   <!-- ===== CONFIGURAÇÃO DO PLANO ===== -->
   <div class="page" id="page-editor-prof">
-    <h1 class="page-title">Configurar plano</h1>
-    <p class="page-subtitle">Personalize os exercícios e os parâmetros prescritos.</p>
+    <h1 class="page-title" id="tituloFormularioPlano" tabindex="-1">Criar plano terapêutico</h1>
     <div class="card">
-      <h2 class="card-title" id="tituloFormularioPlano">Criar plano terapêutico</h2>
       <form id="formPlanoProf" onsubmit="salvarPlanoProf(event)">
-        <div class="form-group"><label class="form-label" for="nomePlanoProf">Nome do plano</label>
-          <input class="form-input" id="nomePlanoProf" maxlength="100" required placeholder="Ex.: Mobilidade domiciliar"></div>
-        <div class="form-group"><label class="form-label" for="orientacoesPlanoProf">Orientações do profissional</label>
-          <textarea class="form-input" id="orientacoesPlanoProf" maxlength="700" rows="3" placeholder="Orientações individualizadas"></textarea></div>
-        <p class="card-text-small" id="resumoEtapaPlano">Nenhum exercício adicionado.</p>
-        <div id="resumoExerciciosPlano" class="exercise-plan-summary"></div>
-        <div id="itensPlanoProf" hidden></div>
-        <button type="button" class="btn btn-outline" onclick="abrirOpcoesExercicios()">+ Adicionar exercícios</button>
-        <button type="submit" class="btn">Salvar plano</button>
+        <div id="dadosPlanoProf">
+          <div class="form-group"><label class="form-label" for="nomePlanoProf">Nome do plano</label>
+            <input class="form-input" id="nomePlanoProf" maxlength="100" minlength="2" required placeholder="Ex.: Mobilidade domiciliar"></div>
+          <div class="form-group"><label class="form-label" for="orientacoesPlanoProf">Orientações do profissional</label>
+            <textarea class="form-input" id="orientacoesPlanoProf" maxlength="700" rows="3" placeholder="Orientações individualizadas"></textarea></div>
+        </div>
+        <button type="button" class="btn" id="avancarPlanoProf" onclick="avancarPlano()">Próximo</button>
+        <div id="etapaExerciciosPlano" hidden>
+          <p class="card-text-small" id="resumoEtapaPlano">Nenhum exercício adicionado.</p>
+          <div id="resumoExerciciosPlano" class="exercise-plan-summary"></div>
+          <div id="itensPlanoProf" hidden></div>
+          <button type="button" class="btn btn-outline" onclick="abrirOpcoesExercicios()">+ Adicionar exercícios</button>
+          <button type="submit" class="btn">Salvar plano</button>
+          <button type="button" class="btn btn-outline" id="voltarDadosPlano" onclick="mostrarEtapaPlano(false)">Voltar ao nome e orientações</button>
+        </div>
         <button type="button" class="btn btn-outline" onclick="cancelarFormularioPlano()">Cancelar edição</button>
       </form>
     </div>
