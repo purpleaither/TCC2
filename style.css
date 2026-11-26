@@ -854,6 +854,7 @@ button.heatmap-cell:focus-visible{outline:3px solid var(--titulo, #003366);outli
 /* Inserção em páginas separadas: seleção, configuração e resumo. */
 #page-exercise-source-prof .card{max-width:620px}
 #page-exercise-source-prof .card>.btn{display:block;width:100%;min-height:46px;margin:12px 0}
+#createPlanEntry { margin-block-end: var(--espaco-grupo); }
 #exerciseConfigDialog { margin: auto; inline-size: min(740px, calc(100% - 24px)); max-block-size: 90dvh; color: var(--texto); }
 #exerciseConfigDialog::backdrop { background: rgb(0 0 0 / .45); }
 #exerciseConfigDialog #exerciseConfigRow > .demo-exercicio-item { margin-bottom: 16px; }
@@ -868,17 +869,8 @@ button.heatmap-cell:focus-visible{outline:3px solid var(--titulo, #003366);outli
 #page-editor-prof #itensPlanoProf[hidden]{display:none}
 
 /* Ações principais após a lista de planos e escolha do plano de destino. */
-#planMainActions .btn{display:block;width:100%;min-height:46px;margin:10px 0}
-#planMainActions .btn:disabled{opacity:.5;cursor:not-allowed}
-#planMainActions #addExerciseEntryHint{font-size:var(--fonte-minima);line-height:1.5;margin-top:8px}
-#page-exercise-target-prof .card{margin-bottom:12px}
-#page-exercise-target-prof .card .btn{margin-top:12px}
 
 /* Ações dos planos sempre logo abaixo de Editar e Excluir. */
-#planMainActions[hidden]{display:none}
-#page-planos-prof .plan-card-add-actions{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 0;padding-top:12px;border-top:1px solid var(--linha, #dfe7e2)}
-#page-planos-prof .plan-card-add-actions .btn{flex:1 1 180px;min-height:46px;width:auto;margin:0}
-@media(max-width:390px){#page-planos-prof .plan-card-add-actions{flex-direction:column}#page-planos-prof .plan-card-add-actions .btn{flex:auto;width:100%}}
 
 /* Leitura ampliada dos exercícios na primeira tela de gerenciamento de planos. */
 #page-planos-prof #listaPlanosProf .demo-detalhe{font-size:var(--fonte-minima);line-height:var(--entrelinha-texto);padding:14px;margin:12px 0}

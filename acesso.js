@@ -62,7 +62,7 @@ function navigate(page) {
   else {
     if (page === "conta") page = isProfessional() ? "profissional" : "contatos";
     const allowed = isProfessional()
-      ? ["profissional","planos-prof","exercise-target-prof","exercise-source-prof","exercise-bank-prof","editor-prof","registros-prof"]
+      ? ["profissional","planos-prof","exercise-source-prof","exercise-bank-prof","editor-prof","registros-prof"]
       : ["inicio","sintomas","historico","orientacoes","exercicios","contatos"];
     if(!allowed.includes(page)) page=homePage();
   }
@@ -70,7 +70,7 @@ function navigate(page) {
   mostrarCabecalho(page!=="login");
   document.querySelectorAll(".menu-item").forEach(item=>{
     const selected=item.getAttribute("onclick")==="navegarPara('"+(
-      ["editor-prof","exercise-target-prof","exercise-source-prof","exercise-bank-prof"].includes(page)?"planos-prof":page
+      ["editor-prof","exercise-source-prof","exercise-bank-prof"].includes(page)?"planos-prof":page
     )+"')";
     item.classList.toggle("active",selected);
     if(selected)item.setAttribute("aria-current","page");
@@ -512,8 +512,6 @@ function renderProfessionalPlans(){
   const root=$("listaPlanosProf");
   root.replaceChildren();
   if(!plans.length)root.append(el("p","Nenhum plano disponível.","demo-vazio"));
-  const mainActions=$("planMainActions");
-  if(mainActions)mainActions.hidden=!!plans.length;
   const createEntry=$("createPlanEntry");
   if(createEntry)createEntry.disabled=!patientId;
   for(const p of plans){
@@ -542,15 +540,6 @@ function renderProfessionalPlans(){
     remove.addEventListener("click",()=>deletePlan(p.id));
     actions.append(edit,remove);
     card.append(actions);
-    const moreActions=el("div",undefined,"plan-card-add-actions");
-    const create=el("button","Criar plano terapêutico","btn");
-    create.type="button";
-    create.addEventListener("click",createPlanFromScratch);
-    const add=el("button","Adicionar exercícios","btn btn-outline");
-    add.type="button";
-    add.addEventListener("click",()=>addExercisesToExistingPlan(p.id));
-    moreActions.append(create,add);
-    card.append(moreActions);
     root.append(card);
   }
 }
@@ -776,38 +765,6 @@ function updatePlanEditorSummary(){
     item.append(heading,detail,actions);
     list.append(item);
   });
-}
-function choosePlanForExerciseAddition(){
-  if(!isProfessional()||!patientId)return;
-  if(!plans.length){
-    message("Crie um plano terapêutico antes de adicionar exercícios.",true);
-    return;
-  }
-  if(plans.length===1){
-    addExercisesToExistingPlan(plans[0].id);
-    return;
-  }
-  const root=$("exerciseTargetPlans");
-  root.replaceChildren();
-  for(const plan of plans){
-    const card=el("div",undefined,"card");
-    card.append(el("h2",plan.title,"card-title"));
-    const count=Array.isArray(plan.plan_exercises)?plan.plan_exercises.length:0;
-    card.append(el("p",count+" exercício(s) no plano.","card-text-small"));
-    const button=el("button","Adicionar exercícios a este plano","btn");
-    button.type="button";
-    button.addEventListener("click",()=>addExercisesToExistingPlan(plan.id));
-    card.append(button);
-    root.append(card);
-  }
-  navigate("exercise-target-prof");
-}
-function addExercisesToExistingPlan(planId){
-  if(!isProfessional())return;
-  const plan=plans.find(x=>x.id===planId);
-  if(!plan)return;
-  editPlan(planId);
-  openExerciseSourceOptions();
 }
 function openExerciseSourceOptions(){
   if(!isProfessional())return;
@@ -1523,7 +1480,6 @@ window.limparFormularioPlano=clearPlanForm;
 window.cancelarFormularioPlano=cancelPlanEditor;
 window.criarPlanoProfissional=createPlanFromScratch;
 window.abrirOpcoesExercicios=openExerciseSourceOptions;
-window.escolherPlanoParaExercicios=choosePlanForExerciseAddition;
 window.voltarDaEscolhaExercicios=backFromExerciseSource;
 window.concluirInsercaoExercicio=finishExerciseInsertion;
 window.voltarDaConfiguracaoExercicio=backFromExerciseConfiguration;
