@@ -298,6 +298,8 @@ body {
   cursor: not-allowed;
 }
 
+#page-sintomas [hidden] { display: none; }
+
 /* ---- Escala de dor (EVA) ---- */
 .pain-scale {
   margin-bottom: 20px;

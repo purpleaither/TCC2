@@ -34,13 +34,13 @@ const perfis = [
   { nome: 'fisioterapeuta', credencial: 'FISIO', inicio: 'profissional' },
 ];
 
-async function auditar(pagina, perfil, tela, abrir) {
+async function auditar(pagina, perfil, tela, abrir, seletor = "#page-" + tela + ".active") {
   const caso = { id: 'CT42-' + tela, perfil, tela };
   casos.push(caso);
   try {
     const inicio = performance.now();
     if (abrir) await abrir();
-    await pagina.locator('#page-' + tela + '.active').waitFor({ state: 'visible', timeout: 8000 });
+    await pagina.locator(seletor).waitFor({ state: 'visible', timeout: 8000 });
     if (abrir) caso.tempoInterfaceMs = Math.round(performance.now() - inicio);
     if (modo) {
       const alvo = (await puppeteer.pages()).find(p => p.url() === pagina.url());
@@ -121,6 +121,11 @@ try {
       if (perfil.nome === 'paciente') {
         for (const tela of ['sintomas', 'exercicios', 'historico', 'orientacoes', 'contatos']) {
           await auditar(pagina, perfil.nome, tela, () => navegar(pagina, tela));
+          if (tela === 'sintomas') {
+            const avancar = () => pagina.locator('#diarioProximo').click();
+            await auditar(pagina, perfil.nome, 'sintomas-sensacoes', avancar, '#diarioSensacoesTitulo');
+            await auditar(pagina, perfil.nome, 'sintomas-sinais', avancar, '#diarioSinaisTitulo');
+          }
         }
         if (!modo && process.env.TCC_BIBLIOTECA === '1') {
           try {
@@ -135,6 +140,7 @@ try {
             await pagina.getByRole('checkbox', { name: 'Maior espaçamento no texto' }).check();
             await pagina.locator('#abrirAcessibilidade').click();
             const diario = pagina.locator('#page-sintomas.active');
+            await diario.locator('#diarioProximo').click();
             const rigidez = diario.locator('#descricaoRigidez');
             await rigidez.waitFor({ state: 'visible', timeout: 5000 });
             await diario.locator('#descricaoCansaco').waitFor({ state: 'visible', timeout: 5000 });

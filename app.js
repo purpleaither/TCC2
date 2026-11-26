@@ -120,6 +120,27 @@ function selecionar(grupoId, indice) {
   }
 }
 
+let etapaDiario = 0;
+
+function definirEtapaDiario(indice, focar = false) {
+  const etapas = document.querySelectorAll('#page-sintomas [data-etapa-diario]');
+  if (!etapas[indice]) return;
+  etapaDiario = indice;
+  etapas.forEach((etapa, posicao) => { etapa.hidden = posicao !== indice; });
+  document.getElementById('diarioEtapa').textContent = 'Etapa ' + (indice + 1) + ' de ' + etapas.length;
+  document.getElementById('diarioVoltar').hidden = indice === 0;
+  document.getElementById('diarioProximo').hidden = indice === etapas.length - 1;
+  document.getElementById('diarioSalvar').hidden = indice !== etapas.length - 1;
+  if (focar) {
+    etapas[indice].querySelector('h2').focus({ preventScroll: true });
+    window.scrollTo(0, 0);
+  }
+}
+
+function mudarEtapaDiario(delta) {
+  definirEtapaDiario(etapaDiario + delta, true);
+}
+
 function limparRespostasOpcionais() {
   humorAtual = atividadeAtual = null;
   document.querySelectorAll('#humorOptions .selected, #atividadeOptions .selected')

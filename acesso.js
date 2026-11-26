@@ -97,6 +97,7 @@ function navigate(page) {
   }
   if(page==="registros-prof")renderProfessionalRecords();
   if(page==="exercicios")renderPatientPlans();
+  if(page==="sintomas")definirEtapaDiario(0, true);
   if(page==="historico")gerarHeatmap();
   window.scrollTo(0,0);
 }

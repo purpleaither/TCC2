@@ -132,9 +132,10 @@
   <div class="page" id="page-sintomas">
 
     <h1 class="page-title">Registrar sintomas</h1>
+    <p class="page-subtitle" id="diarioEtapa">Etapa 1 de 3</p>
 
-    <section class="card" aria-labelledby="diarioDorTitulo">
-      <h2 class="card-title" id="diarioDorTitulo">Dor</h2>
+    <section class="card" data-etapa-diario aria-labelledby="diarioDorTitulo">
+      <h2 class="card-title" id="diarioDorTitulo" tabindex="-1" aria-describedby="diarioEtapa">Dor</h2>
       <!-- Dor em repouso -->
       <div class="pain-scale">
         <div class="pain-scale-label">
@@ -176,8 +177,8 @@
       </div>
     </section>
 
-    <section class="card" aria-labelledby="diarioSensacoesTitulo">
-      <h2 class="card-title" id="diarioSensacoesTitulo">Como você se sentiu</h2>
+    <section class="card" data-etapa-diario aria-labelledby="diarioSensacoesTitulo" hidden>
+      <h2 class="card-title" id="diarioSensacoesTitulo" tabindex="-1" aria-describedby="diarioEtapa">Como você se sentiu</h2>
       <!-- Rigidez articular -->
       <div class="choices">
         <p class="choices-label" id="descricaoRigidez">Sensação de articulações duras ou difíceis de mexer</p>
@@ -231,8 +232,8 @@
       </div>
     </section>
 
-    <section class="card" aria-labelledby="diarioSinaisTitulo">
-      <h2 class="card-title" id="diarioSinaisTitulo">Sinais fora do comum</h2>
+    <section class="card" data-etapa-diario aria-labelledby="diarioSinaisTitulo" hidden>
+      <h2 class="card-title" id="diarioSinaisTitulo" tabindex="-1" aria-describedby="diarioEtapa">Sinais fora do comum</h2>
       <!-- Sinal atípico -->
       <p style="font-size:var(--fonte-minima); font-weight:bold; color:var(--titulo, #003366); margin-bottom:4px">Você percebeu algum sinal fora do comum hoje?</p>
       <p style="font-size:var(--fonte-minima); color:var(--texto-suave, #666); margin-bottom:8px">Febre, inchaço súbito ou dor extrema fora do comum.</p>
@@ -244,7 +245,9 @@
       </div>
     </section>
 
-    <button class="btn" onclick="concluirRegistro()">Concluir registro de sintomas</button>
+    <button type="button" class="btn btn-outline" id="diarioVoltar" onclick="mudarEtapaDiario(-1)" hidden>Voltar</button>
+    <button type="button" class="btn" id="diarioProximo" onclick="mudarEtapaDiario(1)">Próximo</button>
+    <button type="button" class="btn" id="diarioSalvar" onclick="concluirRegistro()" hidden>Concluir registro de sintomas</button>
 
   </div>
 
