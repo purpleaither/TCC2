@@ -88,15 +88,9 @@ function alterarDor(tipo, delta) {
   if (tipo === 'rest') {
     dorRepouso = Math.max(0, Math.min(10, dorRepouso + delta));
     document.getElementById('restPainValue').textContent = dorRepouso + '/10';
-    var pct = dorRepouso * 10;
-    document.getElementById('restPainFill').style.width = pct + '%';
-    document.getElementById('restPainThumb').style.left = 'calc(' + pct + '% - 9px)';
   } else {
     dorMovimento = Math.max(0, Math.min(10, dorMovimento + delta));
     document.getElementById('movPainValue').textContent = dorMovimento + '/10';
-    var pct = dorMovimento * 10;
-    document.getElementById('movPainFill').style.width = pct + '%';
-    document.getElementById('movPainThumb').style.left = 'calc(' + pct + '% - 9px)';
   }
 }
 

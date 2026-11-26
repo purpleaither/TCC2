@@ -145,15 +145,11 @@
       <div class="pain-scale">
         <div class="pain-scale-label">
           <span>Dor quando você ficou parado</span>
-          <span id="restPainValue">0/10</span>
         </div>
         <div class="pain-scale-controls">
-          <button class="pain-scale-btn" onclick="alterarDor('rest', -1)">−</button>
-          <div class="pain-scale-bar">
-            <div class="pain-scale-fill" id="restPainFill" style="width:0%"></div>
-            <div class="pain-scale-thumb" id="restPainThumb" style="left:calc(0% - 9px)"></div>
-          </div>
-          <button class="pain-scale-btn" onclick="alterarDor('rest', 1)">+</button>
+          <button class="pain-scale-btn" aria-label="Diminuir a nota da dor quando ficou parado" onclick="alterarDor('rest', -1)">−</button>
+          <output id="restPainValue" aria-label="Nota da dor quando ficou parado">0/10</output>
+          <button class="pain-scale-btn" aria-label="Aumentar a nota da dor quando ficou parado" onclick="alterarDor('rest', 1)">+</button>
         </div>
         <div class="pain-scale-labels">
           <span>0 = sem dor</span>
@@ -171,23 +167,18 @@
       <!-- Dor ao se mexer -->
       <div class="pain-scale">
         <div class="pain-scale-label">
-          <span>Dor ao se mexer</span>
-          <span id="movPainValue">0/10</span>
+          <span id="dorMovimentoComparacaoTitulo">Ao se mexer hoje, como foi a dor em relação à de costume?</span>
         </div>
         <div class="pain-scale-controls">
-          <button class="pain-scale-btn" onclick="alterarDor('mov', -1)">−</button>
-          <div class="pain-scale-bar">
-            <div class="pain-scale-fill" id="movPainFill" style="width:0%"></div>
-            <div class="pain-scale-thumb" id="movPainThumb" style="left:calc(0% - 9px)"></div>
-          </div>
-          <button class="pain-scale-btn" onclick="alterarDor('mov', 1)">+</button>
+          <button class="pain-scale-btn" aria-label="Diminuir a nota da dor ao se mexer" onclick="alterarDor('mov', -1)">−</button>
+          <output id="movPainValue" aria-label="Nota da dor ao se mexer">0/10</output>
+          <button class="pain-scale-btn" aria-label="Aumentar a nota da dor ao se mexer" onclick="alterarDor('mov', 1)">+</button>
         </div>
         <div class="pain-scale-labels">
           <span>0 = sem dor</span>
           <span>10 = pior dor que você consegue imaginar</span>
         </div>
-        <p class="choices-label" id="dorMovimentoComparacaoTitulo">Foi diferente da sua dor de costume?</p>
-        <div class="choices-options pain-comparison" id="dorMovimentoComparacao" role="group" aria-labelledby="dorMovimentoComparacaoTitulo" aria-description="ao se mexer">
+        <div class="choices-options pain-comparison" id="dorMovimentoComparacao" role="group" aria-labelledby="dorMovimentoComparacaoTitulo">
           <button type="button" class="choice-btn" value="Menos dor" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 0)">Menos dor</button>
           <button type="button" class="choice-btn" value="A mesma dor" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 1)">A mesma dor</button>
           <button type="button" class="choice-btn" value="Mais dor" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 2)">Mais dor</button>
