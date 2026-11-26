@@ -121,6 +121,30 @@ body {
   align-items: center;
 }
 
+#page-login [hidden] { display: none; }
+
+.login-loading {
+  min-block-size: 70vh;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.login-spinner {
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  border: .2rem solid var(--linha);
+  border-block-start-color: var(--titulo);
+  border-radius: 50%;
+  animation: login-girar .8s linear infinite;
+}
+
+@keyframes login-girar {
+  to { transform: rotate(360deg); }
+}
+
 .login-header {
   text-align: center;
   margin-bottom: 24px;

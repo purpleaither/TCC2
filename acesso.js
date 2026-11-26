@@ -112,12 +112,18 @@ async function login() {
   try {
     result(await supabase.auth.signInWithPassword({email,password}));
     $("loginSenha").value="";
+    $("loginContent").hidden=true;
+    $("loginLoading").hidden=false;
+    $("loginLoadingTitle").focus();
     await openSession();
   } catch(err) {
     message("Não foi possível entrar. Verifique seu e-mail e sua senha.",true);
   } finally {
     busy=false;
     $("loginSubmit").disabled=!loginReady;
+    $("loginLoading").hidden=true;
+    $("loginContent").hidden=false;
+    if($("page-login").classList.contains("active"))$("loginSubmit").focus();
   }
 }
 

@@ -80,7 +80,12 @@
   <main>
   <!-- ===== TELA: LOGIN ===== -->
   <div class="page active" id="page-login">
-    <div class="login-wrapper">
+    <div class="login-loading" id="loginLoading" hidden>
+      <img src="logo.svg" alt="" class="login-logo">
+      <span class="login-spinner" aria-hidden="true"></span>
+      <h1 class="login-title" id="loginLoadingTitle" tabindex="-1">Carregando seu painel...</h1>
+    </div>
+    <div class="login-wrapper" id="loginContent">
       <div class="login-header">
         <img src="logo.svg" alt="Autonomia em Movimento" class="login-logo">
         <h1 class="login-title">Autonomia em Movimento</h1>

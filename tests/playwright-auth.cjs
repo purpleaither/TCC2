@@ -24,9 +24,21 @@ const roles = [
    await page.waitForFunction(()=>!document.querySelector('#loginSubmit').disabled,{timeout:25000});
    await page.locator('#loginEmail').fill(role.email);
    await page.locator('#loginSenha').fill(role.password);
+   await page.locator('#loginLoading').evaluate(loading=>{
+    const observer=new MutationObserver(()=>{
+     if(!loading.hidden && document.getElementById('loginContent').hidden){
+      loading.dataset.exibiuCarregamento='true';
+      observer.disconnect();
+     }
+    });
+    observer.observe(loading,{attributes:true,attributeFilter:['hidden']});
+   });
    await page.locator('#loginSubmit').click();
    await page.locator('#page-'+role.expected+'.active').waitFor({timeout:30000});
    check('Authenticated role dashboard',true);
+   const loading=page.locator('#loginLoading');
+   await loading.waitFor({state:'hidden'});
+   check('Carregamento exibido e encerrado',await loading.getAttribute('data-exibiu-carregamento')==='true' && await loading.getAttribute('hidden')!==null);
    await page.locator('#menuBtn').click();
    const profileMenu=page.locator('[data-perfil="'+role.name+'"]');
    check('Authorized menu is visible',await profileMenu.first().isVisible());
