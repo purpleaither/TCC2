@@ -213,7 +213,7 @@ function abrirClimaSheet(dia, reg, ehAtividade = false) {
   document.getElementById('sheetWorkoutHistory').hidden = !ehAtividade;
   var nomesMes = ['jan.', 'fev.', 'mar.', 'abr.', 'mai.', 'jun.', 'jul.', 'ago.', 'set.', 'out.', 'nov.', 'dez.'];
   var titulo = document.getElementById('climaSheetTitle');
-  if (titulo) titulo.textContent = (ehAtividade ? 'Atividades do dia ' : 'Sintomas do dia ') + dia + ' de ' + nomesMes[mesAtual.getMonth()];
+  if (titulo) titulo.textContent = (ehAtividade ? 'Exercícios do dia ' : 'Sintomas do dia ') + dia + ' de ' + nomesMes[mesAtual.getMonth()];
 
   var dor = document.getElementById('sheetDorNivel');
   if (dor) dor.textContent = reg
