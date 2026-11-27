@@ -6,6 +6,11 @@ on:
       - '.github/workflows/playwright-firefox.yml'
       - 'tests/playwright-*.cjs'
       - 'tests/navegador.cjs'
+      - 'index.html'
+      - 'style.css'
+      - 'app.js'
+      - 'acesso.js'
+      - 'database/**'
 
 permissions:
   contents: read
