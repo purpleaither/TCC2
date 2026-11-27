@@ -174,6 +174,15 @@ window.cenarioProf = () => {
     await p.route(/tile.openstreetmap.org|routing.openstreetmap.de/,rota=>rota.abort());
     await p.evaluate(()=>window.cenarioLinksMapa());
     await p.locator('#parqueSelecionado').selectOption('1');
+    const atalhos=p.locator('.mapa-aplicativos');
+    const inicio=await p.locator('[data-trajeto-acao]').boundingBox();
+    const separador=await p.locator('[data-trajeto] .guia-local-ou').boundingBox();
+    assert.ok(inicio.y+inicio.height<=separador.y);
+    assert.ok(separador.y+separador.height<=(await atalhos.boundingBox()).y);
+    for(const icone of await atalhos.locator('img').all()){
+      await icone.evaluate(img=>img.decode());
+      assert.ok(await icone.evaluate(img=>img.nextElementSibling.getBoundingClientRect().top>=img.getBoundingClientRect().bottom));
+    }
     const google=new URL(await p.getByRole('link',{name:'Google Maps a pé'}).getAttribute('href'));
     const waze=new URL(await p.getByRole('link',{name:'Waze de carro'}).getAttribute('href'));
     assert.equal(google.origin,'https://www.google.com');
