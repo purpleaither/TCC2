@@ -125,30 +125,6 @@
       <button type="button" class="btn" id="homeBtnExercicios" onclick="navegarPara('exercicios')">Ver meus exercícios</button>
     </section>
 
-    <div id="guiaArLivre"></div>
-    <template id="modeloGuiaArLivre">
-      <section class="card guia-ar-livre" aria-labelledby="tituloGuiaArLivre">
-        <h2 class="card-title" id="tituloGuiaArLivre">Guia para Atividades em Áreas Verdes</h2>
-        <p>Seu fisioterapeuta indicou a prática ao ar livre para estes exercícios:</p>
-        <ul data-guia-exercicios></ul>
-        <p>Para consultar parques e condições ambientais, escolha uma região do DF ou compartilhe sua localização aproximada. A posição não é salva e vai para a Open-Meteo e o OpenStreetMap sem dados da sua conta.</p>
-        <div class="form-group">
-          <label class="form-label" for="regiaoGuiaArLivre">Região do Distrito Federal</label>
-          <select class="form-input" id="regiaoGuiaArLivre" disabled>
-            <option value="">Escolha uma região</option>
-          </select>
-        </div>
-        <button type="button" class="btn btn-outline">Usar minha localização aproximada</button>
-        <p role="status"></p>
-        <dl class="guia-ambiente" data-guia-ambiente></dl>
-        <h3 class="card-title">Cuidados ao ar livre</h3>
-        <ul data-guia-recomendacoes></ul>
-        <h3 class="card-title">Parques próximos</h3>
-        <ol data-guia-parques></ol>
-        <p class="card-text-small">Estimativas ambientais da Open-Meteo e do CAMS. O CO₂ é uma estimativa regional em partes por milhão (ppm). Distâncias em linha reta. Dados de parques do IPEDF, do Geoportal DF e do <a href="https://www.openstreetmap.org/copyright" rel="noreferrer">OpenStreetMap</a>.</p>
-      </section>
-    </template>
-
     <!-- Card: Aviso -->
     <div class="warning-card">
       <h2 class="warning-title"><img src="Icones/alert-triangle.svg" alt="" class="icon">Sobre o uso do aplicativo</h2>
@@ -364,6 +340,40 @@
       <p class="card-text">Quando o fisioterapeuta selecionar e configurar os exercícios, eles serão disponibilizados nesta área.</p>
       <p class="card-text-small">Apenas os exercícios definidos pelo fisioterapeuta vinculado serão exibidos nesta página.</p>
     </div>
+    <div id="guiaArLivre"></div>
+    <template id="modeloGuiaArLivre">
+      <section class="card guia-ar-livre" aria-labelledby="tituloGuiaArLivre">
+        <h2 class="card-title" id="tituloGuiaArLivre">Guia para Atividades em Áreas Verdes</h2>
+        <p>Seu fisioterapeuta indicou a prática ao ar livre para estes exercícios:</p>
+        <ul data-guia-exercicios></ul>
+        <p>Para consultar parques e condições ambientais, escolha uma região do DF ou compartilhe sua localização aproximada. A posição não é salva e vai para a Open-Meteo e o OpenStreetMap sem dados da sua conta.</p>
+        <div class="form-group">
+          <label class="form-label" for="regiaoGuiaArLivre">Região do Distrito Federal</label>
+          <select class="form-input" id="regiaoGuiaArLivre" disabled>
+            <option value="">Escolha uma região</option>
+          </select>
+        </div>
+        <button type="button" class="btn btn-outline">Usar minha localização aproximada</button>
+        <p role="status"></p>
+        <dl class="guia-ambiente" data-guia-ambiente></dl>
+        <h3 class="card-title">Cuidados ao ar livre</h3>
+        <ul data-guia-recomendacoes></ul>
+        <h3 class="card-title">Parques próximos</h3>
+        <figure class="guia-mapa" data-guia-mapa hidden>
+          <div class="guia-mapa-superficie" aria-label="Mapa dos parques mais próximos" role="group">
+            <canvas width="640" height="420" aria-hidden="true"></canvas>
+            <div data-mapa-marcadores></div>
+          </div>
+          <figcaption>
+            <small>Norte ↑ · ● Local de busca · 1 Parque mais próximo</small>
+            <p data-mapa-detalhe aria-live="polite"></p>
+          </figcaption>
+        </figure>
+        <p data-guia-parques-status></p>
+        <p class="card-text-small">Estimativas ambientais da Open-Meteo e do CAMS. O CO₂ é uma estimativa regional em partes por milhão (ppm). Distâncias em linha reta. Dados de parques do IPEDF, do Geoportal DF e do <a href="https://www.openstreetmap.org/copyright" rel="noreferrer">OpenStreetMap</a>.</p>
+      </section>
+    </template>
+
   </div>
 
   <!-- ===== TELA 6.0: MINHA CONTA ===== -->

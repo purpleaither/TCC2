@@ -1,6 +1,7 @@
 import {
-  arredondarLocalizacao, carregarRegioes, consultarAmbiente, consultarParques, gerarRecomendacoesClimaticas
+  arredondarLocalizacao, carregarLimites, carregarRegioes, consultarAmbiente, consultarParques, gerarRecomendacoesClimaticas
 } from "./environmentalService.js";
+import {desenharMapa} from "./parksMap.js";
 
 const metrics = [
   ["temperature_2m", "Temperatura", "°C"],
@@ -31,7 +32,8 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
   const status = section.querySelector("[role=status]");
   const suggestions = section.querySelector("[data-guia-recomendacoes]");
   const environment = section.querySelector("[data-guia-ambiente]");
-  const parks = section.querySelector("[data-guia-parques]");
+  const map = section.querySelector("[data-guia-mapa]");
+  const parksStatus = section.querySelector("[data-guia-parques-status]");
 
   function showAdvice(data) {
     suggestions.replaceChildren(...gerarRecomendacoesClimaticas(data).map(text => element("li", text)));
@@ -50,28 +52,24 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
       status.textContent = "Não foi possível confirmar a indicação. Tente novamente.";
       return;
     }
-    const [data, results] = await Promise.all([consultarAmbiente(local, signal), consultarParques(local, signal)]);
+    const [data, results, bounds] = await Promise.all([
+      consultarAmbiente(local, signal), consultarParques(local, signal),
+      carregarLimites(signal).catch(() => [])
+    ]);
     if (signal.aborted) return;
     showEnvironment(data);
     showAdvice(data);
-    parks.replaceChildren(...results.map(park => {
-      const item = element("li");
-      const accessibility = {yes: "Acesso por cadeira de rodas informado", limited: "Acesso por cadeira de rodas limitado", no: "Sem acesso por cadeira de rodas informado"};
-      const meta = [park.regiao, park.categoria, accessibility[park.acessibilidade],
-        park.piso && "Tipo de piso no mapa: " + park.piso, park.fonte].filter(Boolean);
-      item.append(element("strong", park.nome),
-        element("p", number.format(park.distancia) + " km em linha reta · " + meta.join(" · ")));
-      return item;
-    }));
+    if (results.length) desenharMapa(map, local, results, bounds);
+    else parksStatus.textContent = "Nenhum parque disponível para esta consulta.";
     status.textContent = metrics.some(([key]) => Number.isFinite(data[key]))
       ? "Consulta concluída." : "Dados ambientais indisponíveis. Consulte os cuidados gerais abaixo.";
-    if (!results.length) parks.append(element("li", "Nenhum parque disponível para esta consulta."));
   }
   function start() {
     request?.abort();
     request = new AbortController();
     environment.replaceChildren();
-    parks.replaceChildren();
+    map.hidden = true;
+    parksStatus.textContent = "";
     showAdvice();
     status.textContent = "";
     return request.signal;

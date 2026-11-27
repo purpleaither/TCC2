@@ -24,6 +24,10 @@ export function carregarRegioes(signal) {
   return json(new URL("../data/regioes_df.json", import.meta.url), {}, signal);
 }
 
+export function carregarLimites(signal) {
+  return json(new URL("../data/limites_df.json", import.meta.url), {}, signal);
+}
+
 export function distanciaKm(a, b) {
   const rad = graus => graus * Math.PI / 180;
   const lat = Math.sin(rad(b.latitude - a.latitude) / 2) ** 2;

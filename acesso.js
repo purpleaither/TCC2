@@ -93,8 +93,7 @@ function navigate(page) {
     text("exercisebankStatus","Selecione os filtros e clique em Buscar.");
   }
   if(page==="registros-prof")renderProfessionalRecords();
-  if(page==="inicio")void refreshOutdoorGuide();
-  if(page==="exercicios")renderPatientPlans();
+  if(page==="exercicios"){renderPatientPlans();void refreshOutdoorGuide();}
   if(page==="sintomas"){limparRegistroDiario();definirEtapaDiario(0, true);}
   if(page==="historico")gerarHeatmap();
   window.scrollTo(0,0);
@@ -244,8 +243,8 @@ async function refreshOutdoorGuide() {
   return version === outdoorRefresh && names.length > 0;
 }
 
-function refreshOutdoorDashboard() {
-  if(!document.hidden && $("page-inicio").classList.contains("active")) void refreshOutdoorGuide();
+function refreshOutdoorExercises() {
+  if(!document.hidden && $("page-exercicios").classList.contains("active")) void refreshOutdoorGuide();
 }
 function startOutdoorUpdates() {
   stopOutdoorUpdates();
@@ -255,13 +254,13 @@ function startOutdoorUpdates() {
         event: "UPDATE", schema: "public", table: "care_plans", filter: "patient_id=eq." + user.id
       }, () => void refreshOutdoorGuide()).subscribe();
   }
-  document.addEventListener("visibilitychange", refreshOutdoorDashboard);
-  outdoorTimer = setInterval(refreshOutdoorDashboard, 15000);
+  document.addEventListener("visibilitychange", refreshOutdoorExercises);
+  outdoorTimer = setInterval(refreshOutdoorExercises, 15000);
 }
 function stopOutdoorUpdates() {
   outdoorRefresh += 1;
   clearInterval(outdoorTimer);
-  document.removeEventListener("visibilitychange", refreshOutdoorDashboard);
+  document.removeEventListener("visibilitychange", refreshOutdoorExercises);
   if(outdoorChannel) void supabase.removeChannel(outdoorChannel);
   outdoorChannel = null;
   outdoorGuide.update([]);

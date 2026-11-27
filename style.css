@@ -1311,3 +1311,35 @@ button.heatmap-cell:focus-visible{outline:3px solid var(--titulo, #003366);outli
 .guia-indicacao { display: flex; align-items: start; gap: .5em; cursor: pointer; }
 .guia-indicacao input { inline-size: 1.5rem; block-size: 1.5rem; flex: none; }
 .guia-tag { display: table; padding: .15em .5em; border-radius: .5em; background: var(--superficie-suave); }
+
+.guia-mapa { margin: var(--espaco-grupo) 0; }
+.guia-mapa-superficie {
+  position: relative;
+  aspect-ratio: 640 / 420;
+  border: 1px solid var(--borda);
+  border-radius: .75rem;
+  background: var(--superficie-suave);
+}
+.guia-mapa canvas { display: block; width: 100%; height: 100%; }
+.guia-mapa-marcador {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  min-inline-size: 28px;
+  min-block-size: 28px;
+  padding: 2px 5px;
+  border: 1px solid var(--titulo);
+  border-radius: 50%;
+  background: var(--superficie);
+  color: var(--titulo);
+  font: inherit;
+  line-height: 1;
+}
+button.guia-mapa-marcador { cursor: pointer; }
+.guia-mapa-marcador[aria-pressed="true"] {
+  background: var(--titulo);
+  color: var(--superficie);
+  z-index: 1;
+}
+.guia-mapa-marcador:focus-visible { z-index: 2; }

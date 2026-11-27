@@ -23,7 +23,9 @@ if(await step('CT20-21',async()=>{await prof.locator('#page-planos-prof.active')
 if(!process.env.CT22_ONLY)await step('CT23',async()=>{await prof.reload();await prof.locator('#page-profissional.active').waitFor({timeout:30000});await selectPatient();await card().getByText(exercise,{exact:true}).waitFor()});
 if(!process.env.CT22_ONLY)await step('CT29',async()=>{await selectPatient();await card().getByRole('button',{name:'Editar',exact:true}).click();await prof.locator('#orientacoesPlanoProf').fill('Orientacao ficticia revisada PW');await prof.locator('#formPlanoProf button[type=submit]').click();await card().getByText('Orientacao ficticia revisada PW',{exact:true}).waitFor();await prof.reload();await prof.locator('#page-profissional.active').waitFor({timeout:30000});await selectPatient();await card().getByText('Orientacao ficticia revisada PW',{exact:true}).waitFor()});
 if(!process.env.CT22_ONLY && !process.env.TCC_SERIE_DESEMPENHO)await step('CT54',async()=>{
-  const guide=patient.locator('#guiaArLivre section');
+  if(await patient.locator('#page-inicio #guiaArLivre').count())throw Error('Guia disponível fora de Meus exercícios');
+  await nav(patient,'exercicios');
+  const guide=patient.locator('#page-exercicios #guiaArLivre section');
   const entry=guide.getByText(exercise,{exact:true});
   const routes=[];
   patient.on('request',request=>{
@@ -68,7 +70,7 @@ if(!process.env.CT22_ONLY && !process.env.TCC_SERIE_DESEMPENHO)await step('CT55'
   await prof.locator('#page-exercise-source-prof.active').getByRole('button',{name:'Voltar',exact:true}).click();
   await prof.locator('#formPlanoProf button[type=submit]').click();
   await card().getByText(walk,{exact:true}).waitFor();
-  await nav(patient,'inicio');
+  await nav(patient,'exercicios');
   await patient.locator('#guiaArLivre').getByText(walk,{exact:true}).waitFor({timeout:20000});
 });
 }
