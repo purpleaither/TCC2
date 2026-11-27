@@ -4,6 +4,7 @@ import { readFile, stat } from 'node:fs/promises';
 import { resolve, extname, sep } from 'node:path';
 import banco from '../../api/database-config.js';
 import clima from '../../api/weather.js';
+import qualidadeAr from '../../api/air-quality.js';
 import wger from '../../api/wger.js';
 import biblioteca from '../../api/exercisebank.js';
 
@@ -20,7 +21,7 @@ process.env.SUPABASE_PUBLISHABLE_KEY = config.publishableKey;
 
 const { headers: [{ headers }] } = JSON.parse(await readFile(new URL('../../vercel.json', import.meta.url), 'utf8'));
 const rotas = new Map([
-  ['/api/database-config', banco], ['/api/weather', clima], ['/api/exercisebank', biblioteca], ['/api/wger', wger],
+  ['/api/database-config', banco], ['/api/weather', clima], ['/api/air-quality', qualidadeAr], ['/api/exercisebank', biblioteca], ['/api/wger', wger],
 ]);
 const tipos = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
