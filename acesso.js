@@ -4,7 +4,7 @@ import {criarGuiaAoArLivre} from "./services/outdoorGuide.js";
 
 import {avisoFaltaDeAr, catalogoRespiratorio, dominioDoDiario, medidasRespiratorias, niveisRespiratorios, resumoRespiratorio} from "./data/respiratorio.js";
 
-import {camposQualidadeAr, dicaAmbiente, resumoQualidadeAr} from "./data/ambiente.js";
+import {camposQualidadeAr} from "./data/ambiente.js";
 
 const $ = id => document.getElementById(id);
 const levels = ["Nenhuma", "Leve", "Moderada", "Intensa"];
@@ -347,18 +347,6 @@ function isMissingColumnError(error) {
   return code === "42703" || code === "PGRST204";
 }
 
-function mapWeather(registro) {
-  if (registro.weather_temperature == null || registro.weather_humidity == null || registro.weather_pressure == null) return null;
-  return {
-    cidade:registro.weather_city || "Brasília",
-    temperatura:registro.weather_temperature,
-    umidade:registro.weather_humidity,
-    pressao:registro.weather_pressure,
-    uv:registro.weather_uv_index,
-    observadoEm:registro.weather_observed_at || registro.recorded_at
-  };
-}
-
 async function loadPatientData() {
   const version = ++patientLoadVersion;
   const selectedPatient = patientId;
@@ -434,11 +422,9 @@ async function loadPatientData() {
         rigidez:levels.indexOf(r.stiffness),
         fadiga:levels.indexOf(r.fatigue),
         respiratorio:resumoRespiratorio(r),
-        qualidadeAr:resumoQualidadeAr(r),
         humor:r.mood,
         atividade:r.activity_level,
-        sinalAtipico:false,
-        clima:mapWeather(r)
+        sinalAtipico:false
       }));
       gerarHeatmap();
       verificarRegistroHoje();
@@ -510,16 +496,6 @@ function renderDailyAdvice(){
   clearTimeout(dailyAdviceTimer);
   if(!isAuthenticated() || isProfessional() || !$("page-inicio").classList.contains("active"))return;
   const advice=patientTpeAdviceForToday();
-  const record=todaysPatientSymptoms();
-  const ambiente=$("ambientePosRegistro");
-  ambiente.hidden=!record;
-  if(!ambiente.hidden){
-    const clima=mapWeather(record);
-    text("ambienteClima",clima?clima.temperatura+" °C · Umidade: "+clima.umidade+"% · Pressão: "+clima.pressao+" hPa · Índice UV: "+(clima.uv??"Sem dado")
-      :"Dados meteorológicos indisponíveis no momento.");
-    text("ambienteAr",resumoQualidadeAr(record)||"Dados de qualidade do ar indisponíveis no momento.");
-    text("ambienteDica",dicaAmbiente(record));
-  }
   $("conselhoDiaTitulo").closest("aside").hidden=!advice;
   text("conselhoDiaTitulo",advice?.title ?? "");
   text("conselhoDiaTexto",advice?.body ?? "");
@@ -1503,9 +1479,7 @@ async function saveSymptoms(){
     if (user !== paciente) return;
     await loadPatientData();
     navigate("inicio");
-    message(clima&&weatherColumnsAvailable
-      ? "Sintomas e condições meteorológicas registrados. O plano permanece inalterado."
-      : "Sintomas registrados. Dados meteorológicos indisponíveis no momento.", !(clima&&weatherColumnsAvailable));
+    message("Sintomas registrados.");
     if(respiratorio.dyspnea_rest>=7)alert(avisoFaltaDeAr);
     else if(atipico===1)
       alert("Se os sintomas forem intensos ou inesperados, procure orientação profissional. Este aplicativo não realiza triagem clínica.");

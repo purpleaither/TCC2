@@ -124,15 +124,10 @@ window.cenarioProf = () => {
       }
       console.log('Navegador e axe-core: '+dominio);
     }
-    await p.evaluate(()=>window.cenarioAmbiente(false,false));
-    assert.equal(await p.locator('#ambientePosRegistro').isVisible(),false);
-    await p.evaluate(()=>window.cenarioAmbiente(true,false));
-    assert.match(await p.locator('#ambienteAr').innerText(),/indisponíveis/);
-    assert.match(await p.locator('#ambienteClima').innerText(),/29%/);
     await p.evaluate(()=>window.cenarioAmbiente(true,true));
-    assert.match(await p.locator('#ambienteAr').innerText(),/Ozônio/);
-    await auditar('#ambientePosRegistro');
-    console.log('Navegador e axe-core: card após envio, com e sem qualidade do ar');
+    assert.equal(await p.locator('#ambientePosRegistro, #sheetClimaDesc, #sheetQualidadeAr').count(),0);
+    await p.locator('#conselhoDiaTitulo').waitFor();
+    console.log('Paciente: medições ambientais ausentes nas telas');
     await p.evaluate(()=>window.cenarioParques(true));
     assert.equal(await p.locator('#verParquesProximos').getAttribute('hidden'),null);
     await p.evaluate(()=>window.cenarioParques(false));

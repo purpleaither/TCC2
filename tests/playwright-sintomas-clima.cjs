@@ -59,6 +59,7 @@ report.push({id:simular?'CT44-persistencia':'CT25',status:'passed',expected,temp
 const x=added[0];const weather=['weather_temperature','weather_humidity','weather_pressure'].every(k=>typeof x[k]==='number'&&Number.isFinite(x[k]))&&!!x.weather_city&&Number.isFinite(Date.parse(x.weather_observed_at));
 if(simular){
  const semMedicao=['weather_temperature','weather_humidity','weather_pressure','weather_city','weather_observed_at'].every(campo=>x[campo]==null);
- report.push({id:'CT44-falha-clima',status:simulacoes===2&&semMedicao&&/Clima indisponível/i.test(aviso)?'passed':'failed',simulacoes,semMedicao,avisoExibido:/Clima indisponível/i.test(aviso)});
+ const avisoExibido=/Sintomas registrados/i.test(aviso)&&!/Clima|meteorológ|qualidade do ar/i.test(aviso);
+ report.push({id:'CT44-falha-clima',status:simulacoes===2&&semMedicao&&avisoExibido?'passed':'failed',simulacoes,semMedicao,avisoExibido});
 }else report.push({id:'CT26',status:weather?'passed':'failed',weather:weather?{city:x.weather_city,temperature:x.weather_temperature,humidity:x.weather_humidity,pressure:x.weather_pressure,observedAt:x.weather_observed_at}:null});
 }catch(e){report.push({id:'CI05',status:'failed',error:String(e.message).split('\n')[0]})}finally{if(browser)await browser.close();fs.mkdirSync('test-results',{recursive:true});const evidence={report,network,retention:'Registro fictício mantido por autorização'};fs.writeFileSync(simular?'test-results/clima-falha-interface.json':'test-results/ci05-sintomas-clima.json',JSON.stringify(evidence,null,2));console.log(JSON.stringify(evidence));if(report.length!==2||report.some(x=>x.status!=='passed'))process.exitCode=1}})();
