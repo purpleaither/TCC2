@@ -25,10 +25,13 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
   let selection;
   const root = document.getElementById("modeloGuiaArLivre").content.cloneNode(true);
   const section = root.firstElementChild;
-  const region = section.querySelector("select");
-  const gps = section.querySelector("button");
+  const locationStep = section.querySelector("[data-guia-local]");
+  const resultStep = section.querySelector("[data-guia-resultado]");
+  const resultTitle = resultStep.querySelector("[data-guia-etapa]");
+  const region = locationStep.querySelector("select");
+  const gps = locationStep.querySelector("button");
   const loading = section.querySelector(".guia-carregando");
-  const status = section.querySelector("p[role=status]");
+  const status = section.querySelector("[data-guia-status]");
   const suggestions = section.querySelector("[data-guia-recomendacoes]");
   const measurements = section.querySelector("[data-guia-dados]");
   const environment = section.querySelector("[data-guia-ambiente]");
@@ -46,7 +49,10 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
     ]));
   }
   async function search(local, signal) {
+    locationStep.hidden = true;
+    resultStep.hidden = false;
     loading.hidden = false;
+    resultTitle.focus();
     status.textContent = "";
     const allowed = await confirmarIndicacao();
     if (signal.aborted) return;
@@ -71,6 +77,8 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
   function start() {
     request?.abort();
     request = new AbortController();
+    locationStep.hidden = false;
+    resultStep.hidden = true;
     loading.hidden = true;
     environment.replaceChildren();
     measurements.hidden = true;
@@ -80,6 +88,11 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
     status.textContent = "";
     return request.signal;
   }
+  resultStep.querySelector("[data-guia-alterar]").addEventListener("click", () => {
+    start();
+    region.value = "";
+    (region.disabled ? gps : region).focus();
+  });
   region.addEventListener("change", () => {
     const signal = start();
     if (region.value) {
