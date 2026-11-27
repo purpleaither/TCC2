@@ -35,7 +35,7 @@ jobs:
                cmp -s index.html /tmp/tcc-index &&
                curl -fsS --max-time 8 https://tcc2-lime.vercel.app/acesso.js -o /tmp/tcc-acesso &&
                cmp -s acesso.js /tmp/tcc-acesso; then
-              git rev-parse HEAD > test-results/commit-publicado.txt
+              printf '%s\n' "$GITHUB_SHA" > test-results/commit-publicado.txt
               exit 0
             fi
             sleep 5
