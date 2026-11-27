@@ -1,21 +1,14 @@
+import {consultarTrajeto} from "./environmentalService.js";
+
 const km = new Intl.NumberFormat("pt-BR", {maximumFractionDigits: 1});
-const surface = {
-  asphalt:"Asfalto", concrete:"Concreto", paving_stones:"Piso intertravado",
-  paved:"Pavimentado", unpaved:"Sem pavimentação", gravel:"Cascalho",
-  fine_gravel:"Cascalho fino", dirt:"Terra", ground:"Solo natural", grass:"Grama", sand:"Areia"
-};
 const distanceLabel = park => {
   if (!Number.isFinite(park.distanciaAPe)) return "Distância a pé indisponível";
   if (park.distanciaAPe < 1000) return Math.round(park.distanciaAPe) + " m a pé";
   return km.format(park.distanciaAPe / 1000) + " km a pé";
 };
-const access = {
-  yes: "Acesso por cadeira de rodas informado",
-  limited: "Acesso por cadeira de rodas limitado",
-  no: "Sem acesso por cadeira de rodas informado"
-};
-
-export function desenharMapa(figure, local, parques, limites, view = {zoom: null, selected: 0}) {
+export function desenharMapa(figure, local, parques, limites, signal, view) {
+  const initial = !view;
+  view ??= {zoom:null, selected:0, route:null, pending:true};
   const canvas = figure.querySelector("canvas");
   const layer = figure.querySelector("[data-mapa-marcadores]");
   const detail = figure.querySelector("[data-mapa-detalhe]");
@@ -23,7 +16,7 @@ export function desenharMapa(figure, local, parques, limites, view = {zoom: null
   const {width, height} = canvas;
   const base = figure.querySelector("[data-mapa-ruas]");
   const mapStatus = figure.querySelector("[data-mapa-status]");
-  const points = [local, ...parques];
+  const points = [local, ...parques.map(park => park.entrada ?? park)];
   const world = ({latitude, longitude}) => {
     const radians = latitude * Math.PI / 180;
     return [(longitude + 180) / 360, (1 - Math.asinh(Math.tan(radians)) / Math.PI) / 2];
@@ -42,35 +35,23 @@ export function desenharMapa(figure, local, parques, limites, view = {zoom: null
   const zoomIn = figure.querySelector("[data-mapa-ampliar]");
   const zoomOut = figure.querySelector("[data-mapa-reduzir]");
   zoomIn.disabled = zoom >= 18;
-  zoomOut.disabled = zoom <= overview;
-  zoomIn.onclick = () => desenharMapa(figure, local, parques, limites, {...view, zoom:zoom + 1});
-  zoomOut.onclick = () => desenharMapa(figure, local, parques, limites, {...view, zoom:zoom - 1});
+  zoomOut.disabled = zoom <= Math.max(0,overview - 2);
+  function changeZoom(offset) {
+    view.zoom = zoom + offset;
+    desenharMapa(figure, local, parques, limites, signal, view);
+  }
+  zoomIn.onclick = () => changeZoom(1);
+  zoomOut.onclick = () => changeZoom(-1);
   figure.querySelector("[data-mapa-legenda]").textContent = Number.isFinite(parques[0].distanciaAPe)
     ? "↑ Norte · ● Local de busca · 1 Mais próximo a pé"
     : "↑ Norte · ● Local de busca · Distâncias a pé indisponíveis";
   const tileCount = 2 ** zoom;
   const scale = tileSize * tileCount;
-  const center = zoom === overview
+  const center = zoom <= overview
     ? [horizontal, vertical].map(([lower, upper]) => (lower + upper) / 2)
     : mercator[view.selected + 1];
   const [west, north] = center.map((value, axis) => value * scale - [width, height][axis] / 2);
   const project = point => world(point).map((value, axis) => value * scale - [west, north][axis]);
-  ctx.clearRect(0, 0, width, height);
-  const colors = getComputedStyle(canvas);
-  ctx.strokeStyle = colors.getPropertyValue("--mapa-contorno");
-  ctx.fillStyle = colors.getPropertyValue("--mapa-regiao");
-  ctx.lineWidth = 1.4;
-  for (const polygon of limites) {
-    ctx.beginPath();
-    for (const [index, [longitude, latitude]] of polygon.entries()) {
-      const point = project({longitude, latitude});
-      if (index) ctx.lineTo(...point);
-      else ctx.moveTo(...point);
-    }
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-  }
 
   layer.replaceChildren();
   const occupied = [];
@@ -79,25 +60,38 @@ export function desenharMapa(figure, local, parques, limites, view = {zoom: null
   const candidates = [[0, 0], [0, -70], [0, 70], [90, 0], [-90, 0],
     [90, -70], [-90, -70], [90, 70], [-90, 70], [0, -140], [0, 140]];
 
-  function activate(index) {
-    view.selected = index;
-    const park = parques[index];
-    buttons.forEach((button, i) => button.setAttribute("aria-pressed", String(i === index)));
+  function updateDetails() {
+    const {selected, route, pending} = view;
+    const park = parques[selected];
+    buttons.forEach((button, i) => button.setAttribute("aria-pressed", String(i === selected)));
     const name = document.createElement("strong");
     name.textContent = park.nome;
     const distance = document.createElement("span");
     distance.className = "guia-mapa-distancia";
-    distance.textContent = distanceLabel(park);
+    distance.textContent = route
+      ? distanceLabel({distanciaAPe:route.distance}) + " · cerca de " + Math.max(1, Math.round(route.duration / 60)) + " min"
+      : pending ? "Calculando trajeto a pé…" : "Trajeto a pé indisponível";
     const meta = document.createElement("small");
-    const lighting = {yes:"Informada", no:"Sem iluminação informada"};
-    meta.textContent = [park.regiao, park.categoria, park.fonte].filter(Boolean).join(" · ");
-    const infrastructure = document.createElement("small");
-    infrastructure.textContent = [
-      access[park.acessibilidade] ?? "Acesso por cadeira de rodas: não informado",
-      "Piso: " + (surface[park.piso] ?? park.piso ?? "não informado"),
-      "Iluminação: " + (lighting[park.iluminacao] ?? "não informada")
-    ].join(" · ");
-    detail.replaceChildren(name, distance, meta, infrastructure);
+    meta.textContent = [park.regiao, park.entrada ? "Entrada mapeada" : "Ponto aproximado do parque"].filter(Boolean).join(" · ");
+    detail.replaceChildren(name, distance, meta);
+  }
+
+  async function selectPark(index) {
+    view.controller?.abort();
+    const controller = new AbortController();
+    view.controller = controller;
+    const selectionSignal = AbortSignal.any([signal, controller.signal]);
+    view.selected = index;
+    view.route = null;
+    view.pending = true;
+    view.updateDetails();
+    view.repaint();
+    const route = await consultarTrajeto(local, parques[index], selectionSignal);
+    if (selectionSignal.aborted) return;
+    view.pending = false;
+    view.route = route;
+    view.updateDetails();
+    view.repaint();
   }
 
   for (const [index, point] of points.entries()) {
@@ -121,23 +115,59 @@ export function desenharMapa(figure, local, parques, limites, view = {zoom: null
       const park = parques[index - 1];
       marker.type = "button";
       marker.setAttribute("aria-label", index + ". " + park.nome + ", " + distanceLabel(park));
-      marker.addEventListener("click", () => activate(index - 1));
+      marker.addEventListener("click", () => { if (view.selected !== index - 1) void selectPark(index - 1); });
       buttons[index - 1] = marker;
     } else marker.setAttribute("aria-hidden", "true");
     layer.append(marker);
   }
-  function drawConnectors() {
+  view.updateDetails = updateDetails;
+  view.repaint = () => {
+    ctx.clearRect(0, 0, width, height);
+    if (base.hidden) drawBounds();
+    const coordinates = view.route?.geometry.coordinates;
+    if (coordinates?.length) {
+      ctx.beginPath();
+      for (const [index, [longitude, latitude]] of coordinates.entries()) {
+        const point = project({longitude, latitude});
+        if (index) ctx.lineTo(...point);
+        else ctx.moveTo(...point);
+      }
+      ctx.lineJoin = "round";
+      ctx.lineCap = "round";
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 10;
+      ctx.stroke();
+      ctx.strokeStyle = "#0064a4";
+      ctx.lineWidth = 6;
+      ctx.stroke();
+    }
     ctx.strokeStyle = "#315449";
     ctx.lineWidth = 2;
     ctx.beginPath();
-    for(const [x, y, left, top] of connectors) {
+    for (const [x, y, left, top] of connectors) {
       ctx.moveTo(x, y);
       ctx.lineTo(left, top);
     }
     ctx.stroke();
+  };
+  function drawBounds() {
+    const colors = getComputedStyle(canvas);
+    ctx.strokeStyle = colors.getPropertyValue("--mapa-contorno");
+    ctx.fillStyle = colors.getPropertyValue("--mapa-regiao");
+    ctx.lineWidth = 1.4;
+    for (const polygon of limites) {
+      ctx.beginPath();
+      for (const [index, [longitude, latitude]] of polygon.entries()) {
+        const point = project({longitude, latitude});
+        if (index) ctx.lineTo(...point);
+        else ctx.moveTo(...point);
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    }
   }
-  drawConnectors();
-  activate(view.selected);
+  updateDetails();
   figure.hidden = false;
   const tiles = [];
   const pending = [];
@@ -161,13 +191,14 @@ export function desenharMapa(figure, local, parques, limites, view = {zoom: null
   batch.append(...tiles);
   base.replaceChildren(batch);
   base.hidden = true;
+  view.repaint();
+  if(initial)void selectPark(0);
   mapStatus.textContent = "Carregando o mapa de ruas…";
   Promise.all(pending).then(() => {
     if (!batch.isConnected || figure.hidden) return;
     base.hidden = false;
     mapStatus.textContent = "";
-    ctx.clearRect(0, 0, width, height);
-    drawConnectors();
+    view.repaint();
   }).catch(() => {
     if (batch.isConnected && !figure.hidden)
       mapStatus.textContent = "Mapa de ruas indisponível. Os parques ainda aparecem na visualização simplificada.";

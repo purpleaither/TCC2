@@ -347,10 +347,13 @@
       <p class="card-text">Quando o fisioterapeuta selecionar e configurar os exercícios, eles serão disponibilizados nesta área.</p>
       <p class="card-text-small">Apenas os exercícios definidos pelo fisioterapeuta vinculado serão exibidos nesta página.</p>
     </div>
+  </div>
+
+  <div class="page" id="page-parques">
+    <h1 class="page-title" id="tituloParques" tabindex="-1">Parques próximos</h1>
     <div id="guiaArLivre"></div>
     <template id="modeloGuiaArLivre">
-      <section class="card guia-ar-livre" aria-labelledby="tituloGuiaArLivre">
-        <h2 class="card-title" id="tituloGuiaArLivre">Parques e clima</h2>
+      <section class="card guia-ar-livre" aria-labelledby="tituloParques">
         <p class="card-text-small" data-guia-exercicios></p>
         <div class="form-group">
           <label class="form-label" for="regiaoGuiaArLivre">Região do Distrito Federal</label>
@@ -379,21 +382,21 @@
           </figcaption>
         </figure>
         <p data-guia-parques-status></p>
-        <details data-guia-dados hidden>
-          <summary>Ver clima e qualidade do ar</summary>
+        <section data-guia-dados aria-labelledby="tituloCondicoesParques" hidden>
+          <h2 class="card-title" id="tituloCondicoesParques">Condições da região</h2>
           <dl class="guia-ambiente" data-guia-ambiente></dl>
-        </details>
+        </section>
         <details>
           <summary>Cuidados ao ar livre</summary>
           <ul data-guia-recomendacoes></ul>
         </details>
         <details>
           <summary>Sobre os dados</summary>
-          <p class="card-text-small">Estimativas ambientais da Open-Meteo e do CAMS. O CO₂ é uma estimativa regional em partes por milhão (ppm). Rotas estimadas a pé até o ponto mapeado do parque, que pode ficar longe da entrada. O mapa pode omitir obstáculos ou trechos sem calçada. Rotas da <a href="https://routing.openstreetmap.de/about.html">FOSSGIS</a>. <a href="https://www.openstreetmap.org/fixthemap">Corrigir o mapa</a>. Dados de parques do IPEDF, do Geoportal DF e do <a href="https://www.openstreetmap.org/copyright" rel="noreferrer">OpenStreetMap</a>.</p>
+          <p class="card-text-small">Estimativas ambientais da Open-Meteo e do CAMS. O CO₂ é uma estimativa regional em partes por milhão (ppm). Rotas estimadas a pé. Quando há entrada pública identificada no mapa, o trajeto usa essa entrada. Em outros casos, usa um ponto aproximado do parque. O mapa pode omitir obstáculos ou trechos sem calçada. Rotas da <a href="https://routing.openstreetmap.de/about.html">FOSSGIS</a>. <a href="https://www.openstreetmap.org/fixthemap">Corrigir o mapa</a>. Dados de parques do IPEDF, do Geoportal DF e do <a href="https://www.openstreetmap.org/copyright" rel="noreferrer">OpenStreetMap</a>.</p>
         </details>
       </section>
     </template>
-
+    <button type="button" class="btn btn-outline" onclick="navegarPara('exercicios');document.getElementById('verParquesProximos')?.focus()">Voltar</button>
   </div>
 
   <!-- ===== TELA 6.0: MINHA CONTA ===== -->

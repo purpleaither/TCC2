@@ -1,7 +1,7 @@
 const FORECAST = "https://api.open-meteo.com/v1/forecast";
 const AIR_QUALITY = "https://air-quality-api.open-meteo.com/v1/air-quality";
 const OVERPASS = "https://overpass-api.de/api/interpreter";
-const PEDESTRIAN = "https://routing.openstreetmap.de/routed-foot/table/v1/driving/";
+const PEDESTRIAN = "https://routing.openstreetmap.de/routed-foot/";
 const CO2_REFERENCIA_EDUCATIVA = 500;
 
 export function arredondarLocalizacao(latitude, longitude) {
@@ -46,14 +46,24 @@ function nomeNormalizado(nome) {
 export async function consultarParques(local, signal) {
   const {latitude, longitude} = arredondarLocalizacao(local.latitude, local.longitude);
   const raio = `(around:3000,${latitude},${longitude})`;
-  const consulta = `[out:json][timeout:7];(way["leisure"="park"]${raio};relation["leisure"="park"]${raio};);out center tags;`;
+  const consulta = `[out:json][timeout:7];(way["leisure"="park"]${raio};relation["leisure"="park"]${raio};)->.parks;.parks out body center;(node(w.parks)["entrance"];node(r.parks)["entrance"];);out body;`;
   const [oficiais, dinamicos] = await Promise.all([
     json(new URL("../data/parques_df.json", import.meta.url), {}, signal).catch(() => []),
     json(OVERPASS, {method: "POST", body: new URLSearchParams({data: consulta})}, signal)
-      .then(result => result.elements.map(({tags, center}) => ({
-        nome: tags?.name, latitude: center?.lat, longitude: center?.lon,
-        acessibilidade: tags?.wheelchair, piso: tags?.surface, iluminacao: tags?.lit, fonte: "OpenStreetMap"
-      })).filter(p => p.nome?.trim() && Number.isFinite(p.latitude) && Number.isFinite(p.longitude)))
+      .then(({elements}) => {
+        const entrances = new Map(elements.filter(({type, tags, lat, lon}) => type === "node" &&
+          tags?.entrance && !["no","emergency","exit","service"].includes(tags.entrance) &&
+          !["no","private"].includes(tags.access) && tags.foot !== "no" &&
+          Number.isFinite(lat) && Number.isFinite(lon)
+        ).map(node => [node.id, {latitude:node.lat, longitude:node.lon}]));
+        return elements.filter(({tags, center}) => tags?.name && Number.isFinite(center?.lat) &&
+          Number.isFinite(center?.lon)).map(({tags, center, nodes, members}) => {
+          const ids = nodes ?? members?.filter(member => member.type === "node").map(member => member.ref) ?? [];
+          const entrance = ids.map(id => entrances.get(id)).filter(Boolean)
+            .sort((a, b) => distanciaKm(local, a) - distanciaKm(local, b))[0];
+          return {nome:tags.name, latitude:center.lat, longitude:center.lon, entrada:entrance, fonte:"OpenStreetMap"};
+        });
+      })
       .catch(() => [])
   ]);
   const unicos = [];
@@ -65,9 +75,7 @@ export async function consultarParques(local, signal) {
         distanciaKm(item, parque) < 2;
     });
     if (similar) {
-      similar.acessibilidade ??= parque.acessibilidade;
-      similar.piso ??= parque.piso;
-      similar.iluminacao ??= parque.iluminacao;
+      similar.entrada ??= parque.entrada;
     } else unicos.push({...parque, distancia: distanciaKm(local, parque)});
   }
   const candidatos = unicos.sort((a, b) => a.distancia - b.distancia).slice(0, 12);
@@ -76,22 +84,40 @@ export async function consultarParques(local, signal) {
 }
 
 let ultimaRota = -Infinity;
-async function atribuirDistanciasAPe(origem, parques, signal) {
-  const espera = Math.max(0, 1000 - (performance.now() - ultimaRota));
-  if (espera) await new Promise(resolve => setTimeout(resolve, espera));
-  if (signal?.aborted) return;
+const pertoDoPonto = point => Number.isFinite(point?.distance) && point.distance <= 150;
+
+async function consultarRoteador(type, origem, parques, params, signal) {
+  while (!signal?.aborted && performance.now() - ultimaRota < 1000) {
+    await new Promise(resolve => setTimeout(resolve, 1000 - (performance.now() - ultimaRota)));
+  }
+  if (signal?.aborted) return null;
   ultimaRota = performance.now();
-  const coords = [origem, ...parques].map(p => p.longitude + "," + p.latitude).join(";");
+  const coords = [arredondarLocalizacao(origem.latitude, origem.longitude), ...parques.map(p => p.entrada ?? p)]
+    .map(p => p.longitude + "," + p.latitude).join(";");
+  return json(PEDESTRIAN + type + "/v1/driving/" + coords + "?" + new URLSearchParams(params),
+    {referrerPolicy:"origin"}, signal).catch(() => null);
+}
+
+async function atribuirDistanciasAPe(origem, parques, signal) {
   const destinations = parques.map((_, index) => index + 1).join(";");
-  const params = new URLSearchParams({sources:"0", destinations, annotations:"distance", generate_hints:"false"});
-  const data = await json(PEDESTRIAN + coords + "?" + params, {referrerPolicy:"origin"}, signal).catch(() => null);
-  const pertoDoPonto = point => Number.isFinite(point?.distance) && point.distance <= 150;
+  const data = await consultarRoteador("table", origem, parques,
+    {sources:"0", destinations, annotations:"distance", generate_hints:"false"}, signal);
   if (data?.code !== "Ok" || !pertoDoPonto(data.sources?.[0])) return;
   parques.forEach((parque, index) => {
     const metros = data.distances?.[0]?.[index];
     if (Number.isFinite(metros) && metros >= 0 && pertoDoPonto(data.destinations?.[index]))
       parque.distanciaAPe = metros;
   });
+}
+
+export async function consultarTrajeto(origem, parque, signal) {
+  const data = await consultarRoteador("route", origem, [parque],
+    {overview:"full", geometries:"geojson", steps:"false", generate_hints:"false"}, signal);
+  const route = data?.routes?.[0];
+  if (data?.code !== "Ok" || !data.waypoints?.every(pertoDoPonto) ||
+      !Number.isFinite(route?.distance) || !Number.isFinite(route?.duration) ||
+      !Array.isArray(route?.geometry?.coordinates)) return null;
+  return route;
 }
 
 export async function consultarAmbiente(local, signal) {

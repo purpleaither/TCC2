@@ -61,7 +61,7 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
     if (signal.aborted) return;
     showEnvironment(data);
     showAdvice(data);
-    if (results.length) desenharMapa(map, local, results, bounds);
+    if (results.length) desenharMapa(map, local, results, bounds, signal);
     else parksStatus.textContent = "Nenhum parque disponível para esta consulta.";
     status.textContent = metrics.some(([key]) => Number.isFinite(data[key]))
       ? "Consulta concluída." : "Dados ambientais indisponíveis. Veja os cuidados ao ar livre.";
@@ -70,7 +70,6 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
     request?.abort();
     request = new AbortController();
     environment.replaceChildren();
-    measurements.open = false;
     measurements.hidden = true;
     map.hidden = true;
     parksStatus.textContent = "";

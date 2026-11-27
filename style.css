@@ -1380,3 +1380,5 @@ button.guia-mapa-marcador { cursor: pointer; }
   font: inherit;
 }
 .guia-mapa-zoom button:disabled { opacity: .6; }
+
+#verParquesProximos[hidden] { display: none; }

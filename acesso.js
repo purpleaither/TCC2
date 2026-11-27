@@ -66,19 +66,24 @@ function navigate(page) {
     if (page === "conta") page = isProfessional() ? "profissional" : "contatos";
     const allowed = isProfessional()
       ? ["profissional","planos-prof","exercise-source-prof","exercise-bank-prof","editor-prof","registros-prof"]
-      : ["inicio","sintomas","historico","orientacoes","exercicios","contatos"];
+      : ["inicio","sintomas","historico","orientacoes","exercicios","parques","contatos"];
     if(!allowed.includes(page)) page=homePage();
+    if(page==="parques" && !outdoorSelectedId)page="exercicios";
   }
   if(!$("page-"+page).classList.contains("active")) {
     const flash=$("authFlash");
     flash.hidden=true;
     flash.textContent="";
   }
+  if(page!=="parques" && outdoorSelectedId){
+    outdoorSelectedId=null;
+    outdoorGuide.update([]);
+  }
   document.querySelectorAll(".page").forEach(n=>n.classList.toggle("active",n.id==="page-"+page));
   mostrarCabecalho(page!=="login");
   document.querySelectorAll(".menu-item").forEach(item=>{
     const selected=item.getAttribute("onclick")==="navegarPara('"+(
-      ["editor-prof","exercise-source-prof","exercise-bank-prof"].includes(page)?"planos-prof":page
+      ["editor-prof","exercise-source-prof","exercise-bank-prof"].includes(page)?"planos-prof":page==="parques"?"exercicios":page
     )+"')";
     item.classList.toggle("active",selected);
     if(selected)item.setAttribute("aria-current","page");
@@ -94,7 +99,7 @@ function navigate(page) {
   }
   if(page==="registros-prof")renderProfessionalRecords();
   if(page==="exercicios")renderPatientPlans();
-  if(page==="exercicios")void refreshOutdoorGuide();
+  if(page==="exercicios" || page==="parques")void refreshOutdoorGuide();
   if(page==="inicio"){
     const advice=patientTpeAdviceForToday();
     text("conselhoDiaTitulo",advice.title);
@@ -227,30 +232,44 @@ const outdoorGuide = criarGuiaAoArLivre($("guiaArLivre"), refreshOutdoorGuide);
 let outdoorChannel;
 let outdoorTimer;
 let outdoorRefresh = 0;
+let outdoorExerciseIds;
+let outdoorSelectedId = null;
 
 async function refreshOutdoorGuide() {
   if(!isAuthenticated() || isProfessional()) return false;
   const current = user.id;
   const version = ++outdoorRefresh;
-  let names = [];
+  let flagged = [];
   try {
     const response = await supabase.from("care_plans")
-      .select("plan_exercises!inner(exercise_name,exercise_source,indicacao_ar_livre)")
+      .select("plan_exercises!inner(id,exercise_name,exercise_source,indicacao_ar_livre)")
       .eq("patient_id",current).eq("plan_exercises.indicacao_ar_livre",true);
-    names = (result(response) || []).flatMap(plan => plan.plan_exercises
-      .filter(exercise => exercise.indicacao_ar_livre === true)
-      .map(exercise => exercise.exercise_source === "ExerciseBank"
-        ? translateExerciseName(exercise.exercise_name) : exercise.exercise_name));
+    flagged = (result(response) || []).flatMap(plan => plan.plan_exercises
+      .filter(exercise => exercise.indicacao_ar_livre === true));
   } catch {
     // Sem confirmação do plano, o guia permanece fechado.
   }
   if(user?.id !== current || isProfessional()) return false;
-  if(version === outdoorRefresh) outdoorGuide.update(names);
-  return version === outdoorRefresh && names.length > 0;
+  if(version !== outdoorRefresh) return false;
+  outdoorExerciseIds = new Set(flagged.map(exercise => exercise.id));
+  const knownIds = new Set(patientExerciseAssignments().map(({exercise}) => exercise.id));
+  if(flagged.some(exercise => !knownIds.has(exercise.id)))await loadPatientData();
+  if(version !== outdoorRefresh)return false;
+  const button = $("verParquesProximos");
+  if(button)button.hidden=!outdoorExerciseIds.has(button.dataset.exerciseId);
+  if(!outdoorSelectedId)return false;
+  const selected = flagged.find(exercise => exercise.id===outdoorSelectedId);
+  if(!selected){
+    navigate("exercicios");
+    return false;
+  }
+  outdoorGuide.update([selected.exercise_source==="ExerciseBank"
+    ? translateExerciseName(selected.exercise_name) : selected.exercise_name]);
+  return true;
 }
 
 function refreshOutdoorExercises() {
-  if(!document.hidden && $("page-exercicios").classList.contains("active")) void refreshOutdoorGuide();
+  if(!document.hidden && document.querySelector("#page-exercicios.active, #page-parques.active")) void refreshOutdoorGuide();
 }
 function startOutdoorUpdates() {
   stopOutdoorUpdates();
@@ -265,6 +284,8 @@ function startOutdoorUpdates() {
 }
 function stopOutdoorUpdates() {
   outdoorRefresh += 1;
+  outdoorExerciseIds=undefined;
+  outdoorSelectedId=null;
   clearInterval(outdoorTimer);
   document.removeEventListener("visibilitychange", refreshOutdoorExercises);
   if(outdoorChannel) void supabase.removeChannel(outdoorChannel);
@@ -511,6 +532,17 @@ function renderPatientPlans(animar=false){
     ?translateExerciseName(exercise.exercise_name)
     :exercise.exercise_name;
   card.append(el("h2",name,"patient-exercise-title"));
+  const parksButton=el("button","Ver parques próximos","btn btn-outline");
+  parksButton.type="button";
+  parksButton.id="verParquesProximos";
+  parksButton.dataset.exerciseId=exercise.id;
+  parksButton.hidden=!(outdoorExerciseIds?.has(exercise.id) ?? exercise.indicacao_ar_livre===true);
+  parksButton.addEventListener("click",()=>{
+    outdoorSelectedId=exercise.id;
+    navigate("parques");
+    $("tituloParques").focus();
+  });
+  card.append(parksButton);
 
   const videoArea=el("div",undefined,"patient-exercise-video bank-media");
   if(["ExerciseBank","wger"].includes(exercise.exercise_source)&&exercise.external_id){
