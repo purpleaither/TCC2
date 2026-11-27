@@ -881,6 +881,7 @@ button.heatmap-cell:focus-visible{outline:3px solid var(--titulo, #003366);outli
 #page-exercise-source-prof .card{max-width:620px}
 #page-exercise-source-prof .card>.btn{display:block;width:100%;min-height:46px;margin:12px 0}
 #createPlanEntry { margin-block-end: var(--espaco-grupo); }
+#createPlanEntry[hidden] { display: none; }
 #exerciseConfigDialog, #parquesDialog { margin: auto; inline-size: min(740px, calc(100% - 24px)); max-block-size: 90dvh; color: var(--texto); }
 #exerciseConfigDialog::backdrop, #parquesDialog::backdrop { background: rgb(0 0 0 / .45); }
 #exerciseConfigDialog #exerciseConfigRow > .demo-exercicio-item { margin-bottom: 16px; }
@@ -1585,7 +1586,7 @@ button.guia-mapa-marcador { cursor: pointer; }
     max-inline-size: min(var(--largura-conteudo), calc(100% - 80px));
     padding-block: 40px;
   }
-  #page-login { padding-block-start: 290px; }
+  #page-login { padding-block-start: 490px; }
   :is(#page-sintomas, #page-editor-prof, #page-exercise-source-prof) { max-inline-size: min(800px, calc(100% - 80px)); }
   :is(#page-registros-prof, #page-exercise-bank-prof) { max-inline-size: min(1120px, calc(100% - 80px)); }
   #parquesDialog:has(.guia-mapa:not([hidden])) { inline-size: min(1120px, calc(100% - 48px)); }

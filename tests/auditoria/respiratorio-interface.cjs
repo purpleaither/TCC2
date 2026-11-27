@@ -153,8 +153,17 @@ window.cenarioProf = () => {
     console.log('Navegador e axe-core: escolha de categoria após nome e orientações');
     await p.evaluate(()=>window.cenarioProf());
     await p.evaluate(()=>window.cenarioAcompanhamento(false));
+    await p.evaluate(()=>window.AppAuth.navigate("planos-prof"));
+    await p.getByRole('heading',{name:'Selecionar paciente',exact:true}).waitFor();
+    assert.equal(await p.locator('#listaPlanosProf').innerText(),'');
+    assert.equal(await p.locator('#createPlanEntry').isVisible(),false);
+    await p.evaluate(()=>window.AppAuth.navigate("registros-prof"));
     assert.equal(await p.locator("#periodoAcompanhamento").isVisible(),false);
     await p.evaluate(()=>window.cenarioAcompanhamento(true));
+    await p.evaluate(()=>window.AppAuth.navigate("planos-prof"));
+    await p.getByRole('heading',{name:'Gerenciar planos',exact:true}).waitFor();
+    await p.locator('#createPlanEntry').waitFor();
+    await p.evaluate(()=>window.AppAuth.navigate("registros-prof"));
     await p.locator("#periodoAcompanhamento").waitFor();
     const blocos=p.locator('#graficosRegistrosProf > details');
     assert.deepEqual(await blocos.locator('> summary').allTextContents(),[

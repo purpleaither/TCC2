@@ -730,12 +730,15 @@ function renderProfessionalPlans(){
   if(!isProfessional())return;
   updatePatientSelectors();
   const patient=patients.find(p=>p.id===patientId);
-  text("profPlanosDescricao",patient?"Planos de "+patient.display_name:"Nenhum paciente vinculado");
+  text("profPlanosTitulo",patient?"Gerenciar planos":"Selecionar paciente");
+  $("profPlanosDescricao").hidden=!patient;
+  text("profPlanosDescricao",patient?"Planos de "+patient.display_name:"");
   const root=$("listaPlanosProf");
   root.replaceChildren();
-  if(!plans.length)root.append(el("p","Nenhum plano disponível.","demo-vazio"));
   const createEntry=$("createPlanEntry");
-  createEntry.disabled=!patientId;
+  createEntry.hidden=!patient;
+  if(!patient)return;
+  if(!plans.length)root.append(el("p","Nenhum plano disponível.","demo-vazio"));
   createEntry.textContent=plans.length?"Criar outro plano terapêutico":"Criar plano terapêutico";
   for(const p of plans){
     const card=el("div",undefined,"card");

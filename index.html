@@ -520,15 +520,15 @@
 
   <!-- ===== PLANOS DO FISIOTERAPEUTA ===== -->
   <div class="page" id="page-planos-prof">
-    <h1 class="page-title">Gerenciar planos</h1>
-    <p class="page-subtitle" id="profPlanosDescricao">Planos individualizados</p>
+    <h1 class="page-title" id="profPlanosTitulo">Selecionar paciente</h1>
+    <p class="page-subtitle" id="profPlanosDescricao" hidden></p>
     <div class="card">
       <label class="form-label" for="pacientePlanoProf">Paciente</label>
       <select id="pacientePlanoProf" class="form-input" onchange="trocarPacientePlanoProf()">
         <option value="p1">Maria Silva</option><option value="p2">João Oliveira</option>
       </select>
     </div>
-    <button type="button" id="createPlanEntry" class="btn" onclick="criarPlanoProfissional()">Criar plano terapêutico</button>
+    <button type="button" id="createPlanEntry" class="btn" hidden onclick="criarPlanoProfissional()">Criar plano terapêutico</button>
     <div id="listaPlanosProf"></div>
     <button type="button" class="btn btn-outline" onclick="navegarPara('profissional')">Voltar</button>
   </div>
