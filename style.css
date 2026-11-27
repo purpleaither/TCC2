@@ -1382,3 +1382,8 @@ button.guia-mapa-marcador { cursor: pointer; }
 .guia-mapa-zoom button:disabled { opacity: .6; }
 
 #verParquesProximos[hidden] { display: none; }
+
+.guia-mapa-superficie { touch-action: none; cursor: grab; }
+.guia-mapa-superficie:active { cursor: grabbing; }
+[data-mapa-quadro] { position: absolute; inset: 0; }
+.guia-mapa-zoom [data-mapa-recentrar] { margin-inline-end: auto; padding-inline: .65rem; }

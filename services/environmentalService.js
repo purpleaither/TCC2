@@ -112,12 +112,12 @@ async function atribuirDistanciasAPe(origem, parques, signal) {
 
 export async function consultarTrajeto(origem, parque, signal) {
   const data = await consultarRoteador("route", origem, [parque],
-    {overview:"full", geometries:"geojson", steps:"false", generate_hints:"false"}, signal);
-  const route = data?.routes?.[0];
-  if (data?.code !== "Ok" || !data.waypoints?.every(pertoDoPonto) ||
-      !Number.isFinite(route?.distance) || !Number.isFinite(route?.duration) ||
-      !Array.isArray(route?.geometry?.coordinates)) return null;
-  return route;
+    {overview:"full", geometries:"geojson", alternatives:"3", steps:"false", generate_hints:"false"}, signal);
+  if (data?.code !== "Ok" || data.waypoints?.length !== 2 || !data.waypoints.every(pertoDoPonto)) return null;
+  const routes = Array.isArray(data.routes) ? data.routes : [];
+  return routes.filter(route => Number.isFinite(route.distance) && route.distance >= 0 &&
+    Number.isFinite(route.duration) && route.duration >= 0 && route.geometry?.coordinates?.length >= 2
+  ).sort((a, b) => a.distance - b.distance || a.duration - b.duration)[0] ?? null;
 }
 
 export async function consultarAmbiente(local, signal) {

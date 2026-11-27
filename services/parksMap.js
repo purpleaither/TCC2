@@ -9,6 +9,9 @@ const distanceLabel = park => {
 export function desenharMapa(figure, local, parques, limites, signal, view) {
   const initial = !view;
   view ??= {zoom:null, selected:0, route:null, pending:true};
+  const viewport = figure.querySelector(".guia-mapa-superficie");
+  const frame = viewport.querySelector("[data-mapa-quadro]");
+  const picker = figure.querySelector("#parqueSelecionado");
   const canvas = figure.querySelector("canvas");
   const layer = figure.querySelector("[data-mapa-marcadores]");
   const detail = figure.querySelector("[data-mapa-detalhe]");
@@ -47,11 +50,65 @@ export function desenharMapa(figure, local, parques, limites, signal, view) {
     : "↑ Norte · ● Local de busca · Distâncias a pé indisponíveis";
   const tileCount = 2 ** zoom;
   const scale = tileSize * tileCount;
-  const center = zoom <= overview
+  const center = view.center ?? (zoom <= overview
     ? [horizontal, vertical].map(([lower, upper]) => (lower + upper) / 2)
-    : mercator[view.selected + 1];
+    : mercator[view.selected + 1]);
   const [west, north] = center.map((value, axis) => value * scale - [width, height][axis] / 2);
   const project = point => world(point).map((value, axis) => value * scale - [west, north][axis]);
+
+  function redraw() {
+    desenharMapa(figure, local, parques, limites, signal, view);
+  }
+  function pan(x, y) {
+    view.zoom = zoom;
+    view.center = center.map((value, axis) => Math.max(0, Math.min(1,
+      value - [x, y][axis] / scale)));
+    redraw();
+  }
+  figure.querySelector("[data-mapa-recentrar]").onclick = () => {
+    view.zoom = null;
+    view.center = null;
+    redraw();
+  };
+  if(initial)picker.replaceChildren(...parques.map((park, index) =>
+    new Option((index + 1) + ". " + park.nome, String(index))));
+  picker.onchange = () => {
+    view.center = null;
+    view.zoom = null;
+    void selectPark(Number(picker.value), true);
+  };
+
+  let drag;
+  viewport.onpointerdown = event => {
+    if (!event.isPrimary || event.button !== 0 || event.target.closest("button, a")) return;
+    drag = {id:event.pointerId, x:event.clientX, y:event.clientY};
+    viewport.setPointerCapture(event.pointerId);
+  };
+  viewport.onpointermove = event => {
+    if (event.pointerId !== drag?.id) return;
+    frame.style.transform = `translate(${event.clientX - drag.x}px,${event.clientY - drag.y}px)`;
+  };
+  viewport.onpointerup = event => {
+    if (event.pointerId !== drag?.id) return;
+    const dx = event.clientX - drag.x;
+    const dy = event.clientY - drag.y;
+    drag = null;
+    frame.style.transform = "";
+    if (Math.hypot(dx, dy) < 4) return;
+    const box = viewport.getBoundingClientRect();
+    pan(dx * width / box.width, dy * height / box.height);
+  };
+  viewport.onpointercancel = viewport.onlostpointercapture = () => {
+    drag = null;
+    frame.style.transform = "";
+  };
+  viewport.onkeydown = event => {
+    if (event.target !== viewport) return;
+    const offset = {ArrowLeft:[80,0], ArrowRight:[-80,0], ArrowUp:[0,80], ArrowDown:[0,-80]}[event.key];
+    if (!offset) return;
+    event.preventDefault();
+    pan(...offset);
+  };
 
   layer.replaceChildren();
   const occupied = [];
@@ -63,6 +120,7 @@ export function desenharMapa(figure, local, parques, limites, signal, view) {
   function updateDetails() {
     const {selected, route, pending} = view;
     const park = parques[selected];
+    picker.value = String(selected);
     buttons.forEach((button, i) => button.setAttribute("aria-pressed", String(i === selected)));
     const name = document.createElement("strong");
     name.textContent = park.nome;
@@ -76,7 +134,7 @@ export function desenharMapa(figure, local, parques, limites, signal, view) {
     detail.replaceChildren(name, distance, meta);
   }
 
-  async function selectPark(index) {
+  async function selectPark(index, recenter = false) {
     view.controller?.abort();
     const controller = new AbortController();
     view.controller = controller;
@@ -84,6 +142,7 @@ export function desenharMapa(figure, local, parques, limites, signal, view) {
     view.selected = index;
     view.route = null;
     view.pending = true;
+    if(recenter)redraw();
     view.updateDetails();
     view.repaint();
     const route = await consultarTrajeto(local, parques[index], selectionSignal);

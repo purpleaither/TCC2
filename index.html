@@ -365,14 +365,22 @@
         <p class="card-text-small">A localização aproximada é usada nas consultas à Open-Meteo, ao OpenStreetMap e ao serviço de rotas da FOSSGIS, que pode registrar a consulta. O app não salva essa posição.</p>
         <p role="status"></p>
         <figure class="guia-mapa" data-guia-mapa hidden>
-          <div class="guia-mapa-zoom" role="group" aria-label="Zoom do mapa">
+          <div class="form-group">
+            <label class="form-label" for="parqueSelecionado">Escolha um parque</label>
+            <select class="form-input" id="parqueSelecionado"></select>
+          </div>
+          <div class="guia-mapa-zoom" role="group" aria-label="Controles do mapa">
+            <button type="button" data-mapa-recentrar>Recentrar</button>
             <button type="button" data-mapa-reduzir aria-label="Diminuir zoom">−</button>
             <button type="button" data-mapa-ampliar aria-label="Aumentar zoom">+</button>
           </div>
-          <div class="guia-mapa-superficie" aria-label="Mapa dos parques mais próximos" role="group">
-            <div data-mapa-ruas aria-hidden="true" hidden></div>
-            <canvas width="640" height="420" aria-hidden="true"></canvas>
-            <div data-mapa-marcadores></div>
+          <p class="card-text-small" id="ajudaMapaParques">Arraste o mapa ou use as setas do teclado para mover a área visível.</p>
+          <div class="guia-mapa-superficie" aria-label="Mapa dos parques mais próximos" aria-describedby="ajudaMapaParques" role="group" tabindex="0">
+            <div data-mapa-quadro>
+              <div data-mapa-ruas aria-hidden="true" hidden></div>
+              <canvas width="640" height="420" aria-hidden="true"></canvas>
+              <div data-mapa-marcadores></div>
+            </div>
             <a class="guia-mapa-creditos" href="https://www.openstreetmap.org/copyright" rel="noreferrer">© OpenStreetMap</a>
           </div>
           <figcaption>
