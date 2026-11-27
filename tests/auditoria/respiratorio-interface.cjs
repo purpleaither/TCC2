@@ -19,6 +19,11 @@ window.cenario = dominio => {
   user={id:"ficticio"}; profile={role:"paciente"}; plans=[{clinical_domain:dominio}]; environmentalColumnsAvailable=true;
   menu(); navigate("sintomas");
 };
+window.cenarioParques = indicado => {
+  plans=[{plan_exercises:[{id:"ex-ficticio",exercise_name:"Elevação de braços",
+    exercise_source:"manual",indicacao_ar_livre:indicado}]}];
+  renderPatientPlans();
+};
 window.cenarioAmbiente = (salvo, ar) => {
   records=salvo?[{recorded_at:new Date().toISOString(),dyspnea_rest:6,
     weather_city:"Brasília",weather_temperature:26,weather_humidity:29,weather_pressure:890,
@@ -92,6 +97,11 @@ window.cenarioProf = () => {
     assert.match(await p.locator('#ambienteAr').innerText(),/Ozônio/);
     await auditar('#ambientePosRegistro');
     console.log('Navegador e axe-core: card após envio, com e sem qualidade do ar');
+    await p.evaluate(()=>window.cenarioParques(true));
+    assert.equal(await p.locator('#verParquesProximos').getAttribute('hidden'),null);
+    await p.evaluate(()=>window.cenarioParques(false));
+    assert.notEqual(await p.locator('#verParquesProximos').getAttribute('hidden'),null);
+    assert.equal(await p.getByText('Adicionar caminhada ao ar livre',{exact:true}).count(),0);
     await p.evaluate(()=>window.cenarioProf());
     await p.evaluate(()=>window.cenarioTabela());
     assert.match(await p.locator('.tabela-longitudinal tbody').innerText(),/Ressecamento/);

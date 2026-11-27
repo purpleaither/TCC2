@@ -1129,12 +1129,10 @@ function backFromExerciseSource(){
     $("nomePlanoProf").focus();
   }
 }
-function addManualExerciseFromOptions(outdoor=false){
+function addManualExerciseFromOptions(){
   if(!isProfessional())return;
   const respiratory=$("dominioPlanoProf").value==="respiratorio";
-  if(outdoor&&respiratory)return message("A caminhada ao ar livre está disponível em planos musculoesqueléticos ou mistos.",true);
-  addExercise(outdoor ? {exercise_name:"Caminhada ao ar livre", exercise_source:WALK_SOURCE, indicacao_ar_livre:true}
-    : respiratory ? {domain:"respiratorio"} : undefined);
+  addExercise(respiratory ? {domain:"respiratorio"} : undefined);
   openExerciseConfiguration($("itensPlanoProf").lastElementChild);
 }
 function openExerciseBankFromOptions(){
