@@ -71,7 +71,7 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
       status.textContent = "Localização indisponível. Escolha uma região do DF.";
       return;
     }
-    status.textContent = "Aguardando permissão para acessar sua localização…";
+    status.textContent = "Autorize o acesso no aviso do navegador ou escolha uma região.";
     navigator.geolocation.getCurrentPosition(({coords}) => {
       if (!signal.aborted) void search(arredondarLocalizacao(coords.latitude, coords.longitude), signal);
     }, () => {

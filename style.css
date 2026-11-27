@@ -437,8 +437,11 @@ body {
   margin-bottom: 12px;
 }
 
+#page-historico > .page-title,
+#page-historico > .heatmap-header { margin-block-end: 1.25rem; }
+.historico-conselho { margin-block-start: 1.25rem; }
 #page-historico [hidden] { display: none; }
-.historico-botoes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; margin-block-end: var(--espaco-grupo); }
+.historico-botoes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; margin-block-end: 1.25rem; }
 .historico-botoes .btn { margin: 0; min-height: 44px; padding-inline: .35rem; border: 1px solid var(--acao); }
 .historico-botoes .btn-outline { color: var(--titulo); border-color: var(--titulo); }
 .historico-botoes .btn-outline:hover { background: var(--superficie-suave); }
@@ -1438,16 +1441,14 @@ button.guia-mapa-marcador { cursor: pointer; }
   #tituloParques { text-align: center; }
 }
 
-.patient-exercise-metric-header { position: relative; padding-inline-end: 2.2rem; }
+.patient-exercise-metrics { position: relative; }
+.patient-exercise-metric-header { display: flex; align-items: start; justify-content: space-between; gap: .25rem; }
 .patient-exercise-metric-help summary {
-  position: absolute;
-  inset-block-start: 0;
-  inset-inline-end: 0;
   display: grid;
   place-items: center;
   list-style: none;
-  inline-size: 2rem;
-  block-size: 2rem;
+  inline-size: 24px;
+  block-size: 24px;
   border: 1px solid var(--borda);
   border-radius: 50%;
   background: var(--superficie);
@@ -1456,10 +1457,16 @@ button.guia-mapa-marcador { cursor: pointer; }
 }
 .patient-exercise-metric-help summary::-webkit-details-marker { display: none; }
 .patient-exercise-metric-help p {
-  margin: .5rem -2.2rem .5rem 0;
-  padding: .55rem;
-  border-radius: .4rem;
+  position: absolute;
+  inset-inline: 0;
+  z-index: 1;
+  margin: .35rem 0 0;
+  padding: .65rem;
+  border: 1px solid var(--borda);
+  border-radius: .65rem;
   background: var(--superficie);
+  color: var(--texto);
+  box-shadow: 0 .25rem .75rem #0003;
 }
 .demo-carregando { margin: 1rem auto; }
 

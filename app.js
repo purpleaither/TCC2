@@ -180,6 +180,14 @@ function limitesHistorico() {
   return {minimo, maximo};
 }
 
+const conselhosHistorico = [
+  ['Cada sessão conta', 'Valorize os exercícios que você fez no ritmo combinado com seu fisioterapeuta.'],
+  ['Pausas também fazem parte', 'Se você precisou descansar ou a rotina mudou, converse com seu fisioterapeuta sobre como retomar.'],
+  ['Observe como você se sente ao se mexer', 'Se sentir uma dor súbita, diferente ou que aumenta durante o exercício, pause e conte ao seu fisioterapeuta.'],
+  ['Observe como você se sente em dias de clima diferente', 'Se notar mais rigidez em certos dias, anote quando ela apareceu e como você se sentiu. Leve esse registro ao atendimento.'],
+  ['Prepare suas dúvidas para o atendimento', 'Reveja seus registros e anote quais exercícios pareceram mais fáceis e quais causaram desconforto.']
+];
+
 function abrirHistorico() {
   mesAtual = limitesHistorico().maximo;
   mostrarCalendarioHistorico(true);
@@ -196,7 +204,12 @@ function gerarHeatmap() {
   document.getElementById('historicoMesAnterior').disabled = mesAtual <= minimo;
   document.getElementById('historicoMesSeguinte').disabled = mesAtual >= maximo;
 
-  window.AppAuth?.renderWorkoutProgress();
+  const hoje = new Date();
+  const diaLocal = Date.UTC(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()) / 86400000;
+  const [titulo, conselho] = conselhosHistorico[diaLocal % conselhosHistorico.length];
+  document.getElementById('historicoConselhoTitulo').textContent = titulo;
+  document.getElementById('historicoConselhoTexto').textContent = conselho;
+  window.AppAuth?.renderWorkoutProgress(hoje);
   const ano = mesAtual.getFullYear();
   const mes = mesAtual.getMonth();
   const diaNoMes = data => {
@@ -294,8 +307,8 @@ function verificarRegistroHoje() {
   var botao = document.getElementById('btnRegistrarSintomas');
   if (botao) {
     botao.textContent = obterRegistroHoje(new Date())
-      ? 'Ver meu registro de sintomas'
-      : 'Registrar sintomas';
+      ? 'Ver como me senti hoje'
+      : 'Registrar como me sinto';
   }
 }
 

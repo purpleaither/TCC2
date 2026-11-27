@@ -624,6 +624,7 @@ function renderPatientPlans(animar=false){
     const tile=el("div",undefined,"patient-exercise-metric");
     const header=el("div",undefined,"patient-exercise-metric-header");
     const help=el("details",undefined,"patient-exercise-metric-help");
+    help.setAttribute("name","ajuda-medidas-exercicio");
     const question=el("summary","?");
     question.setAttribute("aria-label","O que significa " + label.toLowerCase() + "?");
     help.append(question,el("p",exerciseMetricHelp[label]));

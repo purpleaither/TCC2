@@ -116,7 +116,7 @@
 
     <section id="cardRegistroDiario" aria-labelledby="registroDiarioTitulo">
       <h2 class="card-title" id="registroDiarioTitulo">Registro de sintomas</h2>
-      <button type="button" class="btn" id="btnRegistrarSintomas" onclick="abrirRegistroDiario()">Registrar sintomas</button>
+      <button type="button" class="btn" id="btnRegistrarSintomas" onclick="abrirRegistroDiario()">Registrar como me sinto</button>
     </section>
 
     <section aria-labelledby="homeExerciciosTitulo">
@@ -142,7 +142,7 @@
   <!-- ===== TELA 2.0: REGISTRO DE SINTOMAS ===== -->
   <div class="page" id="page-sintomas">
 
-    <h1 class="page-title">Registrar sintomas</h1>
+    <h1 class="page-title">Registrar como me sinto</h1>
     <p class="page-subtitle" id="diarioEtapa">Etapa 1 de 3</p>
 
     <section class="card" data-etapa-diario aria-labelledby="dorParadoComparacaoTitulo">
@@ -291,6 +291,11 @@
         <div class="heatmap-grid" id="heatmapGrid"></div>
       </div>
     </section>
+
+    <aside class="card historico-conselho" aria-labelledby="historicoConselhoTitulo">
+      <h2 class="card-title" id="historicoConselhoTitulo"></h2>
+      <p class="card-text" id="historicoConselhoTexto"></p>
+    </aside>
 
     <!-- Bottom sheet: Clima do dia selecionado -->
     <div class="bottom-sheet" id="climaSheet">
