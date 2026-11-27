@@ -1265,6 +1265,14 @@ button.heatmap-cell:focus-visible{outline:3px solid var(--titulo, #003366);outli
   padding: 4px;
   list-style: none;
 }
+.monitoring-bars-weekly {
+  grid-auto-flow: row;
+  grid-template: none / repeat(auto-fit, minmax(min(100%, 6em), 1fr));
+  grid-auto-rows: auto 6rem auto;
+  overflow: visible;
+  row-gap: 6px;
+}
+.monitoring-bars-weekly > .monitoring-bar { grid-row: span 3; }
 .monitoring-bar {
   display: grid;
   grid-row: 1 / -1;

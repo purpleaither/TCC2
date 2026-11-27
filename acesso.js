@@ -280,7 +280,7 @@ async function loadPatientData() {
     let workouts = supabase.from("workout_sessions")
       .select(professional ? "completed_at,exercises" : "id,patient_id,completed_at,exercises")
       .eq("patient_id", selectedPatient).order("completed_at", { ascending: false }).limit(500);
-    if (professional) workouts = workouts.gte("completed_at", monitoringWeeks(84)[0].toISOString());
+    if (professional) workouts = workouts.gte("completed_at", monitoringWeeks(90)[0].toISOString());
     const workoutResponse = await workouts;
     if (version !== patientLoadVersion) return;
     plans = loadedPlans;
@@ -568,8 +568,11 @@ function renderProfessionalPlans(){
 }
 function monitoringWeeks(days){
   const today = new Date();
-  return Array.from({length: days / 7 + 1}, (_, index) => days - 1 - index * 7).map(offset =>
-    new Date(today.getFullYear(), today.getMonth(), today.getDate() - offset));
+  const weeks = Math.ceil(days / 7);
+  return Array.from({length: weeks + 1}, (_, index) => {
+    const offset = Math.min(days, (weeks - index) * 7);
+    return new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1 - offset);
+  });
 }
 
 function monitoringBars(rows, maximum, title){
@@ -593,7 +596,11 @@ function monitoringBars(rows, maximum, title){
 
 function monitoringTopic(label, panel){
   const details = el("details", undefined, "monitoring-topic");
-  details.append(el("summary", label), panel);
+  const summary = el("summary", label);
+  details.append(summary, panel);
+  details.addEventListener("toggle", () => {
+    summary.textContent = details.open ? label.replace(/^Ver /, "Ocultar ") : label;
+  });
   return details;
 }
 
@@ -639,7 +646,7 @@ function renderProfessionalMonitoring(windows, periodRecords){
       select.append(option);
     }
     const filter = el("div", undefined, "form-group");
-    const label = el("label", "Plano", "form-label");
+    const label = el("label", "Escolha o plano", "form-label");
     label.htmlFor = select.id;
     filter.append(label, select);
     const output = el("div");
@@ -658,12 +665,15 @@ function renderProfessionalMonitoring(windows, periodRecords){
         return { label: shortDate.format(windows[index]) + " a " + shortDate.format(lastDay),
           text: count + (count === 1 ? " treino" : " treinos"), value: count };
       });
-      output.replaceChildren(monitoringBars(rows, Math.max(1, ...counts), "Treinos concluídos por período"));
+      const chart = monitoringBars(rows, Math.max(1, ...counts), "Treinos concluídos por período");
+      chart.classList.add("monitoring-bars-weekly");
+      chart.removeAttribute("tabindex");
+      output.replaceChildren(chart);
     };
     select.addEventListener("change", showSessions);
     workoutCard.append(filter, output);
     if (professionalWorkouts.length === 500) {
-      workoutCard.append(el("p", "O gráfico usa até os 500 treinos mais recentes dos últimos 84 dias.", "card-text-small"));
+      workoutCard.append(el("p", "O gráfico usa até os 500 treinos mais recentes dos últimos 90 dias.", "card-text-small"));
     }
     showSessions();
   }
