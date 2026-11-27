@@ -43,10 +43,10 @@ function isAuthenticated() { return !!(user && profile); }
 function isProfessional() { return isAuthenticated() && profile.role === "fisioterapeuta"; }
 function homePage() { return isProfessional() ? "profissional" : "inicio"; }
 function message(value,isError=false) {
-  text("loginStatus",value);
+  if(!isAuthenticated()){text("loginStatus",value);return;}
   const flash = $("authFlash");
   if(flash) {
-    flash.hidden = !isAuthenticated();
+    flash.hidden = false;
     flash.textContent = value;
     flash.style.background = isError ? "var(--fundo-alerta)" : "var(--superficie-verde)";
     flash.style.color = isError ? "var(--erro)" : "var(--titulo)";
@@ -65,6 +65,11 @@ function navigate(page) {
       ? ["profissional","planos-prof","exercise-source-prof","exercise-bank-prof","editor-prof","registros-prof"]
       : ["inicio","sintomas","historico","orientacoes","exercicios","contatos"];
     if(!allowed.includes(page)) page=homePage();
+  }
+  if(!$("page-"+page).classList.contains("active")) {
+    const flash=$("authFlash");
+    flash.hidden=true;
+    flash.textContent="";
   }
   document.querySelectorAll(".page").forEach(n=>n.classList.toggle("active",n.id==="page-"+page));
   mostrarCabecalho(page!=="login");
