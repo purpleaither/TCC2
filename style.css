@@ -804,13 +804,13 @@ button.heatmap-cell:hover {
 .demo-exercicio-item{border:1px solid var(--linha, #dfe7e2);border-radius:6px;padding:12px;margin-bottom:12px;background:var(--superficie-suave, #fafcfa)}
 .demo-exercicio-item .form-group{margin-bottom:10px}
 .demo-exercicio-item .form-input{min-width:0}
-.demo-grid-parametros{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.demo-grid-parametros{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,calc(10 * var(--fonte-minima))),1fr));gap:10px}
 .demo-acoes{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
 .demo-acoes .btn{width:auto;margin-top:0;flex:1}
 .demo-detalhe{background:var(--superficie-suave, #f6faf7);border-left:3px solid var(--destaque, #006633);padding:10px;margin:9px 0;line-height:var(--entrelinha-texto);font-size:var(--fonte-minima)}
 .demo-vazio{color:var(--texto-suave, #69756e);font-size:var(--fonte-minima);padding:12px 0}
 #page-profissional select,#page-planos-prof select,#page-registros-prof select{background:var(--superficie, #fff)}
-@media(max-width:340px){.demo-grid-parametros{grid-template-columns:1fr}.demo-acoes{flex-direction:column}}
+@media(max-width:340px){.demo-acoes{flex-direction:column}}
 
 .bank-result{margin-top:12px}
 .bank-result .card-title{font-size:var(--fonte-minima);line-height:var(--entrelinha-titulo)}
@@ -833,7 +833,7 @@ button.heatmap-cell:hover {
 #page-exercicios .patient-exercise-title{font-size:clamp(1.3125rem,calc(5vw * var(--escala-texto)),1.6875rem);line-height:var(--entrelinha-titulo);color:var(--titulo, #003366);margin:0 0 14px}
 #page-exercicios .patient-exercise-video{margin:0 0 16px}
 #page-exercicios .patient-exercise-video video{width:100%;max-height:320px;aspect-ratio:16 / 9;background:var(--superficie-suave, #f2f5f3);border-radius:10px;object-fit:contain}
-#page-exercicios .patient-exercise-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0 16px}
+#page-exercicios .patient-exercise-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,calc(7 * var(--fonte-minima))),1fr));gap:10px;margin:12px 0 16px}
 #page-exercicios .patient-exercise-metric{padding:14px 12px;background:var(--superficie-suave, #f0f8f3);border:1px solid var(--linha, #cfe2d5);border-radius:10px;min-width:0}
 #page-exercicios .patient-exercise-metric-label{display:block;font-size:var(--fonte-minima);font-weight:600;color:var(--texto-suave, #375946);line-height:var(--entrelinha-rotulo);margin-block-end:var(--espaco-valor-rotulo)}
 #page-exercicios .patient-exercise-metric-value{display:block;font-size:clamp(var(--fonte-minima),calc(5vw * var(--escala-texto)),1.625rem);line-height:var(--entrelinha-valor);font-weight:800;color:var(--titulo, #003366);overflow-wrap:anywhere}
@@ -1584,11 +1584,6 @@ button.guia-mapa-marcador { cursor: pointer; }
   .page { padding-block-start: 24px; }
   :is(#page-sintomas, #page-editor-prof, #page-exercise-source-prof) { max-inline-size: 880px; }
   :is(#page-registros-prof, #page-exercise-bank-prof) { max-inline-size: 1200px; }
-  .inicio-acoes {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-  }
   #parquesDialog:has(.guia-mapa:not([hidden])) { inline-size: min(1120px, calc(100% - 48px)); }
   .guia-mapa:not([hidden]) {
     display: grid;
@@ -1599,3 +1594,16 @@ button.guia-mapa-marcador { cursor: pointer; }
   .guia-mapa > :is(.form-group, .guia-orientacao) { grid-column: 1 / -1; margin: 0; }
   .guia-mapa figcaption { padding: 0; }
 }
+
+
+@media (min-width: 540px) {
+  .inicio-acoes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, calc(15 * var(--fonte-minima))), 1fr)); gap: 1rem; }
+}
+#exercisebankResults {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, calc(15 * var(--fonte-minima))), 1fr));
+  gap: 1rem;
+  min-inline-size: 0;
+}
+#exercisebankResults > .bank-result { margin: 0; }
+#exercisebankResults > :not(.bank-result) { grid-column: 1 / -1; }
