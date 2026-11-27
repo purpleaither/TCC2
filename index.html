@@ -359,9 +359,13 @@
           </select>
         </div>
         <button type="button" class="btn btn-outline">Usar minha localização aproximada</button>
-        <p class="card-text-small">A localização aproximada é usada nas consultas à Open-Meteo e ao OpenStreetMap. O app não salva essa posição.</p>
+        <p class="card-text-small">A localização aproximada é usada nas consultas à Open-Meteo, ao OpenStreetMap e ao serviço de rotas da FOSSGIS, que pode registrar a consulta. O app não salva essa posição.</p>
         <p role="status"></p>
         <figure class="guia-mapa" data-guia-mapa hidden>
+          <div class="guia-mapa-zoom" role="group" aria-label="Zoom do mapa">
+            <button type="button" data-mapa-reduzir aria-label="Diminuir zoom">−</button>
+            <button type="button" data-mapa-ampliar aria-label="Aumentar zoom">+</button>
+          </div>
           <div class="guia-mapa-superficie" aria-label="Mapa dos parques mais próximos" role="group">
             <div data-mapa-ruas aria-hidden="true" hidden></div>
             <canvas width="640" height="420" aria-hidden="true"></canvas>
@@ -371,7 +375,7 @@
           <figcaption>
             <div data-mapa-detalhe aria-live="polite"></div>
             <p class="card-text-small" data-mapa-status role="status"></p>
-            <small>↑ Norte · ● Local de busca · 1 Mais próximo</small>
+            <small data-mapa-legenda></small>
           </figcaption>
         </figure>
         <p data-guia-parques-status></p>
@@ -385,7 +389,7 @@
         </details>
         <details>
           <summary>Sobre os dados</summary>
-          <p class="card-text-small">Estimativas ambientais da Open-Meteo e do CAMS. O CO₂ é uma estimativa regional em partes por milhão (ppm). Distâncias em linha reta. Dados de parques do IPEDF, do Geoportal DF e do <a href="https://www.openstreetmap.org/copyright" rel="noreferrer">OpenStreetMap</a>.</p>
+          <p class="card-text-small">Estimativas ambientais da Open-Meteo e do CAMS. O CO₂ é uma estimativa regional em partes por milhão (ppm). Rotas estimadas a pé até o ponto mapeado do parque, que pode ficar longe da entrada. O mapa pode omitir obstáculos ou trechos sem calçada. Rotas da <a href="https://routing.openstreetmap.de/about.html">FOSSGIS</a>. <a href="https://www.openstreetmap.org/fixthemap">Corrigir o mapa</a>. Dados de parques do IPEDF, do Geoportal DF e do <a href="https://www.openstreetmap.org/copyright" rel="noreferrer">OpenStreetMap</a>.</p>
         </details>
       </section>
     </template>

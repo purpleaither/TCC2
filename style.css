@@ -1368,3 +1368,15 @@ button.guia-mapa-marcador { cursor: pointer; }
   z-index: 1;
 }
 .guia-mapa-marcador:focus-visible { z-index: 2; }
+
+.guia-mapa-zoom { display: flex; justify-content: flex-end; gap: .45rem; margin-block-end: .5rem; }
+.guia-mapa-zoom button {
+  min-inline-size: 44px;
+  min-block-size: 44px;
+  border: 1px solid var(--borda);
+  border-radius: .5rem;
+  color: var(--titulo);
+  background: var(--superficie);
+  font: inherit;
+}
+.guia-mapa-zoom button:disabled { opacity: .6; }

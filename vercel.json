@@ -17,7 +17,7 @@
         },
         {
           "key": "Content-Security-Policy-Report-Only",
-          "value": "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'sha256-OenIqg8fq5aqOjNBsYwVlsP1zVMyIiklyXz7AiWW5Qc='; script-src-attr 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.open-meteo.com https://air-quality-api.open-meteo.com https://overpass-api.de; img-src 'self' data: https://tile.openstreetmap.org https://*.exercisebank.net https://wger.de; media-src 'self' https://*.exercisebank.net https://wger.de; font-src 'self'; form-action 'self'; frame-src 'none'"
+          "value": "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'sha256-OenIqg8fq5aqOjNBsYwVlsP1zVMyIiklyXz7AiWW5Qc='; script-src-attr 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.open-meteo.com https://air-quality-api.open-meteo.com https://overpass-api.de https://routing.openstreetmap.de; img-src 'self' data: https://tile.openstreetmap.org https://*.exercisebank.net https://wger.de; media-src 'self' https://*.exercisebank.net https://wger.de; font-src 'self'; form-action 'self'; frame-src 'none'"
         }
       ]
     }

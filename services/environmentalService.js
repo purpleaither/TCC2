@@ -1,6 +1,7 @@
 const FORECAST = "https://api.open-meteo.com/v1/forecast";
 const AIR_QUALITY = "https://air-quality-api.open-meteo.com/v1/air-quality";
 const OVERPASS = "https://overpass-api.de/api/interpreter";
+const PEDESTRIAN = "https://routing.openstreetmap.de/routed-foot/table/v1/driving/";
 const CO2_REFERENCIA_EDUCATIVA = 500;
 
 export function arredondarLocalizacao(latitude, longitude) {
@@ -51,7 +52,7 @@ export async function consultarParques(local, signal) {
     json(OVERPASS, {method: "POST", body: new URLSearchParams({data: consulta})}, signal)
       .then(result => result.elements.map(({tags, center}) => ({
         nome: tags?.name, latitude: center?.lat, longitude: center?.lon,
-        acessibilidade: tags?.wheelchair, piso: tags?.surface, fonte: "OpenStreetMap"
+        acessibilidade: tags?.wheelchair, piso: tags?.surface, iluminacao: tags?.lit, fonte: "OpenStreetMap"
       })).filter(p => p.nome?.trim() && Number.isFinite(p.latitude) && Number.isFinite(p.longitude)))
       .catch(() => [])
   ]);
@@ -66,9 +67,31 @@ export async function consultarParques(local, signal) {
     if (similar) {
       similar.acessibilidade ??= parque.acessibilidade;
       similar.piso ??= parque.piso;
+      similar.iluminacao ??= parque.iluminacao;
     } else unicos.push({...parque, distancia: distanciaKm(local, parque)});
   }
-  return unicos.sort((a, b) => a.distancia - b.distancia).slice(0, 5);
+  const candidatos = unicos.sort((a, b) => a.distancia - b.distancia).slice(0, 12);
+  if (!signal?.aborted && candidatos.length) await atribuirDistanciasAPe({latitude, longitude}, candidatos, signal);
+  return candidatos.sort((a, b) => (a.distanciaAPe ?? Infinity) - (b.distanciaAPe ?? Infinity) || a.distancia - b.distancia).slice(0, 5);
+}
+
+let ultimaRota = -Infinity;
+async function atribuirDistanciasAPe(origem, parques, signal) {
+  const espera = Math.max(0, 1000 - (performance.now() - ultimaRota));
+  if (espera) await new Promise(resolve => setTimeout(resolve, espera));
+  if (signal?.aborted) return;
+  ultimaRota = performance.now();
+  const coords = [origem, ...parques].map(p => p.longitude + "," + p.latitude).join(";");
+  const destinations = parques.map((_, index) => index + 1).join(";");
+  const params = new URLSearchParams({sources:"0", destinations, annotations:"distance", generate_hints:"false"});
+  const data = await json(PEDESTRIAN + coords + "?" + params, {referrerPolicy:"origin"}, signal).catch(() => null);
+  const pertoDoPonto = point => Number.isFinite(point?.distance) && point.distance <= 150;
+  if (data?.code !== "Ok" || !pertoDoPonto(data.sources?.[0])) return;
+  parques.forEach((parque, index) => {
+    const metros = data.distances?.[0]?.[index];
+    if (Number.isFinite(metros) && metros >= 0 && pertoDoPonto(data.destinations?.[index]))
+      parque.distanciaAPe = metros;
+  });
 }
 
 export async function consultarAmbiente(local, signal) {
