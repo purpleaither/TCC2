@@ -687,19 +687,19 @@ function renderPatientPlans(animar=false){
 
   if(assigned.length>1){
     const actions=el("div",undefined,"demo-acoes");
-    const previous=el("button","Voltar","btn btn-outline");
-    previous.type="button";
-    previous.disabled=currentPatientExercise===0;
-    previous.addEventListener("click",()=>{
-      if(currentPatientExercise>0){currentPatientExercise--;renderPatientPlans(true);}
-    });
     const next=el("button","Próximo","btn");
     next.type="button";
     next.disabled=currentPatientExercise===assigned.length-1;
     next.addEventListener("click",()=>{
       if(currentPatientExercise<assigned.length-1){currentPatientExercise++;renderPatientPlans(true);}
     });
-    actions.append(next,previous);
+    actions.append(next);
+    if(currentPatientExercise>0){
+      const previous=el("button","Voltar","btn btn-outline");
+      previous.type="button";
+      previous.addEventListener("click",()=>{currentPatientExercise--;renderPatientPlans(true);});
+      actions.append(previous);
+    }
     card.append(actions);
   }
   if(currentPatientExercise===assigned.length-1){
