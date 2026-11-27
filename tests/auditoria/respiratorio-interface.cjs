@@ -133,6 +133,8 @@ window.cenarioProf = () => {
       await p.getByRole('button',{name:categoria,exact:true}).click();
       assert.equal(await p.locator('#dominioPlanoProf').inputValue(),dominio);
       await p.locator('#page-exercise-source-prof.active').waitFor();
+      if(dominio==='misto')
+        await p.getByRole('button',{name:'Escolher exercícios ortopédicos e respiratórios',exact:true}).waitFor();
       if(dominio==='respiratorio'){
         await p.getByRole('button',{name:'Escolher na biblioteca respiratória'}).click();
         assert.equal(await p.locator('#exercisebankResults .bank-result').count(),5);

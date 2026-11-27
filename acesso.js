@@ -96,8 +96,10 @@ function navigate(page) {
   fecharClimaSheet();
   if(page==="planos-prof")renderProfessionalPlans();
   if(page==="editor-prof")updatePlanEditorSummary();
-  if(page==="exercise-source-prof")text("abrirBibliotecaPlano",$("dominioPlanoProf").value==="respiratorio"
-    ?"Escolher na biblioteca respiratória":"Escolher na ExerciseBank");
+  if(page==="exercise-source-prof")text("abrirBibliotecaPlano",{
+    respiratorio:"Escolher na biblioteca respiratória",
+    misto:"Escolher exercícios ortopédicos e respiratórios"
+  }[$("dominioPlanoProf").value] ?? "Escolher na ExerciseBank");
   if(page==="exercise-bank-prof"){
     $("exercisebankResults").replaceChildren();
     text("exercisebankStatus","Selecione os filtros e clique em Buscar.");
