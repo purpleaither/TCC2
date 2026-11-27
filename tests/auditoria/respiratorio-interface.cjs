@@ -142,6 +142,16 @@ window.cenarioProf = () => {
     assert.equal(await dialog.getByLabel('Sustento inspiratório (segundos)').inputValue(),'3');
     assert.equal(await dialog.getByLabel('Descanso entre séries (segundos)').inputValue(),'90');
     await auditar('#exerciseConfigDialog');
+    assert.equal(await dialog.getByLabel('Nome do exercício').inputValue(),'Inspiração Fracionada em Tempos');
+    const concluir=dialog.getByRole('button',{name:'Concluir inserção'});
+    await concluir.click();
+    assert.equal(await dialog.locator('#erroConfigExercicio').innerText(),'Informe a frequência do exercício.');
+    assert.equal(await p.evaluate(()=>document.activeElement.name),'frequency');
+    await dialog.getByLabel(/Frequência/).fill('2x ao dia');
+    await concluir.click();
+    await dialog.waitFor({state:'hidden'});
+    assert.equal(await p.locator('#itensPlanoProf [name="customName"]').inputValue(),'Inspiração Fracionada em Tempos');
+
     console.log('Navegador e axe-core: biblioteca e configuração respiratória');
 
   } finally {await browser.close();}

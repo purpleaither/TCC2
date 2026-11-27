@@ -1159,12 +1159,11 @@ function finishExerciseInsertion(){
   if(!pendingExerciseRow)return;
   const row=pendingExerciseRow;
   const exercise=readExercise(row);
-  if(!validExercise(exercise)){
-    text("erroConfigExercicio",exercise.exercise_source===WALK_SOURCE
-      ?"Informe o nome da caminhada, a duração e a frequência."
-      :exercise.domain==="respiratorio"
-      ?"Informe o exercício, as séries, os ciclos respiratórios e a frequência. Use segundos inteiros nos tempos opcionais."
-      :"Informe o exercício, as séries, as repetições ou duração e a frequência.");
+  const erro=exerciseError(exercise);
+  if(erro){
+    const [campo, mensagem]=erro;
+    text("erroConfigExercicio",mensagem);
+    row.querySelector('[name="'+campo+'"]').focus();
     return;
   }
   const remove=row.querySelector("button.btn-outline");
@@ -1294,13 +1293,25 @@ function readExercise(row,position){
     position
   };
 }
-function validExercise(exercise){
-  if(exercise.exercise_name.length<2||!exercise.frequency)return false;
-  if(exercise.exercise_source===WALK_SOURCE)return !!exercise.duration;
-  if(exercise.domain==="respiratorio" && (!/^[1-9]\d{0,2}$/.test(exercise.repetitions) ||
-    ![exercise.rest_seconds,exercise.inspiratory_hold_seconds].every(n=>n===null||Number.isInteger(n)&&n>=0&&n<=2147483647)))return false;
-  return Number.isInteger(exercise.series)&&exercise.series>=1&&exercise.series<=20&&
-    !!(exercise.repetitions||exercise.duration);
+function exerciseError(exercise){
+  if(exercise.exercise_name.length<2)return ["customName","Informe o nome do exercício."];
+  if(!exercise.frequency)return ["frequency","Informe a frequência do exercício."];
+  if(exercise.exercise_source===WALK_SOURCE)
+    return exercise.duration?null:["duration","Informe a duração da caminhada."];
+  if(!Number.isInteger(exercise.series)||exercise.series<1||exercise.series>20)
+    return ["series","Informe de 1 a 20 séries."];
+  if(exercise.domain==="respiratorio"){
+    if(!/^[1-9]\d{0,2}$/.test(exercise.repetitions))
+      return ["repetitions","Informe de 1 a 999 ciclos respiratórios."];
+    for(const [campo, rotulo] of [["rest_seconds","o descanso entre séries"],["inspiratory_hold_seconds","o sustento inspiratório"]]){
+      const valor=exercise[campo];
+      if(valor!==null&&(!Number.isInteger(valor)||valor<0||valor>2147483647))
+        return [campo,"Informe "+rotulo+" em segundos inteiros e não negativos."];
+    }
+  }else if(!exercise.repetitions&&!exercise.duration){
+    return ["repetitions","Informe as repetições ou a duração do exercício."];
+  }
+  return null;
 }
 async function savePlan(event){
   if(event)event.preventDefault();
@@ -1309,7 +1320,7 @@ async function savePlan(event){
   const title=$("nomePlanoProf").value.trim();
   const items=Array.from($("itensPlanoProf").children,readExercise);
   if(title.length<2||!items.length)return message("Informe um nome e pelo menos um exercício.",true);
-  if(!items.every(validExercise))
+  if(items.some(exerciseError))
     return message("Verifique os campos de cada exercício antes de salvar.",true);
   const clinical_domain=$("dominioPlanoProf").value;
   if(clinical_domain!=="misto"&&items.some(item=>item.domain!==clinical_domain))
