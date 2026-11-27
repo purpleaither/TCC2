@@ -1269,6 +1269,41 @@ button.heatmap-cell:focus-visible{outline:3px solid var(--titulo, #003366);outli
   }
 }
 
+.periodo-acompanhamento {
+  border: 0;
+  padding: 0;
+  min-inline-size: 0;
+  margin: 0 0 var(--espaco-grupo);
+}
+.periodo-opcoes { display: flex; flex-wrap: wrap; gap: .4rem; }
+.periodo-opcoes label {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  gap: .35em;
+  min-block-size: 44px;
+  padding: .35em .65em;
+  border: 1px solid var(--borda);
+  border-radius: .5rem;
+  cursor: pointer;
+}
+.periodo-opcoes input { margin: 0; accent-color: var(--destaque); }
+.periodo-opcoes label:has(:checked) { border-color: var(--destaque); font-weight: 700; }
+.periodo-opcoes label:has(:focus-visible) { outline: 2px solid var(--titulo); outline-offset: 2px; }
+#graficosRegistrosProf .monitoring-topic > summary::before {
+  flex-basis: .48em;
+  block-size: .48em;
+  border: solid currentColor;
+  border-width: 0 2px 2px 0;
+  background: none;
+  transform: rotate(-45deg);
+  align-self: center;
+}
+#graficosRegistrosProf .monitoring-topic[open] > summary::before { transform: rotate(45deg); }
+.mapa-aplicativos a { text-decoration: none; color: var(--titulo); border-color: var(--titulo); }
+.mapa-aplicativos a:hover { background: var(--superficie-suave); }
+
 /* Acompanhamento na área do fisioterapeuta */
 .monitoring-topic {
   margin-block-end: var(--espaco-grupo);

@@ -16,6 +16,8 @@ export function desenharMapa(figure, local, parques, limites, signal, view) {
   const canvas = figure.querySelector("canvas");
   const layer = figure.querySelector("[data-mapa-marcadores]");
   const detail = figure.querySelector("[data-mapa-detalhe]");
+  const google = figure.querySelector("[data-mapa-google]");
+  const waze = figure.querySelector("[data-mapa-waze]");
   const ctx = canvas.getContext("2d");
   const {width, height} = canvas;
   const base = figure.querySelector("[data-mapa-ruas]");
@@ -208,6 +210,12 @@ export function desenharMapa(figure, local, parques, limites, signal, view) {
     const {selected, route, pending} = view;
     const park = parques[selected];
     picker.value = String(selected);
+    const {latitude, longitude} = park.entrada ?? park;
+    const destino = latitude + "," + longitude;
+    google.href = "https://www.google.com/maps/dir/?" + new URLSearchParams({
+      api:"1", destination:destino, travelmode:"walking"
+    });
+    waze.href = "https://www.waze.com/ul?" + new URLSearchParams({ll:destino, navigate:"yes"});
     buttons.forEach((button, i) => button.setAttribute("aria-pressed", String(i === selected)));
     const name = document.createElement("strong");
     name.textContent = park.nome;

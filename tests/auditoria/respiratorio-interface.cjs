@@ -30,13 +30,28 @@ window.cenarioAmbiente = (salvo, ar) => {
     ...(ar?{pm2_5:12,pm10:20,ozone:35}:{})}]:[];
   navigate("inicio");
 };
-window.cenarioTabela = () => {
-  const now=new Date();
-  const data=now.toISOString();
+window.cenarioAcompanhamento = () => {
+  user={id:"prof-ficticio"}; profile={role:"fisioterapeuta"}; patientId="paciente-ficticio";
+  patients=[{id:patientId,display_name:"Paciente fictício"}];
+  plans=[{clinical_domain:"misto"}];
+  const data=new Date().toISOString();
   professionalWorkouts=[{completed_at:data}];
-  const tabela=renderLongitudinal([{recorded_at:data,dyspnea_rest:0,cough_level:2,
-    airway_dryness:1,weather_humidity:29,pm2_5:12}], [new Date(+now-10000),new Date(+now+10000)]);
-  document.getElementById("page-exercise-bank-prof").append(tabela);
+  records=[{recorded_at:data,dyspnea_rest:0,cough_level:2,airway_dryness:1,stiffness:"Leve",weather_humidity:29,pm2_5:12}];
+  menu(); navigate("registros-prof");
+};
+window.cenarioLinksMapa = async () => {
+  const {desenharMapa}=await import("./services/parksMap.js");
+  document.querySelectorAll(".page").forEach(pagina=>pagina.classList.toggle("active",pagina.id==="page-exercicios"));
+  const guia=document.getElementById("guiaArLivre");
+  guia.replaceChildren(document.getElementById("modeloGuiaArLivre").content.cloneNode(true));
+  guia.querySelector("[data-guia-resultado]").hidden=false;
+  const figure=guia.querySelector("figure");
+  const parques=[
+    {nome:"Parque fictício A",latitude:-15.81,longitude:-47.91},
+    {nome:"Parque fictício B",latitude:-15.82,longitude:-47.92,entrada:{latitude:-15.821,longitude:-47.921}}
+  ];
+  desenharMapa(figure,{latitude:-15.8,longitude:-47.9},parques,[],new AbortController().signal);
+  document.getElementById("parquesDialog").showModal();
 };
 window.cenarioEditor = () => {
   user={id:"prof-ficticio"}; profile={role:"fisioterapeuta"}; patientId="paciente-ficticio";
@@ -142,10 +157,34 @@ window.cenarioProf = () => {
     }
     console.log('Navegador e axe-core: escolha de categoria após nome e orientações');
     await p.evaluate(()=>window.cenarioProf());
-    await p.evaluate(()=>window.cenarioTabela());
+    await p.evaluate(()=>window.cenarioAcompanhamento());
+    const blocos=p.locator('#graficosRegistrosProf > details');
+    assert.deepEqual(await blocos.locator('> summary').allTextContents(),[
+      'Treinos concluídos','Sintomas e atividade física','Registros por dia'
+    ]);
+    assert.equal(await p.getByRole('radio',{name:'30 dias'}).isChecked(),true);
+    await blocos.first().getByText('1 treino concluído no período',{exact:true}).waitFor();
+    await p.getByText('Sintomas e atividade física',{exact:true}).click();
+    await blocos.nth(1).getByRole('heading',{name:'Falta de ar em repouso'}).waitFor();
+    await p.getByText('Registros por dia',{exact:true}).click();
+    await p.getByText('Ver tabela do período',{exact:true}).click();
     assert.match(await p.locator('.tabela-longitudinal tbody').innerText(),/Ressecamento/);
-    await auditar('.tabela-longitudinal');
-    console.log('Navegador e axe-core: tabela longitudinal');
+    await auditar('#page-registros-prof');
+    console.log('Navegador e axe-core: acompanhamento e tabela longitudinal');
+    await p.route(/tile.openstreetmap.org|routing.openstreetmap.de/,rota=>rota.abort());
+    await p.evaluate(()=>window.cenarioLinksMapa());
+    await p.locator('#parqueSelecionado').selectOption('1');
+    const google=new URL(await p.getByRole('link',{name:'Google Maps a pé'}).getAttribute('href'));
+    const waze=new URL(await p.getByRole('link',{name:'Waze de carro'}).getAttribute('href'));
+    assert.equal(google.origin,'https://www.google.com');
+    assert.equal(google.searchParams.get('travelmode'),'walking');
+    assert.equal(google.searchParams.get('destination'),'-15.821,-47.921');
+    assert.equal(google.searchParams.has('origin'),false);
+    assert.equal(waze.origin,'https://www.waze.com');
+    assert.equal(waze.searchParams.get('ll'),'-15.821,-47.921');
+    await p.locator('#parquesDialog').getByRole('button',{name:'Fechar'}).click();
+    console.log('Mapa: Google Maps e Waze seguem o parque selecionado');
+    await p.evaluate(()=>window.cenarioProf());
     assert.equal(await p.locator('#exercisebankResults .bank-result').count(),5);
     await auditar('#page-exercise-bank-prof');
     await p.locator('#exercisebankResults .bank-result').nth(2).getByRole('button',{name:'Selecionar exercício'}).click();

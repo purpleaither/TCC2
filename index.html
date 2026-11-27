@@ -424,6 +424,10 @@
               </div>
               <figcaption>
                 <div data-mapa-detalhe aria-live="polite"></div>
+                <div class="demo-acoes mapa-aplicativos">
+                  <a class="btn btn-outline" data-mapa-google target="_blank" rel="noopener noreferrer">Google Maps a pé</a>
+                  <a class="btn btn-outline" data-mapa-waze target="_blank" rel="noopener noreferrer">Waze de carro</a>
+                </div>
                 <div class="guia-trajeto" data-trajeto>
                   <button type="button" class="btn" data-trajeto-acao>Iniciar trajeto</button>
                   <p class="card-text-small" data-trajeto-aviso>Mantenha o pop-up aberto. Sua posição fica no aparelho e é aproximada para calcular a rota.</p>
@@ -646,15 +650,15 @@
         <option value="p1">Maria Silva</option><option value="p2">João Oliveira</option>
       </select>
     </div>
-    <div class="form-group">
-      <label class="form-label" for="periodoAcompanhamento">Período do acompanhamento</label>
-      <select id="periodoAcompanhamento" class="form-input" disabled>
-        <option value="7">Últimos 7 dias</option>
-        <option value="30" selected>Últimos 30 dias</option>
-        <option value="60">Últimos 60 dias</option>
-        <option value="90">Últimos 90 dias</option>
-      </select>
-    </div>
+    <fieldset class="periodo-acompanhamento" id="periodoAcompanhamento" disabled>
+      <legend class="form-label">Período do acompanhamento</legend>
+      <div class="periodo-opcoes">
+        <label><input type="radio" name="periodo-acompanhamento" value="7"> 7 dias</label>
+        <label><input type="radio" name="periodo-acompanhamento" value="30" checked> 30 dias</label>
+        <label><input type="radio" name="periodo-acompanhamento" value="60"> 60 dias</label>
+        <label><input type="radio" name="periodo-acompanhamento" value="90"> 90 dias</label>
+      </div>
+    </fieldset>
     <div id="graficosRegistrosProf"></div>
     <button type="button" class="btn btn-outline" onclick="navegarPara('profissional')">Voltar</button>
   </div>

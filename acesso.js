@@ -827,9 +827,6 @@ function monitoringTopic(label, panel){
   const details = el("details", undefined, "monitoring-topic");
   const summary = el("summary", label);
   details.append(summary, panel);
-  details.addEventListener("toggle", () => {
-    summary.textContent = details.open ? label.replace(/^Ver /, "Ocultar ") : label;
-  });
   return details;
 }
 
@@ -897,7 +894,8 @@ function renderProfessionalMonitoring(windows, periodRecords){
       const chart = monitoringBars(rows, Math.max(1, ...counts), "Treinos concluídos por período");
       chart.classList.add("monitoring-bars-weekly");
       chart.removeAttribute("tabindex");
-      output.replaceChildren(chart);
+      const total = counts.reduce((sum, count) => sum + count, 0);
+      output.replaceChildren(el("p", total + (total === 1 ? " treino concluído" : " treinos concluídos") + " no período", "card-title"), chart);
     };
     select.addEventListener("change", showSessions);
     workoutCard.append(filter, output);
@@ -906,23 +904,35 @@ function renderProfessionalMonitoring(windows, periodRecords){
     }
     showSessions();
   }
-  root.append(monitoringTopic("Ver treinos concluídos", workoutCard));
-  for (const [key, title, buttonLabel] of [
-    ["stiffness", "Rigidez", "Ver nível de rigidez"],
-    ["fatigue", "Cansaço (fadiga)", "Ver nível de cansaço"],
-    ["activity_level", "Nível de atividade física", "Ver nível de atividade física"]
-  ]) {
+  const treinos = monitoringTopic("Treinos concluídos", workoutCard);
+  treinos.open = true;
+  const sintomas = el("div");
+  const dominio = dominioDoDiario(plans);
+  const indicadores = [];
+  if(dominio!=="respiratorio")indicadores.push(
+    ["stiffness", "Rigidez", levels], ["fatigue", "Cansaço", levels]);
+  if(dominio!=="musculoesqueletico")
+    for(const [campo, titulo, maximo] of medidasRespiratorias)
+      indicadores.push([campo, titulo, maximo===3?niveisRespiratorios:10]);
+  indicadores.push(["activity_level", "Nível de atividade física", levels]);
+
+  for (const [key, title, escala] of indicadores) {
     const card = el("section", undefined, "card");
-    card.append(el("h3", title, "card-title"),
-      el("p", "O gráfico mostra o último relato de cada dia com registro.", "card-text"));
-    const rows = recent.filter(record => levels.includes(record[key])).map(record => ({
-      label: shortDate.format(new Date(record.recorded_at)),
-      text: record[key], value: levels.indexOf(record[key])
-    }));
-    card.append(rows.length ? monitoringBars(rows, levels.length - 1, title + " por dia")
+    card.append(el("h3", title, "card-title"));
+    const valores = Array.isArray(escala) ? escala : null;
+    const maximo = valores ? valores.length - 1 : escala;
+    const rows = recent.flatMap(record => {
+      const valor = record[key];
+      const index = valores && typeof valor==="string" ? valores.indexOf(valor) : valor;
+      if(!Number.isInteger(index)||index<0||index>maximo)return [];
+      return [{label:shortDate.format(new Date(record.recorded_at)),
+        text:valores ? valores[index] : index + "/" + maximo, value:index}];
+    });
+    card.append(rows.length ? monitoringBars(rows, maximo, title + " por dia")
       : el("p", "Nenhum relato disponível.", "card-text-small"));
-    root.append(monitoringTopic(buttonLabel, card));
+    sintomas.append(card);
   }
+  root.append(treinos, monitoringTopic("Sintomas e atividade física", sintomas));
 }
 
 function renderLongitudinal(recordsDoPeriodo, windows){
@@ -985,17 +995,18 @@ function renderProfessionalRecords(){
   updatePatientSelectors();
   const ready=!!patientId && professionalWorkouts !== undefined;
   $("periodoAcompanhamento").disabled=!ready;
-  const windows=monitoringWeeks(Number($("periodoAcompanhamento").value));
+  const windows=monitoringWeeks(Number($("periodoAcompanhamento").querySelector(":checked").value));
   const periodRecords=records.filter(record=>{
     const time=new Date(record.recorded_at);
     return time>=windows[0] && time<windows.at(-1);
   });
   renderProfessionalMonitoring(windows, periodRecords);
   if (!patientId || professionalWorkouts === undefined) return;
-  $("graficosRegistrosProf").append(monitoringTopic("Ver clima, sintomas e treinos",renderLongitudinal(periodRecords,windows)));
+  const painel = el("div");
   const root = el("div");
   root.id = "listaRegistrosProf";
-  $("graficosRegistrosProf").append(monitoringTopic("Ver registros individuais", root));
+  painel.append(monitoringTopic("Ver tabela do período",renderLongitudinal(periodRecords,windows)),root);
+  $("graficosRegistrosProf").append(monitoringTopic("Registros por dia", painel));
   if(!periodRecords.length)root.append(el("p","Nenhum registro no período selecionado.","demo-vazio"));
   for(const r of periodRecords) {
     const card=el("div",undefined,"card");
@@ -1008,6 +1019,8 @@ function renderProfessionalRecords(){
       " · Nível de atividade física: "+(r.activity_level ?? "Não registrado"),"card-text-small"));
     const clima=mapWeather(r);
     if(clima)card.append(el("p","Clima registrado em "+date(clima.observadoEm)+": "+clima.temperatura+" °C · "+clima.umidade+"% · "+clima.pressao+" hPa ("+clima.cidade+")","card-text-small"));
+    const ar=resumoQualidadeAr(r);
+    if(ar)card.append(el("p",ar,"card-text-small"));
     root.append(card);
   }
 }
@@ -1980,9 +1993,9 @@ async function init(){
     const open=[...root.querySelectorAll(":scope > details")].map(topic=>topic.open);
     const plan=$("monitoramentoPlano")?.value;
     renderProfessionalRecords();
-    root.querySelectorAll(":scope > details").forEach((topic,index)=>{topic.open=!!open[index];});
-    if(plan){
-      const select=$("monitoramentoPlano");
+    root.querySelectorAll(":scope > details").forEach((topic,index)=>{if(open[index]!==undefined)topic.open=open[index];});
+    const select=$("monitoramentoPlano");
+    if(plan&&select){
       select.value=plan;
       select.dispatchEvent(new Event("change"));
     }
