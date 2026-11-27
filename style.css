@@ -1318,8 +1318,22 @@ button.heatmap-cell:focus-visible{outline:3px solid var(--titulo, #003366);outli
   aspect-ratio: 640 / 420;
   border: 1px solid var(--borda);
   border-radius: .75rem;
+  --mapa-regiao: var(--superficie-verde);
+  --mapa-contorno: var(--destaque);
+  background: var(--superficie);
+  overflow: clip;
+}
+.guia-mapa figcaption { padding: .65em 0; }
+.guia-mapa [data-mapa-detalhe] {
+  display: grid;
+  gap: .25em;
+  padding: .75em;
+  margin-block: 0 .5em;
+  border-radius: .65rem;
   background: var(--superficie-suave);
 }
+.guia-mapa-distancia { font-weight: 700; color: var(--titulo); }
+.guia-ar-livre details + details { margin-block-start: .5em; }
 .guia-mapa canvas { display: block; width: 100%; height: 100%; }
 .guia-mapa-marcador {
   position: absolute;

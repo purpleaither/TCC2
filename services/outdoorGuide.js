@@ -30,7 +30,9 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
   const region = section.querySelector("select");
   const gps = section.querySelector("button");
   const status = section.querySelector("[role=status]");
-  const suggestions = section.querySelector("[data-guia-recomendacoes]");
+  const advice = document.getElementById("cuidadosArLivre");
+  const suggestions = advice.querySelector("[data-guia-recomendacoes]");
+  const measurements = section.querySelector("[data-guia-dados]");
   const environment = section.querySelector("[data-guia-ambiente]");
   const map = section.querySelector("[data-guia-mapa]");
   const parksStatus = section.querySelector("[data-guia-parques-status]");
@@ -39,6 +41,7 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
     suggestions.replaceChildren(...gerarRecomendacoesClimaticas(data).map(text => element("li", text)));
   }
   function showEnvironment(data) {
+    measurements.hidden = false;
     environment.replaceChildren(...metrics.flatMap(([key, label, unit]) => [
       element("dt", label),
       element("dd", Number.isFinite(data[key]) ? [number.format(data[key]), unit].filter(Boolean).join(" ") : "Indisponível")
@@ -62,12 +65,14 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
     if (results.length) desenharMapa(map, local, results, bounds);
     else parksStatus.textContent = "Nenhum parque disponível para esta consulta.";
     status.textContent = metrics.some(([key]) => Number.isFinite(data[key]))
-      ? "Consulta concluída." : "Dados ambientais indisponíveis. Consulte os cuidados gerais abaixo.";
+      ? "Consulta concluída." : "Dados ambientais indisponíveis. Veja os cuidados ao ar livre no Início.";
   }
   function start() {
     request?.abort();
     request = new AbortController();
     environment.replaceChildren();
+    measurements.open = false;
+    measurements.hidden = true;
     map.hidden = true;
     parksStatus.textContent = "";
     showAdvice();
@@ -103,11 +108,14 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
         lifetime?.abort();
         lifetime = null;
         section.remove();
+        advice.hidden = true;
+        advice.querySelector("details").open = false;
         region.value = "";
         status.textContent = "";
         return;
       }
-      exercises.replaceChildren(...[...new Set(names)].map(name => element("li", name)));
+      exercises.textContent = "Indicação ao ar livre: " + [...new Set(names)].join(", ");
+      advice.hidden = false;
       if (section.isConnected) return;
       start();
       host.append(section);

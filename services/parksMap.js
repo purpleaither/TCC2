@@ -27,7 +27,9 @@ export function desenharMapa(figure, local, parques, limites) {
     (value - (bounds[axis][0] + bounds[axis][1]) / 2) * scale + [width, height][axis] / 2
   );
   ctx.clearRect(0, 0, width, height);
-  ctx.strokeStyle = "#5b766d";
+  const colors = getComputedStyle(canvas);
+  ctx.strokeStyle = colors.getPropertyValue("--mapa-contorno");
+  ctx.fillStyle = colors.getPropertyValue("--mapa-regiao");
   ctx.lineWidth = 1.4;
   for (const polygon of limites) {
     ctx.beginPath();
@@ -37,6 +39,7 @@ export function desenharMapa(figure, local, parques, limites) {
       else ctx.moveTo(...point);
     }
     ctx.closePath();
+    ctx.fill();
     ctx.stroke();
   }
 
@@ -49,9 +52,15 @@ export function desenharMapa(figure, local, parques, limites) {
   function activate(index) {
     const park = parques[index];
     buttons.forEach((button, i) => button.setAttribute("aria-pressed", String(i === index)));
-    detail.textContent = [park.nome, km.format(park.distancia) + " km em linha reta",
-      park.regiao, park.categoria, access[park.acessibilidade],
+    const name = document.createElement("strong");
+    name.textContent = park.nome;
+    const distance = document.createElement("span");
+    distance.className = "guia-mapa-distancia";
+    distance.textContent = km.format(park.distancia) + " km em linha reta";
+    const meta = document.createElement("small");
+    meta.textContent = [park.regiao, park.categoria, access[park.acessibilidade],
       park.piso && "Piso: " + park.piso, park.fonte].filter(Boolean).join(" · ");
+    detail.replaceChildren(name, distance, meta);
   }
 
   for (const [index, point] of [local, ...parques].entries()) {

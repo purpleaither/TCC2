@@ -26,7 +26,7 @@ if(!process.env.CT22_ONLY && !process.env.TCC_SERIE_DESEMPENHO)await step('CT54'
   if(await patient.locator('#page-inicio #guiaArLivre').count())throw Error('Guia disponível fora de Meus exercícios');
   await nav(patient,'exercicios');
   const guide=patient.locator('#page-exercicios #guiaArLivre section');
-  const entry=guide.getByText(exercise,{exact:true});
+  const entry=guide.getByText(exercise,{exact:false});
   const routes=[];
   patient.on('request',request=>{
     if(['api.open-meteo.com','air-quality-api.open-meteo.com','overpass-api.de'].includes(new URL(request.url()).hostname))
@@ -44,6 +44,9 @@ if(!process.env.CT22_ONLY && !process.env.TCC_SERIE_DESEMPENHO)await step('CT54'
   await setOutdoor(true);
   await card().getByText('Indicação ao ar livre',{exact:true}).waitFor();
   await entry.waitFor({timeout:20000});
+  await nav(patient,'inicio');
+  await patient.locator('#cuidadosArLivre').waitFor({state:'visible'});
+  await nav(patient,'exercicios');
   if(routes.length)throw Error('Consulta externa iniciada antes de escolher uma localização');
   await setOutdoor(false);
   await entry.waitFor({state:'detached',timeout:20000});
@@ -71,7 +74,7 @@ if(!process.env.CT22_ONLY && !process.env.TCC_SERIE_DESEMPENHO)await step('CT55'
   await prof.locator('#formPlanoProf button[type=submit]').click();
   await card().getByText(walk,{exact:true}).waitFor();
   await nav(patient,'exercicios');
-  await patient.locator('#guiaArLivre').getByText(walk,{exact:true}).waitFor({timeout:20000});
+  await patient.locator('#guiaArLivre').getByText(walk,{exact:false}).waitFor({timeout:20000});
 });
 }
 }catch(e){report.push({id:'setup',status:'blocked',error:String(e.message).split('\n')[0].slice(0,200)})}

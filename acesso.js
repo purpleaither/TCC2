@@ -93,7 +93,8 @@ function navigate(page) {
     text("exercisebankStatus","Selecione os filtros e clique em Buscar.");
   }
   if(page==="registros-prof")renderProfessionalRecords();
-  if(page==="exercicios"){renderPatientPlans();void refreshOutdoorGuide();}
+  if(page==="exercicios")renderPatientPlans();
+  if(page==="inicio" || page==="exercicios")void refreshOutdoorGuide();
   if(page==="sintomas"){limparRegistroDiario();definirEtapaDiario(0, true);}
   if(page==="historico")gerarHeatmap();
   window.scrollTo(0,0);
@@ -244,7 +245,7 @@ async function refreshOutdoorGuide() {
 }
 
 function refreshOutdoorExercises() {
-  if(!document.hidden && $("page-exercicios").classList.contains("active")) void refreshOutdoorGuide();
+  if(!document.hidden && document.querySelector("#page-inicio.active, #page-exercicios.active")) void refreshOutdoorGuide();
 }
 function startOutdoorUpdates() {
   stopOutdoorUpdates();
