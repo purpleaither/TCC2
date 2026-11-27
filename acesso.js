@@ -497,16 +497,16 @@ function renderWorkoutProgress(month, now = new Date()){
 
   const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (now.getDay() + 6) % 7);
   const monthEnd = new Date(month.getFullYear(), month.getMonth() + 1, 1);
-  const weekly = treinosConcluidos.filter(item => {
+  const completed = treinosConcluidos.filter(item => {
     const date = new Date(item.completed_at);
     return date >= monday && date <= now;
-  });
+  }).length;
   const monthly = treinosConcluidos.filter(item => {
     const date = new Date(item.completed_at);
     return date >= month && date < monthEnd && date <= now;
   }).length;
   const format = count => count + (count === 1 ? " treino" : " treinos");
-  $("totalTreinosPeriodo").textContent = format(weekly.length) + " nesta semana · " + format(monthly) + " no mês selecionado";
+  $("totalTreinosPeriodo").textContent = format(completed) + " nesta semana · " + format(monthly) + " no mês selecionado";
   $("totalTreinosAcumulado").textContent = format(totalTreinos) + " desde o início";
 
   const assignments = patientExerciseAssignments();
@@ -518,11 +518,6 @@ function renderWorkoutProgress(month, now = new Date()){
   $("progressoSemanal").hidden = !target;
   if (!target) return;
 
-  const planIds = new Set(assignments.map(({plan}) => plan.id));
-  const completed = weekly.filter(session => {
-    const sessionIds = new Set((session.exercises || []).map(exercise => exercise.plan_id));
-    return sessionIds.size === planIds.size && [...planIds].every(id => sessionIds.has(id));
-  }).length;
   const percent = Math.min(100, Math.round(completed / target * 100));
   $("barraSemanal").value = percent;
   $("metaSemanal").textContent = completed >= target
