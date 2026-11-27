@@ -114,15 +114,17 @@
     <h1 class="page-title">Olá, <span id="userNameDisplay">Maria</span></h1>
     <p class="page-subtitle" id="currentDateDisplay">Carregando data...</p>
 
-    <section id="cardRegistroDiario" aria-labelledby="registroDiarioTitulo">
-      <h2 class="card-title" id="registroDiarioTitulo">Registro de sintomas</h2>
-      <button type="button" class="btn" id="btnRegistrarSintomas" onclick="abrirRegistroDiario()">Registrar como me sinto</button>
-    </section>
+    <div class="inicio-acoes">
+      <section id="cardRegistroDiario" aria-labelledby="registroDiarioTitulo">
+        <h2 class="card-title" id="registroDiarioTitulo">Registro de sintomas</h2>
+        <button type="button" class="btn" id="btnRegistrarSintomas" onclick="abrirRegistroDiario()">Registrar como me sinto</button>
+      </section>
 
-    <section aria-labelledby="homeExerciciosTitulo">
-      <h2 class="card-title" id="homeExerciciosTitulo">Meus exercícios</h2>
-      <button type="button" class="btn" id="homeBtnExercicios" onclick="navegarPara('exercicios')">Ver meus exercícios</button>
-    </section>
+      <section aria-labelledby="homeExerciciosTitulo">
+        <h2 class="card-title" id="homeExerciciosTitulo">Meus exercícios</h2>
+        <button type="button" class="btn" id="homeBtnExercicios" onclick="navegarPara('exercicios')">Ver meus exercícios</button>
+      </section>
+    </div>
 
     <aside class="patient-tpe-advice" aria-label="Conselho de educação terapêutica" hidden>
       <span class="patient-tpe-label">Conselho do dia</span>
@@ -418,11 +420,11 @@
                   <div class="mapa-aplicativos">
                     <a class="btn btn-outline" data-mapa-google target="_blank" rel="noopener noreferrer">
                       <img src="Icones/googlemaps.svg" width="28" height="28" alt="">
-                      <span>Google Maps a pé</span>
+                      <span>Google Maps</span>
                     </a>
                     <a class="btn btn-outline" data-mapa-waze target="_blank" rel="noopener noreferrer">
                       <img src="Icones/waze.svg" width="28" height="28" alt="">
-                      <span>Waze de carro</span>
+                      <span>Waze</span>
                     </a>
                   </div>
                   <p class="card-text-small" data-trajeto-aviso>Mantenha o pop-up aberto. Sua posição fica no aparelho e é aproximada para calcular a rota.</p>

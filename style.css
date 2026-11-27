@@ -1576,3 +1576,21 @@ button.guia-mapa-marcador { cursor: pointer; }
 .tabela-longitudinal :is(th, td) { min-inline-size: 7rem; }
 .tabela-longitudinal tr > :first-child { position: sticky; inset-inline-start: 0; }
 .tabela-longitudinal caption { text-align: start; }
+
+
+@media (min-width: 900px) {
+  .inicio-acoes, #acoesPacienteProf:not([hidden]) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  #parquesDialog:has(.guia-mapa:not([hidden])) { inline-size: min(1120px, calc(100% - 48px)); }
+  .guia-mapa:not([hidden]) {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 1rem;
+  }
+  .guia-mapa > :is(.form-group, .guia-orientacao) { grid-column: 1 / -1; margin: 0; }
+  .guia-mapa figcaption { padding: 0; }
+}

@@ -288,13 +288,15 @@ export function desenharMapa(figure, local, parques, limites, signal, view) {
         if (index) ctx.lineTo(...point);
         else ctx.moveTo(...point);
       }
+      // O canvas é reduzido no celular. Mantém a espessura visual em pixels CSS.
+      const escala = width / (canvas.clientWidth || width);
       ctx.lineJoin = "round";
       ctx.lineCap = "round";
       ctx.strokeStyle = "#fff";
-      ctx.lineWidth = 10;
+      ctx.lineWidth = 9 * escala;
       ctx.stroke();
-      ctx.strokeStyle = "#0064a4";
-      ctx.lineWidth = 6;
+      ctx.strokeStyle = "#004b80";
+      ctx.lineWidth = 5 * escala;
       ctx.stroke();
     }
     ctx.strokeStyle = "#315449";
@@ -369,6 +371,9 @@ export function desenharMapa(figure, local, parques, limites, signal, view) {
   base.hidden = true;
   view.repaint();
   if(initial){
+    const resize = new ResizeObserver(() => view.repaint());
+    resize.observe(canvas);
+    signal.addEventListener("abort", () => resize.disconnect(), {once:true});
     view.navigation = createWalkingNavigation(figure, signal, () => parques[view.selected], (position, route, origin) => {
       const starting = !!position && !view.position;
       const ended = !position && !!view.position;

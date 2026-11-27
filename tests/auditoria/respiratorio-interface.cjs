@@ -179,9 +179,23 @@ window.cenarioProf = () => {
     assert.match(csv,/"0";"451"/);
     await auditar('#page-registros-prof');
     console.log('Navegador e axe-core: acompanhamento e tabela longitudinal');
-    await p.route(/tile.openstreetmap.org|routing.openstreetmap.de/,rota=>rota.abort());
+    await p.route(/tile.openstreetmap.org/,rota=>rota.abort());
+    await p.route(/routing.openstreetmap.de/,rota=>rota.fulfill({json:{
+      code:'Ok', waypoints:[{distance:0},{distance:0}],
+      routes:[{distance:1500,duration:1000,geometry:{coordinates:[[-47.9,-15.8],[-47.921,-15.821]]}}]
+    }}));
+    await p.evaluate(()=>{
+      const desenhar=CanvasRenderingContext2D.prototype.stroke;
+      CanvasRenderingContext2D.prototype.stroke=function(...args){
+        if(this.strokeStyle==='#004b80')this.canvas.dataset.espessuraRota=String(this.lineWidth*this.canvas.clientWidth/this.canvas.width);
+        return desenhar.apply(this,args);
+      };
+    });
     await p.evaluate(()=>window.cenarioLinksMapa());
     await p.locator('#parqueSelecionado').selectOption('1');
+    const canvas=p.locator('#parquesDialog canvas');
+    await p.waitForFunction(()=>Number(document.querySelector('#parquesDialog canvas')?.dataset.espessuraRota)>=4.99);
+    assert.ok(Number(await canvas.getAttribute('data-espessura-rota'))>=4.99);
     const atalhos=p.locator('.mapa-aplicativos');
     const inicio=await p.locator('[data-trajeto-acao]').boundingBox();
     const separador=await p.locator('[data-trajeto] .guia-local-ou').boundingBox();
@@ -191,15 +205,24 @@ window.cenarioProf = () => {
       await icone.evaluate(img=>img.decode());
       assert.ok(await icone.evaluate(img=>img.nextElementSibling.getBoundingClientRect().top>=img.getBoundingClientRect().bottom));
     }
-    const google=new URL(await p.getByRole('link',{name:'Google Maps a pé'}).getAttribute('href'));
-    const waze=new URL(await p.getByRole('link',{name:'Waze de carro'}).getAttribute('href'));
+    const google=new URL(await p.getByRole('link',{name:'Google Maps'}).getAttribute('href'));
+    const waze=new URL(await p.getByRole('link',{name:'Waze'}).getAttribute('href'));
     assert.equal(google.origin,'https://www.google.com');
     assert.equal(google.searchParams.get('travelmode'),'walking');
     assert.equal(google.searchParams.get('destination'),'-15.821,-47.921');
     assert.equal(google.searchParams.has('origin'),false);
     assert.equal(waze.origin,'https://www.waze.com');
     assert.equal(waze.searchParams.get('ll'),'-15.821,-47.921');
+    await p.setViewportSize({width:1366,height:768});
+    await p.waitForFunction(()=>{
+      const espessura=Number(document.querySelector('#parquesDialog canvas')?.dataset.espessuraRota);
+      return Math.abs(espessura-5)<.02;
+    });
+    const mapa=await p.locator('#parquesDialog .guia-mapa-superficie').boundingBox();
+    const controles=await p.locator('#parquesDialog figcaption').boundingBox();
+    assert.ok(mapa.x+mapa.width<controles.x && Math.abs(mapa.y-controles.y)<2);
     await p.locator('#parquesDialog').getByRole('button',{name:'Fechar'}).click();
+    await p.setViewportSize({width:360,height:780});
     console.log('Mapa: Google Maps e Waze seguem o parque selecionado');
     await p.evaluate(()=>window.cenarioProf());
     assert.equal(await p.locator('#exercisebankResults .bank-result').count(),5);
