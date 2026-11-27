@@ -516,7 +516,8 @@ function renderProfessionalPlans(){
   root.replaceChildren();
   if(!plans.length)root.append(el("p","Nenhum plano disponível.","demo-vazio"));
   const createEntry=$("createPlanEntry");
-  if(createEntry)createEntry.disabled=!patientId;
+  createEntry.disabled=!patientId;
+  createEntry.textContent=plans.length?"Criar outro plano":"Criar plano terapêutico";
   for(const p of plans){
     const card=el("div",undefined,"card");
     card.append(el("h2",p.title,"card-title"));
