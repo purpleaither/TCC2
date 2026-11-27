@@ -1,4 +1,5 @@
 import {consultarTrajeto} from "./environmentalService.js";
+import {createWalkingNavigation} from "./walkingNavigation.js";
 
 const km = new Intl.NumberFormat("pt-BR", {maximumFractionDigits: 1});
 const distanceLabel = park => {
@@ -19,7 +20,7 @@ export function desenharMapa(figure, local, parques, limites, signal, view) {
   const {width, height} = canvas;
   const base = figure.querySelector("[data-mapa-ruas]");
   const mapStatus = figure.querySelector("[data-mapa-status]");
-  const points = [local, ...parques.map(park => park.entrada ?? park)];
+  const points = [view.routeOrigin ?? local, ...parques.map(park => park.entrada ?? park)];
   const world = ({latitude, longitude}) => {
     const radians = latitude * Math.PI / 180;
     return [(longitude + 180) / 360, (1 - Math.asinh(Math.tan(radians)) / Math.PI) / 2];
@@ -65,6 +66,7 @@ export function desenharMapa(figure, local, parques, limites, signal, view) {
   function redraw() {
     desenharMapa(figure, local, parques, limites, signal, view);
   }
+  view.redraw = redraw;
   function pan(x, y) {
     view.zoom = zoom;
     view.center = center.map((value, axis) => Math.max(0, Math.min(1,
@@ -200,12 +202,13 @@ export function desenharMapa(figure, local, parques, limites, signal, view) {
   }
 
   async function selectPark(index, recenter = false) {
+    view.navigation?.stop();
     view.controller?.abort();
     const controller = new AbortController();
     view.controller = controller;
     const selectionSignal = AbortSignal.any([signal, controller.signal]);
     view.selected = index;
-    view.route = null;
+    view.route = view.previewRoute = null;
     view.pending = true;
     if(recenter)redraw();
     view.updateDetails();
@@ -213,7 +216,8 @@ export function desenharMapa(figure, local, parques, limites, signal, view) {
     const route = await consultarTrajeto(local, parques[index], selectionSignal);
     if (selectionSignal.aborted) return;
     view.pending = false;
-    view.route = route;
+    view.previewRoute = route;
+    if (!view.position)view.route = route;
     view.updateDetails();
     view.repaint();
   }
@@ -273,6 +277,15 @@ export function desenharMapa(figure, local, parques, limites, signal, view) {
       ctx.lineTo(left, top);
     }
     ctx.stroke();
+    if (view.position) {
+      ctx.beginPath();
+      ctx.arc(...project(view.position),10,0,Math.PI*2);
+      ctx.fillStyle = "#0064a4";
+      ctx.fill();
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
   };
   function drawBounds() {
     const colors = getComputedStyle(canvas);
@@ -316,7 +329,28 @@ export function desenharMapa(figure, local, parques, limites, signal, view) {
   base.replaceChildren(batch);
   base.hidden = true;
   view.repaint();
-  if(initial)void selectPark(0);
+  if(initial){
+    view.navigation = createWalkingNavigation(figure, signal, () => parques[view.selected], (position, route, origin) => {
+      view.position = position;
+      if (signal.aborted) return;
+      if(route){
+        view.route = route;
+        view.routeOrigin = origin;
+        view.zoom = view.center = null;
+        view.redraw();
+      } else if (!position) {
+        const moved = !!view.routeOrigin;
+        view.routeOrigin = null;
+        view.route = view.previewRoute;
+        if(moved){
+          view.zoom = view.center = null;
+          view.redraw();
+        }
+      }
+      view.repaint();
+    });
+    void selectPark(0);
+  }
   mapStatus.textContent = "Carregando o mapa de ruas…";
   Promise.all(pending).then(() => {
     if (!batch.isConnected || figure.hidden) return;

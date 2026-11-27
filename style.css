@@ -1452,3 +1452,10 @@ button.guia-mapa-marcador { cursor: pointer; }
   background: var(--superficie);
 }
 .demo-carregando { margin: 1rem auto; }
+
+.guia-trajeto [data-trajeto-instrucao]:not(:empty) {
+  padding: .65em;
+  border-radius: .4rem;
+  background: var(--superficie-suave);
+  font-weight: 700;
+}

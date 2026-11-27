@@ -21,3 +21,7 @@ O valor de 500 ppm de CO₂ é uma referência operacional de exibição para o 
 A migração adiciona a coluna com valor padrão falso e envia alterações pelo Supabase Realtime por meio da tabela de planos, respeitando a leitura existente por participante. O painel reconsulta a indicação ao entrar, quando a aba volta a ficar visível e a cada 15 segundos enquanto o painel está visível. O formulário consulta a indicação de novo antes de enviar dados de localização. Os indicadores ambientais foram retirados do pop-up. A consulta ao abrir o mapa se limita a parques e rotas. O conselho educativo sobre os sintomas do dia fica no Início.
 
 O caso CT54 verifica, com contas fictícias, a edição do campo pelo fisioterapeuta, a atualização do painel do paciente após marcar e desmarcar, e a ausência de chamadas ambientais antes da escolha de uma localização.
+
+## Acompanhamento do trajeto
+
+**Iniciar trajeto** solicita localização contínua durante a sessão em primeiro plano e atualiza o ponto do paciente no mapa. As instruções em português mostram a próxima manobra e sua distância estimada. O recálculo exige pelo menos duas posições fora da rota, leva em conta a precisão informada pelo aparelho e respeita intervalo mínimo de 15 segundos. A tela encerra a localização ao fechar o pop-up, sair da aba ou selecionar outro parque. A posição detalhada fica em memória. O roteador recebe somente a origem arredondada para o cálculo da rota.
