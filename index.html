@@ -258,6 +258,15 @@
     </div>
 
     <section class="card" id="historicoAtividades" aria-labelledby="historicoAtividadesBtn">
+      <div class="resumo-treinos" id="resumoTreinos" hidden>
+        <h3 class="card-title">Seu progresso</h3>
+        <div id="progressoSemanal" hidden>
+          <p class="card-text-small" id="metaSemanal"></p>
+          <progress id="barraSemanal" aria-label="Progresso da rotina semanal" max="100" value="0"></progress>
+        </div>
+        <p class="card-text-small" id="totalTreinosPeriodo"></p>
+        <p class="card-text-small" id="totalTreinosAcumulado"></p>
+      </div>
       <div class="heatmap-calendario">
         <div class="heatmap-weekdays">
           <span class="heatmap-weekday">S</span>

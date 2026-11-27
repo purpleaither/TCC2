@@ -144,7 +144,9 @@ async function logout() {
   }
   reset();
 }
+let totalTreinos = null;
 function reset() {
+  totalTreinos = null;
   stopOutdoorUpdates();
   patientLoadVersion += 1;
   professionalWorkouts = undefined;
@@ -362,7 +364,7 @@ async function loadPatientData() {
     }
     const loadedRecords = result(symptomsResponse) || [];
     let workouts = supabase.from("workout_sessions")
-      .select(professional ? "completed_at,exercises" : "id,patient_id,completed_at,exercises")
+      .select(professional ? "completed_at,exercises" : "id,patient_id,completed_at,exercises", professional ? {} : {count: "exact"})
       .eq("patient_id", selectedPatient).order("completed_at", { ascending: false }).limit(500);
     if (professional) workouts = workouts.gte("completed_at", monitoringWeeks(90)[0].toISOString());
     const workoutResponse = await workouts;
@@ -380,6 +382,7 @@ async function loadPatientData() {
       renderProfessionalRecords();
     } else {
       treinosConcluidos = sessions;
+      totalTreinos = workoutResponse.count;
       primeiroEventoHistorico = oldestDates.filter(Boolean).sort((a,b)=>Date.parse(a)-Date.parse(b))[0] ?? null;
       registrosUsuario=records.slice().reverse().map(r=>({
         data:r.recorded_at,
@@ -487,6 +490,44 @@ function patientExerciseAssignments(){
   return plans.flatMap(plan=>[...(plan.plan_exercises||[])]
     .sort((a,b)=>(a.position??0)-(b.position??0))
     .map(exercise=>({plan,exercise})));
+}
+function renderWorkoutProgress(month, now = new Date()){
+  $("resumoTreinos").hidden = totalTreinos == null;
+  if (totalTreinos == null) return;
+
+  const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (now.getDay() + 6) % 7);
+  const monthEnd = new Date(month.getFullYear(), month.getMonth() + 1, 1);
+  const weekly = treinosConcluidos.filter(item => {
+    const date = new Date(item.completed_at);
+    return date >= monday && date <= now;
+  });
+  const monthly = treinosConcluidos.filter(item => {
+    const date = new Date(item.completed_at);
+    return date >= month && date < monthEnd && date <= now;
+  }).length;
+  const format = count => count + (count === 1 ? " treino" : " treinos");
+  $("totalTreinosPeriodo").textContent = format(weekly.length) + " nesta semana · " + format(monthly) + " no mês selecionado";
+  $("totalTreinosAcumulado").textContent = format(totalTreinos) + " desde o início";
+
+  const assignments = patientExerciseAssignments();
+  const targets = new Set(assignments.map(({exercise}) => {
+    const match = exercise.frequency?.trim().match(/^([1-7])\s*(?:x|vez|vezes)\s*(?:por|na|a|\/)\s*semana$/i);
+    return match ? Number(match[1]) : null;
+  }));
+  const target = targets.size === 1 ? [...targets][0] : null;
+  $("progressoSemanal").hidden = !target;
+  if (!target) return;
+
+  const planIds = new Set(assignments.map(({plan}) => plan.id));
+  const completed = weekly.filter(session => {
+    const sessionIds = new Set((session.exercises || []).map(exercise => exercise.plan_id));
+    return sessionIds.size === planIds.size && [...planIds].every(id => sessionIds.has(id));
+  }).length;
+  const percent = Math.min(100, Math.round(completed / target * 100));
+  $("barraSemanal").value = percent;
+  $("metaSemanal").textContent = completed >= target
+    ? "Você completou sua rotina planejada para esta semana."
+    : completed + " de " + target + " sessões da rotina semanal concluídas (" + percent + "%)";
 }
 async function completePatientWorkout(){
   if(!isAuthenticated()||isProfessional()||busy||workoutCompletedInView)return;
@@ -1683,7 +1724,7 @@ async function init(){
   }
 }
 
-window.AppAuth={login,logout,navigate,saveSymptoms,isProfessional,renderWorkoutDay};
+window.AppAuth={login,logout,navigate,saveSymptoms,isProfessional,renderWorkoutDay,renderWorkoutProgress};
 window.atualizarPacienteProfissional=()=>selectPatient($("pacienteProf").value);
 window.trocarPacientePlanoProf=()=>selectPatient($("pacientePlanoProf").value);
 window.trocarPacienteRegistrosProf=()=>selectPatient($("pacienteRegistrosProf").value);

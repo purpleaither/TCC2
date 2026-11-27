@@ -196,6 +196,7 @@ function gerarHeatmap() {
   document.getElementById('historicoMesAnterior').disabled = mesAtual <= minimo;
   document.getElementById('historicoMesSeguinte').disabled = mesAtual >= maximo;
 
+  window.AppAuth?.renderWorkoutProgress(mesAtual);
   const ano = mesAtual.getFullYear();
   const mes = mesAtual.getMonth();
   const diaNoMes = data => {
