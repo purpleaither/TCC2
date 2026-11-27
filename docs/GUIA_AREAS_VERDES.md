@@ -18,6 +18,6 @@ O valor de 500 ppm de CO₂ é uma referência operacional de exibição para o 
 
 ## Banco e verificação
 
-A migração adiciona a coluna com valor padrão falso e envia alterações pelo Supabase Realtime por meio da tabela de planos, respeitando a leitura existente por participante. O painel reconsulta a indicação ao entrar, quando a aba volta a ficar visível e a cada 15 segundos enquanto o painel está visível. O formulário consulta a indicação de novo antes de enviar dados de localização. Os indicadores ambientais aparecem abaixo do mapa após a consulta. O conselho educativo sobre os sintomas do dia fica no Início.
+A migração adiciona a coluna com valor padrão falso e envia alterações pelo Supabase Realtime por meio da tabela de planos, respeitando a leitura existente por participante. O painel reconsulta a indicação ao entrar, quando a aba volta a ficar visível e a cada 15 segundos enquanto o painel está visível. O formulário consulta a indicação de novo antes de enviar dados de localização. Os indicadores ambientais foram retirados do pop-up. A consulta ao abrir o mapa se limita a parques e rotas. O conselho educativo sobre os sintomas do dia fica no Início.
 
 O caso CT54 verifica, com contas fictícias, a edição do campo pelo fisioterapeuta, a atualização do painel do paciente após marcar e desmarcar, e a ausência de chamadas ambientais antes da escolha de uma localização.

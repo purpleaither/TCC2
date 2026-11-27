@@ -1,23 +1,7 @@
 import {
-  arredondarLocalizacao, carregarLimites, carregarRegioes, consultarAmbiente, consultarParques
+  arredondarLocalizacao, carregarLimites, carregarRegioes, consultarParques
 } from "./environmentalService.js";
 import {desenharMapa} from "./parksMap.js";
-
-const metrics = [
-  ["temperature_2m", "Temperatura", "°C"],
-  ["relative_humidity_2m", "Umidade relativa", "%"],
-  ["surface_pressure", "Pressão na superfície", "hPa"],
-  ["uv_index", "Índice UV", ""],
-  ["carbon_dioxide", "CO₂", "ppm"],
-  ["pm2_5", "Partículas finas (PM2,5)", "µg/m³"]
-];
-const number = new Intl.NumberFormat("pt-BR", {maximumFractionDigits: 1});
-
-function element(tag, text) {
-  const node = document.createElement(tag);
-  if (text !== undefined) node.textContent = text;
-  return node;
-}
 
 export function criarGuiaAoArLivre(host, confirmarIndicacao) {
   let lifetime;
@@ -27,26 +11,18 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
   const section = root.firstElementChild;
   const locationStep = section.querySelector("[data-guia-local]");
   const resultStep = section.querySelector("[data-guia-resultado]");
-  const resultTitle = resultStep.querySelector("[data-guia-etapa]");
   const region = locationStep.querySelector("select");
   const gps = locationStep.querySelector("button");
   const loading = section.querySelector(".guia-carregando");
   const status = section.querySelector("[data-guia-status]");
-  const environment = section.querySelector("[data-guia-ambiente]");
   const map = section.querySelector("[data-guia-mapa]");
   const parksStatus = section.querySelector("[data-guia-parques-status]");
 
-  function showEnvironment(data) {
-    environment.replaceChildren(...metrics.flatMap(([key, label, unit]) => [
-      element("dt", label),
-      element("dd", Number.isFinite(data[key]) ? [number.format(data[key]), unit].filter(Boolean).join(" ") : "Indisponível")
-    ]));
-  }
   async function search(local, signal) {
     locationStep.hidden = true;
     resultStep.hidden = false;
     loading.hidden = false;
-    resultTitle.focus();
+    resultStep.focus();
     status.textContent = "";
     const allowed = await confirmarIndicacao();
     if (signal.aborted) return;
@@ -55,17 +31,15 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
       status.textContent = "Não foi possível confirmar a indicação. Tente novamente.";
       return;
     }
-    const [data, results, bounds] = await Promise.all([
-      consultarAmbiente(local, signal), consultarParques(local, signal),
+    const [results, bounds] = await Promise.all([
+      consultarParques(local, signal),
       carregarLimites(signal).catch(() => [])
     ]);
     if (signal.aborted) return;
     loading.hidden = true;
-    showEnvironment(data);
     if (results.length) desenharMapa(map, local, results, bounds, signal);
     else parksStatus.textContent = "Nenhum parque disponível para esta consulta.";
-    status.textContent = metrics.some(([key]) => Number.isFinite(data[key]))
-      ? "" : "Dados ambientais indisponíveis.";
+
   }
   function start() {
     request?.abort();
@@ -73,7 +47,6 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
     locationStep.hidden = false;
     resultStep.hidden = true;
     loading.hidden = true;
-    environment.replaceChildren();
     map.hidden = true;
     parksStatus.textContent = "";
     status.textContent = "";

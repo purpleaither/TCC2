@@ -361,18 +361,15 @@
             <p class="guia-local-ou">ou</p>
             <button type="button" class="btn">Usar localização aproximada</button>
           </div>
-          <div data-guia-resultado hidden>
-            <h3 class="card-title" tabindex="-1" data-guia-etapa>Mapa</h3>
-            <div class="guia-carregando login-spinner" role="status" aria-label="Carregando parques e clima" hidden></div>
+          <div data-guia-resultado tabindex="-1" hidden>
+            <div class="guia-carregando login-spinner" role="status" aria-label="Carregando parques" hidden></div>
             <figure class="guia-mapa" data-guia-mapa hidden>
               <div class="form-group">
                 <label class="form-label" for="parqueSelecionado">Escolha um parque</label>
                 <select class="form-input" id="parqueSelecionado"></select>
               </div>
-              <div class="guia-mapa-zoom" role="group" aria-label="Controles do mapa">
+              <div class="guia-mapa-acao">
                 <button type="button" data-mapa-recentrar>Recentrar</button>
-                <button type="button" data-mapa-reduzir aria-label="Diminuir zoom">−</button>
-                <button type="button" data-mapa-ampliar aria-label="Aumentar zoom">+</button>
               </div>
               <p class="card-text-small" id="ajudaMapaParques">Arraste o mapa ou use as setas do teclado.</p>
               <div class="guia-mapa-superficie" aria-label="Mapa dos parques mais próximos" aria-describedby="ajudaMapaParques" role="group" tabindex="0">
@@ -381,16 +378,19 @@
                   <canvas width="640" height="420" aria-hidden="true"></canvas>
                   <div data-mapa-marcadores></div>
                 </div>
-                <a class="guia-mapa-creditos" href="https://www.openstreetmap.org/copyright" rel="noreferrer">© OpenStreetMap</a>
+                <div class="guia-mapa-zoom" role="group" aria-label="Zoom do mapa">
+                <button type="button" data-mapa-reduzir aria-label="Diminuir zoom">−</button>
+                <button type="button" data-mapa-ampliar aria-label="Aumentar zoom">+</button>
+              </div>
+              <a class="guia-mapa-creditos" href="https://www.openstreetmap.org/copyright" rel="noreferrer">© OpenStreetMap</a>
               </div>
               <figcaption>
                 <div data-mapa-detalhe aria-live="polite"></div>
                 <p class="card-text-small" data-mapa-status role="status"></p>
-                <small>Rotas: <a href="https://routing.openstreetmap.de/about.html">FOSSGIS</a> · <a href="https://www.openstreetmap.org/fixthemap">Corrigir mapa</a></small>
+                <small><a href="https://www.openstreetmap.org/fixthemap">Corrigir mapa</a></small>
               </figcaption>
             </figure>
             <p data-guia-parques-status></p>
-            <dl class="guia-ambiente" data-guia-ambiente></dl>
             <button type="button" class="btn btn-outline" data-guia-alterar>Alterar localização</button>
           </div>
           <p data-guia-status role="status"></p>

@@ -1299,15 +1299,7 @@ button.heatmap-cell:focus-visible{outline:3px solid var(--titulo, #003366);outli
 
 .guia-ar-livre :is(ul,ol) { padding-inline-start: 1.5em; }
 .guia-ar-livre :is(li,p) { margin-block: var(--espaco-texto); }
-.guia-ar-livre dl:empty { display: none; }
 .guia-ar-livre [role="status"]:empty { margin: 0; }
-.guia-ambiente {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-  gap: .5em;
-  margin-block: var(--espaco-grupo);
-}
-.guia-ambiente dd { margin: 0; font-weight: 700; overflow-wrap: anywhere; }
 .guia-indicacao { display: flex; align-items: start; gap: .5em; cursor: pointer; }
 .guia-indicacao input { inline-size: 1.5rem; block-size: 1.5rem; flex: none; }
 .guia-tag { display: table; padding: .15em .5em; border-radius: .5em; background: var(--superficie-suave); }
@@ -1371,8 +1363,16 @@ button.guia-mapa-marcador { cursor: pointer; }
 }
 .guia-mapa-marcador:focus-visible { z-index: 2; }
 
-.guia-mapa-zoom { display: flex; justify-content: flex-end; gap: .45rem; margin-block-end: .5rem; }
-.guia-mapa-zoom button {
+.guia-mapa-zoom {
+  position: absolute;
+  inset-block-start: .5rem;
+  inset-inline-start: .5rem;
+  z-index: 3;
+  display: grid;
+  gap: .25rem;
+}
+.guia-mapa-acao { margin-block-end: .5rem; }
+.guia-mapa-zoom button, .guia-mapa-acao button {
   min-inline-size: 44px;
   min-block-size: 44px;
   border: 1px solid var(--borda);
@@ -1388,7 +1388,7 @@ button.guia-mapa-marcador { cursor: pointer; }
 .guia-mapa-superficie { touch-action: none; cursor: grab; }
 .guia-mapa-superficie:active { cursor: grabbing; }
 [data-mapa-quadro] { position: absolute; inset: 0; }
-.guia-mapa-zoom [data-mapa-recentrar] { margin-inline-end: auto; padding-inline: .65rem; }
+.guia-mapa-acao button { padding-inline: .65rem; }
 
 #nomeExercicioParques {
   display: block;
