@@ -254,13 +254,11 @@ async function refreshOutdoorGuide() {
   const button = $("verParquesProximos");
   if(button)button.hidden=!outdoorExerciseIds.has(button.dataset.exerciseId);
   if(!outdoorSelectedId)return false;
-  const selected = flagged.find(exercise => exercise.id===outdoorSelectedId);
-  if(!selected){
+  if(!outdoorExerciseIds.has(outdoorSelectedId)){
     closeOutdoorGuide();
     return false;
   }
-  outdoorGuide.update([selected.exercise_source==="ExerciseBank"
-    ? translateExerciseName(selected.exercise_name) : selected.exercise_name]);
+  outdoorGuide.update(true);
   return true;
 }
 
@@ -280,7 +278,7 @@ function startOutdoorUpdates() {
 }
 function closeOutdoorGuide() {
   outdoorSelectedId=null;
-  outdoorGuide.update([]);
+  outdoorGuide.update(false);
   $("parquesDialog").close();
 }
 
@@ -540,6 +538,7 @@ function renderPatientPlans(animar=false){
   parksButton.hidden=!(outdoorExerciseIds?.has(exercise.id) ?? exercise.indicacao_ar_livre===true);
   parksButton.addEventListener("click",()=>{
     outdoorSelectedId=exercise.id;
+    text("tituloParques","Parques próximos para realizar o exercício: "+name);
     $("parquesDialog").showModal();
     void refreshOutdoorGuide();
   });

@@ -352,15 +352,12 @@
       <div id="guiaArLivre"></div>
       <template id="modeloGuiaArLivre">
         <section class="card guia-ar-livre" aria-labelledby="tituloParques">
-          <p class="card-text-small" data-guia-exercicios></p>
           <div class="form-group">
-            <label class="form-label" for="regiaoGuiaArLivre">Região do DF</label>
-            <select class="form-input" id="regiaoGuiaArLivre" disabled>
+            <select class="form-input" id="regiaoGuiaArLivre" aria-label="Escolha uma região" disabled>
               <option value="">Escolha uma região</option>
             </select>
           </div>
-          <button type="button" class="btn btn-outline">Usar localização aproximada</button>
-          <p class="card-text-small">A posição aproximada é enviada a serviços externos.</p>
+          <button type="button" class="btn">Usar localização aproximada</button>
           <p role="status"></p>
           <figure class="guia-mapa" data-guia-mapa hidden>
             <div class="form-group">
@@ -384,6 +381,7 @@
             <figcaption>
               <div data-mapa-detalhe aria-live="polite"></div>
               <p class="card-text-small" data-mapa-status role="status"></p>
+              <small>Rotas: <a href="https://routing.openstreetmap.de/about.html">FOSSGIS</a> · <a href="https://www.openstreetmap.org/fixthemap">Corrigir mapa</a></small>
             </figcaption>
           </figure>
           <p data-guia-parques-status></p>
@@ -400,11 +398,6 @@
       <form method="dialog">
         <button type="submit" class="btn btn-outline">Fechar</button>
       </form>
-      <details>
-        <summary>Sobre os dados</summary>
-        <p class="card-text-small">Clima e ar: estimativas da Open-Meteo e do CAMS. As rotas a pé podem omitir obstáculos ou trechos sem calçada. Rotas da <a href="https://routing.openstreetmap.de/about.html">FOSSGIS</a>. <a href="https://www.openstreetmap.org/fixthemap">Corrigir o mapa</a>. Parques: IPEDF, Geoportal DF e <a href="https://www.openstreetmap.org/copyright" rel="noreferrer">OpenStreetMap</a>.</p>
-        <p class="card-text-small">O app não salva a posição aproximada. A FOSSGIS pode registrar a consulta.</p>
-      </details>
     </dialog>
   </div>
 

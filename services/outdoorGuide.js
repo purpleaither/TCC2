@@ -25,7 +25,6 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
   let selection;
   const root = document.getElementById("modeloGuiaArLivre").content.cloneNode(true);
   const section = root.firstElementChild;
-  const exercises = section.querySelector("[data-guia-exercicios]");
   const region = section.querySelector("select");
   const gps = section.querySelector("button");
   const status = section.querySelector("[role=status]");
@@ -99,8 +98,8 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
   });
 
   return {
-    update(names) {
-      if (!names.length) {
+    update(enabled) {
+      if (!enabled) {
         request?.abort();
         lifetime?.abort();
         lifetime = null;
@@ -109,7 +108,6 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
         status.textContent = "";
         return;
       }
-      exercises.textContent = "Indicação ao ar livre: " + [...new Set(names)].join(", ");
       if (section.isConnected) return;
       start();
       host.append(section);

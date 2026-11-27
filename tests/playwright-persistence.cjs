@@ -37,7 +37,6 @@ if(!process.env.CT22_ONLY && !process.env.TCC_SERIE_DESEMPENHO)await step('CT54'
   await patient.locator('#page-inicio.active').waitFor({timeout:30000});
   await showExercise(exercise);
   const guide=patient.locator('#parquesDialog #guiaArLivre section');
-  const entry=guide.getByText(exercise,{exact:false});
   const parksButton=patient.getByRole('button',{name:'Ver parques próximos',exact:true});
   const routes=[];
   patient.on('request',request=>{
@@ -56,10 +55,11 @@ if(!process.env.CT22_ONLY && !process.env.TCC_SERIE_DESEMPENHO)await step('CT54'
   await setOutdoor(true);
   await card().getByText('Indicação ao ar livre',{exact:true}).waitFor();
   await parksButton.click({timeout:20000});
-  await entry.waitFor({timeout:20000});
+  await guide.waitFor({timeout:20000});
+  await patient.getByRole('heading',{name:'Parques próximos para realizar o exercício: '+exercise,exact:true}).waitFor();
   if(routes.length)throw Error('Consulta externa iniciada antes de escolher uma localização');
   await setOutdoor(false);
-  await entry.waitFor({state:'detached',timeout:20000});
+  await guide.waitFor({state:'detached',timeout:20000});
 });
 if(!process.env.TCC_SERIE_DESEMPENHO)await step('CT22',async()=>{phase='biblioteca';await card().getByRole('button',{name:'Editar',exact:true}).click();await prof.getByRole('button',{name:'+ Adicionar exercícios',exact:true}).click();await prof.getByRole('button',{name:'Escolher na ExerciseBank',exact:true}).click();await prof.locator('#exercisebankRefresh').waitFor();const catalogo=prof.waitForResponse(r=>new URL(r.url()).pathname==='/api/exercisebank'&&r.request().method()==='GET');await prof.locator('#exercisebankRefresh').click({timeout:30000});const resposta=await catalogo;if(!resposta.ok())throw Error('Catálogo respondeu HTTP '+resposta.status());const item=prof.locator('#exercisebankResults .bank-result').first();try{await item.waitFor({timeout:30000})}catch(e){throw Error('Biblioteca sem resultados: '+(await prof.locator('#exercisebankStatus').innerText()).slice(0,120))};const name=await item.getByRole('heading').innerText();phase='configuracao';await item.getByRole('button',{name:'Selecionar exercício'}).click();await prof.getByRole('button',{name:'Concluir inserção',exact:true}).click();await item.waitFor({state:'visible'});await prof.locator('#page-exercise-bank-prof.active').getByRole('button',{name:'Voltar',exact:true}).click();await prof.locator('#page-exercise-source-prof.active').getByRole('button',{name:'Voltar',exact:true}).click();phase='salvamento';await prof.locator('#page-editor-prof.active').waitFor();await prof.locator('#formPlanoProf button[type=submit]').click();phase='verificacao';await card().getByText(name,{exact:true}).waitFor({timeout:20000});phase='persistencia';await prof.reload();await prof.locator('#page-profissional.active').waitFor({timeout:30000});await selectPatient();await card().getByText(name,{exact:true}).waitFor({timeout:20000});if(!network.some(x=>x.phase==='salvamento'||x.phase==='verificacao' ? x.endpoint.endsWith('/plan_exercises')&&x.method==='POST'&&x.status>=200&&x.status<300 : false))throw Error('Resposta de inserção não observada')});
 if(!process.env.CT22_ONLY)await step('CT24',async()=>{await patient.reload();await patient.locator('#page-inicio.active').waitFor({timeout:30000});await nav(patient,'exercicios');for(let i=0;i<100;i++){if(await patient.locator('.patient-plan-title').getByText(title,{exact:true}).count())break;const next=patient.getByRole('button',{name:'Próximo',exact:true});if(!await next.count()||!await next.first().isEnabled())break;await next.first().click()}await patient.locator('.patient-plan-title').filter({hasText:title}).waitFor({timeout:5000});await patient.locator('.patient-exercise-title').filter({hasText:exercise}).waitFor({timeout:5000})});
@@ -87,8 +87,8 @@ if(!process.env.CT22_ONLY && !process.env.TCC_SERIE_DESEMPENHO)await step('CT55'
   await patient.locator('#page-inicio.active').waitFor({timeout:30000});
   await showExercise(walk);
   await patient.getByRole('button',{name:'Ver parques próximos',exact:true}).click();
-  await patient.locator('#guiaArLivre').getByText(walk,{exact:false}).waitFor({timeout:20000});
-  await patient.getByRole('dialog',{name:'Parques próximos'}).getByRole('button',{name:'Fechar',exact:true}).click();
+  await patient.locator('#guiaArLivre section').waitFor({timeout:20000});
+  await patient.getByRole('dialog',{name:'Parques próximos para realizar o exercício: '+walk,exact:true}).getByRole('button',{name:'Fechar',exact:true}).click();
   await patient.getByRole('heading',{name:walk,exact:true}).waitFor();
 });
 }
