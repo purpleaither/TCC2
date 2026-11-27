@@ -156,6 +156,8 @@ body {
   margin-bottom: 12px;
 }
 
+.login-header .login-logo { margin-bottom: 6px; }
+
 .login-title {
   line-height: var(--entrelinha-titulo);
   font-size: 1.25rem;
@@ -952,7 +954,7 @@ button.heatmap-cell:focus-visible{outline:3px solid var(--titulo, #003366);outli
   --fundo-alerta: #fff5f5;
   --fundo-aviso: #fffbe6;
   --texto: #333333;
-  --texto-suave: #666666;
+  --texto-suave: #505050;
   --titulo: #003366;
   --destaque: #006633;
   --acao: #006633;
