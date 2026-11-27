@@ -1,0 +1,60 @@
+name: Compatibilidade no Firefox (RNF02)
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/playwright-firefox.yml'
+      - 'tests/playwright-*.cjs'
+      - 'tests/navegador.cjs'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verificacao-mvp
+  cancel-in-progress: false
+
+jobs:
+  firefox:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'feature/fisioterapia-respiratoria'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    env:
+      TCC_BROWSER: firefox
+      TCC_BASE_URL: https://tcc2-lime.vercel.app/
+      TEST_FISIO_EMAIL: ${{ secrets.TEST_FISIO_EMAIL }}
+      TEST_FISIO_PASSWORD: ${{ secrets.TEST_FISIO_PASSWORD }}
+      TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
+      TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
+      TEST_PACIENTEDOIS_EMAIL: ${{ secrets.TEST_PACIENTEDOIS_EMAIL }}
+      TEST_PACIENTEDOIS_PASSWORD: ${{ secrets.TEST_PACIENTEDOIS_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save playwright@1.58.2
+      - run: npx playwright install --with-deps firefox
+      - name: Registrar navegador e arquivos públicos avaliados
+        run: |
+          mkdir -p test-results
+          node -e 'const {firefox}=require("playwright"); (async()=>{const b=await firefox.launch();console.log("Firefox "+b.version());await b.close()})()' | tee test-results/navegador.txt
+          for arquivo in index.html style.css app.js acesso.js; do
+            url="${TCC_BASE_URL}$arquivo"
+            if [ "$arquivo" = index.html ]; then url="$TCC_BASE_URL"; fi
+            curl -fsS --max-time 15 "$url" -o "/tmp/$arquivo"
+            (cd /tmp && sha256sum "$arquivo") >> test-results/versao-publica.sha256
+          done
+      - name: Executar regressão funcional no Firefox
+        run: |
+          falhou=0
+          for suite in smoke auth persistence sintomas-clima treino-historico seguranca; do
+            node "tests/playwright-$suite.cjs" || falhou=1
+          done
+          exit "$falhou"
+      - name: Preservar evidências da execução
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidencias-firefox-rnf02
+          path: test-results/

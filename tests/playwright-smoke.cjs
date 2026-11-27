@@ -1,11 +1,11 @@
-const { chromium } = require('playwright');
+const browserType = require('./navegador.cjs');
 const fs = require('node:fs');
 const path = require('node:path');
 const base = process.env.TCC_BASE_URL || 'https://tcc2-lime.vercel.app/';
 const out = path.join(process.cwd(),'test-results');
 fs.mkdirSync(out,{recursive:true});
 (async()=>{
- const browser=await chromium.launch({headless:true});
+ const browser=await browserType.launch({headless:true});
  const result={url:base,date:new Date().toISOString(),scenarios:[]};
  for(const config of [{name:'desktop',viewport:{width:1366,height:768}},{name:'mobile',viewport:{width:390,height:844}}]){
   const page=await browser.newPage({viewport:config.viewport});

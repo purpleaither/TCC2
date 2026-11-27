@@ -1,4 +1,4 @@
-const {chromium}=require('playwright');
+const browserType = require('./navegador.cjs');
 const fs=require('node:fs');
 const base=process.env.TCC_BASE_URL || 'https://tcc2-lime.vercel.app/';
 const title='TESTE FICTICIO PW '+Date.now();
@@ -21,7 +21,7 @@ async function showExercise(name){
 }
 function card(){return prof.locator('#listaPlanosProf .card').filter({has:prof.getByText(title,{exact:true})})}
 async function selectPatient(){await nav(prof,'planos-prof');await prof.locator('#pacientePlanoProf').selectOption(patientId);await prof.waitForTimeout(1500)}
-(async()=>{browser=await chromium.launch();try{
+(async()=>{browser=await browserType.launch();try{
 patient=await login('PACIENTE','inicio');prof=await login('FISIO','profissional');
 prof.on('request',r=>{const u=new URL(r.url());if(u.pathname==='/api/exercisebank')network.push({phase,endpoint:u.pathname,method:r.method(),event:'request'})});prof.on('requestfailed',r=>{const u=new URL(r.url());if(u.pathname==='/api/exercisebank')network.push({phase,endpoint:u.pathname,event:'requestfailed',error:r.failure()?.errorText})});prof.on('response',r=>{const u=new URL(r.url());if(u.pathname==='/api/exercisebank'||/\/rest\/v1\/(care_plans|plan_exercises)$/.test(u.pathname))network.push({phase,endpoint:u.pathname,method:r.request().method(),status:r.status(),retryAfter:r.headers()['retry-after']||null})});
 const name=(await patient.locator('#userNameDisplay').innerText()).trim();
