@@ -246,8 +246,8 @@
     <h1 class="page-title">Meu histórico</h1>
 
     <div class="historico-botoes" role="group" aria-label="Tipo de histórico">
-      <button type="button" class="btn" id="historicoAtividadesBtn" aria-controls="historicoAtividades" aria-pressed="true" onclick="mostrarCalendarioHistorico(true)">Dias em que você fez os exercícios domiciliares</button>
-      <button type="button" class="btn btn-outline" id="historicoSintomasBtn" aria-controls="historicoSintomas" aria-pressed="false" onclick="mostrarCalendarioHistorico(false)">Calendário de sintomas</button>
+      <button type="button" class="btn" id="historicoAtividadesBtn" aria-controls="historicoAtividades" aria-pressed="true" onclick="mostrarCalendarioHistorico(true)">Dias de movimento</button>
+      <button type="button" class="btn btn-outline" id="historicoSintomasBtn" aria-controls="historicoSintomas" aria-pressed="false" onclick="mostrarCalendarioHistorico(false)">Como me senti</button>
     </div>
 
     <!-- Navegação de mês -->
@@ -260,12 +260,8 @@
     <section class="card" id="historicoAtividades" aria-labelledby="historicoAtividadesBtn">
       <div class="resumo-treinos" id="resumoTreinos" hidden>
         <h3 class="card-title">Seu progresso</h3>
-        <div id="progressoSemanal" hidden>
-          <p class="card-text-small" id="metaSemanal"></p>
-          <progress id="barraSemanal" aria-label="Progresso da rotina semanal" max="100" value="0"></progress>
-        </div>
-        <p class="card-text-small" id="totalTreinosPeriodo"></p>
-        <p class="card-text-small" id="totalTreinosAcumulado"></p>
+        <p class="card-text-small" id="metaSemanal"></p>
+        <progress id="barraSemanal" aria-label="Progresso da rotina semanal" max="100" value="0"></progress>
       </div>
       <div class="heatmap-calendario">
         <div class="heatmap-weekdays">

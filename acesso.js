@@ -491,31 +491,22 @@ function patientExerciseAssignments(){
     .sort((a,b)=>(a.position??0)-(b.position??0))
     .map(exercise=>({plan,exercise})));
 }
-function renderWorkoutProgress(month, now = new Date()){
-  $("resumoTreinos").hidden = totalTreinos == null;
+function renderWorkoutProgress(now = new Date()){
+  $("resumoTreinos").hidden = true;
   if (totalTreinos == null) return;
 
   const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (now.getDay() + 6) % 7);
-  const monthEnd = new Date(month.getFullYear(), month.getMonth() + 1, 1);
   const completed = treinosConcluidos.filter(item => {
     const date = new Date(item.completed_at);
     return date >= monday && date <= now;
   }).length;
-  const monthly = treinosConcluidos.filter(item => {
-    const date = new Date(item.completed_at);
-    return date >= month && date < monthEnd && date <= now;
-  }).length;
-  const format = count => count + (count === 1 ? " treino" : " treinos");
-  $("totalTreinosPeriodo").textContent = format(completed) + " nesta semana · " + format(monthly) + " no mês selecionado";
-  $("totalTreinosAcumulado").textContent = format(totalTreinos) + " desde o início";
-
   const assignments = patientExerciseAssignments();
   const targets = new Set(assignments.map(({exercise}) => {
     const match = exercise.frequency?.trim().match(/^([1-7])\s*(?:x|vez|vezes)\s*(?:por|na|a|\/)\s*semana$/i);
     return match ? Number(match[1]) : null;
   }));
   const target = targets.size === 1 ? [...targets][0] : null;
-  $("progressoSemanal").hidden = !target;
+  $("resumoTreinos").hidden = !target;
   if (!target) return;
 
   const percent = Math.min(100, Math.round(completed / target * 100));
