@@ -356,13 +356,13 @@
       <section class="card guia-ar-livre" aria-labelledby="tituloParques">
         <p class="card-text-small" data-guia-exercicios></p>
         <div class="form-group">
-          <label class="form-label" for="regiaoGuiaArLivre">Região do Distrito Federal</label>
+          <label class="form-label" for="regiaoGuiaArLivre">Região do DF</label>
           <select class="form-input" id="regiaoGuiaArLivre" disabled>
             <option value="">Escolha uma região</option>
           </select>
         </div>
-        <button type="button" class="btn btn-outline">Usar minha localização aproximada</button>
-        <p class="card-text-small">A localização aproximada é usada nas consultas à Open-Meteo, ao OpenStreetMap e ao serviço de rotas da FOSSGIS, que pode registrar a consulta. O app não salva essa posição.</p>
+        <button type="button" class="btn btn-outline">Usar localização aproximada</button>
+        <p class="card-text-small">A posição aproximada é enviada a serviços externos.</p>
         <p role="status"></p>
         <figure class="guia-mapa" data-guia-mapa hidden>
           <div class="form-group">
@@ -374,7 +374,7 @@
             <button type="button" data-mapa-reduzir aria-label="Diminuir zoom">−</button>
             <button type="button" data-mapa-ampliar aria-label="Aumentar zoom">+</button>
           </div>
-          <p class="card-text-small" id="ajudaMapaParques">Arraste o mapa ou use as setas do teclado para mover a área visível.</p>
+          <p class="card-text-small" id="ajudaMapaParques">Arraste o mapa ou use as setas do teclado.</p>
           <div class="guia-mapa-superficie" aria-label="Mapa dos parques mais próximos" aria-describedby="ajudaMapaParques" role="group" tabindex="0">
             <div data-mapa-quadro>
               <div data-mapa-ruas aria-hidden="true" hidden></div>
@@ -400,7 +400,8 @@
         </details>
         <details>
           <summary>Sobre os dados</summary>
-          <p class="card-text-small">Estimativas ambientais da Open-Meteo e do CAMS. O CO₂ é uma estimativa regional em partes por milhão (ppm). Rotas estimadas a pé. Quando há entrada pública identificada no mapa, o trajeto usa essa entrada. Em outros casos, usa um ponto aproximado do parque. O mapa pode omitir obstáculos ou trechos sem calçada. Rotas da <a href="https://routing.openstreetmap.de/about.html">FOSSGIS</a>. <a href="https://www.openstreetmap.org/fixthemap">Corrigir o mapa</a>. Dados de parques do IPEDF, do Geoportal DF e do <a href="https://www.openstreetmap.org/copyright" rel="noreferrer">OpenStreetMap</a>.</p>
+          <p class="card-text-small">Clima e ar: estimativas da Open-Meteo e do CAMS. As rotas a pé podem omitir obstáculos ou trechos sem calçada. Rotas da <a href="https://routing.openstreetmap.de/about.html">FOSSGIS</a>. <a href="https://www.openstreetmap.org/fixthemap">Corrigir o mapa</a>. Parques: IPEDF, Geoportal DF e <a href="https://www.openstreetmap.org/copyright" rel="noreferrer">OpenStreetMap</a>.</p>
+          <p class="card-text-small">O app não salva a posição aproximada. A FOSSGIS pode registrar a consulta.</p>
         </details>
       </section>
     </template>
