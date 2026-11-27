@@ -56,12 +56,12 @@ if(!process.env.CT22_ONLY && !process.env.TCC_SERIE_DESEMPENHO)await step('CT55'
   const name=dialog.getByLabel('Nome do exercício');
   if(await name.inputValue()!=='Caminhada ao ar livre')throw Error('Nome da caminhada incorreto');
   if(!await dialog.getByRole('checkbox').isChecked())throw Error('Indicação ao ar livre não marcada');
-  for(const field of ['series','repetitions','duration','frequency']){
+  if(await dialog.locator('[name=series], [name=repetitions]').count())throw Error('A caminhada exibiu séries ou repetições');
+  for(const field of ['duration','frequency']){
     if(await dialog.locator('[name="'+field+'"]').inputValue())throw Error('Parâmetro preenchido automaticamente');
   }
   const walk='Caminhada fictícia PW '+Date.now();
   await name.fill(walk);
-  await dialog.getByLabel('Séries',{exact:true}).fill('1');
   await dialog.getByLabel('Duração',{exact:true}).fill('10 minutos');
   await dialog.getByLabel('Frequência',{exact:true}).fill('2 vezes por semana');
   await dialog.getByRole('button',{name:'Concluir inserção',exact:true}).click();

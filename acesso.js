@@ -4,6 +4,7 @@ import {criarGuiaAoArLivre} from "./services/outdoorGuide.js";
 
 const $ = id => document.getElementById(id);
 const levels = ["Nenhuma", "Leve", "Moderada", "Intensa"];
+const WALK_SOURCE = "caminhada_manual";
 const moods = ["Bem", "Regular", "Desanimado"];
 let supabase = null;
 let user = null;
@@ -473,7 +474,7 @@ function renderWorkoutDay(year,month,day){
       row.append(el("strong",name||"Exercício","workout-history-name"));
       row.append(el("span",String(item.plan_title||"Plano"),"workout-history-plan"));
       row.append(el("p",[
-        "Séries: "+(item.series||"–"),"Repetições: "+(item.repetitions||"–"),
+        ...(item.exercise_source===WALK_SOURCE?[]:["Séries: "+(item.series||"–"),"Repetições: "+(item.repetitions||"–")]),
         "Duração: "+(item.duration||"–"),"Frequência: "+(item.frequency||"–")
       ].join(" · "),"card-text-small"));
       card.append(row);
@@ -594,7 +595,8 @@ function renderProfessionalPlans(){
       const line=el("div",undefined,"demo-detalhe");
       line.append(el("strong",x.exercise_name,"plan-exercise-name"));
       if(x.indicacao_ar_livre)line.append(el("p","Indicação ao ar livre","card-text-small guia-tag"));
-      line.append(el("p",(x.series||"–")+" série(s) · "+(x.repetitions||"–")+" repetições · "+(x.duration||"–")+" duração · "+x.frequency,"plan-exercise-prescription"));
+      const quantidade=x.exercise_source===WALK_SOURCE?"":(x.series||"–")+" série(s) · "+(x.repetitions||"–")+" repetições · ";
+      line.append(el("p",quantidade+(x.duration||"–")+" duração · "+x.frequency,"plan-exercise-prescription"));
       if(["ExerciseBank","wger"].includes(x.exercise_source) && x.external_id){
         const view=el("button","Ver demonstração","btn btn-outline");
         view.type="button";
@@ -799,6 +801,7 @@ function addExercise(entry){
   row.dataset.externalId=entry?.external_id??"";
   row.dataset.exerciseSource=entry?.exercise_source??"manual";
   row.dataset.instructions=entry?.instructions??"";
+  const walking=row.dataset.exerciseSource===WALK_SOURCE;
   const params=el("div",undefined,"demo-grid-parametros");
   for(const [key,title,type,value] of [
     ["series","Séries","number",2],
@@ -806,6 +809,7 @@ function addExercise(entry){
     ["duration","Duração","text",""],
     ["frequency","Frequência","text","3 vezes por semana"]
   ]){
+    if(walking && (key==="series" || key==="repetitions"))continue;
     const wrap=el("div",undefined,"form-group");
     const lbl=el("label",title,"form-label");
     const input=el("input",undefined,"form-input");
@@ -835,8 +839,7 @@ function addExercise(entry){
       const sourceLabel=el("p",entry.exercise_source==="ExerciseBank"?"ExerciseBank · catálogo de demonstração":"wger · vídeo sujeito à disponibilidade e licença","card-text-small");
       row.prepend(sourceLabel);
     }
-    for(const k of ["series","repetitions","duration","frequency"])
-      row.querySelector('[name="'+k+'"]').value=entry[k]??"";
+    for(const field of params.querySelectorAll("input"))field.value=entry[field.name]??"";
   }
 }
 let exerciseReturnPage="planos-prof";
@@ -861,8 +864,10 @@ function updatePlanEditorSummary(){
     const item=el("div",undefined,"exercise-summary-item");
     const heading=el("strong",(index+1)+". "+(exerciseNameFromRow(row)||"Exercício sem nome"),"exercise-summary-name");
     const detail=el("p",[
-      "Séries: "+(row.querySelector('[name="series"]')?.value||"–"),
-      "Repetições: "+(row.querySelector('[name="repetitions"]')?.value||"–"),
+      ...(row.dataset.exerciseSource===WALK_SOURCE?[]:[
+        "Séries: "+(row.querySelector('[name="series"]').value||"–"),
+        "Repetições: "+(row.querySelector('[name="repetitions"]').value||"–")
+      ]),
       "Duração: "+(row.querySelector('[name="duration"]')?.value||"–"),
       "Frequência: "+(row.querySelector('[name="frequency"]')?.value||"–")
     ].join(" · "),"card-text-small");
@@ -892,7 +897,7 @@ function backFromExerciseSource(){
 }
 function addManualExerciseFromOptions(outdoor=false){
   if(!isProfessional())return;
-  addExercise(outdoor ? {exercise_name:"Caminhada ao ar livre", indicacao_ar_livre:true} : undefined);
+  addExercise(outdoor ? {exercise_name:"Caminhada ao ar livre", exercise_source:WALK_SOURCE, indicacao_ar_livre:true} : undefined);
   openExerciseConfiguration($("itensPlanoProf").lastElementChild);
 }
 function openExerciseBankFromOptions(){
@@ -915,13 +920,11 @@ function openExerciseConfiguration(row,existing=false){
 function finishExerciseInsertion(){
   if(!pendingExerciseRow)return;
   const row=pendingExerciseRow;
-  const series=Number(row.querySelector('[name="series"]')?.value);
-  const repeats=row.querySelector('[name="repetitions"]')?.value.trim()||"";
-  const duration=row.querySelector('[name="duration"]')?.value.trim()||"";
-  const frequency=row.querySelector('[name="frequency"]')?.value.trim()||"";
-  const name=exerciseNameFromRow(row);
-  if(!name||name.length<2||!Number.isInteger(series)||series<1||series>20||(!repeats&&!duration)||!frequency){
-    text("erroConfigExercicio","Informe o exercício, as séries, as repetições ou duração e a frequência.");
+  const exercise=readExercise(row);
+  if(!validExercise(exercise)){
+    text("erroConfigExercicio",exercise.exercise_source===WALK_SOURCE
+      ?"Informe o nome da caminhada, a duração e a frequência."
+      :"Informe o exercício, as séries, as repetições ou duração e a frequência.");
     return;
   }
   const remove=row.querySelector("button.btn-outline");
@@ -1010,32 +1013,37 @@ function editPlan(id){
   mostrarEtapaPlano(true);
   navigate("editor-prof");
 }
-function readExercises(){
-  return Array.from($("itensPlanoProf").children).map((row,i)=>{
-    const v=key=>row.querySelector('[name="'+key+'"]').value.trim();
-    return {
-      exercise_name:exerciseNameFromRow(row),
-      exercise_source:row.dataset.exerciseSource,
-      external_id:row.dataset.externalId||null,
-      series:Number(v("series")),
-      repetitions:v("repetitions"),
-      duration:v("duration"),
-      frequency:v("frequency"),
-      instructions:row.dataset.instructions,
-      indicacao_ar_livre:row.querySelector('[name="indicacao_ar_livre"]').checked,
-      position:i
-    };
-  });
+function readExercise(row,position){
+  const v=key=>row.querySelector('[name="'+key+'"]')?.value.trim()??"";
+  const walking=row.dataset.exerciseSource===WALK_SOURCE;
+  return {
+    exercise_name:exerciseNameFromRow(row),
+    exercise_source:row.dataset.exerciseSource,
+    external_id:row.dataset.externalId||null,
+    series:walking?null:Number(v("series")),
+    repetitions:walking?null:v("repetitions"),
+    duration:v("duration"),
+    frequency:v("frequency"),
+    instructions:row.dataset.instructions,
+    indicacao_ar_livre:row.querySelector('[name="indicacao_ar_livre"]').checked,
+    position
+  };
+}
+function validExercise(exercise){
+  if(exercise.exercise_name.length<2||!exercise.frequency)return false;
+  if(exercise.exercise_source===WALK_SOURCE)return !!exercise.duration;
+  return Number.isInteger(exercise.series)&&exercise.series>=1&&exercise.series<=20&&
+    !!(exercise.repetitions||exercise.duration);
 }
 async function savePlan(event){
   if(event)event.preventDefault();
   if(!isProfessional()||!patientId||busy)return;
   if($("etapaExerciciosPlano").hidden)return avancarPlano();
   const title=$("nomePlanoProf").value.trim();
-  const items=readExercises();
+  const items=Array.from($("itensPlanoProf").children,readExercise);
   if(title.length<2||!items.length)return message("Informe um nome e pelo menos um exercício.",true);
-  if(items.some(x=>x.exercise_name.length<2||!Number.isInteger(x.series)||x.series<1||x.series>20||(!x.repetitions&&!x.duration)||!x.frequency))
-    return message("Verifique o exercício, as séries, as repetições ou duração e a frequência.",true);
+  if(!items.every(validExercise))
+    return message("Verifique os campos de cada exercício antes de salvar.",true);
   busy=true;
   let insertedId=null;
   try{
