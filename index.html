@@ -125,13 +125,12 @@
       <button type="button" class="btn" id="homeBtnExercicios" onclick="navegarPara('exercicios')">Ver meus exercícios</button>
     </section>
 
-    <section class="card guia-ar-livre" id="cuidadosArLivre" aria-labelledby="tituloCuidadosArLivre" hidden>
-      <h2 class="card-title" id="tituloCuidadosArLivre">Cuidados ao ar livre</h2>
-      <details>
-        <summary>Ver dicas para a atividade</summary>
-        <ul data-guia-recomendacoes></ul>
-      </details>
-    </section>
+    <aside class="patient-tpe-advice" aria-label="Conselho de educação terapêutica">
+      <span class="patient-tpe-label">Conselho do dia</span>
+      <h2 class="patient-tpe-heading" id="conselhoDiaTitulo"></h2>
+      <p class="patient-tpe-text" id="conselhoDiaTexto"></p>
+      <button type="button" class="patient-tpe-link" onclick="navegarPara('orientacoes')">Saiba mais em Aprender a cuidar</button>
+    </aside>
 
     <!-- Card: Aviso -->
     <div class="warning-card">
@@ -376,6 +375,10 @@
         <details data-guia-dados hidden>
           <summary>Ver clima e qualidade do ar</summary>
           <dl class="guia-ambiente" data-guia-ambiente></dl>
+        </details>
+        <details>
+          <summary>Cuidados ao ar livre</summary>
+          <ul data-guia-recomendacoes></ul>
         </details>
         <details>
           <summary>Sobre os dados</summary>

@@ -30,8 +30,7 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
   const region = section.querySelector("select");
   const gps = section.querySelector("button");
   const status = section.querySelector("[role=status]");
-  const advice = document.getElementById("cuidadosArLivre");
-  const suggestions = advice.querySelector("[data-guia-recomendacoes]");
+  const suggestions = section.querySelector("[data-guia-recomendacoes]");
   const measurements = section.querySelector("[data-guia-dados]");
   const environment = section.querySelector("[data-guia-ambiente]");
   const map = section.querySelector("[data-guia-mapa]");
@@ -65,7 +64,7 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
     if (results.length) desenharMapa(map, local, results, bounds);
     else parksStatus.textContent = "Nenhum parque disponível para esta consulta.";
     status.textContent = metrics.some(([key]) => Number.isFinite(data[key]))
-      ? "Consulta concluída." : "Dados ambientais indisponíveis. Veja os cuidados ao ar livre no Início.";
+      ? "Consulta concluída." : "Dados ambientais indisponíveis. Veja os cuidados ao ar livre.";
   }
   function start() {
     request?.abort();
@@ -108,14 +107,11 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
         lifetime?.abort();
         lifetime = null;
         section.remove();
-        advice.hidden = true;
-        advice.querySelector("details").open = false;
         region.value = "";
         status.textContent = "";
         return;
       }
       exercises.textContent = "Indicação ao ar livre: " + [...new Set(names)].join(", ");
-      advice.hidden = false;
       if (section.isConnected) return;
       start();
       host.append(section);

@@ -45,7 +45,7 @@ if(!process.env.CT22_ONLY && !process.env.TCC_SERIE_DESEMPENHO)await step('CT54'
   await card().getByText('Indicação ao ar livre',{exact:true}).waitFor();
   await entry.waitFor({timeout:20000});
   await nav(patient,'inicio');
-  await patient.locator('#cuidadosArLivre').waitFor({state:'visible'});
+  await patient.locator('#conselhoDiaTitulo').waitFor({state:'visible'});
   await nav(patient,'exercicios');
   if(routes.length)throw Error('Consulta externa iniciada antes de escolher uma localização');
   await setOutdoor(false);

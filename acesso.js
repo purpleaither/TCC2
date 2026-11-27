@@ -94,7 +94,12 @@ function navigate(page) {
   }
   if(page==="registros-prof")renderProfessionalRecords();
   if(page==="exercicios")renderPatientPlans();
-  if(page==="inicio" || page==="exercicios")void refreshOutdoorGuide();
+  if(page==="exercicios")void refreshOutdoorGuide();
+  if(page==="inicio"){
+    const advice=patientTpeAdviceForToday();
+    text("conselhoDiaTitulo",advice.title);
+    text("conselhoDiaTexto",advice.body);
+  }
   if(page==="sintomas"){limparRegistroDiario();definirEtapaDiario(0, true);}
   if(page==="historico")gerarHeatmap();
   window.scrollTo(0,0);
@@ -245,7 +250,7 @@ async function refreshOutdoorGuide() {
 }
 
 function refreshOutdoorExercises() {
-  if(!document.hidden && document.querySelector("#page-inicio.active, #page-exercicios.active")) void refreshOutdoorGuide();
+  if(!document.hidden && $("page-exercicios").classList.contains("active")) void refreshOutdoorGuide();
 }
 function startOutdoorUpdates() {
   stopOutdoorUpdates();
@@ -526,21 +531,6 @@ function renderPatientPlans(animar=false){
     metrics.append(tile);
   }
   card.append(metrics);
-  if(currentPatientExercise===0){
-    const advice=patientTpeAdviceForToday();
-    const adviceBox=el("aside",undefined,"patient-tpe-advice");
-    adviceBox.setAttribute("aria-label","Conselho de educação terapêutica");
-    adviceBox.append(
-      el("span","Conselho","patient-tpe-label"),
-      el("h3",advice.title,"patient-tpe-heading"),
-      el("p",advice.body,"patient-tpe-text")
-    );
-    const moreAdvice=el("button","Saiba mais em Aprender a cuidar","patient-tpe-link");
-    moreAdvice.type="button";
-    moreAdvice.addEventListener("click",()=>navigate("orientacoes"));
-    adviceBox.append(moreAdvice);
-    card.append(adviceBox);
-  }
   // Instruções clínicas individuais continuam disponíveis; descrições automáticas
   // em inglês do banco de vídeos não são apresentadas como orientação ao paciente.
   if(exercise.instructions && exercise.exercise_source!=="ExerciseBank")

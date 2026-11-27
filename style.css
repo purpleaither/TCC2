@@ -823,13 +823,13 @@ button.heatmap-cell:hover {
   #page-exercicios .patient-exercise-metric{padding:11px 9px}
 }
 
-/* Conselhos curtos de educação terapêutica na tela do exercício. */
-#page-exercicios .patient-tpe-advice{margin:8px 0 18px;padding:14px 15px;border-left:4px solid var(--destaque, #006633);border-radius:8px;background:var(--superficie-suave, #f0f8f3)}
-#page-exercicios .patient-tpe-label{display:inline-block;color:var(--destaque, #006633);font-weight:800;font-size:var(--fonte-minima);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
-#page-exercicios .patient-tpe-heading{font-size:var(--fonte-minima);line-height:var(--entrelinha-titulo);color:var(--titulo, #003366);margin:0 0 6px}
-#page-exercicios .patient-tpe-text{font-size:var(--fonte-minima);line-height:var(--entrelinha-texto);color:var(--texto, #2c4539);margin:0 0 8px}
-#page-exercicios .patient-tpe-link{background:none;border:0;padding:5px 0;color:var(--destaque, #006633);text-align:left;text-decoration:underline;cursor:pointer;font-size:var(--fonte-minima);font-weight:700}
-#page-exercicios .patient-tpe-link:focus-visible{outline:2px solid var(--titulo, #003366);outline-offset:3px}
+/* Conselhos curtos de educação terapêutica na tela inicial. */
+#page-inicio .patient-tpe-advice{margin:8px 0 18px;padding:14px 15px;border-left:4px solid var(--destaque, #006633);border-radius:8px;background:var(--superficie-suave, #f0f8f3)}
+#page-inicio .patient-tpe-label{display:inline-block;color:var(--destaque, #006633);font-weight:800;font-size:var(--fonte-minima);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+#page-inicio .patient-tpe-heading{font-size:var(--fonte-minima);line-height:var(--entrelinha-titulo);color:var(--titulo, #003366);margin:0 0 6px}
+#page-inicio .patient-tpe-text{font-size:var(--fonte-minima);line-height:var(--entrelinha-texto);color:var(--texto, #2c4539);margin:0 0 8px}
+#page-inicio .patient-tpe-link{background:none;border:0;padding:5px 0;color:var(--destaque, #006633);text-align:left;text-decoration:underline;cursor:pointer;font-size:var(--fonte-minima);font-weight:700}
+#page-inicio .patient-tpe-link:focus-visible{outline:2px solid var(--titulo, #003366);outline-offset:3px}
 
 /* Conclusão do treino e ficha preservada no histórico diário. */
 #page-exercicios .patient-workout-finish{display:block;width:100%;margin-top:15px;min-height:50px;font-size:var(--fonte-minima);font-weight:800}
