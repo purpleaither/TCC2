@@ -666,7 +666,7 @@ function renderPatientPlans(animar=false){
     $("parquesDialog").showModal();
     void refreshOutdoorGuide();
   });
-  card.append(parksButton);
+  card.append(parksButton,el("p","A sombra das árvores pode deixar o ar ao redor mais fresco e o ambiente mais confortável em dias secos. Se a atividade ao ar livre foi liberada pelo seu fisioterapeuta, prefira o início da manhã ou o fim da tarde, quando o sol costuma ser menos intenso.","card-text-small exercicio-orientacao-ar-livre"));
 
   const videoArea=el("div",undefined,"patient-exercise-video bank-media");
   if(["ExerciseBank","wger"].includes(exercise.exercise_source)&&exercise.external_id){
@@ -710,7 +710,7 @@ function renderPatientPlans(animar=false){
 
   if(assigned.length>1){
     const actions=el("div",undefined,"demo-acoes");
-    const previous=el("button","Anterior","btn btn-outline");
+    const previous=el("button","Voltar","btn btn-outline");
     previous.type="button";
     previous.disabled=currentPatientExercise===0;
     previous.addEventListener("click",()=>{
@@ -722,7 +722,7 @@ function renderPatientPlans(animar=false){
     next.addEventListener("click",()=>{
       if(currentPatientExercise<assigned.length-1){currentPatientExercise++;renderPatientPlans(true);}
     });
-    actions.append(previous,next);
+    actions.append(next,previous);
     card.append(actions);
   }
   if(currentPatientExercise===assigned.length-1){

@@ -251,9 +251,9 @@
 
     <p class="card diario-aviso" id="avisoFaltaDeAr" role="alert"></p>
     <p class="choices-label" id="diarioErro" tabindex="-1" hidden></p>
-    <button type="button" class="btn btn-outline" id="diarioVoltar" onclick="mudarEtapaDiario(-1)" hidden>Voltar</button>
     <button type="button" class="btn" id="diarioProximo" onclick="mudarEtapaDiario(1)">Próximo</button>
     <button type="button" class="btn" id="diarioSalvar" onclick="concluirRegistro()" hidden>Concluir registro de sintomas</button>
+    <button type="button" class="btn btn-outline" id="diarioVoltar" onclick="mudarEtapaDiario(-1)" hidden>Voltar</button>
 
   </div>
 
@@ -356,14 +356,8 @@
     </div>
 
     <div class="card">
-      <h2 class="card-title">Meteoropatia: clima e sintomas</h2>
-      <p class="card-text">Variações bruscas de temperatura, umidade e pressão atmosférica podem alterar a percepção de rigidez articular em algumas pessoas. Manter o corpo aquecido e ativo atenua esses desconfortos.</p>
-      <a href="#" class="card-link" onclick="event.preventDefault(); alert('Em breve: leitura completa com orientações validadas pela equipe do HUB.');">Ler artigo completo →</a>
-    </div>
-
-    <div class="card">
       <h2 class="card-title">Autonomia no dia a dia</h2>
-      <p class="card-text">Estratégias práticas para adaptar suas tarefas domésticas e de trabalho, mantendo o movimento constante e o autocuidado após a alta hospitalar.</p>
+      <p class="card-text">Estratégias práticas para adaptar suas tarefas domésticas e de trabalho, mantendo o movimento constante e o autocuidado.</p>
       <a href="#" class="card-link" onclick="event.preventDefault(); alert('Em breve: leitura completa com orientações validadas pela equipe do HUB.');">Ler artigo completo →</a>
     </div>
 
@@ -405,7 +399,9 @@
             <button type="button" class="btn">Usar localização aproximada</button>
           </div>
           <div data-guia-resultado tabindex="-1" hidden>
-            <div class="guia-carregando login-spinner" role="status" aria-label="Carregando parques" hidden></div>
+            <div class="guia-carregando" role="status" aria-label="Carregando parques" hidden>
+              <span class="login-spinner" aria-hidden="true"></span>
+            </div>
             <figure class="guia-mapa" data-guia-mapa hidden>
               <div class="form-group">
                 <label class="form-label" for="parqueSelecionado">Escolha um parque</label>
@@ -437,7 +433,6 @@
               </figcaption>
             </figure>
             <p data-guia-parques-status></p>
-            <p class="card-text-small">A sombra das árvores pode deixar o ar ao redor mais fresco e o ambiente mais confortável em dias secos. Se a atividade ao ar livre foi liberada pelo seu fisioterapeuta, prefira o início da manhã ou o fim da tarde, quando o sol costuma ser menos intenso.</p>
             <button type="button" class="btn btn-outline" data-guia-alterar>Alterar localização</button>
           </div>
           <p data-guia-status role="status"></p>
