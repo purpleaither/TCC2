@@ -553,7 +553,7 @@
     <div class="card">
       <h2 class="card-title">Como deseja adicionar?</h2>
       <button type="button" class="btn" onclick="adicionarExercicioManual()">Adicionar manualmente</button>
-      <button type="button" class="btn btn-outline" onclick="abrirBibliotecaExerciseBank()">Escolher na ExerciseBank</button>
+      <button type="button" class="btn btn-outline" id="abrirBibliotecaPlano" onclick="abrirBibliotecaExerciseBank()">Escolher na ExerciseBank</button>
       <button type="button" class="btn btn-outline" onclick="voltarDaEscolhaExercicios()">Voltar</button>
     </div>
   </div>
@@ -619,26 +619,28 @@
     <div class="card">
       <form id="formPlanoProf" onsubmit="salvarPlanoProf(event)">
         <div id="dadosPlanoProf">
-          <div class="form-group">
-            <label class="form-label" for="dominioPlanoProf">Perfil clínico do plano</label>
-            <select class="form-input" id="dominioPlanoProf">
-              <option value="musculoesqueletico">Musculoesquelético</option>
-              <option value="respiratorio">Respiratório</option>
-              <option value="misto">Misto</option>
-            </select>
-          </div>
           <div class="form-group"><label class="form-label" for="nomePlanoProf">Nome do plano</label>
             <input class="form-input" id="nomePlanoProf" maxlength="100" minlength="2" required placeholder="Ex.: Mobilidade domiciliar"></div>
           <div class="form-group"><label class="form-label" for="orientacoesPlanoProf">Orientações do profissional</label>
             <textarea class="form-input" id="orientacoesPlanoProf" maxlength="700" rows="3" placeholder="Orientações individualizadas"></textarea></div>
         </div>
         <button type="button" class="btn" id="avancarPlanoProf" onclick="avancarPlano()">Próximo</button>
+        <input type="hidden" id="dominioPlanoProf" value="musculoesqueletico">
+        <section id="etapaCategoriaPlano" aria-labelledby="tituloCategoriaPlano" hidden>
+          <h2 class="card-title" id="tituloCategoriaPlano" tabindex="-1">Em qual categoria o plano se encaixa?</h2>
+          <p class="card-text" id="categoriaIndisponivel" hidden>As opções Respiratório e Misto dependem da atualização do banco.</p>
+          <button type="button" class="btn" onclick="escolherCategoriaPlano('musculoesqueletico')">Ortopédico</button>
+          <button type="button" class="btn" data-categoria-respiratoria onclick="escolherCategoriaPlano('respiratorio')">Respiratório</button>
+          <button type="button" class="btn" data-categoria-respiratoria onclick="escolherCategoriaPlano('misto')">Misto</button>
+          <button type="button" class="btn btn-outline" onclick="mostrarEtapaPlano(false)">Voltar</button>
+        </section>
         <div id="etapaExerciciosPlano" hidden>
+          <button type="button" class="btn btn-outline" id="alterarCategoriaPlano" onclick="mostrarCategoriaPlano()" hidden>Alterar categoria</button>
           <div id="resumoExerciciosPlano" class="exercise-plan-summary"></div>
           <div id="itensPlanoProf" hidden></div>
           <button type="button" class="btn btn-outline" onclick="abrirOpcoesExercicios()">+ Adicionar exercícios</button>
           <button type="submit" class="btn" id="salvarPlanoBtn" hidden>Salvar plano</button>
-          <button type="button" class="btn btn-outline" id="voltarDadosPlano" onclick="mostrarEtapaPlano(false)">Voltar</button>
+          <button type="button" class="btn btn-outline" id="voltarDadosPlano" onclick="mostrarCategoriaPlano()">Voltar</button>
         </div>
         <button type="button" class="btn btn-outline" id="cancelarPlanoBtn" onclick="cancelarFormularioPlano()">Cancelar edição</button>
       </form>

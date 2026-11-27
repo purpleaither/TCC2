@@ -1,4 +1,4 @@
-const { chromium } = require('playwright');
+const browserType = require('../navegador.cjs');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -38,6 +38,11 @@ window.cenarioTabela = () => {
     airway_dryness:1,weather_humidity:29,pm2_5:12}], [new Date(+now-10000),new Date(+now+10000)]);
   document.getElementById("page-exercise-bank-prof").append(tabela);
 };
+window.cenarioEditor = () => {
+  user={id:"prof-ficticio"}; profile={role:"fisioterapeuta"}; patientId="paciente-ficticio";
+  respiratoryColumnsAvailable=true;
+  createPlanFromScratch();
+};
 window.cenarioProf = () => {
   user={id:"prof-ficticio"}; profile={role:"fisioterapeuta"}; respiratoryColumnsAvailable=true;
   menu(); navigate("exercise-bank-prof");
@@ -51,7 +56,13 @@ window.cenarioProf = () => {
 
 (async () => {
   await new Promise(r=>server.listen(0,'127.0.0.1',r));
-  const browser = await chromium.launch({executablePath:process.env.CHROME_PATH, timeout:15000, args:['--no-sandbox','--disable-dev-shm-usage','--disable-background-networking','--disable-crash-reporter']});
+  const engine = browserType.name();
+  const browser = await browserType.launch({
+    executablePath:engine === 'chromium' ? process.env.CHROME_PATH : undefined,
+    timeout:15000,
+    args:engine === 'chromium' ? ['--no-sandbox','--disable-dev-shm-usage','--disable-background-networking','--disable-crash-reporter'] : []
+  });
+  console.log(engine + ' ' + browser.version());
   try {
     const p = await browser.newPage({viewport:{width:360,height:780}});
     await p.goto('http://127.0.0.1:'+server.address().port);
@@ -102,6 +113,22 @@ window.cenarioProf = () => {
     await p.evaluate(()=>window.cenarioParques(false));
     assert.notEqual(await p.locator('#verParquesProximos').getAttribute('hidden'),null);
     assert.equal(await p.getByText('Adicionar caminhada ao ar livre',{exact:true}).count(),0);
+    for (const [categoria, dominio] of [['Ortopédico','musculoesqueletico'],['Respiratório','respiratorio'],['Misto','misto']]) {
+      await p.evaluate(()=>window.cenarioEditor());
+      await p.locator('#nomePlanoProf').fill('Plano fictício');
+      await p.locator('#avancarPlanoProf').click();
+      await p.locator('#tituloCategoriaPlano').waitFor();
+      assert.equal(await p.evaluate(()=>document.activeElement.id),'tituloCategoriaPlano');
+      await auditar('#page-editor-prof');
+      await p.getByRole('button',{name:categoria,exact:true}).click();
+      assert.equal(await p.locator('#dominioPlanoProf').inputValue(),dominio);
+      await p.locator('#page-exercise-source-prof.active').waitFor();
+      if(dominio==='respiratorio'){
+        await p.getByRole('button',{name:'Escolher na biblioteca respiratória'}).click();
+        assert.equal(await p.locator('#exercisebankResults .bank-result').count(),5);
+      }
+    }
+    console.log('Navegador e axe-core: escolha de categoria após nome e orientações');
     await p.evaluate(()=>window.cenarioProf());
     await p.evaluate(()=>window.cenarioTabela());
     assert.match(await p.locator('.tabela-longitudinal tbody').innerText(),/Ressecamento/);

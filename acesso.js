@@ -96,6 +96,8 @@ function navigate(page) {
   fecharClimaSheet();
   if(page==="planos-prof")renderProfessionalPlans();
   if(page==="editor-prof")updatePlanEditorSummary();
+  if(page==="exercise-source-prof")text("abrirBibliotecaPlano",$("dominioPlanoProf").value==="respiratorio"
+    ?"Escolher na biblioteca respiratória":"Escolher na ExerciseBank");
   if(page==="exercise-bank-prof"){
     $("exercisebankResults").replaceChildren();
     text("exercisebankStatus","Selecione os filtros e clique em Buscar.");
@@ -1125,8 +1127,7 @@ function openExerciseSourceOptions(){
 function backFromExerciseSource(){
   navigate(exerciseReturnPage);
   if(exerciseReturnPage==="editor-prof"&&!editingPlan&&!$("itensPlanoProf").children.length){
-    mostrarEtapaPlano(false);
-    $("nomePlanoProf").focus();
+    mostrarCategoriaPlano();
   }
 }
 function addManualExerciseFromOptions(){
@@ -1138,6 +1139,8 @@ function addManualExerciseFromOptions(){
 function openExerciseBankFromOptions(){
   if(!isProfessional())return;
   navigate("exercise-bank-prof");
+  $("dominioBiblioteca").value=$("dominioPlanoProf").value==="respiratorio"?"respiratorio":"todos";
+  if($("dominioBiblioteca").value==="respiratorio")void loadSample();
 }
 function openExerciseConfiguration(row,existing=false){
   if(!isProfessional()||!row)return;
@@ -1194,22 +1197,41 @@ function backFromExerciseConfiguration(){
   $("exerciseConfigDialog").close();
 }
 function mostrarEtapaPlano(exercicios){
+  $("etapaCategoriaPlano").hidden=true;
   $("dadosPlanoProf").hidden=exercicios&&!editingPlan;
   $("etapaExerciciosPlano").hidden=!exercicios;
   $("avancarPlanoProf").hidden=exercicios;
-  $("dominioPlanoProf").disabled=!respiratoryColumnsAvailable;
+  $("alterarCategoriaPlano").hidden=!editingPlan;
   $("voltarDadosPlano").hidden=!!editingPlan;
   $("cancelarPlanoBtn").hidden=exercicios&&!editingPlan;
   text("tituloFormularioPlano",editingPlan?"Editar plano terapêutico":exercicios?"Adicionar exercícios":"Criar plano terapêutico");
+}
+function mostrarCategoriaPlano(){
+  $("dadosPlanoProf").hidden=true;
+  $("avancarPlanoProf").hidden=true;
+  $("etapaExerciciosPlano").hidden=true;
+  $("etapaCategoriaPlano").hidden=false;
+  $("categoriaIndisponivel").hidden=respiratoryColumnsAvailable;
+  for(const botao of document.querySelectorAll("[data-categoria-respiratoria]"))
+    botao.disabled=!respiratoryColumnsAvailable;
+  $("tituloCategoriaPlano").focus();
+}
+function escolherCategoriaPlano(dominio){
+  if(!isProfessional()||!patientId||$("etapaCategoriaPlano").hidden)return;
+  if(dominio!=="musculoesqueletico" && (!respiratoryColumnsAvailable || !["respiratorio","misto"].includes(dominio)))return;
+  $("dominioPlanoProf").value=dominio;
+  mostrarEtapaPlano(true);
+  if(!editingPlan&&!$("itensPlanoProf").children.length){
+    openExerciseSourceOptions();
+    $("tituloOrigemExercicios").focus();
+  }else $("tituloFormularioPlano").focus();
 }
 function avancarPlano(){
   if(!isProfessional()||!patientId)return;
   const nome=$("nomePlanoProf");
   if(!nome.reportValidity())return;
   if(nome.value.trim().length<2){nome.focus();return message("Informe o nome do plano.",true);}
-  mostrarEtapaPlano(true);
-  openExerciseSourceOptions();
-  $("tituloOrigemExercicios").focus();
+  mostrarCategoriaPlano();
 }
 function createPlanFromScratch(){
   if(!isProfessional())return;
@@ -1234,6 +1256,7 @@ function clearPlanForm(){
   pendingExerciseRow=null;
   pendingExercisePlaceholder=null;
   $("formPlanoProf").reset();
+  $("dominioPlanoProf").value="musculoesqueletico";
   $("itensPlanoProf").replaceChildren();
   updatePlanEditorSummary();
   camposExercicioAntes=[];
@@ -1978,8 +2001,10 @@ window.adicionarExercicioManual=addManualExerciseFromOptions;
 window.abrirBibliotecaExerciseBank=openExerciseBankFromOptions;
 window.salvarPlanoProf=savePlan;
 window.avancarPlano=avancarPlano;
+window.mostrarCategoriaPlano=mostrarCategoriaPlano;
+window.escolherCategoriaPlano=escolherCategoriaPlano;
 window.mostrarEtapaPlano=etapa=>{
   mostrarEtapaPlano(etapa);
-  $("nomePlanoProf").focus();
+  (editingPlan ? $("tituloFormularioPlano") : $("nomePlanoProf")).focus();
 };
 document.addEventListener("DOMContentLoaded",init);
