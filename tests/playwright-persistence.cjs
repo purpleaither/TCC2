@@ -48,6 +48,29 @@ if(!process.env.CT22_ONLY && !process.env.TCC_SERIE_DESEMPENHO)await step('CT54'
 });
 if(!process.env.TCC_SERIE_DESEMPENHO)await step('CT22',async()=>{phase='biblioteca';await card().getByRole('button',{name:'Editar',exact:true}).click();await prof.getByRole('button',{name:'+ Adicionar exercícios',exact:true}).click();await prof.getByRole('button',{name:'Escolher na ExerciseBank',exact:true}).click();await prof.locator('#exercisebankRefresh').waitFor();const catalogo=prof.waitForResponse(r=>new URL(r.url()).pathname==='/api/exercisebank'&&r.request().method()==='GET');await prof.locator('#exercisebankRefresh').click({timeout:30000});const resposta=await catalogo;if(!resposta.ok())throw Error('Catálogo respondeu HTTP '+resposta.status());const item=prof.locator('#exercisebankResults .bank-result').first();try{await item.waitFor({timeout:30000})}catch(e){throw Error('Biblioteca sem resultados: '+(await prof.locator('#exercisebankStatus').innerText()).slice(0,120))};const name=await item.getByRole('heading').innerText();phase='configuracao';await item.getByRole('button',{name:'Selecionar exercício'}).click();await prof.getByRole('button',{name:'Concluir inserção',exact:true}).click();await item.waitFor({state:'visible'});await prof.locator('#page-exercise-bank-prof.active').getByRole('button',{name:'Voltar',exact:true}).click();await prof.locator('#page-exercise-source-prof.active').getByRole('button',{name:'Voltar',exact:true}).click();phase='salvamento';await prof.locator('#page-editor-prof.active').waitFor();await prof.locator('#formPlanoProf button[type=submit]').click();phase='verificacao';await card().getByText(name,{exact:true}).waitFor({timeout:20000});phase='persistencia';await prof.reload();await prof.locator('#page-profissional.active').waitFor({timeout:30000});await selectPatient();await card().getByText(name,{exact:true}).waitFor({timeout:20000});if(!network.some(x=>x.phase==='salvamento'||x.phase==='verificacao' ? x.endpoint.endsWith('/plan_exercises')&&x.method==='POST'&&x.status>=200&&x.status<300 : false))throw Error('Resposta de inserção não observada')});
 if(!process.env.CT22_ONLY)await step('CT24',async()=>{await patient.reload();await patient.locator('#page-inicio.active').waitFor({timeout:30000});await nav(patient,'exercicios');for(let i=0;i<100;i++){if(await patient.locator('.patient-plan-title').getByText(title,{exact:true}).count())break;const next=patient.getByRole('button',{name:/próximo/i});if(!await next.count()||!await next.first().isEnabled())break;await next.first().click()}await patient.locator('.patient-plan-title').filter({hasText:title}).waitFor({timeout:5000});await patient.locator('.patient-exercise-title').filter({hasText:exercise}).waitFor({timeout:5000})});
+if(!process.env.CT22_ONLY && !process.env.TCC_SERIE_DESEMPENHO)await step('CT55',async()=>{
+  await card().getByRole('button',{name:'Editar',exact:true}).click();
+  await prof.getByRole('button',{name:'+ Adicionar exercícios',exact:true}).click();
+  await prof.getByRole('button',{name:'Adicionar caminhada ao ar livre',exact:true}).click();
+  const dialog=prof.locator('#exerciseConfigDialog');
+  const name=dialog.getByLabel('Nome do exercício');
+  if(await name.inputValue()!=='Caminhada ao ar livre')throw Error('Nome da caminhada incorreto');
+  if(!await dialog.getByRole('checkbox').isChecked())throw Error('Indicação ao ar livre não marcada');
+  for(const field of ['series','repetitions','duration','frequency']){
+    if(await dialog.locator('[name="'+field+'"]').inputValue())throw Error('Parâmetro preenchido automaticamente');
+  }
+  const walk='Caminhada fictícia PW '+Date.now();
+  await name.fill(walk);
+  await dialog.getByLabel('Séries',{exact:true}).fill('1');
+  await dialog.getByLabel('Duração',{exact:true}).fill('10 minutos');
+  await dialog.getByLabel('Frequência',{exact:true}).fill('2 vezes por semana');
+  await dialog.getByRole('button',{name:'Concluir inserção',exact:true}).click();
+  await prof.locator('#page-exercise-source-prof.active').getByRole('button',{name:'Voltar',exact:true}).click();
+  await prof.locator('#formPlanoProf button[type=submit]').click();
+  await card().getByText(walk,{exact:true}).waitFor();
+  await nav(patient,'inicio');
+  await patient.locator('#guiaArLivre').getByText(walk,{exact:true}).waitFor({timeout:20000});
+});
 }
 }catch(e){report.push({id:'setup',status:'blocked',error:String(e.message).split('\n')[0].slice(0,200)})}
 finally{if(prof&&patientId){await step('CT30-cleanup',async()=>{await selectPatient();if(!await card().count()){report.push({id:'CT30',status:'not_executed'});return}prof.once('dialog',d=>d.accept());await card().getByRole('button',{name:'Excluir',exact:true}).click();await card().waitFor({state:'detached',timeout:20000})})}await browser.close();fs.mkdirSync('test-results',{recursive:true});fs.writeFileSync('test-results/playwright-persistence.json',JSON.stringify(report,null,2));fs.writeFileSync('test-results/diagnostico-ct22.json',JSON.stringify(network,null,2));console.log(JSON.stringify({report,network}));if(report.some(x=>x.status!=='passed'))process.exitCode=1}})().catch(()=>{process.exitCode=1});
