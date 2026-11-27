@@ -30,9 +30,9 @@ window.cenarioAmbiente = (salvo, ar) => {
     ...(ar?{pm2_5:12,pm10:20,ozone:35}:{})}]:[];
   navigate("inicio");
 };
-window.cenarioAcompanhamento = () => {
-  user={id:"prof-ficticio"}; profile={role:"fisioterapeuta"}; patientId="paciente-ficticio";
-  patients=[{id:patientId,display_name:"Paciente fictício"}];
+window.cenarioAcompanhamento = selecionado => {
+  user={id:"prof-ficticio"}; profile={role:"fisioterapeuta"}; patientId=selecionado?"paciente-ficticio":null;
+  patients=[{id:"paciente-ficticio",display_name:"Paciente fictício"}];
   plans=[{clinical_domain:"misto"}];
   const data=new Date().toISOString();
   professionalWorkouts=[{completed_at:data}];
@@ -152,7 +152,10 @@ window.cenarioProf = () => {
     }
     console.log('Navegador e axe-core: escolha de categoria após nome e orientações');
     await p.evaluate(()=>window.cenarioProf());
-    await p.evaluate(()=>window.cenarioAcompanhamento());
+    await p.evaluate(()=>window.cenarioAcompanhamento(false));
+    assert.equal(await p.locator("#periodoAcompanhamento").isVisible(),false);
+    await p.evaluate(()=>window.cenarioAcompanhamento(true));
+    await p.locator("#periodoAcompanhamento").waitFor();
     const blocos=p.locator('#graficosRegistrosProf > details');
     assert.deepEqual(await blocos.locator('> summary').allTextContents(),[
       'Treinos concluídos','Sintomas e atividade física','Registros por dia'

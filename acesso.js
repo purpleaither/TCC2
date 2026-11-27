@@ -1013,6 +1013,7 @@ function renderProfessionalRecords(){
   if(!isProfessional())return;
   updatePatientSelectors();
   const ready=!!patientId && professionalWorkouts !== undefined;
+  $("periodoAcompanhamento").hidden=!patientId;
   $("periodoAcompanhamento").disabled=!ready;
   const windows=monitoringWeeks(Number($("periodoAcompanhamento").querySelector(":checked").value));
   const periodRecords=records.filter(record=>{
