@@ -855,8 +855,8 @@ button.heatmap-cell:focus-visible{outline:3px solid var(--titulo, #003366);outli
 #page-exercise-source-prof .card{max-width:620px}
 #page-exercise-source-prof .card>.btn{display:block;width:100%;min-height:46px;margin:12px 0}
 #createPlanEntry { margin-block-end: var(--espaco-grupo); }
-#exerciseConfigDialog { margin: auto; inline-size: min(740px, calc(100% - 24px)); max-block-size: 90dvh; color: var(--texto); }
-#exerciseConfigDialog::backdrop { background: rgb(0 0 0 / .45); }
+#exerciseConfigDialog, #parquesDialog { margin: auto; inline-size: min(740px, calc(100% - 24px)); max-block-size: 90dvh; color: var(--texto); }
+#exerciseConfigDialog::backdrop, #parquesDialog::backdrop { background: rgb(0 0 0 / .45); }
 #exerciseConfigDialog #exerciseConfigRow > .demo-exercicio-item { margin-bottom: 16px; }
 #exerciseConfigDialog .btn { min-height: 46px; }
 #erroConfigExercicio { color: var(--erro); }

@@ -66,24 +66,20 @@ function navigate(page) {
     if (page === "conta") page = isProfessional() ? "profissional" : "contatos";
     const allowed = isProfessional()
       ? ["profissional","planos-prof","exercise-source-prof","exercise-bank-prof","editor-prof","registros-prof"]
-      : ["inicio","sintomas","historico","orientacoes","exercicios","parques","contatos"];
+      : ["inicio","sintomas","historico","orientacoes","exercicios","contatos"];
     if(!allowed.includes(page)) page=homePage();
-    if(page==="parques" && !outdoorSelectedId)page="exercicios";
   }
   if(!$("page-"+page).classList.contains("active")) {
     const flash=$("authFlash");
     flash.hidden=true;
     flash.textContent="";
   }
-  if(page!=="parques" && outdoorSelectedId){
-    outdoorSelectedId=null;
-    outdoorGuide.update([]);
-  }
+  if(page!=="exercicios" && outdoorSelectedId)closeOutdoorGuide();
   document.querySelectorAll(".page").forEach(n=>n.classList.toggle("active",n.id==="page-"+page));
   mostrarCabecalho(page!=="login");
   document.querySelectorAll(".menu-item").forEach(item=>{
     const selected=item.getAttribute("onclick")==="navegarPara('"+(
-      ["editor-prof","exercise-source-prof","exercise-bank-prof"].includes(page)?"planos-prof":page==="parques"?"exercicios":page
+      ["editor-prof","exercise-source-prof","exercise-bank-prof"].includes(page)?"planos-prof":page
     )+"')";
     item.classList.toggle("active",selected);
     if(selected)item.setAttribute("aria-current","page");
@@ -99,7 +95,7 @@ function navigate(page) {
   }
   if(page==="registros-prof")renderProfessionalRecords();
   if(page==="exercicios")renderPatientPlans();
-  if(page==="exercicios" || page==="parques")void refreshOutdoorGuide();
+  if(page==="exercicios")void refreshOutdoorGuide();
   if(page==="inicio"){
     const advice=patientTpeAdviceForToday();
     text("conselhoDiaTitulo",advice.title);
@@ -260,7 +256,7 @@ async function refreshOutdoorGuide() {
   if(!outdoorSelectedId)return false;
   const selected = flagged.find(exercise => exercise.id===outdoorSelectedId);
   if(!selected){
-    navigate("exercicios");
+    closeOutdoorGuide();
     return false;
   }
   outdoorGuide.update([selected.exercise_source==="ExerciseBank"
@@ -269,7 +265,7 @@ async function refreshOutdoorGuide() {
 }
 
 function refreshOutdoorExercises() {
-  if(!document.hidden && document.querySelector("#page-exercicios.active, #page-parques.active")) void refreshOutdoorGuide();
+  if(!document.hidden && $("page-exercicios").classList.contains("active")) void refreshOutdoorGuide();
 }
 function startOutdoorUpdates() {
   stopOutdoorUpdates();
@@ -282,15 +278,20 @@ function startOutdoorUpdates() {
   document.addEventListener("visibilitychange", refreshOutdoorExercises);
   outdoorTimer = setInterval(refreshOutdoorExercises, 15000);
 }
+function closeOutdoorGuide() {
+  outdoorSelectedId=null;
+  outdoorGuide.update([]);
+  $("parquesDialog").close();
+}
+
 function stopOutdoorUpdates() {
   outdoorRefresh += 1;
   outdoorExerciseIds=undefined;
-  outdoorSelectedId=null;
+  closeOutdoorGuide();
   clearInterval(outdoorTimer);
   document.removeEventListener("visibilitychange", refreshOutdoorExercises);
   if(outdoorChannel) void supabase.removeChannel(outdoorChannel);
   outdoorChannel = null;
-  outdoorGuide.update([]);
 }
 
 async function consultarClimaBrasilia() {
@@ -535,12 +536,13 @@ function renderPatientPlans(animar=false){
   const parksButton=el("button","Ver parques próximos","btn btn-outline");
   parksButton.type="button";
   parksButton.id="verParquesProximos";
+  parksButton.setAttribute("aria-haspopup","dialog");
   parksButton.dataset.exerciseId=exercise.id;
   parksButton.hidden=!(outdoorExerciseIds?.has(exercise.id) ?? exercise.indicacao_ar_livre===true);
   parksButton.addEventListener("click",()=>{
     outdoorSelectedId=exercise.id;
-    navigate("parques");
-    $("tituloParques").focus();
+    $("parquesDialog").showModal();
+    void refreshOutdoorGuide();
   });
   card.append(parksButton);
 
@@ -1587,6 +1589,9 @@ async function loadExerciseMedia(id,target,button,source="ExerciseBank",autoPlay
 }
 
 async function init(){
+  $("parquesDialog").addEventListener("close",()=>{
+    if(!$("parquesDialog").open)closeOutdoorGuide();
+  });
   menu();navigate("login");
   $("exerciseConfigDialog").addEventListener("cancel",event=>{
     event.preventDefault();

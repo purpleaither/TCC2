@@ -36,7 +36,7 @@ if(!process.env.CT22_ONLY && !process.env.TCC_SERIE_DESEMPENHO)await step('CT54'
   await patient.reload();
   await patient.locator('#page-inicio.active').waitFor({timeout:30000});
   await showExercise(exercise);
-  const guide=patient.locator('#page-parques #guiaArLivre section');
+  const guide=patient.locator('#parquesDialog #guiaArLivre section');
   const entry=guide.getByText(exercise,{exact:false});
   const parksButton=patient.getByRole('button',{name:'Ver parques próximos',exact:true});
   const routes=[];
@@ -88,7 +88,7 @@ if(!process.env.CT22_ONLY && !process.env.TCC_SERIE_DESEMPENHO)await step('CT55'
   await showExercise(walk);
   await patient.getByRole('button',{name:'Ver parques próximos',exact:true}).click();
   await patient.locator('#guiaArLivre').getByText(walk,{exact:false}).waitFor({timeout:20000});
-  await patient.locator('#page-parques').getByRole('button',{name:'Voltar',exact:true}).click();
+  await patient.getByRole('dialog',{name:'Parques próximos'}).getByRole('button',{name:'Fechar',exact:true}).click();
   await patient.getByRole('heading',{name:walk,exact:true}).waitFor();
 });
 }

@@ -347,65 +347,66 @@
       <p class="card-text">Quando o fisioterapeuta selecionar e configurar os exercícios, eles serão disponibilizados nesta área.</p>
       <p class="card-text-small">Apenas os exercícios definidos pelo fisioterapeuta vinculado serão exibidos nesta página.</p>
     </div>
-  </div>
-
-  <div class="page" id="page-parques">
-    <h1 class="page-title" id="tituloParques" tabindex="-1">Parques próximos</h1>
-    <div id="guiaArLivre"></div>
-    <template id="modeloGuiaArLivre">
-      <section class="card guia-ar-livre" aria-labelledby="tituloParques">
-        <p class="card-text-small" data-guia-exercicios></p>
-        <div class="form-group">
-          <label class="form-label" for="regiaoGuiaArLivre">Região do DF</label>
-          <select class="form-input" id="regiaoGuiaArLivre" disabled>
-            <option value="">Escolha uma região</option>
-          </select>
-        </div>
-        <button type="button" class="btn btn-outline">Usar localização aproximada</button>
-        <p class="card-text-small">A posição aproximada é enviada a serviços externos.</p>
-        <p role="status"></p>
-        <figure class="guia-mapa" data-guia-mapa hidden>
+    <dialog class="card" id="parquesDialog" aria-labelledby="tituloParques">
+      <h2 class="page-title" id="tituloParques" tabindex="-1" autofocus>Parques próximos</h2>
+      <div id="guiaArLivre"></div>
+      <template id="modeloGuiaArLivre">
+        <section class="card guia-ar-livre" aria-labelledby="tituloParques">
+          <p class="card-text-small" data-guia-exercicios></p>
           <div class="form-group">
-            <label class="form-label" for="parqueSelecionado">Escolha um parque</label>
-            <select class="form-input" id="parqueSelecionado"></select>
+            <label class="form-label" for="regiaoGuiaArLivre">Região do DF</label>
+            <select class="form-input" id="regiaoGuiaArLivre" disabled>
+              <option value="">Escolha uma região</option>
+            </select>
           </div>
-          <div class="guia-mapa-zoom" role="group" aria-label="Controles do mapa">
-            <button type="button" data-mapa-recentrar>Recentrar</button>
-            <button type="button" data-mapa-reduzir aria-label="Diminuir zoom">−</button>
-            <button type="button" data-mapa-ampliar aria-label="Aumentar zoom">+</button>
-          </div>
-          <p class="card-text-small" id="ajudaMapaParques">Arraste o mapa ou use as setas do teclado.</p>
-          <div class="guia-mapa-superficie" aria-label="Mapa dos parques mais próximos" aria-describedby="ajudaMapaParques" role="group" tabindex="0">
-            <div data-mapa-quadro>
-              <div data-mapa-ruas aria-hidden="true" hidden></div>
-              <canvas width="640" height="420" aria-hidden="true"></canvas>
-              <div data-mapa-marcadores></div>
+          <button type="button" class="btn btn-outline">Usar localização aproximada</button>
+          <p class="card-text-small">A posição aproximada é enviada a serviços externos.</p>
+          <p role="status"></p>
+          <figure class="guia-mapa" data-guia-mapa hidden>
+            <div class="form-group">
+              <label class="form-label" for="parqueSelecionado">Escolha um parque</label>
+              <select class="form-input" id="parqueSelecionado"></select>
             </div>
-            <a class="guia-mapa-creditos" href="https://www.openstreetmap.org/copyright" rel="noreferrer">© OpenStreetMap</a>
-          </div>
-          <figcaption>
-            <div data-mapa-detalhe aria-live="polite"></div>
-            <p class="card-text-small" data-mapa-status role="status"></p>
-            <small data-mapa-legenda></small>
-          </figcaption>
-        </figure>
-        <p data-guia-parques-status></p>
-        <section data-guia-dados aria-labelledby="tituloCondicoesParques" hidden>
-          <h2 class="card-title" id="tituloCondicoesParques">Condições da região</h2>
-          <dl class="guia-ambiente" data-guia-ambiente></dl>
+            <div class="guia-mapa-zoom" role="group" aria-label="Controles do mapa">
+              <button type="button" data-mapa-recentrar>Recentrar</button>
+              <button type="button" data-mapa-reduzir aria-label="Diminuir zoom">−</button>
+              <button type="button" data-mapa-ampliar aria-label="Aumentar zoom">+</button>
+            </div>
+            <p class="card-text-small" id="ajudaMapaParques">Arraste o mapa ou use as setas do teclado.</p>
+            <div class="guia-mapa-superficie" aria-label="Mapa dos parques mais próximos" aria-describedby="ajudaMapaParques" role="group" tabindex="0">
+              <div data-mapa-quadro>
+                <div data-mapa-ruas aria-hidden="true" hidden></div>
+                <canvas width="640" height="420" aria-hidden="true"></canvas>
+                <div data-mapa-marcadores></div>
+              </div>
+              <a class="guia-mapa-creditos" href="https://www.openstreetmap.org/copyright" rel="noreferrer">© OpenStreetMap</a>
+            </div>
+            <figcaption>
+              <div data-mapa-detalhe aria-live="polite"></div>
+              <p class="card-text-small" data-mapa-status role="status"></p>
+              <small data-mapa-legenda></small>
+            </figcaption>
+          </figure>
+          <p data-guia-parques-status></p>
+          <section data-guia-dados aria-labelledby="tituloCondicoesParques" hidden>
+            <h2 class="card-title" id="tituloCondicoesParques">Condições da região</h2>
+            <dl class="guia-ambiente" data-guia-ambiente></dl>
+          </section>
+          <details>
+            <summary>Cuidados ao ar livre</summary>
+            <ul data-guia-recomendacoes></ul>
+          </details>
+          <details>
+            <summary>Sobre os dados</summary>
+            <p class="card-text-small">Clima e ar: estimativas da Open-Meteo e do CAMS. As rotas a pé podem omitir obstáculos ou trechos sem calçada. Rotas da <a href="https://routing.openstreetmap.de/about.html">FOSSGIS</a>. <a href="https://www.openstreetmap.org/fixthemap">Corrigir o mapa</a>. Parques: IPEDF, Geoportal DF e <a href="https://www.openstreetmap.org/copyright" rel="noreferrer">OpenStreetMap</a>.</p>
+            <p class="card-text-small">O app não salva a posição aproximada. A FOSSGIS pode registrar a consulta.</p>
+          </details>
         </section>
-        <details>
-          <summary>Cuidados ao ar livre</summary>
-          <ul data-guia-recomendacoes></ul>
-        </details>
-        <details>
-          <summary>Sobre os dados</summary>
-          <p class="card-text-small">Clima e ar: estimativas da Open-Meteo e do CAMS. As rotas a pé podem omitir obstáculos ou trechos sem calçada. Rotas da <a href="https://routing.openstreetmap.de/about.html">FOSSGIS</a>. <a href="https://www.openstreetmap.org/fixthemap">Corrigir o mapa</a>. Parques: IPEDF, Geoportal DF e <a href="https://www.openstreetmap.org/copyright" rel="noreferrer">OpenStreetMap</a>.</p>
-          <p class="card-text-small">O app não salva a posição aproximada. A FOSSGIS pode registrar a consulta.</p>
-        </details>
-      </section>
-    </template>
-    <button type="button" class="btn btn-outline" onclick="navegarPara('exercicios');document.getElementById('verParquesProximos')?.focus()">Voltar</button>
+      </template>
+      <form method="dialog">
+        <button type="submit" class="btn btn-outline">Fechar</button>
+      </form>
+    </dialog>
   </div>
 
   <!-- ===== TELA 6.0: MINHA CONTA ===== -->
