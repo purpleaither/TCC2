@@ -395,21 +395,21 @@
 
   <!-- ===== PAINEL PROFISSIONAL DEMONSTRATIVO ===== -->
   <div class="page" id="page-profissional">
-    <div class="card">
-      <h1 class="card-title" id="profGreeting">Bem-vindo(a), fisioterapeuta</h1>
-      <p class="card-text">Selecione um paciente vinculado para consultar registros e configurar planos terapêuticos individualizados.</p>
-      <label class="form-label" for="pacienteProf">Paciente</label>
-      <select class="form-input" id="pacienteProf" onchange="atualizarPacienteProfissional()"><option value="p1">Maria Silva</option><option value="p2">João Oliveira</option></select>
+    <div class="form-group">
+      <h1 class="card-title"><label for="pacienteProf">Paciente</label></h1>
+      <select class="form-input" id="pacienteProf" onchange="atualizarPacienteProfissional()"></select>
     </div>
-    <div class="card">
-      <h2 class="card-title">Planos terapêuticos</h2>
-      <p class="card-text">Crie e organize exercícios prescritos, com séries, repetições, duração e frequência.</p>
-      <button class="btn" onclick="navegarPara('planos-prof')">Gerenciar planos</button>
-    </div>
-    <div class="card">
-      <h2 class="card-title">Registros de sintomas</h2>
-      <p class="card-text">Consulte os registros vinculados a este paciente.</p>
-      <button class="btn" onclick="navegarPara('registros-prof')">Consultar registros</button>
+    <div id="acoesPacienteProf" hidden>
+      <div class="card">
+        <h2 class="card-title">Planos terapêuticos</h2>
+        <p class="card-text">Crie e organize exercícios prescritos, com séries, repetições, duração e frequência.</p>
+        <button class="btn" onclick="navegarPara('planos-prof')">Gerenciar planos</button>
+      </div>
+      <div class="card">
+        <h2 class="card-title">Registros de sintomas</h2>
+        <p class="card-text">Consulte os registros vinculados a este paciente.</p>
+        <button class="btn" onclick="navegarPara('registros-prof')">Consultar registros</button>
+      </div>
     </div>
   </div>
 

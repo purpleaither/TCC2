@@ -156,9 +156,7 @@ async function openSession() {
     const links=result(await supabase.from("care_links").select("patient_id").eq("physiotherapist_id",user.id));
     const ids=(links||[]).map(x=>x.patient_id);
     patients=ids.length ? result(await supabase.from("profiles").select("id,display_name").in("id",ids)) : [];
-    patientId=patients[0]?.id||null;
-    updatePatientSelectors();
-    text("profGreeting","Olá, "+profile.display_name);
+    patientId=null;
     await loadPatientData();
     navigate("profissional");
   } else {
@@ -172,17 +170,21 @@ async function openSession() {
   text("loginStatus", "Entre com uma conta de teste cadastrada.");
 }
 function updatePatientSelectors() {
+  $("acoesPacienteProf").hidden=!patientId;
   for(const id of ["pacienteProf","pacientePlanoProf","pacienteRegistrosProf"]) {
     const select=$(id);
     if(!select)continue;
-    select.replaceChildren();
+    const placeholder=el("option",patients.length?"Selecione um paciente":"Nenhum paciente vinculado");
+    placeholder.value="";
+    placeholder.disabled=true;
+    select.replaceChildren(placeholder);
     for(const patient of patients) {
       const option=el("option",patient.display_name);
       option.value=patient.id;
       select.append(option);
     }
-    if(patientId)select.value=patientId;
-    select.disabled=!patientId;
+    select.value=patientId||"";
+    select.disabled=!patients.length;
   }
   const submit=$("formPlanoProf")?.querySelector('button[type="submit"]');
   if(submit)submit.disabled=!patientId;

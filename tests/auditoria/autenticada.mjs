@@ -158,6 +158,7 @@ try {
           }
         }
       } else {
+        await pagina.locator('#pacienteProf').selectOption({ index: 1 });
         await auditar(pagina, perfil.nome, 'registros-prof', () => navegar(pagina, 'registros-prof'));
         await auditar(pagina, perfil.nome, 'planos-prof', () => navegar(pagina, 'planos-prof'));
         await auditar(pagina, perfil.nome, 'editor-prof', () => pagina.locator('#page-planos-prof').getByRole('button', { name: 'Criar plano terapêutico' }).filter({ visible: true }).first().click({ timeout: 8000 }));
