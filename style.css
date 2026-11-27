@@ -1579,6 +1579,10 @@ button.guia-mapa-marcador { cursor: pointer; }
 
 
 @media (min-width: 900px) {
+  .app { --largura-conteudo: 840px; }
+  .page { padding-block-start: 24px; }
+  :is(#page-sintomas, #page-editor-prof, #page-exercise-source-prof) { max-inline-size: 720px; }
+  :is(#page-registros-prof, #page-exercise-bank-prof) { max-inline-size: 1000px; }
   .inicio-acoes, #acoesPacienteProf:not([hidden]) {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
