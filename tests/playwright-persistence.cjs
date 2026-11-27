@@ -56,7 +56,7 @@ if(!process.env.CT22_ONLY && !process.env.TCC_SERIE_DESEMPENHO)await step('CT54'
   await card().getByText('Indicação ao ar livre',{exact:true}).waitFor();
   await parksButton.click({timeout:20000});
   await guide.waitFor({timeout:20000});
-  await patient.getByRole('heading',{name:'Parques próximos para realizar o exercício: '+exercise,exact:true}).waitFor();
+  await patient.getByRole('heading',{name:'Parques próximos '+exercise,exact:true}).waitFor();
   if(routes.length)throw Error('Consulta externa iniciada antes de escolher uma localização');
   await setOutdoor(false);
   await guide.waitFor({state:'detached',timeout:20000});
@@ -88,7 +88,7 @@ if(!process.env.CT22_ONLY && !process.env.TCC_SERIE_DESEMPENHO)await step('CT55'
   await showExercise(walk);
   await patient.getByRole('button',{name:'Ver parques próximos',exact:true}).click();
   await patient.locator('#guiaArLivre > section').waitFor({timeout:20000});
-  await patient.getByRole('dialog',{name:'Parques próximos para realizar o exercício: '+walk,exact:true}).getByRole('button',{name:'Fechar',exact:true}).click();
+  await patient.getByRole('dialog',{name:'Parques próximos '+walk,exact:true}).getByRole('button',{name:'Fechar',exact:true}).click();
   await patient.getByRole('heading',{name:walk,exact:true}).waitFor();
 });
 }

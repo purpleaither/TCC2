@@ -1389,3 +1389,12 @@ button.guia-mapa-marcador { cursor: pointer; }
 .guia-mapa-superficie:active { cursor: grabbing; }
 [data-mapa-quadro] { position: absolute; inset: 0; }
 .guia-mapa-zoom [data-mapa-recentrar] { margin-inline-end: auto; padding-inline: .65rem; }
+
+#nomeExercicioParques {
+  display: block;
+  color: var(--destaque);
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  #tituloParques { text-align: center; }
+}

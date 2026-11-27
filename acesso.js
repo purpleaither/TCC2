@@ -538,7 +538,7 @@ function renderPatientPlans(animar=false){
   parksButton.hidden=!(outdoorExerciseIds?.has(exercise.id) ?? exercise.indicacao_ar_livre===true);
   parksButton.addEventListener("click",()=>{
     outdoorSelectedId=exercise.id;
-    text("tituloParques","Parques próximos para realizar o exercício: "+name);
+    text("nomeExercicioParques",name);
     $("parquesDialog").showModal();
     void refreshOutdoorGuide();
   });
