@@ -689,17 +689,16 @@ function renderPatientPlans(animar=false){
   ]){
     if(value===null||value===undefined||String(value).trim()==="")continue;
     const tile=el("div",undefined,"patient-exercise-metric");
-    const header=el("div",undefined,"patient-exercise-metric-header");
     const help=el("details",undefined,"patient-exercise-metric-help");
     help.setAttribute("name","ajuda-medidas-exercicio");
     const question=el("summary","?");
     question.setAttribute("aria-label","O que significa " + label.toLowerCase() + "?");
-    header.append(el("span",label,"patient-exercise-metric-label"));
+    tile.append(el("span",label,"patient-exercise-metric-label"),
+      el("strong",String(value),"patient-exercise-metric-value"));
     if(exerciseMetricHelp[label]){
       help.append(question,el("p",exerciseMetricHelp[label]));
-      header.append(help);
+      tile.append(help);
     }
-    tile.append(header,el("strong",String(value),"patient-exercise-metric-value"));
     metrics.append(tile);
   }
   card.append(metrics);

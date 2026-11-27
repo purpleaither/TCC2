@@ -1445,7 +1445,8 @@ button.guia-mapa-marcador { cursor: pointer; }
 }
 
 .patient-exercise-metrics { position: relative; }
-.patient-exercise-metric-header { display: flex; align-items: start; justify-content: space-between; gap: .25rem; }
+.patient-exercise-metric { display: flex; flex-direction: column; }
+.patient-exercise-metric-help { margin-block-start: auto; align-self: end; }
 .patient-exercise-metric-help summary {
   display: grid;
   place-items: center;
