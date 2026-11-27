@@ -6,6 +6,9 @@ import {avisoFaltaDeAr, catalogoRespiratorio, dominioDoDiario, medidasRespirator
 
 import {camposQualidadeAr} from "./data/ambiente.js";
 
+import {criarControleDeSessao} from "./services/sessionActivity.js";
+
+const sessaoAtiva = criarControleDeSessao({janela:window, documento:document, aoExpirar:encerrarPorInatividade});
 const $ = id => document.getElementById(id);
 const levels = ["Nenhuma", "Leve", "Moderada", "Intensa"];
 const WALK_SOURCE = "caminhada_manual";
@@ -132,6 +135,7 @@ async function login() {
     $("loginLoading").hidden=false;
     $("loginLoadingTitle").focus();
     await openSession();
+    if(user) sessaoAtiva.iniciar(user.id,true);
   } catch(err) {
     if(signedIn){
       reset();
@@ -149,15 +153,22 @@ async function login() {
   }
 }
 
+async function encerrarPorInatividade(){
+  reset();
+  text("loginStatus","Sua sessão terminou por inatividade. Entre novamente.");
+  await supabase?.auth.signOut({scope:"local"}).catch(()=>{});
+}
+
 async function logout() {
   if(supabase) {
-    try { await supabase.auth.signOut(); }
+    try { result(await supabase.auth.signOut()); }
     catch(err) { message("Não foi possível encerrar a sessão. Tente novamente.",true); return; }
   }
   reset();
 }
 let totalTreinos = null;
 function reset() {
+  sessaoAtiva.parar();
   totalTreinos = null;
   stopOutdoorUpdates();
   patientLoadVersion += 1;
@@ -1999,20 +2010,35 @@ async function init(){
     supabase=createClient(config.url,config.publishableKey,{
       auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}
     });
+  }catch(err){
+    text("loginStatus","Não foi possível conectar ao serviço. Tente novamente mais tarde.");
+    return;
+  }
+
+  try{
+    const session=result(await supabase.auth.getSession()).session;
+    if(!session){
+      text("loginStatus","Entre com uma conta de teste cadastrada.");
+    }else if(!sessaoAtiva.podeRestaurar(session.user.id)){
+      await encerrarPorInatividade();
+    }else{
+      $("loginContent").hidden=true;
+      $("loginLoading").hidden=false;
+      await openSession();
+      if(user)sessaoAtiva.iniciar(user.id);
+    }
+  }catch(err){
+    if(isAuthenticated())reset();
+    text("loginStatus","Não foi possível restaurar sua sessão. Você pode entrar novamente.");
+  }finally{
     loginReady=true;
     $("loginSubmit").disabled=false;
-    message("Entre com uma conta de teste cadastrada.");
-    const session=await supabase.auth.getSession();
-    if(session.error)throw session.error;
-    if(session.data.session)await openSession();
-    supabase.auth.onAuthStateChange((event)=>{
-      if(event==="SIGNED_OUT"&&isAuthenticated())reset();
-    });
-  }catch(err){
-    loginReady=false;
-    $("loginSubmit").disabled=true;
-    message("Não foi possível conectar ao serviço. Tente novamente mais tarde.",true);
+    $("loginLoading").hidden=true;
+    $("loginContent").hidden=false;
   }
+  supabase.auth.onAuthStateChange((event)=>{
+    if(event==="SIGNED_OUT"&&isAuthenticated())reset();
+  });
 }
 
 window.AppAuth={login,logout,navigate,saveSymptoms,isProfessional,renderWorkoutDay,renderWorkoutProgress};

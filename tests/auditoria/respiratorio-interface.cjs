@@ -245,5 +245,53 @@ window.cenarioProf = () => {
 
     console.log('Navegador e axe-core: biblioteca e configuração respiratória');
 
+    const sessao=await browser.newPage();
+    await sessao.route('**/acesso.js',rota=>rota.fulfill({path:path.join(pasta,'acesso.js'),contentType:'text/javascript'}));
+    await sessao.route('**/api/database-config',rota=>rota.fulfill({json:{
+      configured:true,url:'https://teste.invalid',publishableKey:'ficticia'
+    }}));
+    await sessao.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm',rota=>rota.fulfill({
+      contentType:'text/javascript',headers:{'Access-Control-Allow-Origin':'*'},body:`
+        export function createClient(){
+          const usuario={id:"sessao-ficticia",display_name:"Perfil fictício",role:"fisioterapeuta"};
+          const sessao=()=>localStorage.getItem("sessao-ficticia")?{user:usuario}:null;
+          return {
+            auth:{
+              getSession:async()=>({data:{session:sessao()}}),
+              getUser:async()=>({data:{user:sessao()?.user}}),
+              signInWithPassword:async()=>{localStorage.setItem("sessao-ficticia","1");return {data:{session:sessao()}};},
+              signOut:async()=>{localStorage.removeItem("sessao-ficticia");return {error:null};},
+              onAuthStateChange:()=>{}
+            },
+            from:tabela=>({select:()=>({eq:()=>tabela==="profiles"
+              ?{single:async()=>({data:usuario})}:Promise.resolve({data:[]})})})
+          };
+        }`
+    }));
+    await sessao.clock.install();
+    await sessao.goto('http://127.0.0.1:'+server.address().port);
+    await sessao.locator('#loginEmail').fill('teste@example.com');
+    await sessao.locator('#loginSenha').fill('senha-ficticia');
+    await sessao.locator('#loginSubmit').click();
+    const painelSessao=sessao.locator('#page-profissional.active');
+    await painelSessao.waitFor();
+    await sessao.clock.fastForward(29*60*1000);
+    await sessao.locator('#profGreeting').click();
+    const chave='tcc:atividade:sessao-ficticia';
+    const ultimo=await sessao.evaluate(chave=>localStorage.getItem(chave),chave);
+    await sessao.reload();
+    await painelSessao.waitFor();
+    assert.equal(await sessao.evaluate(chave=>localStorage.getItem(chave),chave),ultimo);
+    await sessao.clock.fastForward(29*60*1000);
+    assert.equal(await painelSessao.isVisible(),true);
+    await sessao.clock.fastForward(2*60*1000);
+    await sessao.locator('#page-login.active').waitFor();
+    assert.match(await sessao.locator('#loginStatus').innerText(),/inatividade/);
+    await sessao.reload();
+    await sessao.locator('#loginSubmit:enabled').waitFor();
+    assert.equal(await painelSessao.count(),0);
+    await sessao.close();
+    console.log('Sessão: login, recarga, renovação por interação e encerramento por inatividade.');
+
   } finally {await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1}).finally(()=>server.close());
