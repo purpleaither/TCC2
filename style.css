@@ -1260,8 +1260,15 @@ button.heatmap-cell:focus-visible{outline:3px solid var(--titulo, #003366);outli
   }
 
   .bottom-sheet {
+    top: 50%;
+    bottom: auto;
+    transform: translate(-50%, -50%);
     max-inline-size: 720px;
+    border: 1px solid var(--borda);
+    border-radius: 16px;
   }
+
+  .bottom-sheet-handle { display: none; }
 
   .app .heatmap-cell {
     aspect-ratio: auto;
