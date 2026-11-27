@@ -987,9 +987,9 @@ function backFromExerciseSource(){
     $("nomePlanoProf").focus();
   }
 }
-function addManualExerciseFromOptions(outdoor=false){
+function addManualExerciseFromOptions(){
   if(!isProfessional())return;
-  addExercise(outdoor ? {exercise_name:"Caminhada ao ar livre", exercise_source:WALK_SOURCE, indicacao_ar_livre:true} : undefined);
+  addExercise();
   openExerciseConfiguration($("itensPlanoProf").lastElementChild);
 }
 function openExerciseBankFromOptions(){

@@ -308,6 +308,9 @@ body {
   background: var(--fundo-alerta, #fff5f5);
 }
 
+#abrirBibliotecaPlano { color: var(--titulo); border-color: var(--titulo); }
+#abrirBibliotecaPlano:hover { background: var(--superficie-suave); }
+
 /* Botão de emergência (vermelho SAMU) */
 .btn-danger {
   background: var(--acao-perigo);
