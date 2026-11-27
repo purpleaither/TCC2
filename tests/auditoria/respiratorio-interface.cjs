@@ -71,10 +71,11 @@ window.cenarioProf = () => {
       const violations = await p.evaluate(async sel => (await axe.run(sel,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21a','wcag21aa','wcag22aa']}})).violations.map(v=>({id:v.id,nodes:v.nodes.map(n=>n.target)})),sel);
       assert.deepEqual(violations,[]);
     };
-    for (const [dominio, total, temDor] of [['musculoesqueletico',3,true],['respiratorio',7,false],['misto',8,true]]) {
+    for (const [dominio, total, temDor] of [['musculoesqueletico',3,true],['respiratorio',7,false],['misto',4,true]]) {
       await p.evaluate(d=>window.cenario(d),dominio);
       assert.equal(await p.locator('#diarioEtapa').innerText(),'Etapa 1 de '+total);
-      assert.equal(await p.locator('#notaDorParado').isVisible(),temDor);
+      assert.equal(await p.locator('#notaDorParado, #notaDorMovimento').count(),0);
+      assert.equal(await p.locator('#dorParadoComparacao').isVisible(),temDor);
       assert.equal(await p.locator('#dyspnea_rest').count(),dominio==='musculoesqueletico'?0:1);
       await auditar('#page-sintomas');
       if (dominio==='misto') {
@@ -91,10 +92,19 @@ window.cenarioProf = () => {
         await auditar('#page-sintomas');
         await p.locator('#diarioProximo').click();
         assert.equal(await p.locator('#dyspnea_exertion').isVisible(),true);
+        if (dominio==='misto'){
+          assert.equal(await p.locator('#diarioEtapa').innerText(),'Etapa 3 de 4');
+          assert.equal(await p.locator('#diarioErro').isVisible(),true);
+        }
         for (const id of ['dyspnea_exertion','cough_level','secretion_level','airway_dryness']) {
           await p.locator('#'+id+' button').first().click();
           await auditar('#page-sintomas');
+          if (dominio!=='misto') await p.locator('#diarioProximo').click();
+        }
+        if (dominio==='misto'){
           await p.locator('#diarioProximo').click();
+          assert.equal(await p.locator('#diarioEtapa').innerText(),'Etapa 4 de 4');
+          await p.locator('#diarioSinaisTitulo').waitFor();
         }
       }
       console.log('Navegador e axe-core: '+dominio);

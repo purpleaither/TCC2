@@ -146,8 +146,9 @@ function mudarEtapaDiario(delta) {
     ];
     const faltando = respostas.filter(([id, valor]) => etapa.contains(document.getElementById(id)) && valor === null)
       .map(([, , rotulo]) => rotulo);
-    if (etapa.parentElement.id === 'etapasRespiratorias' && !etapa.querySelector('.selected')) {
-      mostrarErroDiario('Escolha uma opção para continuar.');
+    const grupos = etapa.parentElement.id === 'etapasRespiratorias' ? [...etapa.querySelectorAll('[role="group"]')] : [];
+    if (grupos.some(grupo => !grupo.querySelector('.selected'))) {
+      mostrarErroDiario(grupos.length > 1 ? 'Responda a todas as perguntas sobre sua respiração para continuar.' : 'Escolha uma opção para continuar.');
       return;
     }
     if (faltando.length) {
@@ -160,7 +161,6 @@ function mudarEtapaDiario(delta) {
 
 function limparRegistroDiario() {
   rigidezAtual = fadigaAtual = humorAtual = atividadeAtual = atipico = null;
-  for (const id of ['notaDorParado', 'notaDorMovimento']) document.getElementById(id).value = '';
   document.querySelectorAll('#page-sintomas .selected').forEach(botao => {
     botao.classList.remove('selected');
     if (botao.hasAttribute('aria-pressed')) botao.setAttribute('aria-pressed', 'false');

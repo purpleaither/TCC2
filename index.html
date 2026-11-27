@@ -175,17 +175,12 @@
           <button type="button" class="choice-btn" value="Não sei comparar" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 3)">Não sei comparar</button>
         </div>
       </div>
-      <p class="card-text-small" id="diarioEscalaDor">Escala Numérica de Dor (opcional). 0 = sem dor; 10 = pior dor que você consegue imaginar.</p>
-      <label class="form-label" for="notaDorParado">Nota de dor quando ficou parado</label>
-      <select class="form-input" id="notaDorParado" aria-describedby="diarioEscalaDor"><option value="">Não informar</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select>
-      <label class="form-label" for="notaDorMovimento">Nota de dor ao se mexer</label>
-      <select class="form-input" id="notaDorMovimento" aria-describedby="diarioEscalaDor"><option value="">Não informar</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select>
     </section>
 
     <section class="card" data-etapa-diario="musculoesqueletico" aria-labelledby="descricaoRigidez" hidden>
       <!-- Rigidez articular -->
       <div class="choices">
-        <h2 class="choices-label" id="descricaoRigidez" tabindex="-1" aria-describedby="diarioEtapa">Como você se sentiu hoje? Quanto foi difícil mexer as articulações?</h2>
+        <h2 class="choices-label" id="descricaoRigidez" tabindex="-1" aria-describedby="diarioEtapa">Quanto foi difícil mexer as articulações?</h2>
         <div class="choices-options" id="rigidezOptions">
           <button class="choice-btn" onclick="selecionar('rigidezOptions', 0)">Nenhuma</button>
           <button class="choice-btn" onclick="selecionar('rigidezOptions', 1)">Leve</button>

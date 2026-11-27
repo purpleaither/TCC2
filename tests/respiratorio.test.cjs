@@ -59,7 +59,7 @@ for (const dominio of ["musculoesqueletico", "respiratorio", "misto"]) {
     };
     await vm.runInNewContext(salvar + "\nsaveSymptoms()", contexto);
     assert.deepEqual(passos, ["clima", ...(respiratorio ? ["ar"] : []), "salvar", "recarregar", "início", ...(respiratorio ? ["alerta"] : [])]);
-    assert.equal(registro.pain_rest, muscular ? 4 : null);
+    assert.equal(registro.pain_rest, undefined);
     assert.equal(registro.stiffness, muscular ? "Leve" : null);
     assert.equal(registro.dyspnea_rest, respiratorio ? 7 : undefined);
     assert.equal(registro.dyspnea_exertion, respiratorio ? 0 : undefined);

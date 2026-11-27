@@ -1372,20 +1372,36 @@ function configurarDiarioRespiratorio(){
   const destino=dominio==="respiratorio"?$("diarioEtapaBemEstar"):$("descricaoRigidez").closest("section");
   destino.append(bemEstar);
   const container=$("etapasRespiratorias");
+  const aviso=$("avisoFaltaDeAr");
+  $("diarioErro").before(aviso);
   container.replaceChildren();
   text("avisoFaltaDeAr","");
   text("diarioExemploAtipico",dominio==="respiratorio"
     ?"Por exemplo: falta de ar diferente da habitual."
     :"Febre, inchaço súbito ou dor extrema fora do comum.");
   if(dominio==="musculoesqueletico")return;
-  for(const [campo, rotulo, maximo] of medidasAtivas()){
-    const etapa=el("section",undefined,"card");
-    etapa.dataset.etapaDiario="respiratorio";
-    const titulo=el("h2",rotulo,"choices-label");
-    titulo.id=campo+"Titulo";
+  const misto=dominio==="misto";
+  const painel=misto?el("section",undefined,"card"):container;
+  if(misto){
+    painel.dataset.etapaDiario="respiratorio";
+    const titulo=el("h2","Respiração","card-title");
+    titulo.id="diarioRespiracaoTitulo";
     titulo.tabIndex=-1;
     titulo.setAttribute("aria-describedby","diarioEtapa");
-    etapa.setAttribute("aria-labelledby",titulo.id);
+    painel.setAttribute("aria-labelledby",titulo.id);
+    painel.append(titulo);
+    container.append(painel);
+  }
+  for(const [campo, rotulo, maximo] of medidasAtivas()){
+    const etapa=el(misto?"div":"section",undefined,misto?"choices":"card");
+    if(!misto)etapa.dataset.etapaDiario="respiratorio";
+    const titulo=el(misto?"p":"h2",rotulo,"choices-label");
+    titulo.id=campo+"Titulo";
+    if(!misto){
+      titulo.tabIndex=-1;
+      titulo.setAttribute("aria-describedby","diarioEtapa");
+      etapa.setAttribute("aria-labelledby",titulo.id);
+    }
     const grupo=el("div",undefined,"choices-options");
     grupo.id=campo;
     grupo.setAttribute("role","group");
@@ -1404,7 +1420,8 @@ function configurarDiarioRespiratorio(){
       grupo.append(botao);
     }
     etapa.append(grupo);
-    container.append(etapa);
+    if(misto&&campo==="dyspnea_rest")etapa.append(aviso);
+    painel.append(etapa);
   }
 }
 
@@ -1425,10 +1442,7 @@ async function saveSymptoms(){
       respiratorio[campo]=nota;
     }
   }
-  const dor=id=>$(id).value===""?null:Number($(id).value);
   const registro = {
-    pain_rest: dominio==="respiratorio"?null:dor("notaDorParado"),
-    pain_movement: dominio==="respiratorio"?null:dor("notaDorMovimento"),
     patient_id: paciente.id,
     ...respiratorio,
     stiffness: levels[rigidezAtual] ?? null,
