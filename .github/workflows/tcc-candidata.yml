@@ -35,6 +35,8 @@ jobs:
       - run: tests/auditoria/node_modules/.bin/playwright install --with-deps chromium
       - run: node --test tests/respiratorio.test.cjs tests/auditoria/qualidade-ar.test.mjs
       - run: node tests/auditoria/respiratorio-interface.cjs
+        env:
+          NODE_PATH: ${{ github.workspace }}/tests/auditoria/node_modules
   candidata:
     if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'verificacao-complementar-tcc'
     runs-on: ubuntu-24.04

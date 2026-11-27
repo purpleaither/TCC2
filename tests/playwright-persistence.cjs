@@ -11,8 +11,12 @@ async function login(role,home){const p=await browser.newPage();await p.goto(bas
 async function nav(p,n){await p.evaluate(n=>window.navegarPara(n),n);await p.locator('#page-'+n+'.active').waitFor()}
 async function showExercise(name){
   await nav(patient,'exercicios');
-  const next=patient.getByRole('button',{name:'Próximo',exact:true});
-  for(let index=0;index<100;index++){
+  const next=patient.locator('#page-exercicios.active').getByRole('button',{name:'Próximo',exact:true});
+  const progress=patient.locator('.patient-exercise-progress');
+  await progress.waitFor();
+  const total=Number((await progress.innerText()).match(/ de (\d+)/)?.[1]);
+  if(!Number.isSafeInteger(total)||total<1)throw Error('Total da ficha de exercícios indisponível');
+  for(let index=0;index<total;index++){
     if(await patient.getByRole('heading',{name,exact:true}).isVisible())return;
     if(!await next.count()||!await next.isEnabled())break;
     await next.click();
@@ -71,17 +75,14 @@ if(!process.env.CT22_ONLY)await step('CT24',async()=>{
 if(!process.env.CT22_ONLY && !process.env.TCC_SERIE_DESEMPENHO)await step('CT55',async()=>{
   await card().getByRole('button',{name:'Editar',exact:true}).click();
   await prof.getByRole('button',{name:'+ Adicionar exercícios',exact:true}).click();
-  await prof.getByRole('button',{name:'Adicionar caminhada ao ar livre',exact:true}).click();
+  await prof.getByRole('button',{name:'Adicionar manualmente',exact:true}).click();
   const dialog=prof.locator('#exerciseConfigDialog');
   const name=dialog.getByLabel('Nome do exercício');
-  if(await name.inputValue()!=='Caminhada ao ar livre')throw Error('Nome da caminhada incorreto');
-  if(!await dialog.getByRole('checkbox').isChecked())throw Error('Indicação ao ar livre não marcada');
-  if(await dialog.locator('[name=series], [name=repetitions]').count())throw Error('A caminhada exibiu séries ou repetições');
-  for(const field of ['duration','frequency']){
-    if(await dialog.locator('[name="'+field+'"]').inputValue())throw Error('Parâmetro preenchido automaticamente');
-  }
-  const walk='Caminhada fictícia PW '+Date.now();
+  const indicacao=dialog.getByRole('checkbox',{name:/Recomendar realização/});
+  if(await indicacao.isChecked())throw Error('Indicação ao ar livre veio marcada por padrão');
+  const walk='Exercício ao ar livre fictício PW '+Date.now();
   await name.fill(walk);
+  await indicacao.check();
   await dialog.getByLabel('Duração',{exact:true}).fill('10 minutos');
   await dialog.getByLabel('Frequência',{exact:true}).fill('2 vezes por semana');
   await dialog.getByRole('button',{name:'Concluir inserção',exact:true}).click();

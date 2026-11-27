@@ -167,7 +167,12 @@ create table if not exists public.workout_sessions (
   id uuid primary key default gen_random_uuid(),
   patient_id uuid not null references public.profiles(id) on delete cascade,
   completed_at timestamptz not null default now(),
-  exercises jsonb not null check (jsonb_typeof(exercises) = 'array' and jsonb_array_length(exercises) between 1 and 100)
+  exercises jsonb not null check (
+  case when jsonb_typeof(exercises) = 'array'
+   then jsonb_array_length(exercises) >= 1 and octet_length(exercises::text) <= 1048576
+   else false
+  end
+ )
 );
 create index if not exists idx_workout_sessions_patient_date
   on public.workout_sessions(patient_id, completed_at desc);

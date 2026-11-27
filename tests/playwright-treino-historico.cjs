@@ -23,7 +23,16 @@ if(!await step('preparacao-plano',async()=>{await prof.locator('#page-planos-pro
 const isWorkout=r=>new URL(r.url()).pathname.endsWith('/rest/v1/workout_sessions');
 patient.on('response',r=>{if(isWorkout(r))network.push({method:r.request().method(),status:r.status()})});
 const before=patient.waitForResponse(r=>isWorkout(r)&&r.request().method()==='GET'&&r.ok(),{timeout:30000});await patient.reload();const ids=new Set((await (await before).json()).map(x=>x.id));await patient.locator('#page-inicio.active').waitFor();await nav(patient,'exercicios');
-let seen=false;for(let i=0;i<100;i++){if(await patient.locator('.patient-exercise-title').innerText()===exercise)seen=true;if(await patient.locator('#finishPatientWorkout').count())break;await patient.getByRole('button',{name:'Próximo',exact:true}).click()}
+const progress=patient.locator('.patient-exercise-progress');
+await progress.waitFor();
+const total=Number((await progress.innerText()).match(/ de (\d+)/)?.[1]);
+if(!Number.isSafeInteger(total)||total<1)throw Error('Total da ficha de exercícios indisponível');
+let seen=false;
+for(let i=0;i<total;i++){
+  if(await patient.locator('.patient-exercise-title').innerText()===exercise)seen=true;
+  if(await patient.locator('#finishPatientWorkout').isVisible())break;
+  await patient.locator('#page-exercicios.active').getByRole('button',{name:'Próximo',exact:true}).click();
+}
 if(!seen)throw Error('Exercício fictício não encontrado');
 const inicioConclusao=performance.now();
 const [post]=await Promise.all([
