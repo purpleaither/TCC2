@@ -4,7 +4,7 @@ const test = require("node:test");
 test("acompanha a caminhada e encerra o GPS ao fechar o mapa", async t => {
   const {createWalkingNavigation} = await import("../services/walkingNavigation.js");
   const button = {};
-  const status = {textContent:""};
+  const status = {textContent:"",dataset:{}};
   const root = {querySelector:selector => selector.includes("acao") ? button : status};
   const stopped = [];
   const origins = [];
@@ -45,7 +45,8 @@ test("acompanha a caminhada e encerra o GPS ao fechar o mapa", async t => {
   const fix = (latitude,longitude) => gps({coords:{latitude,longitude,accuracy:12}});
   fix(-15.80012,-47.90012);
   await new Promise(resolve=>setImmediate(resolve));
-  assert.match(status.textContent,/Vire à direita.*Rua fictícia/);
+  assert.match(status.textContent,/Vire à direita em .*Rua fictícia/);
+  assert.equal(status.dataset.icon,"↱");
   assert.deepEqual(origins,["-47.9,-15.8"]);
   assert.equal(updates[0][0].latitude,-15.80012);
   time += 16000;

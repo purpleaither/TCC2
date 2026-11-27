@@ -1453,9 +1453,19 @@ button.guia-mapa-marcador { cursor: pointer; }
 }
 .demo-carregando { margin: 1rem auto; }
 
-.guia-trajeto [data-trajeto-instrucao]:not(:empty) {
+.guia-orientacao:not(:empty) {
   padding: .65em;
   border-radius: .4rem;
   background: var(--superficie-suave);
   font-weight: 700;
 }
+
+.guia-orientacao[data-icon]:not([data-icon=""])::before {
+  content: attr(data-icon) / "";
+  display: inline-block;
+  color: var(--titulo);
+  font-size: 1.5em;
+  line-height: 1;
+  margin-inline-end: .35em;
+}
+[data-trajeto-seguir][hidden] { display: none; }

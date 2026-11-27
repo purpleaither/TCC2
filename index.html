@@ -370,6 +370,7 @@
                 <label class="form-label" for="parqueSelecionado">Escolha um parque</label>
                 <select class="form-input" id="parqueSelecionado"></select>
               </div>
+              <p class="guia-orientacao" data-trajeto-instrucao role="status"></p>
               <div class="guia-mapa-superficie" aria-label="Mapa dos parques mais próximos" aria-describedby="ajudaMapaParques" role="group" tabindex="0">
                 <div data-mapa-quadro>
                   <div data-mapa-ruas aria-hidden="true" hidden></div>
@@ -389,7 +390,7 @@
                 <div class="guia-trajeto" data-trajeto>
                   <button type="button" class="btn" data-trajeto-acao>Iniciar trajeto</button>
                   <p class="card-text-small" data-trajeto-aviso>Mantenha o pop-up aberto. Sua posição fica no aparelho e é aproximada para calcular a rota.</p>
-                  <p data-trajeto-instrucao role="status"></p>
+                  <button type="button" class="btn btn-outline" data-trajeto-seguir hidden>Seguir minha posição</button>
                 </div>
                 <p class="card-text-small" data-mapa-status role="status"></p>
               </figcaption>

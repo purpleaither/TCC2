@@ -1,4 +1,4 @@
-import {consultarTrajeto} from "./environmentalService.js";
+import {arredondarLocalizacao, consultarTrajeto} from "./environmentalService.js";
 import {createWalkingNavigation} from "./walkingNavigation.js";
 
 const km = new Intl.NumberFormat("pt-BR", {maximumFractionDigits: 1});
@@ -45,6 +45,7 @@ export function desenharMapa(figure, local, parques, limites, signal, view) {
     const next = Math.min(18, Math.max(minimumZoom, zoom + offset));
     if (next === zoom) return;
     if (anchor) {
+      view.following = false;
       const box = viewport.getBoundingClientRect();
       const ratios = [(anchor.x - box.left) / box.width - .5, (anchor.y - box.top) / box.height - .5];
       view.center = center.map((value, axis) =>
@@ -68,11 +69,30 @@ export function desenharMapa(figure, local, parques, limites, signal, view) {
   }
   view.redraw = redraw;
   function pan(x, y) {
+    view.following = false;
     view.zoom = zoom;
     view.center = center.map((value, axis) => Math.max(0, Math.min(1,
       value - [x, y][axis] / scale)));
     redraw();
   }
+  const followButton = figure.querySelector("[data-trajeto-seguir]");
+  followButton.hidden = !view.position || view.following;
+  view.moveCamera = (position, centerNow = false) => {
+    if (!view.following) return;
+    const [x,y] = project(position);
+    if (!centerNow && x > width*.28 && x < width*.72 && y > height*.28 && y < height*.72) return;
+    const approximate = world(arredondarLocalizacao(position.latitude,position.longitude));
+    if (!centerNow && view.center?.every((value,index) => value === approximate[index])) return;
+    view.center = approximate;
+    if (centerNow)view.zoom = Math.max(16,zoom);
+    redraw();
+  };
+  followButton.onclick = () => {
+    if (!view.position) return;
+    view.following = true;
+    view.moveCamera(view.position,true);
+    viewport.focus({preventScroll:true});
+  };
   if(initial)picker.replaceChildren(...parques.map((park, index) =>
     new Option((index + 1) + ". " + park.nome, String(index))));
   picker.onchange = () => {
@@ -279,12 +299,23 @@ export function desenharMapa(figure, local, parques, limites, signal, view) {
     ctx.stroke();
     if (view.position) {
       ctx.beginPath();
-      ctx.arc(...project(view.position),10,0,Math.PI*2);
+      const [x,y] = project(view.position);
+      ctx.save();
+      ctx.translate(x,y);
+      if (Number.isFinite(view.position.heading)) {
+        ctx.rotate(view.position.heading*Math.PI/180);
+        ctx.moveTo(0,-14);
+        ctx.lineTo(10,10);
+        ctx.lineTo(0,6);
+        ctx.lineTo(-10,10);
+        ctx.closePath();
+      } else ctx.arc(0,0,9,0,Math.PI*2);
       ctx.fillStyle = "#0064a4";
       ctx.fill();
       ctx.strokeStyle = "#fff";
       ctx.lineWidth = 3;
       ctx.stroke();
+      ctx.restore();
     }
   };
   function drawBounds() {
@@ -331,22 +362,26 @@ export function desenharMapa(figure, local, parques, limites, signal, view) {
   view.repaint();
   if(initial){
     view.navigation = createWalkingNavigation(figure, signal, () => parques[view.selected], (position, route, origin) => {
+      const starting = !!position && !view.position;
+      const ended = !position && !!view.position;
       view.position = position;
       if (signal.aborted) return;
-      if(route){
+      if (route){
         view.route = route;
         view.routeOrigin = origin;
-        view.zoom = view.center = null;
-        view.redraw();
-      } else if (!position) {
-        const moved = !!view.routeOrigin;
+        view.updateDetails();
+      }
+      if(starting){
+        view.following = true;
+        view.moveCamera(position,true);
+        viewport.scrollIntoView({block:"nearest"});
+      } else if(ended){
         view.routeOrigin = null;
         view.route = view.previewRoute;
-        if(moved){
-          view.zoom = view.center = null;
-          view.redraw();
-        }
-      }
+        view.following = false;
+        view.zoom = view.center = null;
+        view.redraw();
+      } else if(position)view.moveCamera(position);
       view.repaint();
     });
     void selectPark(0);

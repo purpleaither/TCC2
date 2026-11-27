@@ -40,6 +40,11 @@ function progressOnRoute(position, segments, previous) {
   return best;
 }
 
+const maneuverIcon = {
+  left:"↰", right:"↱", "sharp left":"↰", "sharp right":"↱",
+  "slight left":"↖", "slight right":"↗", uturn:"↶", straight:"↑"
+};
+
 function instructionFor(step) {
   const {type, modifier, exit} = step.maneuver ?? {};
   const directions = {
@@ -65,7 +70,8 @@ export function createWalkingNavigation(root, signal, park, update) {
   let outside = 0;
   let lastRequest = -Infinity;
 
-  function report(message) {
+  function report(message, icon = "") {
+    status.dataset.icon = icon;
     if (status.textContent !== message)status.textContent = message;
   }
   function stop(message = "") {
@@ -117,7 +123,9 @@ export function createWalkingNavigation(root, signal, park, update) {
     if (!step) { report("Siga pelo caminho traçado até o destino."); return; }
     const meters = Math.max(0,step.offset-progress);
     const distance = meters >= 1000 ? (Math.round(meters/100)/10).toLocaleString("pt-BR")+" km" : Math.ceil(meters/10)*10+" m";
-    report((meters < 12 ? "" : "Em " + distance + ", ") + instructionFor(step) + (step.name ? " · " + step.name : ""));
+    const {type,modifier} = step.maneuver ?? {};
+    const icon = type === "arrive" ? "●" : type?.includes("roundabout") || type === "rotary" ? "⟳" : maneuverIcon[modifier] ?? "↑";
+    report(instructionFor(step) + (meters < 12 ? " agora" : " em " + distance) + (step.name ? " · " + step.name : ""),icon);
   }
   button.onclick = () => {
     if (signal.aborted) return;
@@ -132,7 +140,9 @@ export function createWalkingNavigation(root, signal, park, update) {
         report("Aguardando uma localização mais precisa…");
         return;
       }
-      latest = {latitude:coords.latitude,longitude:coords.longitude,accuracy:coords.accuracy};
+      const moving = coords.speed == null || coords.speed >= .4;
+      const heading = moving && Number.isFinite(coords.heading) ? coords.heading : null;
+      latest = {latitude:coords.latitude,longitude:coords.longitude,accuracy:coords.accuracy,heading};
       update(latest);
       if (route)follow();
       else if (performance.now() - lastRequest >= 15000)void reroute();
