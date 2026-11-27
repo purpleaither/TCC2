@@ -103,8 +103,19 @@ function selecionar(grupoId, indice) {
 
 let etapaDiario = 0;
 
+function etapasDoDiario() {
+  const pagina = document.getElementById('page-sintomas');
+  const dominio = pagina.dataset.dominio || 'musculoesqueletico';
+  return [...pagina.querySelectorAll('[data-etapa-diario]')].filter(etapa => {
+    const tipo = etapa.dataset.etapaDiario;
+    const ativa = !tipo || tipo === dominio || dominio === 'misto' && etapa.id !== 'diarioEtapaBemEstar';
+    if (!ativa) etapa.hidden = true;
+    return ativa;
+  });
+}
+
 function definirEtapaDiario(indice, focar = false) {
-  const etapas = document.querySelectorAll('#page-sintomas [data-etapa-diario]');
+  const etapas = etapasDoDiario();
   if (!etapas[indice]) return;
   etapaDiario = indice;
   document.getElementById('diarioErro').hidden = true;
@@ -127,11 +138,18 @@ function mostrarErroDiario(mensagem) {
 }
 
 function mudarEtapaDiario(delta) {
-  if (etapaDiario === 1 && delta > 0) {
-    const faltando = [
-      [rigidezAtual, 'rigidez'], [fadigaAtual, 'cansaço'],
-      [humorAtual, 'humor'], [atividadeAtual, 'nível de atividade física']
-    ].filter(([valor]) => valor === null).map(([, rotulo]) => rotulo);
+  const etapa = etapasDoDiario()[etapaDiario];
+  if (delta > 0 && etapa) {
+    const respostas = [
+      ['rigidezOptions', rigidezAtual, 'rigidez'], ['fadigaOptions', fadigaAtual, 'cansaço'],
+      ['humorOptions', humorAtual, 'humor'], ['atividadeOptions', atividadeAtual, 'nível de atividade física']
+    ];
+    const faltando = respostas.filter(([id, valor]) => etapa.contains(document.getElementById(id)) && valor === null)
+      .map(([, , rotulo]) => rotulo);
+    if (etapa.parentElement.id === 'etapasRespiratorias' && !etapa.querySelector('.selected')) {
+      mostrarErroDiario('Escolha uma opção para continuar.');
+      return;
+    }
     if (faltando.length) {
       mostrarErroDiario('Responda sobre ' + faltando.join(', ') + ' para continuar.');
       return;
@@ -142,6 +160,7 @@ function mudarEtapaDiario(delta) {
 
 function limparRegistroDiario() {
   rigidezAtual = fadigaAtual = humorAtual = atividadeAtual = atipico = null;
+  for (const id of ['notaDorParado', 'notaDorMovimento']) document.getElementById(id).value = '';
   document.querySelectorAll('#page-sintomas .selected').forEach(botao => {
     botao.classList.remove('selected');
     if (botao.hasAttribute('aria-pressed')) botao.setAttribute('aria-pressed', 'false');
@@ -264,7 +283,14 @@ function abrirClimaSheet(dia, reg, ehAtividade = false) {
   var titulo = document.getElementById('climaSheetTitle');
   if (titulo) titulo.textContent = (ehAtividade ? 'Exercícios do dia ' : 'Sintomas do dia ') + dia + ' de ' + nomesMes[mesAtual.getMonth()];
 
+  const respiratorio = document.getElementById('sheetRespiratorio');
+  respiratorio.hidden = !reg?.respiratorio;
+  respiratorio.textContent = reg?.respiratorio || '';
+  const qualidadeAr = document.getElementById('sheetQualidadeAr');
+  qualidadeAr.hidden = !reg?.respiratorio;
+  qualidadeAr.textContent = reg?.qualidadeAr || 'Dados de qualidade do ar indisponíveis no momento.';
   var dor = document.getElementById('sheetDorNivel');
+  if (dor) dor.hidden = !!reg?.respiratorio && reg.dorRepouso == null && reg.dorMovimento == null && !reg.comparacaoParado && !reg.comparacaoMovimento;
   if (dor) dor.textContent = reg
     ? 'Quando ficou parado: ' + resumirDor(reg.dorRepouso, reg.comparacaoParado) +
       ' | Ao se mexer: ' + resumirDor(reg.dorMovimento, reg.comparacaoMovimento)
@@ -274,6 +300,8 @@ function abrirClimaSheet(dia, reg, ehAtividade = false) {
   var rigidez = document.getElementById('sheetRigidez');
   var fadiga = document.getElementById('sheetFadiga');
   var humor = document.getElementById('sheetHumor');
+  if (rigidez) rigidez.parentElement.hidden = !!reg?.respiratorio && reg.rigidez < 0;
+  if (fadiga) fadiga.parentElement.hidden = !!reg?.respiratorio && reg.fadiga < 0;
   if (rigidez) rigidez.textContent = (reg ? intensidade[reg.rigidez] : null) || 'Não registrado';
   if (fadiga) fadiga.textContent = (reg ? intensidade[reg.fadiga] : null) || 'Não registrado';
   if (humor) humor.textContent = reg?.humor ?? 'Não registrado';

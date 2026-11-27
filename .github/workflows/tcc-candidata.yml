@@ -9,16 +9,34 @@ on:
       - '*.html'
       - '*.css'
       - 'api/**'
+      - 'data/**'
+      - 'database/**'
       - 'vercel.json'
 
 permissions:
   contents: read
 
 concurrency:
-  group: verificacao-mvp
+  group: ${{ github.event.pull_request.head.ref == 'feature/fisioterapia-respiratoria' && 'verificacao-respiratoria-isolada' || 'verificacao-mvp' }}
   cancel-in-progress: false
 
 jobs:
+  respiratorio:
+    name: Diário e ambiente respiratório com dados fictícios
+    if: github.event.pull_request.head.ref == 'feature/fisioterapia-respiratoria'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci --prefix tests/auditoria
+      - run: tests/auditoria/node_modules/.bin/playwright install --with-deps chromium
+      - run: node --test tests/respiratorio.test.cjs tests/auditoria/qualidade-ar.test.mjs
+      - run: node tests/auditoria/respiratorio-interface.cjs
+        env:
+          NODE_PATH: ${{ github.workspace }}/tests/auditoria/node_modules
   candidata:
     if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'verificacao-complementar-tcc'
     runs-on: ubuntu-24.04

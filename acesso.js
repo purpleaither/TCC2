@@ -2,9 +2,14 @@
 
 import {criarGuiaAoArLivre} from "./services/outdoorGuide.js";
 
+import {avisoFaltaDeAr, catalogoRespiratorio, dominioDoDiario, medidasRespiratorias, niveisRespiratorios, resumoRespiratorio} from "./data/respiratorio.js";
+
+import {camposQualidadeAr, dicaAmbiente, resumoQualidadeAr} from "./data/ambiente.js";
+
 const $ = id => document.getElementById(id);
 const levels = ["Nenhuma", "Leve", "Moderada", "Intensa"];
 const WALK_SOURCE = "caminhada_manual";
+const RESPIRATORY_SOURCE = "respiratorio_interno";
 const moods = ["Bem", "Regular", "Desanimado"];
 let supabase = null;
 let user = null;
@@ -12,6 +17,8 @@ let profile = null;
 let patients = [];
 let patientId = null;
 let plans = [];
+let respiratoryColumnsAvailable = false;
+let environmentalColumnsAvailable = false;
 let records = [];
 let professionalWorkouts;
 let patientLoadVersion = 0;
@@ -89,6 +96,8 @@ function navigate(page) {
   fecharClimaSheet();
   if(page==="planos-prof")renderProfessionalPlans();
   if(page==="editor-prof")updatePlanEditorSummary();
+  if(page==="exercise-source-prof")text("abrirBibliotecaPlano",$("dominioPlanoProf").value==="respiratorio"
+    ?"Escolher na biblioteca respiratória":"Escolher na ExerciseBank");
   if(page==="exercise-bank-prof"){
     $("exercisebankResults").replaceChildren();
     text("exercisebankStatus","Selecione os filtros e clique em Buscar.");
@@ -98,7 +107,7 @@ function navigate(page) {
   if(page==="exercicios")void refreshOutdoorGuide();
   if(page==="inicio")renderDailyAdvice();
   else clearTimeout(dailyAdviceTimer);
-  if(page==="sintomas"){limparRegistroDiario();definirEtapaDiario(0, true);}
+  if(page==="sintomas"){limparRegistroDiario();configurarDiarioRespiratorio();definirEtapaDiario(0, true);}
   if(page==="historico")abrirHistorico();
   window.scrollTo(0,0);
 }
@@ -155,6 +164,8 @@ function reset() {
   patients=[];
   patientId=null;
   plans=[];
+  respiratoryColumnsAvailable=false;
+  environmentalColumnsAvailable=false;
   records=[];
   clearPlanForm();
   currentPatientExercise=0;
@@ -319,7 +330,15 @@ async function obterClimaBrasilia() {
   }
 }
 
-function isMissingWeatherColumns(error) {
+async function obterQualidadeAr(){
+  const resposta=await fetch("/api/air-quality",{cache:"no-store",signal:AbortSignal.timeout(10000)});
+  if(!resposta.ok)throw Error("Qualidade do ar indisponível");
+  const dados=await resposta.json();
+  return Object.fromEntries(camposQualidadeAr
+    .filter(campo=>Number.isFinite(dados?.[campo])&&dados[campo]>=0).map(campo=>[campo,dados[campo]]));
+}
+
+function isMissingColumnError(error) {
   const code = error && error.code;
   return code === "42703" || code === "PGRST204";
 }
@@ -349,18 +368,36 @@ async function loadPatientData() {
     return;
   }
   try {
-    const loadedPlans=result(await supabase.from("care_plans")
-      .select("id,title,notes,created_at,updated_at,plan_exercises(id,exercise_name,exercise_source,external_id,series,repetitions,duration,frequency,instructions,position,indicacao_ar_livre)")
-      .eq("patient_id",selectedPatient).order("created_at",{ascending:false}))||[];
-    const baseFields="id,recorded_at,pain_rest,pain_movement,stiffness,fatigue,mood,activity_level,pain_rest_comparison,pain_movement_comparison";
+    const planFields = "id,title,notes,created_at,updated_at";
+    const exerciseFields = "id,exercise_name,exercise_source,external_id,series,repetitions,duration,frequency,instructions,position,indicacao_ar_livre";
+    const queryPlans = fields => supabase.from("care_plans").select(fields)
+      .eq("patient_id",selectedPatient).order("created_at",{ascending:false});
+    let planResponse = await queryPlans(planFields+",clinical_domain,plan_exercises("+exerciseFields+",domain,rest_seconds,inspiratory_hold_seconds)");
+    const supportsRespiratory = !isMissingColumnError(planResponse.error);
+    if(!supportsRespiratory)planResponse=await queryPlans(planFields+",plan_exercises("+exerciseFields+")");
+    const loadedPlans=result(planResponse)||[];
+    const baseFields="id,recorded_at,pain_rest,pain_movement,stiffness,fatigue,mood,activity_level,pain_rest_comparison,pain_movement_comparison"+
+      (supportsRespiratory?",dyspnea_rest,dyspnea_exertion,cough_level,secretion_level":"");
     const weatherFields=",weather_city,weather_temperature,weather_humidity,weather_pressure,weather_observed_at";
-    let symptomsResponse=await supabase.from("symptom_records")
-      .select(baseFields+(weatherColumnsAvailable?weatherFields:""))
+    const environmentalFields=",airway_dryness,"+camposQualidadeAr.join(",");
+    const querySymptoms=(weather,environment)=>supabase.from("symptom_records")
+      .select(baseFields+(weather?weatherFields:"")+(environment?environmentalFields:""))
       .eq("patient_id",selectedPatient).order("recorded_at",{ascending:false}).limit(500);
-    if (symptomsResponse.error && weatherColumnsAvailable && isMissingWeatherColumns(symptomsResponse.error)) {
+    let supportsEnvironment=supportsRespiratory;
+    let symptomsResponse=await querySymptoms(weatherColumnsAvailable,supportsEnvironment);
+    if (supportsEnvironment && isMissingColumnError(symptomsResponse.error) &&
+      /airway_dryness|pm2_5|pm10|ozone/.test(symptomsResponse.error.message || "")) {
+      supportsEnvironment=false;
+      symptomsResponse=await querySymptoms(weatherColumnsAvailable,false);
+    }
+    if (weatherColumnsAvailable && isMissingColumnError(symptomsResponse.error) &&
+      /weather_/.test(symptomsResponse.error.message || "")) {
       weatherColumnsAvailable=false;
-      symptomsResponse=await supabase.from("symptom_records").select(baseFields)
-        .eq("patient_id",selectedPatient).order("recorded_at",{ascending:false}).limit(500);
+      symptomsResponse=await querySymptoms(false,supportsEnvironment);
+      if (supportsEnvironment && isMissingColumnError(symptomsResponse.error)) {
+        supportsEnvironment=false;
+        symptomsResponse=await querySymptoms(false,false);
+      }
     }
     const loadedRecords = result(symptomsResponse) || [];
     let workouts = supabase.from("workout_sessions")
@@ -374,6 +411,8 @@ async function loadPatientData() {
       earliestHistoryDate("workout_sessions","completed_at",sessions,selectedPatient)
     ]) : [];
     if (version !== patientLoadVersion) return;
+    respiratoryColumnsAvailable = supportsRespiratory;
+    environmentalColumnsAvailable = supportsEnvironment;
     plans = loadedPlans;
     records = loadedRecords;
     if(professional){
@@ -390,8 +429,10 @@ async function loadPatientData() {
         dorMovimento:r.pain_movement,
         comparacaoParado:r.pain_rest_comparison,
         comparacaoMovimento:r.pain_movement_comparison,
-        rigidez:Math.max(0,levels.indexOf(r.stiffness)),
-        fadiga:Math.max(0,levels.indexOf(r.fatigue)),
+        rigidez:levels.indexOf(r.stiffness),
+        fadiga:levels.indexOf(r.fatigue),
+        respiratorio:resumoRespiratorio(r),
+        qualidadeAr:resumoQualidadeAr(r),
         humor:r.mood,
         atividade:r.activity_level,
         sinalAtipico:false,
@@ -437,6 +478,7 @@ function todaysPatientSymptoms(){
 function patientTpeAdviceForToday(){
   const record=todaysPatientSymptoms();
   if(!record)return null;
+  if(record.dyspnea_rest>=7)return {title:"Atenção à falta de ar em repouso",body:avisoFaltaDeAr};
   const intensity=Math.max(...[record.pain_rest, record.pain_movement].filter(Number.isFinite));
   const stiffness=String(record.stiffness||"").toLowerCase();
   const fatigue=String(record.fatigue||"").toLowerCase();
@@ -466,6 +508,16 @@ function renderDailyAdvice(){
   clearTimeout(dailyAdviceTimer);
   if(!isAuthenticated() || isProfessional() || !$("page-inicio").classList.contains("active"))return;
   const advice=patientTpeAdviceForToday();
+  const record=todaysPatientSymptoms();
+  const ambiente=$("ambientePosRegistro");
+  ambiente.hidden=!record||!Number.isInteger(record.dyspnea_rest);
+  if(!ambiente.hidden){
+    const clima=mapWeather(record);
+    text("ambienteClima",clima?clima.temperatura+" °C · Umidade: "+clima.umidade+"% · Pressão: "+clima.pressao+" hPa"
+      :"Dados meteorológicos indisponíveis no momento.");
+    text("ambienteAr",resumoQualidadeAr(record)||"Dados de qualidade do ar indisponíveis no momento.");
+    text("ambienteDica",dicaAmbiente(record));
+  }
   $("conselhoDiaTitulo").closest("aside").hidden=!advice;
   text("conselhoDiaTitulo",advice?.title ?? "");
   text("conselhoDiaTexto",advice?.body ?? "");
@@ -481,6 +533,9 @@ const exerciseMetricHelp = {
   "Séries":"Uma série é um grupo de repetições. O total de séries indica quantos grupos o fisioterapeuta orientou.",
   "Repetições":"É quantas vezes você faz o movimento em cada série, conforme a orientação do fisioterapeuta.",
   "Duração":"É por quanto tempo você faz o exercício, conforme a orientação do fisioterapeuta.",
+  "Ciclos respiratórios":"É quantas vezes você repete a sequência de respiração ensinada.",
+  "Descanso entre séries":"É o intervalo indicado pelo seu fisioterapeuta antes de começar a próxima série.",
+  "Sustento inspiratório":"É o tempo indicado para segurar o ar após inspirar.",
   "Frequência":"É quantas vezes o fisioterapeuta orientou você a fazer o exercício, por exemplo, por dia ou por semana."
 };
 
@@ -527,7 +582,8 @@ async function completePatientWorkout(){
       plan_id:plan.id,plan_title:plan.title,
       exercise_name:exercise.exercise_name,exercise_source:exercise.exercise_source,
       external_id:exercise.external_id,series:exercise.series,repetitions:exercise.repetitions,
-      duration:exercise.duration,frequency:exercise.frequency,position:exercise.position
+      duration:exercise.duration,frequency:exercise.frequency,position:exercise.position,
+      domain:exercise.domain,rest_seconds:exercise.rest_seconds,inspiratory_hold_seconds:exercise.inspiratory_hold_seconds
     }));
     result(await supabase.from("workout_sessions").insert({patient_id:user.id,exercises}));
     workoutCompletedInView=true;
@@ -563,8 +619,12 @@ function renderWorkoutDay(year,month,day){
       row.append(el("strong",name||"Exercício","workout-history-name"));
       row.append(el("span",String(item.plan_title||"Plano"),"workout-history-plan"));
       row.append(el("p",[
-        ...(item.exercise_source===WALK_SOURCE?[]:["Séries: "+(item.series||"–"),"Repetições: "+(item.repetitions||"–")]),
-        "Duração: "+(item.duration||"–"),"Frequência: "+(item.frequency||"–")
+        ...(item.exercise_source===WALK_SOURCE?[]:["Séries: "+(item.series||"–"),(item.domain==="respiratorio"?"Ciclos respiratórios: ":"Repetições: ")+(item.repetitions||"–")]),
+        "Duração: "+(item.duration||"–"),"Frequência: "+(item.frequency||"–"),
+        ...(item.domain==="respiratorio"?[
+          item.rest_seconds==null?"":"Descanso entre séries: "+item.rest_seconds+" s",
+          item.inspiratory_hold_seconds==null?"":"Sustento inspiratório: "+item.inspiratory_hold_seconds+" s"
+        ].filter(Boolean):[])
       ].join(" · "),"card-text-small"));
       card.append(row);
     }
@@ -613,10 +673,17 @@ function renderPatientPlans(animar=false){
     card.append(videoArea);
   }
 
+  const respiratory=exercise.domain==="respiratorio";
+  if(respiratory){
+    const note="Respire no seu ritmo, sem forçar. Se sentir tontura, formigamento ou falta de ar intensa, pare e descanse.";
+    card.append(el("p",note,"card-text diario-aviso"));
+  }
   const metrics=el("div",undefined,"patient-exercise-metrics");
   for(const [label,value] of [
     ["Séries",exercise.series],
-    ["Repetições",exercise.repetitions],
+    [respiratory?"Ciclos respiratórios":"Repetições",exercise.repetitions],
+    ...(respiratory?[["Descanso entre séries",exercise.rest_seconds==null?null:exercise.rest_seconds+" s"],
+      ["Sustento inspiratório",exercise.inspiratory_hold_seconds==null?null:exercise.inspiratory_hold_seconds+" s"]]:[]),
     ["Duração",exercise.duration],
     ["Frequência",exercise.frequency]
   ]){
@@ -627,8 +694,11 @@ function renderPatientPlans(animar=false){
     help.setAttribute("name","ajuda-medidas-exercicio");
     const question=el("summary","?");
     question.setAttribute("aria-label","O que significa " + label.toLowerCase() + "?");
-    help.append(question,el("p",exerciseMetricHelp[label]));
-    header.append(el("span",label,"patient-exercise-metric-label"),help);
+    header.append(el("span",label,"patient-exercise-metric-label"));
+    if(exerciseMetricHelp[label]){
+      help.append(question,el("p",exerciseMetricHelp[label]));
+      header.append(help);
+    }
     tile.append(header,el("strong",String(value),"patient-exercise-metric-value"));
     metrics.append(tile);
   }
@@ -687,8 +757,12 @@ function renderProfessionalPlans(){
       const line=el("div",undefined,"demo-detalhe");
       line.append(el("strong",x.exercise_name,"plan-exercise-name"));
       if(x.indicacao_ar_livre)line.append(el("p","Indicação ao ar livre","card-text-small guia-tag"));
-      const quantidade=x.exercise_source===WALK_SOURCE?"":(x.series||"–")+" série(s) · "+(x.repetitions||"–")+" repetições · ";
-      line.append(el("p",quantidade+(x.duration||"–")+" duração · "+x.frequency,"plan-exercise-prescription"));
+      const unidades=x.domain==="respiratorio"?" ciclos respiratórios":" repetições";
+      const dose=x.exercise_source===WALK_SOURCE?[]:[(x.series||"–")+" série(s) de "+(x.repetitions||"–")+unidades];
+      if(x.domain==="respiratorio" && x.inspiratory_hold_seconds!=null)dose.push("Sustento de "+x.inspiratory_hold_seconds+" s");
+      if(x.domain==="respiratorio" && x.rest_seconds!=null)dose.push("Descanso de "+x.rest_seconds+" s");
+      if(x.duration || x.domain!=="respiratorio")dose.push((x.duration||"–")+" duração");
+      line.append(el("p",[...dose,x.frequency].join(" · "),"plan-exercise-prescription"));
       if(["ExerciseBank","wger"].includes(x.exercise_source) && x.external_id){
         const view=el("button","Ver demonstração","btn btn-outline");
         view.type="button";
@@ -850,6 +924,61 @@ function renderProfessionalMonitoring(windows, periodRecords){
   }
 }
 
+function renderLongitudinal(recordsDoPeriodo, windows){
+  const painel=el("section",undefined,"card");
+  painel.append(el("p","Dados por dia, com o registro mais recente e a indicação de treino concluído. As informações apoiam a conversa presencial e não estabelecem causa e efeito.","card-text"));
+  const dias=new Map();
+  const treinos=new Set((professionalWorkouts||[]).filter(sessao=>{
+    const quando=new Date(sessao.completed_at);
+    return quando>=windows[0]&&quando<windows.at(-1);
+  }).map(sessao=>localDateKey(sessao.completed_at)));
+  for(const record of recordsDoPeriodo){
+    const dia=localDateKey(record.recorded_at);
+    if(!dias.has(dia))dias.set(dia,record);
+  }
+  for(const dia of treinos)if(!dias.has(dia))dias.set(dia,{});
+  if(!dias.size){
+    painel.append(el("p","Nenhum registro no período selecionado.","card-text"));
+    return painel;
+  }
+
+  const viewport=el("div",undefined,"tabela-longitudinal");
+  viewport.tabIndex=0;
+  viewport.setAttribute("role","region");
+  viewport.setAttribute("aria-label","Tabela de clima, sintomas e treinos");
+  const tabela=el("table");
+  tabela.append(el("caption","Clima, sintomas e treinos no período selecionado"));
+  const cabecalho=el("tr");
+  for(const rotulo of ["Data","Umidade","PM₂,₅ (µg/m³)","Sintomas respiratórios","Dor","Treino concluído"]){
+    const celula=el("th",rotulo);
+    celula.scope="col";
+    cabecalho.append(celula);
+  }
+  const thead=el("thead");
+  thead.append(cabecalho);
+  const corpo=el("tbody");
+  for(const dia of [...dias.keys()].sort().reverse()){
+    const r=dias.get(dia);
+    const linha=el("tr");
+    const data=el("th",new Date(dia+"T12:00:00").toLocaleDateString("pt-BR"));
+    data.scope="row";
+    linha.append(data);
+    const temDor=r.pain_rest!=null||r.pain_movement!=null||r.pain_rest_comparison||r.pain_movement_comparison;
+    for(const valor of [
+      r.weather_humidity==null?"—":r.weather_humidity+"%",
+      r.pm2_5==null?"—":Number(r.pm2_5).toLocaleString("pt-BR"),
+      resumoRespiratorio(r)||"—",
+      temDor?"Parado: "+resumirDor(r.pain_rest,r.pain_rest_comparison)+" · Em movimento: "+resumirDor(r.pain_movement,r.pain_movement_comparison):"—",
+      professionalWorkouts===null?"Indisponível":treinos.has(dia)?"Sim":"Sem registro"
+    ])linha.append(el("td",valor));
+    corpo.append(linha);
+  }
+  tabela.append(thead,corpo);
+  viewport.append(tabela);
+  painel.append(viewport);
+  return painel;
+}
+
 function renderProfessionalRecords(){
   if(!isProfessional())return;
   updatePatientSelectors();
@@ -862,6 +991,7 @@ function renderProfessionalRecords(){
   });
   renderProfessionalMonitoring(windows, periodRecords);
   if (!patientId || professionalWorkouts === undefined) return;
+  $("graficosRegistrosProf").append(monitoringTopic("Ver clima, sintomas e treinos",renderLongitudinal(periodRecords,windows)));
   const root = el("div");
   root.id = "listaRegistrosProf";
   $("graficosRegistrosProf").append(monitoringTopic("Ver registros individuais", root));
@@ -869,8 +999,10 @@ function renderProfessionalRecords(){
   for(const r of periodRecords) {
     const card=el("div",undefined,"card");
     card.append(el("h3",date(r.recorded_at),"card-title"));
-    card.append(el("p","Quando ficou parado: "+resumirDor(r.pain_rest,r.pain_rest_comparison)+" | Ao se mexer: "+resumirDor(r.pain_movement,r.pain_movement_comparison),"card-text"));
-    card.append(el("p","Rigidez: "+r.stiffness+" · Fadiga: "+r.fatigue,"card-text-small"));
+    if(r.pain_rest!=null||r.pain_movement!=null||r.pain_rest_comparison||r.pain_movement_comparison)card.append(el("p","Quando ficou parado: "+resumirDor(r.pain_rest,r.pain_rest_comparison)+" | Ao se mexer: "+resumirDor(r.pain_movement,r.pain_movement_comparison),"card-text"));
+    if(r.stiffness!=null||r.fatigue!=null)card.append(el("p","Rigidez: "+r.stiffness+" · Fadiga: "+r.fatigue,"card-text-small"));
+    const respiratorio=resumoRespiratorio(r);
+    if(respiratorio)card.append(el("p",respiratorio,"card-text"));
     card.append(el("p","Humor: "+(r.mood ?? "Não registrado")+
       " · Nível de atividade física: "+(r.activity_level ?? "Não registrado"),"card-text-small"));
     const clima=mapWeather(r);
@@ -893,20 +1025,30 @@ function addExercise(entry){
   row.dataset.externalId=entry?.external_id??"";
   row.dataset.exerciseSource=entry?.exercise_source??"manual";
   row.dataset.instructions=entry?.instructions??"";
+  row.dataset.domain=entry?.domain??"musculoesqueletico";
+  const respiratory=row.dataset.domain==="respiratorio";
   const walking=row.dataset.exerciseSource===WALK_SOURCE;
   const params=el("div",undefined,"demo-grid-parametros");
   for(const [key,title,type,value] of [
     ["series","Séries","number",2],
-    ["repetitions","Repetições","text","10"],
+    ["repetitions",respiratory?"Ciclos respiratórios":"Repetições",respiratory?"number":"text","10"],
     ["duration","Duração","text",""],
-    ["frequency","Frequência","text","3 vezes por semana"]
+    ["frequency",respiratory?"Frequência (ex.: 2x ao dia)":"Frequência","text",respiratory?"":"3 vezes por semana"],
+    ...(respiratory?[
+      ["rest_seconds","Descanso entre séries (segundos)","number",""],
+      ["inspiratory_hold_seconds","Sustento inspiratório (segundos)","number",""]
+    ]:[])
   ]){
     if(walking && (key==="series" || key==="repetitions"))continue;
     const wrap=el("div",undefined,"form-group");
     const lbl=el("label",title,"form-label");
     const input=el("input",undefined,"form-input");
     input.name=key;input.type=type;input.value=value;
-    if(type==="number"){input.min="1";input.max="20";}
+    if(type==="number"){
+      input.min=key.endsWith("_seconds")?"0":"1";
+      input.max=key==="series"?"20":key==="repetitions"?"999":"2147483647";
+      if(key==="rest_seconds")input.placeholder="Ex.: 60 a 90";
+    }
     else input.maxLength=80;
     lbl.append(input);wrap.append(lbl);params.append(wrap);
   }
@@ -928,7 +1070,9 @@ function addExercise(entry){
   $("itensPlanoProf").append(row);
   if(entry){
     if(name.readOnly){
-      const sourceLabel=el("p",entry.exercise_source==="ExerciseBank"?"ExerciseBank · catálogo de demonstração":"wger · vídeo sujeito à disponibilidade e licença","card-text-small");
+      const source=entry.exercise_source===RESPIRATORY_SOURCE?"Catálogo respiratório interno"
+        :entry.exercise_source==="ExerciseBank"?"ExerciseBank · catálogo de demonstração":"wger · vídeo sujeito à disponibilidade e licença";
+      const sourceLabel=el("p",source,"card-text-small");
       row.prepend(sourceLabel);
     }
     for(const field of params.querySelectorAll("input"))field.value=entry[field.name]??"";
@@ -983,18 +1127,20 @@ function openExerciseSourceOptions(){
 function backFromExerciseSource(){
   navigate(exerciseReturnPage);
   if(exerciseReturnPage==="editor-prof"&&!editingPlan&&!$("itensPlanoProf").children.length){
-    mostrarEtapaPlano(false);
-    $("nomePlanoProf").focus();
+    mostrarCategoriaPlano();
   }
 }
 function addManualExerciseFromOptions(){
   if(!isProfessional())return;
-  addExercise();
+  const respiratory=$("dominioPlanoProf").value==="respiratorio";
+  addExercise(respiratory ? {domain:"respiratorio"} : undefined);
   openExerciseConfiguration($("itensPlanoProf").lastElementChild);
 }
 function openExerciseBankFromOptions(){
   if(!isProfessional())return;
   navigate("exercise-bank-prof");
+  $("dominioBiblioteca").value=$("dominioPlanoProf").value==="respiratorio"?"respiratorio":"todos";
+  if($("dominioBiblioteca").value==="respiratorio")void loadSample();
 }
 function openExerciseConfiguration(row,existing=false){
   if(!isProfessional()||!row)return;
@@ -1016,6 +1162,8 @@ function finishExerciseInsertion(){
   if(!validExercise(exercise)){
     text("erroConfigExercicio",exercise.exercise_source===WALK_SOURCE
       ?"Informe o nome da caminhada, a duração e a frequência."
+      :exercise.domain==="respiratorio"
+      ?"Informe o exercício, as séries, os ciclos respiratórios e a frequência. Use segundos inteiros nos tempos opcionais."
       :"Informe o exercício, as séries, as repetições ou duração e a frequência.");
     return;
   }
@@ -1049,21 +1197,41 @@ function backFromExerciseConfiguration(){
   $("exerciseConfigDialog").close();
 }
 function mostrarEtapaPlano(exercicios){
+  $("etapaCategoriaPlano").hidden=true;
   $("dadosPlanoProf").hidden=exercicios&&!editingPlan;
   $("etapaExerciciosPlano").hidden=!exercicios;
   $("avancarPlanoProf").hidden=exercicios;
+  $("alterarCategoriaPlano").hidden=!editingPlan;
   $("voltarDadosPlano").hidden=!!editingPlan;
   $("cancelarPlanoBtn").hidden=exercicios&&!editingPlan;
   text("tituloFormularioPlano",editingPlan?"Editar plano terapêutico":exercicios?"Adicionar exercícios":"Criar plano terapêutico");
+}
+function mostrarCategoriaPlano(){
+  $("dadosPlanoProf").hidden=true;
+  $("avancarPlanoProf").hidden=true;
+  $("etapaExerciciosPlano").hidden=true;
+  $("etapaCategoriaPlano").hidden=false;
+  $("categoriaIndisponivel").hidden=respiratoryColumnsAvailable;
+  for(const botao of document.querySelectorAll("[data-categoria-respiratoria]"))
+    botao.disabled=!respiratoryColumnsAvailable;
+  $("tituloCategoriaPlano").focus();
+}
+function escolherCategoriaPlano(dominio){
+  if(!isProfessional()||!patientId||$("etapaCategoriaPlano").hidden)return;
+  if(dominio!=="musculoesqueletico" && (!respiratoryColumnsAvailable || !["respiratorio","misto"].includes(dominio)))return;
+  $("dominioPlanoProf").value=dominio;
+  mostrarEtapaPlano(true);
+  if(!editingPlan&&!$("itensPlanoProf").children.length){
+    openExerciseSourceOptions();
+    $("tituloOrigemExercicios").focus();
+  }else $("tituloFormularioPlano").focus();
 }
 function avancarPlano(){
   if(!isProfessional()||!patientId)return;
   const nome=$("nomePlanoProf");
   if(!nome.reportValidity())return;
   if(nome.value.trim().length<2){nome.focus();return message("Informe o nome do plano.",true);}
-  mostrarEtapaPlano(true);
-  openExerciseSourceOptions();
-  $("tituloOrigemExercicios").focus();
+  mostrarCategoriaPlano();
 }
 function createPlanFromScratch(){
   if(!isProfessional())return;
@@ -1088,6 +1256,7 @@ function clearPlanForm(){
   pendingExerciseRow=null;
   pendingExercisePlaceholder=null;
   $("formPlanoProf").reset();
+  $("dominioPlanoProf").value="musculoesqueletico";
   $("itensPlanoProf").replaceChildren();
   updatePlanEditorSummary();
   camposExercicioAntes=[];
@@ -1100,6 +1269,7 @@ function editPlan(id){
   clearPlanForm();
   editingPlan=id;
   $("nomePlanoProf").value=plan.title;
+  $("dominioPlanoProf").value=plan.clinical_domain??"musculoesqueletico";
   $("orientacoesPlanoProf").value=plan.notes||"";
   for(const x of [...(plan.plan_exercises||[])].sort((a,b)=>a.position-b.position))addExercise(x);
   mostrarEtapaPlano(true);
@@ -1110,6 +1280,9 @@ function readExercise(row,position){
   const walking=row.dataset.exerciseSource===WALK_SOURCE;
   return {
     exercise_name:exerciseNameFromRow(row),
+    domain:row.dataset.domain,
+    rest_seconds:v("rest_seconds")?Number(v("rest_seconds")):null,
+    inspiratory_hold_seconds:v("inspiratory_hold_seconds")?Number(v("inspiratory_hold_seconds")):null,
     exercise_source:row.dataset.exerciseSource,
     external_id:row.dataset.externalId||null,
     series:walking?null:Number(v("series")),
@@ -1124,6 +1297,8 @@ function readExercise(row,position){
 function validExercise(exercise){
   if(exercise.exercise_name.length<2||!exercise.frequency)return false;
   if(exercise.exercise_source===WALK_SOURCE)return !!exercise.duration;
+  if(exercise.domain==="respiratorio" && (!/^[1-9]\d{0,2}$/.test(exercise.repetitions) ||
+    ![exercise.rest_seconds,exercise.inspiratory_hold_seconds].every(n=>n===null||Number.isInteger(n)&&n>=0&&n<=2147483647)))return false;
   return Number.isInteger(exercise.series)&&exercise.series>=1&&exercise.series<=20&&
     !!(exercise.repetitions||exercise.duration);
 }
@@ -1136,18 +1311,24 @@ async function savePlan(event){
   if(title.length<2||!items.length)return message("Informe um nome e pelo menos um exercício.",true);
   if(!items.every(validExercise))
     return message("Verifique os campos de cada exercício antes de salvar.",true);
+  const clinical_domain=$("dominioPlanoProf").value;
+  if(clinical_domain!=="misto"&&items.some(item=>item.domain!==clinical_domain))
+    return message("Use exercícios do perfil selecionado ou escolha o perfil Misto.",true);
   busy=true;
   let insertedId=null;
   try{
     const data={title,notes:$("orientacoesPlanoProf").value.trim(),patient_id:patientId,physiotherapist_id:user.id};
+    const domainFields=respiratoryColumnsAvailable?{clinical_domain}:{};
+    const exerciseRows=items.map(({domain,rest_seconds,inspiratory_hold_seconds,...item})=>
+      respiratoryColumnsAvailable?{...item,domain,rest_seconds,inspiratory_hold_seconds}:item);
     if(editingPlan){
-      result(await supabase.from("care_plans").update({title:data.title,notes:data.notes,updated_at:new Date().toISOString()}).eq("id",editingPlan));
+      result(await supabase.from("care_plans").update({title:data.title,...domainFields,notes:data.notes,updated_at:new Date().toISOString()}).eq("id",editingPlan));
       result(await supabase.from("plan_exercises").delete().eq("plan_id",editingPlan));
-      result(await supabase.from("plan_exercises").insert(items.map(x=>({...x,plan_id:editingPlan}))));
+      result(await supabase.from("plan_exercises").insert(exerciseRows.map(x=>({...x,plan_id:editingPlan}))));
     }else{
-      const plan=result(await supabase.from("care_plans").insert(data).select("id").single());
+      const plan=result(await supabase.from("care_plans").insert({...data,...domainFields}).select("id").single());
       insertedId=plan.id;
-      result(await supabase.from("plan_exercises").insert(items.map(x=>({...x,plan_id:insertedId}))));
+      result(await supabase.from("plan_exercises").insert(exerciseRows.map(x=>({...x,plan_id:insertedId}))));
     }
     clearPlanForm();
     await loadPatientData();
@@ -1169,28 +1350,98 @@ async function deletePlan(id){
   }catch(err){message("Não foi possível excluir o plano.",true);}
   finally{busy=false;}
 }
+function medidasAtivas(){
+  return medidasRespiratorias.filter(([campo])=>campo!=="airway_dryness"||environmentalColumnsAvailable);
+}
+
+function configurarDiarioRespiratorio(){
+  const dominio=dominioDoDiario(plans);
+  $("page-sintomas").dataset.dominio=dominio;
+  const bemEstar=$("diarioCamposBemEstar");
+  const destino=dominio==="respiratorio"?$("diarioEtapaBemEstar"):$("descricaoRigidez").closest("section");
+  destino.append(bemEstar);
+  const container=$("etapasRespiratorias");
+  container.replaceChildren();
+  text("avisoFaltaDeAr","");
+  text("diarioExemploAtipico",dominio==="respiratorio"
+    ?"Por exemplo: falta de ar diferente da habitual."
+    :"Febre, inchaço súbito ou dor extrema fora do comum.");
+  if(dominio==="musculoesqueletico")return;
+  for(const [campo, rotulo, maximo] of medidasAtivas()){
+    const etapa=el("section",undefined,"card");
+    etapa.dataset.etapaDiario="respiratorio";
+    const titulo=el("h2",rotulo,"choices-label");
+    titulo.id=campo+"Titulo";
+    titulo.tabIndex=-1;
+    titulo.setAttribute("aria-describedby","diarioEtapa");
+    etapa.setAttribute("aria-labelledby",titulo.id);
+    const grupo=el("div",undefined,"choices-options");
+    grupo.id=campo;
+    grupo.setAttribute("role","group");
+    grupo.setAttribute("aria-labelledby",titulo.id);
+    etapa.append(titulo);
+    if(maximo===10)etapa.append(el("p","Escala de Borg Modificada: 0 = nenhuma falta de ar; 10 = falta de ar máxima.","card-text"));
+    for(let nota=0;nota<=maximo;nota++){
+      const botao=el("button",maximo===10?String(nota):niveisRespiratorios[nota],"choice-btn");
+      botao.type="button";
+      botao.value=nota;
+      botao.setAttribute("aria-pressed","false");
+      botao.addEventListener("click",()=>{
+        selecionar(campo,nota);
+        if(campo==="dyspnea_rest")text("avisoFaltaDeAr",nota>=7?avisoFaltaDeAr:"");
+      });
+      grupo.append(botao);
+    }
+    etapa.append(grupo);
+    container.append(etapa);
+  }
+}
+
 async function saveSymptoms(){
   if(!isAuthenticated()||isProfessional()||busy)return;
   busy=true;
   const paciente = user;
+  const dominio=$("page-sintomas").dataset.dominio||"musculoesqueletico";
+  const respiratorio={};
+  if(dominio!=="musculoesqueletico"){
+    for(const [campo,, maximo] of medidasAtivas()){
+      const selecionado=$(campo)?.querySelector(".selected");
+      const nota=selecionado?Number(selecionado.value):null;
+      if(!Number.isInteger(nota)||nota<0||nota>maximo){
+        busy=false;
+        return mostrarErroDiario("Responda às perguntas sobre sua respiração antes de salvar.");
+      }
+      respiratorio[campo]=nota;
+    }
+  }
+  const dor=id=>$(id).value===""?null:Number($(id).value);
   const registro = {
+    pain_rest: dominio==="respiratorio"?null:dor("notaDorParado"),
+    pain_movement: dominio==="respiratorio"?null:dor("notaDorMovimento"),
     patient_id: paciente.id,
-    stiffness: levels[rigidezAtual],
-    fatigue: levels[fadigaAtual],
+    ...respiratorio,
+    stiffness: levels[rigidezAtual] ?? null,
+    fatigue: levels[fadigaAtual] ?? null,
     pain_rest_comparison: $("dorParadoComparacao").querySelector(".selected")?.value ?? null,
     pain_movement_comparison: $("dorMovimentoComparacao").querySelector(".selected")?.value ?? null,
     mood: moods[humorAtual] ?? null,
     activity_level: levels[atividadeAtual] ?? null
   };
   try {
-    const clima = await obterClimaBrasilia().catch(() => null);
+    const [climaResposta, arResposta] = await Promise.allSettled([
+      obterClimaBrasilia(),
+      dominio!=="musculoesqueletico"&&environmentalColumnsAvailable ? obterQualidadeAr() : null
+    ]);
+    const clima=climaResposta.status==="fulfilled"?climaResposta.value:null;
+    const ar=arResposta.status==="fulfilled"?arResposta.value:null;
     if (user !== paciente) return;
     const associarClima = clima && weatherColumnsAvailable;
-    let saved = await supabase.from("symptom_records").insert(associarClima ? {...registro, ...clima} : registro);
-    if (saved.error && associarClima && isMissingWeatherColumns(saved.error)) {
+    const dadosDoRegistro={...registro,...ar};
+    let saved = await supabase.from("symptom_records").insert(associarClima ? {...dadosDoRegistro, ...clima} : dadosDoRegistro);
+    if (saved.error && associarClima && isMissingColumnError(saved.error) && /weather_/.test(saved.error.message || "")) {
       if (user !== paciente) return;
       weatherColumnsAvailable = false;
-      saved = await supabase.from("symptom_records").insert(registro);
+      saved = await supabase.from("symptom_records").insert(dadosDoRegistro);
     }
     result(saved);
     if (user !== paciente) return;
@@ -1199,7 +1450,8 @@ async function saveSymptoms(){
     message(clima&&weatherColumnsAvailable
       ? "Sintomas e condições meteorológicas registrados. O plano permanece inalterado."
       : "Sintomas registrados. Clima indisponível ou atualização do banco pendente; nenhuma medição foi associada a este registro.", !(clima&&weatherColumnsAvailable));
-    if(atipico===1)
+    if(respiratorio.dyspnea_rest>=7)alert(avisoFaltaDeAr);
+    else if(atipico===1)
       alert("Se os sintomas forem intensos ou inesperados, procure orientação profissional. Este aplicativo não realiza triagem clínica.");
   }catch(err){message("Não foi possível salvar os sintomas. Confira a conexão.",true);}
   finally{busy=false;}
@@ -1218,7 +1470,9 @@ async function ebCall(opts={}){
   return data;
 }
 async function loadSample(force=false){
-  if(!isProfessional()||loadingSample)return;
+  if(!isProfessional())return;
+  if($("dominioBiblioteca").value==="respiratorio"){renderSample();return;}
+  if(loadingSample)return;
   if(sampleList&&!force){renderSample();return;}
   loadingSample=true;$("exercisebankRefresh").disabled=true;
   text("exercisebankStatus","Carregando exercícios...");
@@ -1226,8 +1480,8 @@ async function loadSample(force=false){
     sampleList=await ebCall();
     renderSample();
   }catch(e){
-    sampleList=null;$("exercisebankResults").replaceChildren();
-    text("exercisebankStatus",e.message);
+    sampleList=null;renderSample();
+    if($("dominioBiblioteca").value!=="respiratorio")text("exercisebankStatus",e.message);
   }finally{loadingSample=false;$("exercisebankRefresh").disabled=false;}
 }
 const BODY_REGION_LABELS={
@@ -1579,11 +1833,12 @@ function exerciseRegions(ex){
 function equipmentLabel(value){return EQUIPMENT_PT[String(value||"").toLowerCase()]||String(value);}
 function regionText(ex){return exerciseRegions(ex).map(key=>BODY_REGION_LABELS[key]).join(", ");}
 function renderSample(){
-  if(!isProfessional()||!sampleList)return;
+  if(!isProfessional())return;
+  const dominio=$("dominioBiblioteca").value;
   const q=$("exercisebankQuery").value.trim().toLocaleLowerCase("pt-BR");
   const home=$("exercisebankHomeOnly").checked;
   const region=$("exercisebankRegion").value;
-  const all=Array.isArray(sampleList.items)?sampleList.items:[];
+  const all=dominio!=="respiratorio"&&Array.isArray(sampleList?.items)?sampleList.items:[];
   const filtered=all.filter(x=>{
     // Exibir somente exercícios com equivalência explícita em português no glossário.
     if(!isExerciseNameTranslated(x.name))return false;
@@ -1596,8 +1851,10 @@ function renderSample(){
       .join(" ").toLocaleLowerCase("pt-BR").includes(q);
   });
   const root=$("exercisebankResults");root.replaceChildren();
-  text("exercisebankStatus",filtered.length+" exercício(s)");
-  if(!filtered.length)root.append(el("p","Nenhum exercício com nome em português encontrado para esses filtros.","card-text-small"));
+  const internos=dominio==="musculoesqueletico"||region!=="todas"?[]:catalogoRespiratorio.filter(item=>
+    (!home||item.domiciliar)&&[item.nome,item.categoria,item.descricao].join(" ").toLocaleLowerCase("pt-BR").includes(q));
+  text("exercisebankStatus",filtered.length+internos.length+" exercício(s)");
+  if(!filtered.length&&!internos.length)root.append(el("p","Nenhum exercício com nome em português encontrado para esses filtros.","card-text-small"));
   filtered.forEach(x=>{
     const card=el("div",undefined,"demo-exercicio-item bank-result");
     const translated=translateExerciseName(x.name);
@@ -1616,6 +1873,19 @@ function renderSample(){
     });
     row.append(preview,pick);card.append(row,media);root.append(card);
   });
+  for(const item of internos){
+    const card=el("div",undefined,"demo-exercicio-item bank-result");
+    const pick=el("button","Selecionar exercício","btn");
+    pick.type="button";
+    pick.addEventListener("click",()=>{
+      if(!respiratoryColumnsAvailable)return message("A atualização do banco é necessária para adicionar exercícios respiratórios.",true);
+      addExercise({exercise_name:item.nome,exercise_source:RESPIRATORY_SOURCE,external_id:item.id,domain:item.domain,
+        instructions:item.descricao,...item.parametrosPadrao});
+      openExerciseConfiguration($("itensPlanoProf").lastElementChild);
+    });
+    card.append(el("h2",item.nome,"card-title"),el("p",item.descricao,"card-text"),pick);
+    root.append(card);
+  }
 }
 async function loadExerciseMedia(id,target,button,source="ExerciseBank",autoPlay=false){
   if(button)button.disabled=true;
@@ -1675,6 +1945,10 @@ async function init(){
     backFromExerciseConfiguration();
   });
   $("exercisebankRefresh")?.addEventListener("click",()=>loadSample());
+  $("dominioBiblioteca").addEventListener("change",()=>{
+    if($("dominioBiblioteca").value==="respiratorio")$("exercisebankRegion").value="todas";
+    void loadSample();
+  });
   $("periodoAcompanhamento").addEventListener("change",()=>{
     const root=$("graficosRegistrosProf");
     const open=[...root.querySelectorAll(":scope > details")].map(topic=>topic.open);
@@ -1727,8 +2001,10 @@ window.adicionarExercicioManual=addManualExerciseFromOptions;
 window.abrirBibliotecaExerciseBank=openExerciseBankFromOptions;
 window.salvarPlanoProf=savePlan;
 window.avancarPlano=avancarPlano;
+window.mostrarCategoriaPlano=mostrarCategoriaPlano;
+window.escolherCategoriaPlano=escolherCategoriaPlano;
 window.mostrarEtapaPlano=etapa=>{
   mostrarEtapaPlano(etapa);
-  $("nomePlanoProf").focus();
+  (editingPlan ? $("tituloFormularioPlano") : $("nomePlanoProf")).focus();
 };
 document.addEventListener("DOMContentLoaded",init);

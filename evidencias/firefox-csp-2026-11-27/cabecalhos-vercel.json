@@ -1,0 +1,58 @@
+{
+  "data": "2026-11-27T17:12:06.801810+00:00",
+  "metodo": "GET",
+  "observacoes": [
+    {
+      "url": "https://tcc2-lime.vercel.app/",
+      "http": 200,
+      "cabecalhos": {
+        "content-security-policy": "frame-ancestors 'none'; object-src 'none'; base-uri 'self'",
+        "content-security-policy-report-only": "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'sha256-OenIqg8fq5aqOjNBsYwVlsP1zVMyIiklyXz7AiWW5Qc='; script-src-attr 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.open-meteo.com https://air-quality-api.open-meteo.com https://overpass-api.de https://routing.openstreetmap.de; img-src 'self' data: https://tile.openstreetmap.org https://*.exercisebank.net https://wger.de; media-src 'self' https://*.exercisebank.net https://wger.de; font-src 'self'; form-action 'self'; frame-src 'none'",
+        "x-frame-options": "DENY",
+        "x-content-type-options": "nosniff",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "referrer-policy": null,
+        "permissions-policy": null
+      }
+    },
+    {
+      "url": "https://tcc2-lime.vercel.app/style.css",
+      "http": 200,
+      "cabecalhos": {
+        "content-security-policy": "frame-ancestors 'none'; object-src 'none'; base-uri 'self'",
+        "content-security-policy-report-only": "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'sha256-OenIqg8fq5aqOjNBsYwVlsP1zVMyIiklyXz7AiWW5Qc='; script-src-attr 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.open-meteo.com https://air-quality-api.open-meteo.com https://overpass-api.de https://routing.openstreetmap.de; img-src 'self' data: https://tile.openstreetmap.org https://*.exercisebank.net https://wger.de; media-src 'self' https://*.exercisebank.net https://wger.de; font-src 'self'; form-action 'self'; frame-src 'none'",
+        "x-frame-options": "DENY",
+        "x-content-type-options": "nosniff",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "referrer-policy": null,
+        "permissions-policy": null
+      }
+    },
+    {
+      "url": "https://tcc2-lime.vercel.app/app.js",
+      "http": 200,
+      "cabecalhos": {
+        "content-security-policy": "frame-ancestors 'none'; object-src 'none'; base-uri 'self'",
+        "content-security-policy-report-only": "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'sha256-OenIqg8fq5aqOjNBsYwVlsP1zVMyIiklyXz7AiWW5Qc='; script-src-attr 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.open-meteo.com https://air-quality-api.open-meteo.com https://overpass-api.de https://routing.openstreetmap.de; img-src 'self' data: https://tile.openstreetmap.org https://*.exercisebank.net https://wger.de; media-src 'self' https://*.exercisebank.net https://wger.de; font-src 'self'; form-action 'self'; frame-src 'none'",
+        "x-frame-options": "DENY",
+        "x-content-type-options": "nosniff",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "referrer-policy": null,
+        "permissions-policy": null
+      }
+    },
+    {
+      "url": "https://tcc2-lime.vercel.app/acesso.js",
+      "http": 200,
+      "cabecalhos": {
+        "content-security-policy": "frame-ancestors 'none'; object-src 'none'; base-uri 'self'",
+        "content-security-policy-report-only": "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'sha256-OenIqg8fq5aqOjNBsYwVlsP1zVMyIiklyXz7AiWW5Qc='; script-src-attr 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.open-meteo.com https://air-quality-api.open-meteo.com https://overpass-api.de https://routing.openstreetmap.de; img-src 'self' data: https://tile.openstreetmap.org https://*.exercisebank.net https://wger.de; media-src 'self' https://*.exercisebank.net https://wger.de; font-src 'self'; form-action 'self'; frame-src 'none'",
+        "x-frame-options": "DENY",
+        "x-content-type-options": "nosniff",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "referrer-policy": null,
+        "permissions-policy": null
+      }
+    }
+  ]
+}

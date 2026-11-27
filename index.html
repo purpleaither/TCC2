@@ -131,6 +131,14 @@
       <button type="button" class="patient-tpe-link" onclick="navegarPara('orientacoes')">Saiba mais em Aprender a cuidar</button>
     </aside>
 
+    <section class="card" id="ambientePosRegistro" aria-labelledby="ambienteTitulo" hidden>
+      <h2 class="card-title" id="ambienteTitulo">Clima e qualidade do ar em Brasília</h2>
+      <p class="card-text" id="ambienteClima"></p>
+      <p class="card-text" id="ambienteAr"></p>
+      <p class="card-text" id="ambienteDica"></p>
+      <p class="card-text-small">Estimativas para Brasília. Fonte: <a href="https://open-meteo.com/">Open-Meteo</a>.</p>
+    </section>
+
     <!-- Card: Aviso -->
     <div class="warning-card">
       <h2 class="warning-title"><img src="Icones/alert-triangle.svg" alt="" class="icon">Sobre o uso do aplicativo</h2>
@@ -145,7 +153,7 @@
     <h1 class="page-title">Registrar como me sinto</h1>
     <p class="page-subtitle" id="diarioEtapa">Etapa 1 de 3</p>
 
-    <section class="card" data-etapa-diario aria-labelledby="dorParadoComparacaoTitulo">
+    <section class="card" data-etapa-diario="musculoesqueletico" aria-labelledby="dorParadoComparacaoTitulo">
       <!-- Dor quando você ficou parado -->
       <div class="pain-scale">
         <h2 class="choices-label" id="dorParadoComparacaoTitulo" tabindex="-1" aria-describedby="diarioEtapa">Quando ficou parado, como foi a dor em relação à de costume?</h2>
@@ -167,9 +175,14 @@
           <button type="button" class="choice-btn" value="Não sei comparar" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 3)">Não sei comparar</button>
         </div>
       </div>
+      <p class="card-text-small" id="diarioEscalaDor">Escala Numérica de Dor (opcional). 0 = sem dor; 10 = pior dor que você consegue imaginar.</p>
+      <label class="form-label" for="notaDorParado">Nota de dor quando ficou parado</label>
+      <select class="form-input" id="notaDorParado" aria-describedby="diarioEscalaDor"><option value="">Não informar</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select>
+      <label class="form-label" for="notaDorMovimento">Nota de dor ao se mexer</label>
+      <select class="form-input" id="notaDorMovimento" aria-describedby="diarioEscalaDor"><option value="">Não informar</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select>
     </section>
 
-    <section class="card" data-etapa-diario aria-labelledby="descricaoRigidez" hidden>
+    <section class="card" data-etapa-diario="musculoesqueletico" aria-labelledby="descricaoRigidez" hidden>
       <!-- Rigidez articular -->
       <div class="choices">
         <h2 class="choices-label" id="descricaoRigidez" tabindex="-1" aria-describedby="diarioEtapa">Como você se sentiu hoje? Quanto foi difícil mexer as articulações?</h2>
@@ -192,6 +205,13 @@
         </div>
       </div>
 
+    </section>
+
+    <div id="etapasRespiratorias"></div>
+
+    <section class="card" id="diarioEtapaBemEstar" data-etapa-diario="respiratorio" aria-labelledby="diarioBemEstar" hidden>
+      <h2 class="card-title" id="diarioBemEstar" tabindex="-1" aria-describedby="diarioEtapa">Bem-estar e movimento</h2>
+      <div id="diarioCamposBemEstar">
       <!-- Humor -->
       <div class="choices">
         <p class="choices-label">Como estava seu humor hoje?</p>
@@ -218,13 +238,14 @@
           <button class="choice-btn" onclick="selecionar('atividadeOptions', 3)">Intensa</button>
         </div>
       </div>
+      </div>
     </section>
 
     <section class="card" data-etapa-diario aria-labelledby="diarioSinaisTitulo" hidden>
       <h2 class="card-title" id="diarioSinaisTitulo" tabindex="-1" aria-describedby="diarioEtapa">Sinais fora do comum</h2>
       <!-- Sinal atípico -->
       <p class="choices-label">Você percebeu algum sinal fora do comum hoje?</p>
-      <p class="card-text-small diario-exemplo">Febre, inchaço súbito ou dor extrema fora do comum.</p>
+      <p class="card-text-small diario-exemplo" id="diarioExemploAtipico">Febre, inchaço súbito ou dor extrema fora do comum.</p>
       <div class="choices">
         <div class="choices-options" id="atipicoOptions">
           <button class="choice-btn" onclick="selecionar('atipicoOptions', 0)">Não</button>
@@ -233,6 +254,7 @@
       </div>
     </section>
 
+    <p class="card diario-aviso" id="avisoFaltaDeAr" role="alert"></p>
     <p class="choices-label" id="diarioErro" tabindex="-1" hidden></p>
     <button type="button" class="btn btn-outline" id="diarioVoltar" onclick="mudarEtapaDiario(-1)" hidden>Voltar</button>
     <button type="button" class="btn" id="diarioProximo" onclick="mudarEtapaDiario(1)">Próximo</button>
@@ -315,6 +337,8 @@
           </div>
         </div>
 
+        <p class="card-text" id="sheetRespiratorio" hidden></p>
+        <p class="card-text" id="sheetQualidadeAr" hidden></p>
         <h3 class="weather-title" style="font-size:var(--fonte-minima)">Resumo Meteorológico</h3>
         <p style="font-size:var(--fonte-minima); line-height:1.4; color:var(--texto, #333);" id="sheetClimaDesc">Não há dados meteorológicos salvos para este registro.</p>
         <p style="font-size:var(--fonte-minima); color:var(--texto-suave, #888); margin-top:16px; line-height:1.4">Clima e dor podem coincidir temporalmente, sem que isso comprove uma relação direta de causa e efeito.</p>
@@ -346,6 +370,19 @@
       <h2 class="card-title">Autonomia no dia a dia</h2>
       <p class="card-text">Estratégias práticas para adaptar suas tarefas domésticas e de trabalho, mantendo o movimento constante e o autocuidado após a alta hospitalar.</p>
       <a href="#" class="card-link" onclick="event.preventDefault(); alert('Em breve: leitura completa com orientações validadas pela equipe do HUB.');">Ler artigo completo →</a>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">Organize suas pausas</h2>
+      <p class="card-text">Divida tarefas como arrumar a casa em partes menores. Planeje pausas entre elas e retome no ritmo combinado com seu fisioterapeuta.</p>
+    </div>
+    <div class="card">
+      <h2 class="card-title">Tempo seco e calor no DF</h2>
+      <p class="card-text">A sombra das árvores pode deixar o ar ao redor mais fresco e o ambiente mais confortável em dias secos. Se a atividade ao ar livre foi liberada pelo seu fisioterapeuta, prefira o início da manhã ou o fim da tarde, quando o sol costuma ser menos intenso.</p>
+    </div>
+    <div class="card">
+      <h2 class="card-title">Esforço e sinais de alerta</h2>
+      <p class="card-text">Use a escala de Borg para descrever o esforço percebido ao fisioterapeuta. Uma nota isolada não define se é seguro continuar. Se sentir falta de ar intensa ou fora do habitual, pare e procure orientação de saúde.</p>
     </div>
 
   </div>
@@ -405,6 +442,7 @@
               </figcaption>
             </figure>
             <p data-guia-parques-status></p>
+            <p class="card-text-small">A sombra das árvores pode deixar o ar ao redor mais fresco e o ambiente mais confortável em dias secos. Se a atividade ao ar livre foi liberada pelo seu fisioterapeuta, prefira o início da manhã ou o fim da tarde, quando o sol costuma ser menos intenso.</p>
             <button type="button" class="btn btn-outline" data-guia-alterar>Alterar localização</button>
           </div>
           <p data-guia-status role="status"></p>
@@ -522,7 +560,15 @@
 
   <!-- ===== CATÁLOGO EXERCISEBANK ===== -->
   <div class="page" id="page-exercise-bank-prof">
-    <h1 class="page-title">Biblioteca ExerciseBank</h1>
+    <h1 class="page-title">Biblioteca de exercícios</h1>
+    <div class="form-group">
+      <label class="form-label" for="dominioBiblioteca">Domínio do exercício</label>
+      <select class="form-input" id="dominioBiblioteca">
+        <option value="todos">Todos</option>
+        <option value="musculoesqueletico">Musculoesquelético</option>
+        <option value="respiratorio">Respiratório</option>
+      </select>
+    </div>
     <details class="card monitoring-topic" data-exercicios-selecionados hidden open>
       <summary>Exercícios adicionados</summary>
       <ul class="exercicios-selecionados-lista"></ul>
@@ -579,12 +625,22 @@
             <textarea class="form-input" id="orientacoesPlanoProf" maxlength="700" rows="3" placeholder="Orientações individualizadas"></textarea></div>
         </div>
         <button type="button" class="btn" id="avancarPlanoProf" onclick="avancarPlano()">Próximo</button>
+        <input type="hidden" id="dominioPlanoProf" value="musculoesqueletico">
+        <section id="etapaCategoriaPlano" aria-labelledby="tituloCategoriaPlano" hidden>
+          <h2 class="card-title" id="tituloCategoriaPlano" tabindex="-1">Em qual categoria o plano se encaixa?</h2>
+          <p class="card-text" id="categoriaIndisponivel" hidden>As opções Respiratório e Misto dependem da atualização do banco.</p>
+          <button type="button" class="btn" onclick="escolherCategoriaPlano('musculoesqueletico')">Ortopédico</button>
+          <button type="button" class="btn" data-categoria-respiratoria onclick="escolherCategoriaPlano('respiratorio')">Respiratório</button>
+          <button type="button" class="btn" data-categoria-respiratoria onclick="escolherCategoriaPlano('misto')">Misto</button>
+          <button type="button" class="btn btn-outline" onclick="mostrarEtapaPlano(false)">Voltar</button>
+        </section>
         <div id="etapaExerciciosPlano" hidden>
+          <button type="button" class="btn btn-outline" id="alterarCategoriaPlano" onclick="mostrarCategoriaPlano()" hidden>Alterar categoria</button>
           <div id="resumoExerciciosPlano" class="exercise-plan-summary"></div>
           <div id="itensPlanoProf" hidden></div>
           <button type="button" class="btn btn-outline" onclick="abrirOpcoesExercicios()">+ Adicionar exercícios</button>
           <button type="submit" class="btn" id="salvarPlanoBtn" hidden>Salvar plano</button>
-          <button type="button" class="btn btn-outline" id="voltarDadosPlano" onclick="mostrarEtapaPlano(false)">Voltar</button>
+          <button type="button" class="btn btn-outline" id="voltarDadosPlano" onclick="mostrarCategoriaPlano()">Voltar</button>
         </div>
         <button type="button" class="btn btn-outline" id="cancelarPlanoBtn" onclick="cancelarFormularioPlano()">Cancelar edição</button>
       </form>

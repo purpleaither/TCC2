@@ -1,4 +1,4 @@
-const { chromium } = require('playwright');
+const browserType = require('./navegador.cjs');
 const fs = require('node:fs');
 const path = require('node:path');
 const base = process.env.TCC_BASE_URL || 'https://tcc2-lime.vercel.app/';
@@ -10,7 +10,7 @@ const roles = [
 ];
 (async()=>{
  const report={date:new Date().toISOString(),url:base,config:{configuredRoles:roles.filter(x=>Boolean(x.email&&x.password)).map(x=>x.name)},scenarios:[]};
- const browser=await chromium.launch({headless:true});
+ const browser=await browserType.launch({headless:true});
  for(const role of roles){
   const entry={role:role.name,checks:[],errors:[]};
   const context=await browser.newContext({viewport:{width:1280,height:800}});

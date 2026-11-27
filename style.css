@@ -1489,3 +1489,18 @@ button.guia-mapa-marcador { cursor: pointer; }
   margin-inline-end: .35em;
 }
 [data-trajeto-seguir][hidden] { display: none; }
+
+.diario-aviso {
+  padding: .75rem;
+  border-inline-start: .25rem solid var(--borda-aviso);
+  background: var(--fundo-aviso);
+  color: var(--cor-aviso);
+}
+
+#avisoFaltaDeAr:empty { padding: 0; margin: 0; border: 0; }
+.tabela-longitudinal { overflow-x: auto; }
+.tabela-longitudinal table { width: 100%; border-collapse: collapse; }
+.tabela-longitudinal :is(caption, th, td) { padding: .5rem; text-align: start; }
+.tabela-longitudinal :is(th, td) { border: 1px solid var(--borda); vertical-align: top; }
+.tabela-longitudinal th { background: var(--superficie-suave); }
+.tabela-longitudinal td:nth-child(4) { min-width: 12rem; }

@@ -1,5 +1,9 @@
+import {coordenadasBrasilia} from "../data/ambiente.js";
+
 // Consulta apenas o clima de Brasília, sem receber dados do paciente.
-const endpoint = "https://api.open-meteo.com/v1/forecast?latitude=-15.7801&longitude=-47.9292&current=temperature_2m,relative_humidity_2m,surface_pressure&timeformat=unixtime&timezone=GMT";
+const params = new URLSearchParams({...coordenadasBrasilia,
+  current:"temperature_2m,relative_humidity_2m,surface_pressure", timeformat:"unixtime", timezone:"GMT"});
+const endpoint = "https://api.open-meteo.com/v1/forecast?" + params;
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");

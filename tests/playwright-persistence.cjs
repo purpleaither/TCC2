@@ -1,4 +1,4 @@
-const {chromium}=require('playwright');
+const browserType = require('./navegador.cjs');
 const fs=require('node:fs');
 const base=process.env.TCC_BASE_URL || 'https://tcc2-lime.vercel.app/';
 const title='TESTE FICTICIO PW '+Date.now();
@@ -11,8 +11,12 @@ async function login(role,home){const p=await browser.newPage();await p.goto(bas
 async function nav(p,n){await p.evaluate(n=>window.navegarPara(n),n);await p.locator('#page-'+n+'.active').waitFor()}
 async function showExercise(name){
   await nav(patient,'exercicios');
-  const next=patient.getByRole('button',{name:'Próximo',exact:true});
-  for(let index=0;index<100;index++){
+  const next=patient.locator('#page-exercicios.active').getByRole('button',{name:'Próximo',exact:true});
+  const progress=patient.locator('.patient-exercise-progress');
+  await progress.waitFor();
+  const total=Number((await progress.innerText()).match(/ de (\d+)/)?.[1]);
+  if(!Number.isSafeInteger(total)||total<1)throw Error('Total da ficha de exercícios indisponível');
+  for(let index=0;index<total;index++){
     if(await patient.getByRole('heading',{name,exact:true}).isVisible())return;
     if(!await next.count()||!await next.isEnabled())break;
     await next.click();
@@ -21,7 +25,7 @@ async function showExercise(name){
 }
 function card(){return prof.locator('#listaPlanosProf .card').filter({has:prof.getByText(title,{exact:true})})}
 async function selectPatient(){await nav(prof,'planos-prof');await prof.locator('#pacientePlanoProf').selectOption(patientId);await prof.waitForTimeout(1500)}
-(async()=>{browser=await chromium.launch();try{
+(async()=>{browser=await browserType.launch();try{
 patient=await login('PACIENTE','inicio');prof=await login('FISIO','profissional');
 prof.on('request',r=>{const u=new URL(r.url());if(u.pathname==='/api/exercisebank')network.push({phase,endpoint:u.pathname,method:r.method(),event:'request'})});prof.on('requestfailed',r=>{const u=new URL(r.url());if(u.pathname==='/api/exercisebank')network.push({phase,endpoint:u.pathname,event:'requestfailed',error:r.failure()?.errorText})});prof.on('response',r=>{const u=new URL(r.url());if(u.pathname==='/api/exercisebank'||/\/rest\/v1\/(care_plans|plan_exercises)$/.test(u.pathname))network.push({phase,endpoint:u.pathname,method:r.request().method(),status:r.status(),retryAfter:r.headers()['retry-after']||null})});
 const name=(await patient.locator('#userNameDisplay').innerText()).trim();
@@ -29,7 +33,7 @@ await nav(prof,'planos-prof');
 const matches=await prof.locator('#pacientePlanoProf option').evaluateAll((opts,name)=>opts.filter(o=>o.textContent.trim()===name&&o.value).map(o=>o.value),name);
 if(matches.length!==1)throw Error('Conta ficticia nao identificada univocamente no seletor; nenhuma escrita realizada');
 patientId=matches[0];await selectPatient();
-if(await step('CT20-21',async()=>{await prof.locator('#page-planos-prof.active').locator('#createPlanEntry').click();await prof.locator('#nomePlanoProf').fill(title);await prof.getByRole('button',{name:'Próximo',exact:true}).click();await prof.getByRole('button',{name:'Adicionar manualmente',exact:true}).click();const row=prof.locator('#exerciseConfigRow');await row.locator('[name=customName]').fill(exercise);await prof.getByRole('button',{name:'Concluir inserção',exact:true}).click();await prof.locator('#page-exercise-source-prof.active').getByRole('button',{name:'Voltar',exact:true}).click();await prof.locator('#formPlanoProf button[type=submit]').click();await card().getByText(exercise,{exact:true}).waitFor({timeout:20000})})){
+if(await step('CT20-21',async()=>{await prof.locator('#page-planos-prof.active').locator('#createPlanEntry').click();await prof.locator('#nomePlanoProf').fill(title);await prof.getByRole('button',{name:'Próximo',exact:true}).click();if(await prof.locator('#etapaCategoriaPlano').isVisible())await prof.getByRole('button',{name:'Ortopédico',exact:true}).click();await prof.getByRole('button',{name:'Adicionar manualmente',exact:true}).click();const row=prof.locator('#exerciseConfigRow');await row.locator('[name=customName]').fill(exercise);await prof.getByRole('button',{name:'Concluir inserção',exact:true}).click();await prof.locator('#page-exercise-source-prof.active').getByRole('button',{name:'Voltar',exact:true}).click();await prof.locator('#formPlanoProf button[type=submit]').click();await card().getByText(exercise,{exact:true}).waitFor({timeout:20000})})){
 if(!process.env.CT22_ONLY)await step('CT23',async()=>{await prof.reload();await prof.locator('#page-profissional.active').waitFor({timeout:30000});await selectPatient();await card().getByText(exercise,{exact:true}).waitFor()});
 if(!process.env.CT22_ONLY)await step('CT29',async()=>{await selectPatient();await card().getByRole('button',{name:'Editar',exact:true}).click();await prof.locator('#orientacoesPlanoProf').fill('Orientacao ficticia revisada PW');await prof.locator('#formPlanoProf button[type=submit]').click();await card().getByText('Orientacao ficticia revisada PW',{exact:true}).waitFor();await prof.reload();await prof.locator('#page-profissional.active').waitFor({timeout:30000});await selectPatient();await card().getByText('Orientacao ficticia revisada PW',{exact:true}).waitFor()});
 if(!process.env.CT22_ONLY && !process.env.TCC_SERIE_DESEMPENHO)await step('CT54',async()=>{
@@ -71,17 +75,14 @@ if(!process.env.CT22_ONLY)await step('CT24',async()=>{
 if(!process.env.CT22_ONLY && !process.env.TCC_SERIE_DESEMPENHO)await step('CT55',async()=>{
   await card().getByRole('button',{name:'Editar',exact:true}).click();
   await prof.getByRole('button',{name:'+ Adicionar exercícios',exact:true}).click();
-  await prof.getByRole('button',{name:'Adicionar caminhada ao ar livre',exact:true}).click();
+  await prof.getByRole('button',{name:'Adicionar manualmente',exact:true}).click();
   const dialog=prof.locator('#exerciseConfigDialog');
   const name=dialog.getByLabel('Nome do exercício');
-  if(await name.inputValue()!=='Caminhada ao ar livre')throw Error('Nome da caminhada incorreto');
-  if(!await dialog.getByRole('checkbox').isChecked())throw Error('Indicação ao ar livre não marcada');
-  if(await dialog.locator('[name=series], [name=repetitions]').count())throw Error('A caminhada exibiu séries ou repetições');
-  for(const field of ['duration','frequency']){
-    if(await dialog.locator('[name="'+field+'"]').inputValue())throw Error('Parâmetro preenchido automaticamente');
-  }
-  const walk='Caminhada fictícia PW '+Date.now();
+  const indicacao=dialog.getByRole('checkbox',{name:/Recomendar realização/});
+  if(await indicacao.isChecked())throw Error('Indicação ao ar livre veio marcada por padrão');
+  const walk='Exercício ao ar livre fictício PW '+Date.now();
   await name.fill(walk);
+  await indicacao.check();
   await dialog.getByLabel('Duração',{exact:true}).fill('10 minutos');
   await dialog.getByLabel('Frequência',{exact:true}).fill('2 vezes por semana');
   await dialog.getByRole('button',{name:'Concluir inserção',exact:true}).click();

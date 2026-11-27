@@ -24,6 +24,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Verificar os três perfis clínicos do diário
+        run: node --test tests/respiratorio.test.cjs tests/auditoria/qualidade-ar.test.mjs
       - name: Preparação do ambiente de testes
         run: npm install --no-save playwright@1.58.2
       - name: Aguardar a publicação da versão avaliada

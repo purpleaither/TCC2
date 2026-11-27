@@ -1,7 +1,7 @@
-const {chromium}=require('playwright');
+const browserType = require('./navegador.cjs');
 const fs=require('node:fs');
 (async()=>{const report=[],network=[];let browser;const simular=process.env.TCC_CLIMA_FALHA==='1';try{
-browser=await chromium.launch();const p=await browser.newPage();
+browser=await browserType.launch();const p=await browser.newPage();
 let simulacoes=0;
 if(simular)await p.route('**/api/weather',rota=>{
  simulacoes++;

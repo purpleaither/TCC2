@@ -1,7 +1,7 @@
-const {chromium}=require('playwright');const fs=require('node:fs');
+const browserType = require('./navegador.cjs');const fs=require('node:fs');
 const base=process.env.TCC_BASE_URL || 'https://tcc2-lime.vercel.app/';
 (async()=>{let browser;const report=[],checks=[];try{
-browser=await chromium.launch();
+browser=await browserType.launch();
 async function login(email,password,label){if(!email||!password)throw Error('Secret ausente');const ctx=await browser.newContext();const p=await ctx.newPage();await p.goto(base);await p.locator('#loginEmail').fill(email);await p.locator('#loginSenha').fill(password);const auth=[];const tokenResponse=p.waitForResponse(r=>new URL(r.url()).pathname.endsWith('/auth/v1/token')&&r.status()===200,{timeout:30000}).catch(()=>null);p.on('response',r=>{const path=new URL(r.url()).pathname;if(path.includes('/auth/v1/token')||path.endsWith('/rest/v1/profiles'))auth.push({path,status:r.status()})});await p.locator('#loginSubmit').click();try{await p.locator('#page-inicio.active').waitFor({timeout:30000})}catch(e){console.log(JSON.stringify({label,auth,page:await p.locator('.page.active').getAttribute('id'),status:await p.locator('#loginStatus').textContent()}));throw Error('Falha de login: '+label)}console.log(JSON.stringify({label,auth,login:'passed'}));const token=await tokenResponse;if(!token)throw Error('Token indisponível: '+label);const session=await token.json();const config=await (await p.request.get(new URL('api/database-config',base).href)).json();p.api={id:session.user.id,url:config.url,headers:{apikey:config.publishableKey,Authorization:'Bearer '+session.access_token}};return p}
 const a=await login(process.env.TEST_PACIENTE_EMAIL,process.env.TEST_PACIENTE_PASSWORD,'paciente 1'),b=await login(process.env.TEST_PACIENTEDOIS_EMAIL,process.env.TEST_PACIENTEDOIS_PASSWORD,'paciente 2');
 const ai=a.api.id,bi=b.api.id;if(ai===bi)throw Error('Contas não distintas');
