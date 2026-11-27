@@ -1,5 +1,7 @@
 "use strict";
 
+import {criarGuiaAoArLivre} from "./services/outdoorGuide.js";
+
 const $ = id => document.getElementById(id);
 const levels = ["Nenhuma", "Leve", "Moderada", "Intensa"];
 const moods = ["Bem", "Regular", "Desanimado"];
@@ -90,6 +92,7 @@ function navigate(page) {
     text("exercisebankStatus","Selecione os filtros e clique em Buscar.");
   }
   if(page==="registros-prof")renderProfessionalRecords();
+  if(page==="inicio")void refreshOutdoorGuide();
   if(page==="exercicios")renderPatientPlans();
   if(page==="sintomas"){limparRegistroDiario();definirEtapaDiario(0, true);}
   if(page==="historico")gerarHeatmap();
@@ -138,6 +141,7 @@ async function logout() {
   reset();
 }
 function reset() {
+  stopOutdoorUpdates();
   patientLoadVersion += 1;
   professionalWorkouts = undefined;
   user=null;
@@ -179,6 +183,7 @@ async function openSession() {
     patientId=user.id;
     aplicarUsuarioNaInterface(profile.display_name);
     await loadPatientData();
+    startOutdoorUpdates();
     navigate(location.hash === "#conta" ? "conta" : "inicio");
   }
   if (location.hash === "#conta") history.replaceState(history.state, "", location.pathname + location.search);
@@ -212,6 +217,55 @@ async function selectPatient(id) {
   updatePatientSelectors();
   await loadPatientData();
 }
+const outdoorGuide = criarGuiaAoArLivre($("guiaArLivre"), refreshOutdoorGuide);
+let outdoorChannel;
+let outdoorTimer;
+let outdoorRefresh = 0;
+
+async function refreshOutdoorGuide() {
+  if(!isAuthenticated() || isProfessional()) return false;
+  const current = user.id;
+  const version = ++outdoorRefresh;
+  let names = [];
+  try {
+    const response = await supabase.from("care_plans")
+      .select("plan_exercises!inner(exercise_name,exercise_source,indicacao_ar_livre)")
+      .eq("patient_id",current).eq("plan_exercises.indicacao_ar_livre",true);
+    names = (result(response) || []).flatMap(plan => plan.plan_exercises
+      .filter(exercise => exercise.indicacao_ar_livre === true)
+      .map(exercise => exercise.exercise_source === "ExerciseBank"
+        ? translateExerciseName(exercise.exercise_name) : exercise.exercise_name));
+  } catch {
+    // Sem confirmação do plano, o guia permanece fechado.
+  }
+  if(user?.id !== current || isProfessional()) return false;
+  if(version === outdoorRefresh) outdoorGuide.update(names);
+  return version === outdoorRefresh && names.length > 0;
+}
+
+function refreshOutdoorDashboard() {
+  if(!document.hidden && $("page-inicio").classList.contains("active")) void refreshOutdoorGuide();
+}
+function startOutdoorUpdates() {
+  stopOutdoorUpdates();
+  if(supabase.channel) {
+    outdoorChannel = supabase.channel("indicacoes-ar-livre")
+      .on("postgres_changes", {
+        event: "UPDATE", schema: "public", table: "care_plans", filter: "patient_id=eq." + user.id
+      }, () => void refreshOutdoorGuide()).subscribe();
+  }
+  document.addEventListener("visibilitychange", refreshOutdoorDashboard);
+  outdoorTimer = setInterval(refreshOutdoorDashboard, 15000);
+}
+function stopOutdoorUpdates() {
+  outdoorRefresh += 1;
+  clearInterval(outdoorTimer);
+  document.removeEventListener("visibilitychange", refreshOutdoorDashboard);
+  if(outdoorChannel) void supabase.removeChannel(outdoorChannel);
+  outdoorChannel = null;
+  outdoorGuide.update([]);
+}
+
 async function consultarClimaBrasilia() {
   const response = await fetch("/api/weather", {
     signal: AbortSignal.timeout(12000),
@@ -269,7 +323,7 @@ async function loadPatientData() {
   }
   try {
     const loadedPlans=result(await supabase.from("care_plans")
-      .select("id,title,notes,created_at,updated_at,plan_exercises(id,exercise_name,exercise_source,external_id,series,repetitions,duration,frequency,instructions,position)")
+      .select("id,title,notes,created_at,updated_at,plan_exercises(id,exercise_name,exercise_source,external_id,series,repetitions,duration,frequency,instructions,position,indicacao_ar_livre)")
       .eq("patient_id",selectedPatient).order("created_at",{ascending:false}))||[];
     const baseFields="id,recorded_at,pain_rest,pain_movement,stiffness,fatigue,mood,activity_level,pain_rest_comparison,pain_movement_comparison";
     const weatherFields=",weather_city,weather_temperature,weather_humidity,weather_pressure,weather_observed_at";
@@ -539,6 +593,7 @@ function renderProfessionalPlans(){
     for(const x of [...(p.plan_exercises||[])].sort((a,b)=>a.position-b.position)){
       const line=el("div",undefined,"demo-detalhe");
       line.append(el("strong",x.exercise_name,"plan-exercise-name"));
+      if(x.indicacao_ar_livre)line.append(el("p","Indicação ao ar livre","card-text-small guia-tag"));
       line.append(el("p",(x.series||"–")+" série(s) · "+(x.repetitions||"–")+" repetições · "+(x.duration||"–")+" duração · "+x.frequency,"plan-exercise-prescription"));
       if(["ExerciseBank","wger"].includes(x.exercise_source) && x.external_id){
         const view=el("button","Ver demonstração","btn btn-outline");
@@ -760,6 +815,16 @@ function addExercise(entry){
     lbl.append(input);wrap.append(lbl);params.append(wrap);
   }
   row.append(params);
+  const outdoorLabel=el("label",undefined,"form-label guia-indicacao");
+  const outdoor=el("input");
+  outdoor.type="checkbox";
+  outdoor.name="indicacao_ar_livre";
+  outdoor.checked=entry?.indicacao_ar_livre===true;
+  const help=el("p","Habilita para o paciente a busca de parques próximos e orientações climáticas de autocuidado.","card-text-small");
+  help.id="guia-indicacao-" + crypto.randomUUID();
+  outdoor.setAttribute("aria-describedby",help.id);
+  outdoorLabel.append(outdoor, "Recomendar realização em parques ou áreas verdes ao ar livre");
+  row.append(outdoorLabel,help);
   const remove=el("button","Remover exercício","btn btn-outline");
   remove.type="button";
   remove.addEventListener("click",()=>{row.remove();updatePlanEditorSummary();});
@@ -840,7 +905,7 @@ function openExerciseConfiguration(row,existing=false){
   pendingExerciseRow=row;
   pendingExercisePlaceholder=existing?document.createElement("span"):null;
   if(existing)row.before(pendingExercisePlaceholder);
-  camposExercicioAntes=existing ? [...row.querySelectorAll("input")].map(campo=>[campo,campo.value]) : [];
+  camposExercicioAntes=existing ? [...row.querySelectorAll("input")].map(campo=>[campo,campo.value,campo.checked]) : [];
   $("exerciseConfigRow").append(row);
   const remove=row.querySelector("button.btn-outline");
   if(remove)remove.hidden=true;
@@ -877,7 +942,10 @@ function backFromExerciseConfiguration(){
   if(!pendingExerciseRow)return;
   const remove=pendingExerciseRow.querySelector("button.btn-outline");
   if(remove)remove.hidden=false;
-  for(const [campo,value] of camposExercicioAntes)campo.value=value;
+  for(const [campo,value,checked] of camposExercicioAntes){
+    campo.value=value;
+    campo.checked=checked;
+  }
   if(pendingExercisePlaceholder)pendingExercisePlaceholder.replaceWith(pendingExerciseRow);
   else pendingExerciseRow.remove();
   pendingExerciseRow=null;
@@ -954,6 +1022,7 @@ function readExercises(){
       duration:v("duration"),
       frequency:v("frequency"),
       instructions:row.dataset.instructions,
+      indicacao_ar_livre:row.querySelector('[name="indicacao_ar_livre"]').checked,
       position:i
     };
   });

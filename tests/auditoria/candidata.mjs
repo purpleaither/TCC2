@@ -25,7 +25,7 @@ const rotas = new Map([
 const tipos = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png',
-  '.webp': 'image/webp', '.woff2': 'font/woff2', '.ico': 'image/x-icon',
+  '.json': 'application/json; charset=utf-8', '.webp': 'image/webp', '.woff2': 'font/woff2', '.ico': 'image/x-icon',
 };
 const raiz = resolve(process.cwd());
 
@@ -55,7 +55,7 @@ createServer(async (req, res) => {
 
     const arquivo = resolve(raiz, '.' + (rota === '/' ? '/index.html' : rota));
     const tipo = tipos[extname(arquivo)];
-    if (!tipo || !arquivo.startsWith(raiz + sep) ||
+    if (!tipo || (extname(arquivo) === '.json' && !rota.startsWith('/data/')) || !arquivo.startsWith(raiz + sep) ||
         /^\/(?:\.|tests\/|database\/)/.test(rota) || !(await stat(arquivo)).isFile()) {
       res.writeHead(404).end();
       return;

@@ -36,7 +36,8 @@ create table if not exists public.plan_exercises (
  duration text check (char_length(duration) <= 60),
  frequency text not null check (char_length(frequency) between 1 and 80),
  instructions text not null default '' check (char_length(instructions) <= 500),
- position smallint not null default 0
+ position smallint not null default 0,
+ indicacao_ar_livre boolean not null default false
 );
 
 create table if not exists public.symptom_records (

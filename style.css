@@ -1296,3 +1296,18 @@ button.heatmap-cell:focus-visible{outline:3px solid var(--titulo, #003366);outli
 }
 
 .exercicios-selecionados-lista { padding-inline-start: 1.25em; color: var(--texto); }
+
+.guia-ar-livre :is(ul,ol) { padding-inline-start: 1.5em; }
+.guia-ar-livre :is(li,p) { margin-block: var(--espaco-texto); }
+.guia-ar-livre dl:empty { display: none; }
+.guia-ar-livre [role="status"]:empty { margin: 0; }
+.guia-ambiente {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: .5em;
+  margin-block: var(--espaco-grupo);
+}
+.guia-ambiente dd { margin: 0; font-weight: 700; overflow-wrap: anywhere; }
+.guia-indicacao { display: flex; align-items: start; gap: .5em; cursor: pointer; }
+.guia-indicacao input { inline-size: 1.5rem; block-size: 1.5rem; flex: none; }
+.guia-tag { display: table; padding: .15em .5em; border-radius: .5em; background: var(--superficie-suave); }

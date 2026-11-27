@@ -26,10 +26,26 @@ jobs:
           node-version: '22'
       - name: Preparação do ambiente de testes
         run: npm install --no-save playwright@1.58.2
-      - if: always() && !cancelled()
+      - name: Aguardar a publicação da versão avaliada
+        id: publicacao
+        run: |
+          mkdir -p test-results
+          for tentativa in $(seq 1 24); do
+            if curl -fsS --max-time 8 https://tcc2-lime.vercel.app/ -o /tmp/tcc-index &&
+               cmp -s index.html /tmp/tcc-index &&
+               curl -fsS --max-time 8 https://tcc2-lime.vercel.app/acesso.js -o /tmp/tcc-acesso &&
+               cmp -s acesso.js /tmp/tcc-acesso; then
+              git rev-parse HEAD > test-results/commit-publicado.txt
+              exit 0
+            fi
+            sleep 5
+          done
+          echo 'A publicação não corresponde ao commit desta execução.' > test-results/commit-publicado.txt
+          exit 1
+      - if: always() && !cancelled() && steps.publicacao.outcome == 'success'
         name: CI-01 - Disponibilidade e responsividade
         run: node tests/playwright-smoke.cjs
-      - if: always() && !cancelled()
+      - if: always() && !cancelled() && steps.publicacao.outcome == 'success'
         name: CI-02 - Autenticação e controle de acesso na interface
         env:
           TEST_FISIO_EMAIL: ${{ secrets.TEST_FISIO_EMAIL }}
@@ -37,7 +53,7 @@ jobs:
           TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
           TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
         run: node tests/playwright-auth.cjs
-      - if: always() && !cancelled()
+      - if: always() && !cancelled() && steps.publicacao.outcome == 'success'
         name: CI-03 e CI-04 - Planos, persistência, edição e biblioteca
         env:
           TEST_FISIO_EMAIL: ${{ secrets.TEST_FISIO_EMAIL }}
@@ -45,13 +61,13 @@ jobs:
           TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
           TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
         run: node tests/playwright-persistence.cjs
-      - if: always() && !cancelled()
+      - if: always() && !cancelled() && steps.publicacao.outcome == 'success'
         name: CI-05 - Registro de sintomas e integração meteorológica
         env:
           TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
           TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
         run: node tests/playwright-sintomas-clima.cjs
-      - if: always() && !cancelled()
+      - if: always() && !cancelled() && steps.publicacao.outcome == 'success'
         name: CI-06 - Conclusão e histórico de exercícios
         env:
           TEST_FISIO_EMAIL: ${{ secrets.TEST_FISIO_EMAIL }}
@@ -59,7 +75,7 @@ jobs:
           TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
           TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
         run: node tests/playwright-treino-historico.cjs
-      - if: always() && !cancelled()
+      - if: always() && !cancelled() && steps.publicacao.outcome == 'success'
         name: CI-07 - Segurança e isolamento de dados
         env:
           TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
