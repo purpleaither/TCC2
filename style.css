@@ -1579,11 +1579,14 @@ button.guia-mapa-marcador { cursor: pointer; }
 
 
 @media (min-width: 900px) {
-  .app { --largura-conteudo: 1120px; }
+  .app { --largura-conteudo: 1080px; }
   .header { padding-inline: 16px; }
-  .page { padding-block-start: 24px; }
-  :is(#page-sintomas, #page-editor-prof, #page-exercise-source-prof) { max-inline-size: 880px; }
-  :is(#page-registros-prof, #page-exercise-bank-prof) { max-inline-size: 1200px; }
+  .page {
+    max-inline-size: min(var(--largura-conteudo), calc(100% - 40px));
+    padding-block: 40px;
+  }
+  :is(#page-sintomas, #page-editor-prof, #page-exercise-source-prof) { max-inline-size: min(840px, calc(100% - 40px)); }
+  :is(#page-registros-prof, #page-exercise-bank-prof) { max-inline-size: min(1160px, calc(100% - 40px)); }
   #parquesDialog:has(.guia-mapa:not([hidden])) { inline-size: min(1120px, calc(100% - 48px)); }
   .guia-mapa:not([hidden]) {
     display: grid;
