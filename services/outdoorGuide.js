@@ -1,5 +1,5 @@
 import {
-  arredondarLocalizacao, carregarLimites, carregarRegioes, consultarAmbiente, consultarParques, gerarRecomendacoesClimaticas
+  arredondarLocalizacao, carregarLimites, carregarRegioes, consultarAmbiente, consultarParques
 } from "./environmentalService.js";
 import {desenharMapa} from "./parksMap.js";
 
@@ -32,17 +32,11 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
   const gps = locationStep.querySelector("button");
   const loading = section.querySelector(".guia-carregando");
   const status = section.querySelector("[data-guia-status]");
-  const suggestions = section.querySelector("[data-guia-recomendacoes]");
-  const measurements = section.querySelector("[data-guia-dados]");
   const environment = section.querySelector("[data-guia-ambiente]");
   const map = section.querySelector("[data-guia-mapa]");
   const parksStatus = section.querySelector("[data-guia-parques-status]");
 
-  function showAdvice(data) {
-    suggestions.replaceChildren(...gerarRecomendacoesClimaticas(data).map(text => element("li", text)));
-  }
   function showEnvironment(data) {
-    measurements.hidden = false;
     environment.replaceChildren(...metrics.flatMap(([key, label, unit]) => [
       element("dt", label),
       element("dd", Number.isFinite(data[key]) ? [number.format(data[key]), unit].filter(Boolean).join(" ") : "Indisponível")
@@ -68,11 +62,10 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
     if (signal.aborted) return;
     loading.hidden = true;
     showEnvironment(data);
-    showAdvice(data);
     if (results.length) desenharMapa(map, local, results, bounds, signal);
     else parksStatus.textContent = "Nenhum parque disponível para esta consulta.";
     status.textContent = metrics.some(([key]) => Number.isFinite(data[key]))
-      ? "Consulta concluída." : "Dados ambientais indisponíveis. Veja os cuidados ao ar livre.";
+      ? "" : "Dados ambientais indisponíveis.";
   }
   function start() {
     request?.abort();
@@ -81,10 +74,8 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
     resultStep.hidden = true;
     loading.hidden = true;
     environment.replaceChildren();
-    measurements.hidden = true;
     map.hidden = true;
     parksStatus.textContent = "";
-    showAdvice();
     status.textContent = "";
     return request.signal;
   }
