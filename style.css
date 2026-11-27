@@ -1585,7 +1585,7 @@ button.guia-mapa-marcador { cursor: pointer; }
     max-inline-size: min(var(--largura-conteudo), calc(100% - 80px));
     padding-block: 40px;
   }
-  #page-login { padding-block-start: 140px; }
+  #page-login { padding-block-start: 290px; }
   :is(#page-sintomas, #page-editor-prof, #page-exercise-source-prof) { max-inline-size: min(800px, calc(100% - 80px)); }
   :is(#page-registros-prof, #page-exercise-bank-prof) { max-inline-size: min(1120px, calc(100% - 80px)); }
   #parquesDialog:has(.guia-mapa:not([hidden])) { inline-size: min(1120px, calc(100% - 48px)); }
