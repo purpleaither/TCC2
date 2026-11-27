@@ -9,8 +9,7 @@ const metrics = [
   ["surface_pressure", "Pressão na superfície", "hPa"],
   ["uv_index", "Índice UV", ""],
   ["carbon_dioxide", "CO₂", "ppm"],
-  ["pm2_5", "Partículas finas (PM2,5)", "µg/m³"],
-  ["european_aqi", "Índice europeu de qualidade do ar", ""]
+  ["pm2_5", "Partículas finas (PM2,5)", "µg/m³"]
 ];
 const number = new Intl.NumberFormat("pt-BR", {maximumFractionDigits: 1});
 

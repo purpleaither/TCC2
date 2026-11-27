@@ -524,11 +524,10 @@ function renderPatientPlans(animar=false){
   const {plan,exercise}=assigned[currentPatientExercise];
   const card=el("div",undefined,"patient-exercise-card");
   if(animar)card.classList.add("patient-exercise-transition");
-  card.append(el("p",plan.title,"patient-plan-title"));
   const progress=el("p","Exercício "+(currentPatientExercise+1)+" de "+assigned.length,"patient-exercise-progress");
   progress.setAttribute("role","status");
   progress.setAttribute("aria-live","polite");
-  card.append(progress);
+  card.append(progress,el("p",plan.title,"patient-plan-title"));
   const name=exercise.exercise_source==="ExerciseBank"
     ?translateExerciseName(exercise.exercise_name)
     :exercise.exercise_name;

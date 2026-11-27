@@ -45,9 +45,6 @@ export function desenharMapa(figure, local, parques, limites, signal, view) {
   }
   zoomIn.onclick = () => changeZoom(1);
   zoomOut.onclick = () => changeZoom(-1);
-  figure.querySelector("[data-mapa-legenda]").textContent = Number.isFinite(parques[0].distanciaAPe)
-    ? "↑ Norte · ● Local de busca · 1 Mais próximo a pé"
-    : "↑ Norte · ● Local de busca · Distâncias a pé indisponíveis";
   const tileCount = 2 ** zoom;
   const scale = tileSize * tileCount;
   const center = view.center ?? (zoom <= overview
