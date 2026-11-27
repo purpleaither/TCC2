@@ -14,6 +14,7 @@ var humorAtual = null;
 var atividadeAtual = null;
 var treinoConcluido = false;
 var registroEnviadoHoje = false;
+var primeiroEventoHistorico = null;
 var mesAtual = new Date(); 
 
 function appPaginaInicial() {
@@ -61,7 +62,9 @@ function fecharMenu() {
   var overlay = document.getElementById('menuOverlay');
   if (drawer) drawer.classList.remove('open');
   if (overlay) overlay.classList.remove('open');
-  document.getElementById('menuBtn')?.setAttribute('aria-expanded', 'false');
+  const menuBtn = document.getElementById('menuBtn');
+  menuBtn?.setAttribute('aria-expanded', 'false');
+  if (drawer?.contains(document.activeElement)) menuBtn?.focus({preventScroll:true});
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -157,10 +160,41 @@ function concluirRegistro() {
 // GERAÇÃO DE HISTÓRICO E HEATMAP DINÂMICO
 // ========================================
 
+function mostrarCalendarioHistorico(atividades) {
+  for (const [id, ativo] of [['historicoAtividades', atividades], ['historicoSintomas', !atividades]]) {
+    document.getElementById(id).hidden = !ativo;
+    const button = document.getElementById(id + 'Btn');
+    button.setAttribute('aria-pressed', String(ativo));
+    button.classList.toggle('btn-outline', !ativo);
+  }
+  fecharClimaSheet();
+}
+
+function limitesHistorico() {
+  const agora = new Date();
+  const maximo = new Date(agora.getFullYear(), agora.getMonth(), 1);
+  const primeiro = primeiroEventoHistorico ? new Date(primeiroEventoHistorico) : null;
+  const minimo = primeiro && primeiro <= agora
+    ? new Date(primeiro.getFullYear(), primeiro.getMonth() - 2, 1)
+    : maximo;
+  return {minimo, maximo};
+}
+
+function abrirHistorico() {
+  mesAtual = limitesHistorico().maximo;
+  mostrarCalendarioHistorico(true);
+  gerarHeatmap();
+}
+
 function gerarHeatmap() {
   const atividades = document.getElementById('calendarioAtividades');
   const sintomas = document.getElementById('heatmapGrid');
   if (!atividades || !sintomas) return;
+
+  const {minimo, maximo} = limitesHistorico();
+  mesAtual = new Date(Math.min(+maximo, Math.max(+minimo, +mesAtual)));
+  document.getElementById('historicoMesAnterior').disabled = mesAtual <= minimo;
+  document.getElementById('historicoMesSeguinte').disabled = mesAtual >= maximo;
 
   const ano = mesAtual.getFullYear();
   const mes = mesAtual.getMonth();
@@ -196,6 +230,7 @@ function gerarHeatmap() {
 
 function mudarMes(delta) {
   mesAtual = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + delta, 1);
+  fecharClimaSheet();
   gerarHeatmap();
 }
 

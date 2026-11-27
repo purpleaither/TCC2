@@ -96,13 +96,10 @@ function navigate(page) {
   if(page==="registros-prof")renderProfessionalRecords();
   if(page==="exercicios")renderPatientPlans();
   if(page==="exercicios")void refreshOutdoorGuide();
-  if(page==="inicio"){
-    const advice=patientTpeAdviceForToday();
-    text("conselhoDiaTitulo",advice.title);
-    text("conselhoDiaTexto",advice.body);
-  }
+  if(page==="inicio")renderDailyAdvice();
+  else clearTimeout(dailyAdviceTimer);
   if(page==="sintomas"){limparRegistroDiario();definirEtapaDiario(0, true);}
-  if(page==="historico")gerarHeatmap();
+  if(page==="historico")abrirHistorico();
   window.scrollTo(0,0);
 }
 
@@ -162,6 +159,8 @@ function reset() {
   workoutCompletedInView=false;
   treinosConcluidos=[];
   registrosUsuario=[];
+  primeiroEventoHistorico=null;
+  clearTimeout(dailyAdviceTimer);
   limparRegistroDiario();
   menu();
   $("loginSenha").value="";
@@ -367,6 +366,11 @@ async function loadPatientData() {
       .eq("patient_id", selectedPatient).order("completed_at", { ascending: false }).limit(500);
     if (professional) workouts = workouts.gte("completed_at", monitoringWeeks(90)[0].toISOString());
     const workoutResponse = await workouts;
+    const sessions = workoutResponse.error ? [] : (workoutResponse.data || []);
+    const oldestDates = !professional ? await Promise.all([
+      earliestHistoryDate("symptom_records","recorded_at",loadedRecords,selectedPatient),
+      earliestHistoryDate("workout_sessions","completed_at",sessions,selectedPatient)
+    ]) : [];
     if (version !== patientLoadVersion) return;
     plans = loadedPlans;
     records = loadedRecords;
@@ -375,7 +379,8 @@ async function loadPatientData() {
       renderProfessionalPlans();
       renderProfessionalRecords();
     } else {
-      treinosConcluidos = workoutResponse.error ? [] : (workoutResponse.data || []);
+      treinosConcluidos = sessions;
+      primeiroEventoHistorico = oldestDates.filter(Boolean).sort((a,b)=>Date.parse(a)-Date.parse(b))[0] ?? null;
       registrosUsuario=records.slice().reverse().map(r=>({
         data:r.recorded_at,
         dorRepouso:r.pain_rest,
@@ -391,6 +396,7 @@ async function loadPatientData() {
       }));
       gerarHeatmap();
       verificarRegistroHoje();
+      if($("page-inicio").classList.contains("active"))renderDailyAdvice();
       renderPatientPlans();
     }
   } catch(err) {
@@ -400,6 +406,17 @@ async function loadPatientData() {
       renderProfessionalRecords();
     }
     message("Não foi possível consultar os dados do paciente. Verifique a conexão e as permissões.",true);
+  }
+}
+async function earliestHistoryDate(table, field, rows, id){
+  const oldestLoaded=rows.at(-1)?.[field];
+  if(rows.length<500)return oldestLoaded;
+  try {
+    const oldest=result(await supabase.from(table).select(field).eq("patient_id",id)
+      .order(field,{ascending:true}).limit(1));
+    return oldest?.[0]?.[field] ?? oldestLoaded;
+  } catch {
+    return oldestLoaded;
   }
 }
 // Conselho educativo por sintomas do dia, sem diagnóstico nem mudança da prescrição.
@@ -416,10 +433,7 @@ function todaysPatientSymptoms(){
 }
 function patientTpeAdviceForToday(){
   const record=todaysPatientSymptoms();
-  if(!record)return {
-    title:"Conselho geral",
-    body:"O registro de sintomas de hoje ainda não foi realizado. Observe como você se sente e siga o plano combinado com seu fisioterapeuta; o conselho será ajustado após o registro."
-  };
+  if(!record)return null;
   const intensity=Math.max(...[record.pain_rest, record.pain_movement].filter(Number.isFinite));
   const stiffness=String(record.stiffness||"").toLowerCase();
   const fatigue=String(record.fatigue||"").toLowerCase();
@@ -444,6 +458,29 @@ function patientTpeAdviceForToday(){
     body:"Continue observando como se sente e siga o ritmo e os exercícios indicados pelo fisioterapeuta, sem aumentar a carga por conta própria."
   };
 }
+let dailyAdviceTimer;
+function renderDailyAdvice(){
+  clearTimeout(dailyAdviceTimer);
+  if(!isAuthenticated() || isProfessional() || !$("page-inicio").classList.contains("active"))return;
+  const advice=patientTpeAdviceForToday();
+  $("conselhoDiaTitulo").closest("aside").hidden=!advice;
+  text("conselhoDiaTitulo",advice?.title ?? "");
+  text("conselhoDiaTexto",advice?.body ?? "");
+  const midnight=new Date();
+  midnight.setHours(24,0,0,0);
+  dailyAdviceTimer=setTimeout(()=>{
+    verificarRegistroHoje();
+    renderDailyAdvice();
+  },Math.max(1,midnight-Date.now()));
+}
+
+const exerciseMetricHelp = {
+  "Séries":"Uma série é um grupo de repetições. O total de séries indica quantos grupos o fisioterapeuta orientou.",
+  "Repetições":"É quantas vezes você faz o movimento em cada série, conforme a orientação do fisioterapeuta.",
+  "Duração":"É por quanto tempo você faz o exercício, conforme a orientação do fisioterapeuta.",
+  "Frequência":"É quantas vezes o fisioterapeuta orientou você a fazer o exercício, por exemplo, por dia ou por semana."
+};
+
 let currentPatientExercise=0;
 let workoutCompletedInView=false;
 function patientExerciseAssignments(){
@@ -519,13 +556,13 @@ function renderPatientPlans(animar=false){
     return;
   }
   currentPatientExercise=Math.max(0,Math.min(currentPatientExercise,assigned.length-1));
-  const {plan,exercise}=assigned[currentPatientExercise];
+  const {exercise}=assigned[currentPatientExercise];
   const card=el("div",undefined,"patient-exercise-card");
   if(animar)card.classList.add("patient-exercise-transition");
   const progress=el("p","Exercício "+(currentPatientExercise+1)+" de "+assigned.length,"patient-exercise-progress");
   progress.setAttribute("role","status");
   progress.setAttribute("aria-live","polite");
-  card.append(progress,el("p",plan.title,"patient-plan-title"));
+  card.append(progress);
   const name=exercise.exercise_source==="ExerciseBank"
     ?translateExerciseName(exercise.exercise_name)
     :exercise.exercise_name;
@@ -558,8 +595,13 @@ function renderPatientPlans(animar=false){
   ]){
     if(value===null||value===undefined||String(value).trim()==="")continue;
     const tile=el("div",undefined,"patient-exercise-metric");
-    tile.append(el("span",label,"patient-exercise-metric-label"),
-      el("strong",String(value),"patient-exercise-metric-value"));
+    const header=el("div",undefined,"patient-exercise-metric-header");
+    const help=el("details",undefined,"patient-exercise-metric-help");
+    const question=el("summary","?");
+    question.setAttribute("aria-label","O que significa " + label.toLowerCase() + "?");
+    help.append(question,el("p",exerciseMetricHelp[label]));
+    header.append(el("span",label,"patient-exercise-metric-label"),help);
+    tile.append(header,el("strong",String(value),"patient-exercise-metric-value"));
     metrics.append(tile);
   }
   card.append(metrics);
@@ -1549,7 +1591,10 @@ function renderSample(){
 }
 async function loadExerciseMedia(id,target,button,source="ExerciseBank",autoPlay=false){
   if(button)button.disabled=true;
-  target.replaceChildren(el("p","Carregando demonstração...","card-text-small"));
+  const spinner=el("div",undefined,"login-spinner demo-carregando");
+  spinner.setAttribute("role","status");
+  spinner.setAttribute("aria-label","Carregando demonstração");
+  target.replaceChildren(spinner);
   try{
     let url,poster,credit;
     if(source==="wger"){
@@ -1587,6 +1632,12 @@ async function loadExerciseMedia(id,target,button,source="ExerciseBank",autoPlay
 }
 
 async function init(){
+  document.addEventListener("visibilitychange",()=>{
+    if(!document.hidden){
+      renderDailyAdvice();
+      if($("page-historico").classList.contains("active"))gerarHeatmap();
+    }
+  });
   $("parquesDialog").addEventListener("close",()=>{
     if(!$("parquesDialog").open)closeOutdoorGuide();
   });

@@ -38,10 +38,19 @@ export function desenharMapa(figure, local, parques, limites, signal, view) {
   const zoomIn = figure.querySelector("[data-mapa-ampliar]");
   const zoomOut = figure.querySelector("[data-mapa-reduzir]");
   zoomIn.disabled = zoom >= 18;
-  zoomOut.disabled = zoom <= Math.max(0,overview - 2);
-  function changeZoom(offset) {
-    view.zoom = zoom + offset;
-    desenharMapa(figure, local, parques, limites, signal, view);
+  const minimumZoom = Math.max(0,overview - 2);
+  zoomOut.disabled = zoom <= minimumZoom;
+  function changeZoom(offset, anchor) {
+    const next = Math.min(18, Math.max(minimumZoom, zoom + offset));
+    if (next === zoom) return;
+    if (anchor) {
+      const box = viewport.getBoundingClientRect();
+      const ratios = [(anchor.x - box.left) / box.width - .5, (anchor.y - box.top) / box.height - .5];
+      view.center = center.map((value, axis) =>
+        value + ratios[axis] * [width, height][axis] * (1 / scale - 1 / (tileSize * 2 ** next)));
+    }
+    view.zoom = next;
+    redraw();
   }
   zoomIn.onclick = () => changeZoom(1);
   zoomOut.onclick = () => changeZoom(-1);
@@ -62,11 +71,6 @@ export function desenharMapa(figure, local, parques, limites, signal, view) {
       value - [x, y][axis] / scale)));
     redraw();
   }
-  figure.querySelector("[data-mapa-recentrar]").onclick = () => {
-    view.zoom = null;
-    view.center = null;
-    redraw();
-  };
   if(initial)picker.replaceChildren(...parques.map((park, index) =>
     new Option((index + 1) + ". " + park.nome, String(index))));
   picker.onchange = () => {
@@ -75,29 +79,93 @@ export function desenharMapa(figure, local, parques, limites, signal, view) {
     void selectPark(Number(picker.value), true);
   };
 
-  let drag;
+  const help = viewport.querySelector(".guia-mapa-ajuda");
+  const helpButton = viewport.querySelector(".guia-mapa-duvida");
+  if(initial) {
+    help.hidden = false;
+    helpButton.hidden = true;
+    helpButton.setAttribute("aria-expanded", "false");
+  }
+  function hideHelp() {
+    help.hidden = true;
+    helpButton.hidden = false;
+    helpButton.setAttribute("aria-expanded", "false");
+  }
+  helpButton.onclick = () => {
+    help.hidden = !help.hidden;
+    helpButton.setAttribute("aria-expanded", String(!help.hidden));
+  };
+
+  const pointers = new Map();
+  let pinch;
+  let lastTap;
+  function pair() {
+    const [a, b] = pointers.values();
+    return {distance:Math.hypot(a.x - b.x, a.y - b.y), x:(a.x + b.x) / 2, y:(a.y + b.y) / 2};
+  }
   viewport.onpointerdown = event => {
-    if (!event.isPrimary || event.button !== 0 || event.target.closest("button, a")) return;
-    drag = {id:event.pointerId, x:event.clientX, y:event.clientY};
-    viewport.setPointerCapture(event.pointerId);
+    if (!event.target.closest(".guia-mapa-duvida"))hideHelp();
+    const control = event.target.closest("button, a");
+    if (event.button !== 0 || (control && event.pointerType !== "touch") || pointers.size >= 2) return;
+    pointers.set(event.pointerId, {x:event.clientX, y:event.clientY, startX:event.clientX, startY:event.clientY, control});
+    if (!control)viewport.setPointerCapture(event.pointerId);
+    if (pointers.size === 2) {
+      for (const id of pointers.keys())viewport.setPointerCapture(id);
+      pinch = pair();
+      lastTap = null;
+      const box = viewport.getBoundingClientRect();
+      frame.style.transform = "";
+      frame.style.transformOrigin = `${pinch.x - box.left}px ${pinch.y - box.top}px`;
+    }
   };
   viewport.onpointermove = event => {
-    if (event.pointerId !== drag?.id) return;
-    frame.style.transform = `translate(${event.clientX - drag.x}px,${event.clientY - drag.y}px)`;
+    const point = pointers.get(event.pointerId);
+    if (!point) return;
+    point.x = event.clientX;
+    point.y = event.clientY;
+    if (!pinch && point.control && Math.hypot(point.x - point.startX, point.y - point.startY) >= 4)
+      viewport.setPointerCapture(event.pointerId);
+    frame.style.transform = pinch
+      ? `scale(${pair().distance / Math.max(1, pinch.distance)})`
+      : `translate(${point.x - point.startX}px,${point.y - point.startY}px)`;
   };
+  function clearGesture() {
+    pointers.clear();
+    pinch = null;
+    frame.style.transform = "";
+    frame.style.transformOrigin = "";
+  }
   viewport.onpointerup = event => {
-    if (event.pointerId !== drag?.id) return;
-    const dx = event.clientX - drag.x;
-    const dy = event.clientY - drag.y;
-    drag = null;
-    frame.style.transform = "";
-    if (Math.hypot(dx, dy) < 4) return;
-    const box = viewport.getBoundingClientRect();
-    pan(dx * width / box.width, dy * height / box.height);
+    const point = pointers.get(event.pointerId);
+    if (!point) return;
+    if (pinch) {
+      const anchor = pinch;
+      const ratio = pair().distance / Math.max(1, pinch.distance);
+      clearGesture();
+      if (ratio >= 1.18 || ratio <= .85)changeZoom(ratio > 1 ? 1 : -1, anchor);
+      return;
+    }
+    clearGesture();
+    const dx = event.clientX - point.startX;
+    const dy = event.clientY - point.startY;
+    if (Math.hypot(dx, dy) >= 4) {
+      lastTap = null;
+      const box = viewport.getBoundingClientRect();
+      pan(dx * width / box.width, dy * height / box.height);
+      return;
+    }
+    if (event.pointerType !== "touch" || point.control) return;
+    const now = performance.now();
+    if (lastTap && now - lastTap.time <= 350 && Math.hypot(event.clientX - lastTap.x, event.clientY - lastTap.y) <= 25) {
+      lastTap = null;
+      changeZoom(1, {x:event.clientX, y:event.clientY});
+    } else lastTap = {time:now, x:event.clientX, y:event.clientY};
   };
-  viewport.onpointercancel = viewport.onlostpointercapture = () => {
-    drag = null;
-    frame.style.transform = "";
+  viewport.onpointercancel = event => {
+    if (pointers.has(event.pointerId))clearGesture();
+  };
+  viewport.onlostpointercapture = event => {
+    if (event.target === viewport && pointers.has(event.pointerId))clearGesture();
   };
   viewport.onkeydown = event => {
     if (event.target !== viewport) return;

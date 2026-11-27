@@ -2,7 +2,7 @@ const {chromium}=require('playwright');
 const fs=require('node:fs');
 const base=process.env.TCC_BASE_URL || 'https://tcc2-lime.vercel.app/';
 const title='TESTE FICTICIO PW '+Date.now();
-const exercise='Mobilidade simulada PW';
+const exercise='Mobilidade simulada PW '+Date.now();
 const report=[];
 const network=[]; let phase='preparacao';
 let browser,prof,patient,patientId;
@@ -23,8 +23,8 @@ if(!await step('preparacao-plano',async()=>{await prof.locator('#page-planos-pro
 const isWorkout=r=>new URL(r.url()).pathname.endsWith('/rest/v1/workout_sessions');
 patient.on('response',r=>{if(isWorkout(r))network.push({method:r.request().method(),status:r.status()})});
 const before=patient.waitForResponse(r=>isWorkout(r)&&r.request().method()==='GET'&&r.ok(),{timeout:30000});await patient.reload();const ids=new Set((await (await before).json()).map(x=>x.id));await patient.locator('#page-inicio.active').waitFor();await nav(patient,'exercicios');
-let seen=false;for(let i=0;i<100;i++){if(await patient.locator('.patient-plan-title').innerText()===title)seen=true;if(await patient.locator('#finishPatientWorkout').count())break;await patient.getByRole('button',{name:'Próximo',exact:true}).click()}
-if(!seen)throw Error('Plano fictício não encontrado');
+let seen=false;for(let i=0;i<100;i++){if(await patient.locator('.patient-exercise-title').innerText()===exercise)seen=true;if(await patient.locator('#finishPatientWorkout').count())break;await patient.getByRole('button',{name:'Próximo',exact:true}).click()}
+if(!seen)throw Error('Exercício fictício não encontrado');
 const inicioConclusao=performance.now();
 const post=patient.waitForResponse(r=>isWorkout(r)&&r.request().method()==='POST'&&r.ok(),{timeout:30000});await patient.locator('#finishPatientWorkout').click();await post;await patient.locator('#finishPatientWorkout').filter({hasText:'✓'}).waitFor({timeout:30000});report.push({id:'CT27',status:'passed',duracaoMs:Math.round(performance.now()-inicioConclusao)});
 const inicioHistorico=performance.now();

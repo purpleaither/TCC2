@@ -125,7 +125,7 @@
       <button type="button" class="btn" id="homeBtnExercicios" onclick="navegarPara('exercicios')">Ver meus exercícios</button>
     </section>
 
-    <aside class="patient-tpe-advice" aria-label="Conselho de educação terapêutica">
+    <aside class="patient-tpe-advice" aria-label="Conselho de educação terapêutica" hidden>
       <span class="patient-tpe-label">Conselho do dia</span>
       <h2 class="patient-tpe-heading" id="conselhoDiaTitulo"></h2>
       <p class="patient-tpe-text" id="conselhoDiaTexto"></p>
@@ -225,7 +225,7 @@
       <h2 class="card-title" id="diarioSinaisTitulo" tabindex="-1" aria-describedby="diarioEtapa">Sinais fora do comum</h2>
       <!-- Sinal atípico -->
       <p class="choices-label">Você percebeu algum sinal fora do comum hoje?</p>
-      <p style="font-size:var(--fonte-minima); color:var(--texto-suave, #666); margin-bottom:8px">Febre, inchaço súbito ou dor extrema fora do comum.</p>
+      <p class="card-text-small diario-exemplo">Febre, inchaço súbito ou dor extrema fora do comum.</p>
       <div class="choices">
         <div class="choices-options" id="atipicoOptions">
           <button class="choice-btn" onclick="selecionar('atipicoOptions', 0)">Não</button>
@@ -246,15 +246,19 @@
 
     <h1 class="page-title">Meu histórico</h1>
 
-    <!-- Navegação de mês -->
-    <div class="heatmap-header">
-      <button class="month-nav-btn" aria-label="Mês anterior" onclick="mudarMes(-1)">‹</button>
-      <span class="month-label" id="mesLabel"></span>
-      <button class="month-nav-btn" aria-label="Próximo mês" onclick="mudarMes(1)">›</button>
+    <div class="historico-botoes" role="group" aria-label="Tipo de histórico">
+      <button type="button" class="btn" id="historicoAtividadesBtn" aria-controls="historicoAtividades" aria-pressed="true" onclick="mostrarCalendarioHistorico(true)">Dias em que você fez os exercícios domiciliares</button>
+      <button type="button" class="btn btn-outline" id="historicoSintomasBtn" aria-controls="historicoSintomas" aria-pressed="false" onclick="mostrarCalendarioHistorico(false)">Calendário de sintomas</button>
     </div>
 
-    <section class="card" aria-labelledby="tituloCalendarioAtividades">
-      <h2 class="card-title" id="tituloCalendarioAtividades">Dias em que você fez os exercícios domiciliares</h2>
+    <!-- Navegação de mês -->
+    <div class="heatmap-header">
+      <button class="month-nav-btn" id="historicoMesAnterior" aria-label="Mês anterior" onclick="mudarMes(-1)">‹</button>
+      <span class="month-label" id="mesLabel"></span>
+      <button class="month-nav-btn" id="historicoMesSeguinte" aria-label="Próximo mês" onclick="mudarMes(1)">›</button>
+    </div>
+
+    <section class="card" id="historicoAtividades" aria-labelledby="historicoAtividadesBtn">
       <div class="heatmap-calendario">
         <div class="heatmap-weekdays">
           <span class="heatmap-weekday">S</span>
@@ -269,8 +273,7 @@
       </div>
     </section>
 
-    <section class="card" aria-labelledby="tituloCalendarioSintomas">
-      <h2 class="card-title" id="tituloCalendarioSintomas">Calendário de sintomas</h2>
+    <section class="card" id="historicoSintomas" aria-labelledby="historicoSintomasBtn" hidden>
       <div class="heatmap-calendario">
         <div class="heatmap-weekdays">
           <span class="heatmap-weekday">S</span>
@@ -341,7 +344,6 @@
   <!-- ===== TELA 5.0: MEUS EXERCÍCIOS ===== -->
   <div class="page" id="page-exercicios">
     <h1 class="page-title">Meus exercícios</h1>
-    <p class="page-subtitle">O plano terapêutico reúne os exercícios definidos pelo fisioterapeuta. Repetições indicam quantas vezes fazer o movimento. Uma série é um grupo de repetições.</p>
     <div class="card" id="exNormalContainer">
       <h2 class="card-title">Nenhum plano atribuído</h2>
       <p class="card-text">Quando o fisioterapeuta selecionar e configurar os exercícios, eles serão disponibilizados nesta área.</p>
@@ -368,9 +370,6 @@
                 <label class="form-label" for="parqueSelecionado">Escolha um parque</label>
                 <select class="form-input" id="parqueSelecionado"></select>
               </div>
-              <div class="guia-mapa-acao">
-                <button type="button" data-mapa-recentrar>Recentrar</button>
-              </div>
               <div class="guia-mapa-superficie" aria-label="Mapa dos parques mais próximos" aria-describedby="ajudaMapaParques" role="group" tabindex="0">
                 <div data-mapa-quadro>
                   <div data-mapa-ruas aria-hidden="true" hidden></div>
@@ -378,16 +377,16 @@
                   <div data-mapa-marcadores></div>
                 </div>
                 <div class="guia-mapa-zoom" role="group" aria-label="Zoom do mapa">
-                <button type="button" data-mapa-reduzir aria-label="Diminuir zoom">−</button>
-                <button type="button" data-mapa-ampliar aria-label="Aumentar zoom">+</button>
-              </div>
+                  <button type="button" data-mapa-ampliar aria-label="Aumentar zoom">+</button>
+                  <button type="button" data-mapa-reduzir aria-label="Diminuir zoom">−</button>
+                </div>
                 <p class="guia-mapa-ajuda" id="ajudaMapaParques">Arraste o mapa ou use as setas do teclado.</p>
-              <a class="guia-mapa-creditos" href="https://www.openstreetmap.org/copyright" rel="noreferrer">© OpenStreetMap</a>
+                <button type="button" class="guia-mapa-duvida" aria-label="Ajuda do mapa" aria-controls="ajudaMapaParques" aria-expanded="false" hidden>?</button>
+                <a class="guia-mapa-creditos" href="https://www.openstreetmap.org/copyright" rel="noreferrer">© OpenStreetMap</a>
               </div>
               <figcaption>
                 <div data-mapa-detalhe aria-live="polite"></div>
                 <p class="card-text-small" data-mapa-status role="status"></p>
-                <small><a href="https://www.openstreetmap.org/fixthemap">Corrigir mapa</a></small>
               </figcaption>
             </figure>
             <p data-guia-parques-status></p>

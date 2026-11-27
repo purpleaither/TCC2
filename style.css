@@ -330,6 +330,10 @@ body {
   background: var(--superficie-neutra);
 }
 #diarioErro { color: var(--erro); }
+#page-sintomas :is(.choices, .pain-scale) { margin-block: 0 1.25rem; }
+#page-sintomas [data-etapa-diario] > :last-child { margin-block-end: 0; }
+#page-sintomas .choices-label { margin-block: 0 .45rem; }
+#page-sintomas .diario-exemplo { margin-block: 0 .5rem; }
 #page-sintomas :is(.choices-options, .mood-options) {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 6.5em), 1fr));
@@ -430,6 +434,9 @@ body {
   margin-bottom: 12px;
 }
 
+#page-historico [hidden] { display: none; }
+.historico-botoes { display: grid; gap: .5rem; margin-block-end: var(--espaco-grupo); }
+.month-nav-btn:disabled { opacity: .5; cursor: default; }
 .month-nav-btn {
   flex: 0 0 40px;
   width: 40px;
@@ -521,7 +528,7 @@ button.heatmap-cell:hover {
   z-index: 30;
   padding: 20px 0;
   visibility: hidden;
-  transition: left 0.3s ease;
+  pointer-events: none;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -531,6 +538,8 @@ button.heatmap-cell:hover {
 .menu-drawer.open {
   left: 0;
   visibility: visible;
+  pointer-events: auto;
+  transition: left 0.3s ease;
 }
 
 .menu-header {
@@ -567,10 +576,11 @@ button.heatmap-cell:hover {
   font-size: var(--fonte-minima);
   color: var(--texto, #333);
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.menu-item:hover {
-  background: var(--superficie-neutra, #f5f5f5);
+@media (hover: hover) {
+  .menu-item:hover { background: var(--superficie-neutra, #f5f5f5); }
 }
 
 .menu-item.active {
@@ -805,7 +815,6 @@ button.heatmap-cell:hover {
   from { opacity: .65; }
   to { opacity: 1; }
 }
-#page-exercicios .patient-plan-title{font-size:var(--fonte-minima);color:var(--texto-suave, #466654);font-weight:600;margin:0 0 6px}
 #page-exercicios .patient-exercise-progress{font-size:var(--fonte-minima);color:var(--destaque, #006633);font-weight:700;margin:0 0 10px}
 #page-exercicios .patient-exercise-title{font-size:clamp(1.3125rem,calc(5vw * var(--escala-texto)),1.6875rem);line-height:var(--entrelinha-titulo);color:var(--titulo, #003366);margin:0 0 14px}
 #page-exercicios .patient-exercise-video{margin:0 0 16px}
@@ -824,6 +833,7 @@ button.heatmap-cell:hover {
 }
 
 /* Conselhos curtos de educação terapêutica na tela inicial. */
+#page-inicio .patient-tpe-advice[hidden] { display: none; }
 #page-inicio .patient-tpe-advice{margin:8px 0 18px;padding:14px 15px;border-left:4px solid var(--destaque, #006633);border-radius:8px;background:var(--superficie-suave, #f0f8f3)}
 #page-inicio .patient-tpe-label{display:inline-block;color:var(--destaque, #006633);font-weight:800;font-size:var(--fonte-minima);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
 #page-inicio .patient-tpe-heading{font-size:var(--fonte-minima);line-height:var(--entrelinha-titulo);color:var(--titulo, #003366);margin:0 0 6px}
@@ -1384,8 +1394,7 @@ button.guia-mapa-marcador { cursor: pointer; }
   line-height: var(--entrelinha-texto);
   pointer-events: none;
 }
-.guia-mapa-acao { margin-block-end: .5rem; }
-.guia-mapa-zoom button, .guia-mapa-acao button {
+.guia-mapa-zoom button, .guia-mapa-duvida {
   min-inline-size: 44px;
   min-block-size: 44px;
   border: 1px solid var(--borda);
@@ -1401,7 +1410,14 @@ button.guia-mapa-marcador { cursor: pointer; }
 .guia-mapa-superficie { touch-action: none; cursor: grab; }
 .guia-mapa-superficie:active { cursor: grabbing; }
 [data-mapa-quadro] { position: absolute; inset: 0; }
-.guia-mapa-acao button { padding-inline: .65rem; }
+.guia-mapa-duvida {
+  position: absolute;
+  inset-block-start: .5rem;
+  inset-inline-end: .5rem;
+  z-index: 3;
+  border-radius: 50%;
+}
+.guia-mapa-ajuda:has(+ .guia-mapa-duvida:not([hidden])) { inset-inline-end: 3.75rem; }
 
 #nomeExercicioParques {
   display: block;
@@ -1411,3 +1427,28 @@ button.guia-mapa-marcador { cursor: pointer; }
 @media (max-width: 600px) {
   #tituloParques { text-align: center; }
 }
+
+.patient-exercise-metric-header { position: relative; padding-inline-end: 2.2rem; }
+.patient-exercise-metric-help summary {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  display: grid;
+  place-items: center;
+  list-style: none;
+  inline-size: 2rem;
+  block-size: 2rem;
+  border: 1px solid var(--borda);
+  border-radius: 50%;
+  background: var(--superficie);
+  color: var(--titulo);
+  cursor: pointer;
+}
+.patient-exercise-metric-help summary::-webkit-details-marker { display: none; }
+.patient-exercise-metric-help p {
+  margin: .5rem -2.2rem .5rem 0;
+  padding: .55rem;
+  border-radius: .4rem;
+  background: var(--superficie);
+}
+.demo-carregando { margin: 1rem auto; }
