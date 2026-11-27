@@ -27,7 +27,8 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
   const section = root.firstElementChild;
   const region = section.querySelector("select");
   const gps = section.querySelector("button");
-  const status = section.querySelector("[role=status]");
+  const loading = section.querySelector(".guia-carregando");
+  const status = section.querySelector("p[role=status]");
   const suggestions = section.querySelector("[data-guia-recomendacoes]");
   const measurements = section.querySelector("[data-guia-dados]");
   const environment = section.querySelector("[data-guia-ambiente]");
@@ -45,10 +46,12 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
     ]));
   }
   async function search(local, signal) {
-    status.textContent = "Consultando condições ambientais e parques próximos…";
+    loading.hidden = false;
+    status.textContent = "";
     const allowed = await confirmarIndicacao();
     if (signal.aborted) return;
     if (!allowed) {
+      loading.hidden = true;
       status.textContent = "Não foi possível confirmar a indicação. Tente novamente.";
       return;
     }
@@ -57,6 +60,7 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
       carregarLimites(signal).catch(() => [])
     ]);
     if (signal.aborted) return;
+    loading.hidden = true;
     showEnvironment(data);
     showAdvice(data);
     if (results.length) desenharMapa(map, local, results, bounds, signal);
@@ -67,6 +71,7 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
   function start() {
     request?.abort();
     request = new AbortController();
+    loading.hidden = true;
     environment.replaceChildren();
     measurements.hidden = true;
     map.hidden = true;
@@ -105,6 +110,7 @@ export function criarGuiaAoArLivre(host, confirmarIndicacao) {
         lifetime = null;
         section.remove();
         region.value = "";
+        loading.hidden = true;
         status.textContent = "";
         return;
       }

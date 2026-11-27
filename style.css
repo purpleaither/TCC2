@@ -1312,6 +1312,7 @@ button.heatmap-cell:focus-visible{outline:3px solid var(--titulo, #003366);outli
 .guia-indicacao input { inline-size: 1.5rem; block-size: 1.5rem; flex: none; }
 .guia-tag { display: table; padding: .15em .5em; border-radius: .5em; background: var(--superficie-suave); }
 
+.guia-carregando { margin: 1rem auto; }
 .guia-mapa { margin: var(--espaco-grupo) 0; }
 .guia-mapa-superficie {
   position: relative;
