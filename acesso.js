@@ -157,6 +157,7 @@ async function openSession() {
     const ids=(links||[]).map(x=>x.patient_id);
     patients=ids.length ? result(await supabase.from("profiles").select("id,display_name").in("id",ids)) : [];
     patientId=null;
+    text("profGreeting","Olá, "+profile.display_name);
     await loadPatientData();
     navigate("profissional");
   } else {
