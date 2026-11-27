@@ -17,7 +17,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: verificacao-mvp
+  group: ${{ github.event.pull_request.head.ref == 'feature/fisioterapia-respiratoria' && 'verificacao-respiratoria-isolada' || 'verificacao-mvp' }}
   cancel-in-progress: false
 
 jobs:
