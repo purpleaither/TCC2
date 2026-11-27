@@ -359,15 +359,18 @@
           </select>
         </div>
         <button type="button" class="btn btn-outline">Usar minha localização aproximada</button>
-        <p class="card-text-small">A localização aproximada é enviada à Open-Meteo e ao OpenStreetMap e não é salva.</p>
+        <p class="card-text-small">A localização aproximada é usada nas consultas à Open-Meteo e ao OpenStreetMap. O app não salva essa posição.</p>
         <p role="status"></p>
         <figure class="guia-mapa" data-guia-mapa hidden>
           <div class="guia-mapa-superficie" aria-label="Mapa dos parques mais próximos" role="group">
+            <div data-mapa-ruas aria-hidden="true" hidden></div>
             <canvas width="640" height="420" aria-hidden="true"></canvas>
             <div data-mapa-marcadores></div>
+            <a class="guia-mapa-creditos" href="https://www.openstreetmap.org/copyright" rel="noreferrer">© OpenStreetMap</a>
           </div>
           <figcaption>
             <div data-mapa-detalhe aria-live="polite"></div>
+            <p class="card-text-small" data-mapa-status role="status"></p>
             <small>↑ Norte · ● Local de busca · 1 Mais próximo</small>
           </figcaption>
         </figure>

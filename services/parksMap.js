@@ -11,21 +11,29 @@ export function desenharMapa(figure, local, parques, limites) {
   const detail = figure.querySelector("[data-mapa-detalhe]");
   const ctx = canvas.getContext("2d");
   const {width, height} = canvas;
-  const longitudeScale = Math.cos(local.latitude * Math.PI / 180);
-  const relative = ({latitude, longitude}) => [
-    (longitude - local.longitude) * longitudeScale, local.latitude - latitude
-  ];
-  const points = [local, ...parques].map(relative);
-  const ranges = [0, 1].map(axis => points.map(point => point[axis]));
-  const bounds = ranges.map(values => [Math.min(...values), Math.max(...values)]);
-  const [horizontal, vertical] = bounds;
-  const scale = Math.min(
-    (width - 160) / Math.max(.009, horizontal[1] - horizontal[0]),
-    (height - 128) / Math.max(.009, vertical[1] - vertical[0])
+  const base = figure.querySelector("[data-mapa-ruas]");
+  const mapStatus = figure.querySelector("[data-mapa-status]");
+  const points = [local, ...parques];
+  const world = ({latitude, longitude}) => {
+    const radians = latitude * Math.PI / 180;
+    return [(longitude + 180) / 360, (1 - Math.asinh(Math.tan(radians)) / Math.PI) / 2];
+  };
+  const mercator = points.map(world);
+  const [horizontal, vertical] = [0, 1].map(axis => {
+    const values = mercator.map(point => point[axis]);
+    return [Math.min(...values), Math.max(...values)];
+  });
+  const tileSize = 256;
+  const zoom = Math.min(16, Math.max(0, Math.floor(Math.log2(Math.min(
+    (width - 120) / Math.max(.000002, horizontal[1] - horizontal[0]),
+    (height - 120) / Math.max(.000002, vertical[1] - vertical[0])
+  ) / tileSize))));
+  const tileCount = 2 ** zoom;
+  const scale = tileSize * tileCount;
+  const [west, north] = [horizontal, vertical].map(([lower, upper], axis) =>
+    (lower + upper) / 2 * scale - [width, height][axis] / 2
   );
-  const project = point => relative(point).map((value, axis) =>
-    (value - (bounds[axis][0] + bounds[axis][1]) / 2) * scale + [width, height][axis] / 2
-  );
+  const project = point => world(point).map((value, axis) => value * scale - [west, north][axis]);
   ctx.clearRect(0, 0, width, height);
   const colors = getComputedStyle(canvas);
   ctx.strokeStyle = colors.getPropertyValue("--mapa-contorno");
@@ -46,6 +54,7 @@ export function desenharMapa(figure, local, parques, limites) {
   layer.replaceChildren();
   const occupied = [];
   const buttons = [];
+  const connectors = [];
   const candidates = [[0, 0], [0, -70], [0, 70], [90, 0], [-90, 0],
     [90, -70], [-90, -70], [90, 70], [-90, 70], [0, -140], [0, 140]];
 
@@ -63,7 +72,7 @@ export function desenharMapa(figure, local, parques, limites) {
     detail.replaceChildren(name, distance, meta);
   }
 
-  for (const [index, point] of [local, ...parques].entries()) {
+  for (const [index, point] of points.entries()) {
     const [x, y] = project(point);
     const alternatives = candidates.map(([dx, dy]) => [
       Math.max(42, Math.min(width - 42, x + dx)),
@@ -73,12 +82,7 @@ export function desenharMapa(figure, local, parques, limites) {
       occupied.every(([c, d]) => Math.hypot((a - c) / 88, (b - d) / 67) >= 1)
     ) ?? alternatives[0];
     occupied.push([left, top]);
-    if (left !== x || top !== y) {
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(left, top);
-      ctx.stroke();
-    }
+    if (left !== x || top !== y) connectors.push([x, y, left, top]);
     const marker = document.createElement(index ? "button" : "span");
     marker.className = "guia-mapa-marcador";
     marker.style.left = left / width * 100 + "%";
@@ -93,6 +97,50 @@ export function desenharMapa(figure, local, parques, limites) {
     } else marker.setAttribute("aria-hidden", "true");
     layer.append(marker);
   }
+  function drawConnectors() {
+    ctx.strokeStyle = "#315449";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for(const [x, y, left, top] of connectors) {
+      ctx.moveTo(x, y);
+      ctx.lineTo(left, top);
+    }
+    ctx.stroke();
+  }
+  drawConnectors();
   activate(0);
   figure.hidden = false;
+  const tiles = [];
+  const pending = [];
+  for (let row = Math.floor(north / tileSize); row <= Math.floor((north + height - 1) / tileSize); row++) {
+    if (row < 0 || row >= tileCount) continue;
+    for (let column = Math.floor(west / tileSize); column <= Math.floor((west + width - 1) / tileSize); column++) {
+      const image = document.createElement("img");
+      image.alt = "";
+      image.referrerPolicy = "origin";
+      image.style.left = (column * tileSize - west) / width * 100 + "%";
+      image.style.top = (row * tileSize - north) / height * 100 + "%";
+      image.style.width = tileSize / width * 100 + "%";
+      image.style.height = tileSize / height * 100 + "%";
+      const x = (column % tileCount + tileCount) % tileCount;
+      image.src = `https://tile.openstreetmap.org/${zoom}/${x}/${row}.png`;
+      pending.push(image.decode());
+      tiles.push(image);
+    }
+  }
+  const batch = document.createElement("div");
+  batch.append(...tiles);
+  base.replaceChildren(batch);
+  base.hidden = true;
+  mapStatus.textContent = "Carregando o mapa de ruas…";
+  Promise.all(pending).then(() => {
+    if (!batch.isConnected || figure.hidden) return;
+    base.hidden = false;
+    mapStatus.textContent = "";
+    ctx.clearRect(0, 0, width, height);
+    drawConnectors();
+  }).catch(() => {
+    if (batch.isConnected && !figure.hidden)
+      mapStatus.textContent = "Mapa de ruas indisponível. Os parques ainda aparecem na visualização simplificada.";
+  });
 }
