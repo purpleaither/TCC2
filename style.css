@@ -1257,26 +1257,33 @@ button.heatmap-cell:focus-visible{outline:3px solid var(--titulo, #003366);outli
 .monitoring-topic > :not(summary) { margin-block-start: var(--espaco-texto); }
 .monitoring-bars {
   display: grid;
-  gap: 12px;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(6.5em, 1fr);
+  grid-template-rows: auto 8rem auto;
+  gap: 4px 12px;
+  overflow-x: auto;
+  padding: 4px;
   list-style: none;
 }
 .monitoring-bar {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 4px 12px;
+  display: grid;
+  grid-row: 1 / -1;
+  grid-template-rows: subgrid;
+  text-align: center;
 }
+.monitoring-bar > strong { grid-row: 1; align-self: end; }
+.monitoring-bar > span:first-child { grid-row: 3; }
 .monitoring-track {
-  display: block;
-  flex-basis: 100%;
-  block-size: 8px;
-  border-radius: 4px;
-  background: var(--superficie-neutra);
+  grid-row: 2;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  border-block-end: 1px solid var(--borda);
 }
 .monitoring-fill {
-  display: block;
-  block-size: 100%;
-  border-radius: inherit;
+  inline-size: 70%;
+  max-inline-size: 3em;
+  border-radius: 4px 4px 0 0;
   background: var(--destaque);
 }
 

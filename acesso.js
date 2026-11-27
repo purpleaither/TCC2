@@ -576,13 +576,14 @@ function monitoringBars(rows, maximum, title){
   const list = el("ul", undefined, "monitoring-bars");
   list.setAttribute("role", "list");
   list.setAttribute("aria-label", title);
+  list.tabIndex = 0;
   for (const row of rows) {
     const item = el("li", undefined, "monitoring-bar");
     item.append(el("span", row.label), el("strong", row.text));
     const track = el("span", undefined, "monitoring-track");
     track.setAttribute("aria-hidden", "true");
     const fill = el("span", undefined, "monitoring-fill");
-    fill.style.inlineSize = (row.value / maximum * 100) + "%";
+    fill.style.blockSize = (row.value / maximum * 100) + "%";
     track.append(fill);
     item.append(track);
     list.append(item);
