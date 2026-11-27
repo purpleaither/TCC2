@@ -36,7 +36,7 @@ window.cenarioAcompanhamento = () => {
   plans=[{clinical_domain:"misto"}];
   const data=new Date().toISOString();
   professionalWorkouts=[{completed_at:data}];
-  records=[{recorded_at:data,dyspnea_rest:0,cough_level:2,airway_dryness:1,stiffness:"Leve",weather_humidity:29,pm2_5:12}];
+  records=[{recorded_at:data,dyspnea_rest:0,cough_level:2,airway_dryness:1,stiffness:"Leve",weather_humidity:29,pm2_5:12,weather_uv_index:0,carbon_dioxide:451}];
   menu(); navigate("registros-prof");
 };
 window.cenarioLinksMapa = async () => {
@@ -167,8 +167,21 @@ window.cenarioProf = () => {
     await p.getByText('Sintomas e atividade física',{exact:true}).click();
     await blocos.nth(1).getByRole('heading',{name:'Falta de ar em repouso'}).waitFor();
     await p.getByText('Registros por dia',{exact:true}).click();
-    await p.getByText('Ver tabela do período',{exact:true}).click();
-    assert.match(await p.locator('.tabela-longitudinal tbody').innerText(),/Ressecamento/);
+    const tabela=p.locator('.tabela-longitudinal table');
+    await tabela.getByRole('columnheader',{name:/Ressecamento/}).waitFor();
+    await tabela.getByRole('columnheader',{name:'Índice UV'}).waitFor();
+    await tabela.getByRole('columnheader',{name:'CO₂ (ppm)'}).waitFor();
+    assert.equal(await blocos.nth(2).locator('details').count(),0);
+    assert.ok(await p.locator('.tabela-longitudinal').evaluate(el=>el.scrollWidth>el.clientWidth &&
+      el.getBoundingClientRect().right<=window.innerWidth));
+    const [download]=await Promise.all([
+      p.waitForEvent('download'),
+      p.getByRole('button',{name:'Baixar tabela (CSV)'}).click()
+    ]);
+    const csv=fs.readFileSync(await download.path(),'utf8');
+    assert.equal(download.suggestedFilename(),'registros-por-dia.csv');
+    assert.match(csv,/Índice UV.*CO₂/);
+    assert.match(csv,/"0";"451"/);
     await auditar('#page-registros-prof');
     console.log('Navegador e axe-core: acompanhamento e tabela longitudinal');
     await p.route(/tile.openstreetmap.org|routing.openstreetmap.de/,rota=>rota.abort());

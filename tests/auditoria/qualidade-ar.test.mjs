@@ -9,7 +9,7 @@ async function consultar(t, respostaExterna) {
     assert.equal(consulta.origin, "https://air-quality-api.open-meteo.com");
     assert.equal(consulta.searchParams.get("latitude"), String(coordenadasBrasilia.latitude));
     assert.equal(consulta.searchParams.get("longitude"), String(coordenadasBrasilia.longitude));
-    assert.equal(consulta.searchParams.get("current"), "pm2_5,pm10,ozone");
+    assert.equal(consulta.searchParams.get("current"), "pm2_5,pm10,ozone,carbon_dioxide");
     assert.ok(opcoes.signal);
     return respostaExterna();
   });
@@ -23,11 +23,12 @@ async function consultar(t, respostaExterna) {
 
 test("qualidade do ar conserva valores válidos, inclusive zero", async t => {
   const resultado = await consultar(t, () => Response.json({
-    current_units:{pm2_5:"μg/m³",pm10:"μg/m³",ozone:"μg/m³"},
-    current:{pm2_5:0,pm10:12,ozone:34}
+    current_units:{pm2_5:"μg/m³",pm10:"μg/m³",ozone:"μg/m³",carbon_dioxide:"ppm"},
+    current:{pm2_5:0,pm10:12,ozone:34,carbon_dioxide:451}
   }));
-  assert.deepEqual(resultado, {codigo:200,corpo:{pm2_5:0,pm10:12,ozone:34}});
+  assert.deepEqual(resultado, {codigo:200,corpo:{pm2_5:0,pm10:12,ozone:34,carbon_dioxide:451}});
   assert.match(resumoQualidadeAr(resultado.corpo), /PM₂,₅: 0 µg\/m³/);
+  assert.match(resumoQualidadeAr(resultado.corpo), /CO₂: 451 ppm/);
 });
 
 test("HTTP 502 do provedor não gera valores ambientais", async t => {

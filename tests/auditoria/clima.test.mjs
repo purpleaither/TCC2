@@ -32,3 +32,12 @@ for (const [nome, fetchSimulado, esperado] of cenarios) {
     assert.ok(Object.keys(corpo).every(campo => !campo.startsWith('weather_')));
   });
 }
+
+test('preserva índice UV zero quando o provedor retorna clima válido', async t => {
+  const {codigo, corpo} = await consultar(t, async url => {
+    assert.ok(new URL(url).searchParams.get('current').split(',').includes('uv_index'));
+    return Response.json({current:{time:1700000000,temperature_2m:25,relative_humidity_2m:48,surface_pressure:894,uv_index:0}});
+  });
+  assert.equal(codigo,200);
+  assert.equal(corpo.weather_uv_index,0);
+});

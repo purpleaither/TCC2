@@ -19,6 +19,7 @@ let patientId = null;
 let plans = [];
 let respiratoryColumnsAvailable = false;
 let environmentalColumnsAvailable = false;
+let extrasAmbienteDisponiveis = false;
 let records = [];
 let professionalWorkouts;
 let patientLoadVersion = 0;
@@ -168,6 +169,7 @@ function reset() {
   plans=[];
   respiratoryColumnsAvailable=false;
   environmentalColumnsAvailable=false;
+  extrasAmbienteDisponiveis=false;
   records=[];
   clearPlanForm();
   currentPatientExercise=0;
@@ -352,6 +354,7 @@ function mapWeather(registro) {
     temperatura:registro.weather_temperature,
     umidade:registro.weather_humidity,
     pressao:registro.weather_pressure,
+    uv:registro.weather_uv_index,
     observadoEm:registro.weather_observed_at || registro.recorded_at
   };
 }
@@ -381,25 +384,21 @@ async function loadPatientData() {
     const baseFields="id,recorded_at,pain_rest,pain_movement,stiffness,fatigue,mood,activity_level,pain_rest_comparison,pain_movement_comparison"+
       (supportsRespiratory?",dyspnea_rest,dyspnea_exertion,cough_level,secretion_level":"");
     const weatherFields=",weather_city,weather_temperature,weather_humidity,weather_pressure,weather_observed_at";
-    const environmentalFields=",airway_dryness,"+camposQualidadeAr.join(",");
-    const querySymptoms=(weather,environment)=>supabase.from("symptom_records")
-      .select(baseFields+(weather?weatherFields:"")+(environment?environmentalFields:""))
-      .eq("patient_id",selectedPatient).order("recorded_at",{ascending:false}).limit(500);
+    const environmentalFields=",airway_dryness,pm2_5,pm10,ozone";
     let supportsEnvironment=supportsRespiratory;
-    let symptomsResponse=await querySymptoms(weatherColumnsAvailable,supportsEnvironment);
-    if (supportsEnvironment && isMissingColumnError(symptomsResponse.error) &&
-      /airway_dryness|pm2_5|pm10|ozone/.test(symptomsResponse.error.message || "")) {
-      supportsEnvironment=false;
-      symptomsResponse=await querySymptoms(weatherColumnsAvailable,false);
-    }
-    if (weatherColumnsAvailable && isMissingColumnError(symptomsResponse.error) &&
-      /weather_/.test(symptomsResponse.error.message || "")) {
-      weatherColumnsAvailable=false;
-      symptomsResponse=await querySymptoms(false,supportsEnvironment);
-      if (supportsEnvironment && isMissingColumnError(symptomsResponse.error)) {
-        supportsEnvironment=false;
-        symptomsResponse=await querySymptoms(false,false);
-      }
+    let extrasDisponiveis=true;
+    const querySymptoms=()=>supabase.from("symptom_records")
+      .select(baseFields+(weatherColumnsAvailable?weatherFields:"")+(supportsEnvironment?environmentalFields:"")+
+        (extrasDisponiveis?",weather_uv_index,carbon_dioxide":""))
+      .eq("patient_id",selectedPatient).order("recorded_at",{ascending:false}).limit(500);
+    let symptomsResponse=await querySymptoms();
+    while(isMissingColumnError(symptomsResponse.error)){
+      const erro=symptomsResponse.error.message || "";
+      if(extrasDisponiveis && /weather_uv_index|carbon_dioxide/.test(erro))extrasDisponiveis=false;
+      else if(weatherColumnsAvailable && /weather_/.test(erro))weatherColumnsAvailable=false;
+      else if(supportsEnvironment && /airway_dryness|pm2_5|pm10|ozone/.test(erro))supportsEnvironment=false;
+      else break;
+      symptomsResponse=await querySymptoms();
     }
     const loadedRecords = result(symptomsResponse) || [];
     let workouts = supabase.from("workout_sessions")
@@ -415,6 +414,7 @@ async function loadPatientData() {
     if (version !== patientLoadVersion) return;
     respiratoryColumnsAvailable = supportsRespiratory;
     environmentalColumnsAvailable = supportsEnvironment;
+    extrasAmbienteDisponiveis = extrasDisponiveis;
     plans = loadedPlans;
     records = loadedRecords;
     if(professional){
@@ -512,10 +512,10 @@ function renderDailyAdvice(){
   const advice=patientTpeAdviceForToday();
   const record=todaysPatientSymptoms();
   const ambiente=$("ambientePosRegistro");
-  ambiente.hidden=!record||!Number.isInteger(record.dyspnea_rest);
+  ambiente.hidden=!record;
   if(!ambiente.hidden){
     const clima=mapWeather(record);
-    text("ambienteClima",clima?clima.temperatura+" °C · Umidade: "+clima.umidade+"% · Pressão: "+clima.pressao+" hPa"
+    text("ambienteClima",clima?clima.temperatura+" °C · Umidade: "+clima.umidade+"% · Pressão: "+clima.pressao+" hPa · Índice UV: "+(clima.uv??"Sem dado")
       :"Dados meteorológicos indisponíveis no momento.");
     text("ambienteAr",resumoQualidadeAr(record)||"Dados de qualidade do ar indisponíveis no momento.");
     text("ambienteDica",dicaAmbiente(record));
@@ -937,7 +937,6 @@ function renderProfessionalMonitoring(windows, periodRecords){
 
 function renderLongitudinal(recordsDoPeriodo, windows){
   const painel=el("section",undefined,"card");
-  painel.append(el("p","Dados por dia, com o registro mais recente e a indicação de treino concluído. As informações apoiam a conversa presencial e não estabelecem causa e efeito.","card-text"));
   const dias=new Map();
   const treinos=new Set((professionalWorkouts||[]).filter(sessao=>{
     const quando=new Date(sessao.completed_at);
@@ -953,14 +952,35 @@ function renderLongitudinal(recordsDoPeriodo, windows){
     return painel;
   }
 
+  const colunas = [
+    ["Temperatura (°C)", "weather_temperature"], ["Umidade (%)", "weather_humidity"],
+    ["Pressão (hPa)", "weather_pressure"], ["Índice UV", "weather_uv_index"],
+    ["CO₂ (ppm)", "carbon_dioxide"], ["PM₂,₅ (µg/m³)", "pm2_5"],
+    ["PM₁₀ (µg/m³)", "pm10"], ["Ozônio (µg/m³)", "ozone"],
+    ...medidasRespiratorias.map(([campo, rotulo, maximo])=>[rotulo+" (0–"+maximo+")",campo]),
+    ["Dor parado","pain_rest"], ["Dor ao se mexer","pain_movement"], ["Rigidez","stiffness"],
+    ["Cansaço","fatigue"], ["Humor","mood"], ["Atividade física","activity_level"]
+  ];
+  const rotulos=["Data",...colunas.map(([rotulo])=>rotulo),"Treino concluído"];
+  const linhas=[...dias.keys()].sort().reverse().map(dia=>{
+    const r=dias.get(dia);
+    return [new Date(dia+"T12:00:00").toLocaleDateString("pt-BR"), ...colunas.map(([,campo])=>{
+      if(campo==="pain_rest"||campo==="pain_movement"){
+        const comparacao=r[campo+"_comparison"];
+        return r[campo]!=null||comparacao ? resumirDor(r[campo],comparacao) : null;
+      }
+      return r[campo];
+    }), professionalWorkouts===null?"Indisponível":treinos.has(dia)?"Sim":"Sem registro"];
+  });
+
   const viewport=el("div",undefined,"tabela-longitudinal");
   viewport.tabIndex=0;
   viewport.setAttribute("role","region");
-  viewport.setAttribute("aria-label","Tabela de clima, sintomas e treinos");
+  viewport.setAttribute("aria-label","Tabela de clima, sintomas e treinos com rolagem horizontal");
   const tabela=el("table");
-  tabela.append(el("caption","Clima, sintomas e treinos no período selecionado"));
+  tabela.append(el("caption","Clima, sintomas e treinos do período, com o último relato de cada dia"));
   const cabecalho=el("tr");
-  for(const rotulo of ["Data","Umidade","PM₂,₅ (µg/m³)","Sintomas respiratórios","Dor","Treino concluído"]){
+  for(const rotulo of rotulos){
     const celula=el("th",rotulo);
     celula.scope="col";
     cabecalho.append(celula);
@@ -968,25 +988,37 @@ function renderLongitudinal(recordsDoPeriodo, windows){
   const thead=el("thead");
   thead.append(cabecalho);
   const corpo=el("tbody");
-  for(const dia of [...dias.keys()].sort().reverse()){
-    const r=dias.get(dia);
+  const formato=valor=>typeof valor==="number"?valor.toLocaleString("pt-BR",{maximumFractionDigits:6}):valor;
+  for(const [dia,...valores] of linhas){
     const linha=el("tr");
-    const data=el("th",new Date(dia+"T12:00:00").toLocaleDateString("pt-BR"));
+    const data=el("th",dia);
     data.scope="row";
     linha.append(data);
-    const temDor=r.pain_rest!=null||r.pain_movement!=null||r.pain_rest_comparison||r.pain_movement_comparison;
-    for(const valor of [
-      r.weather_humidity==null?"—":r.weather_humidity+"%",
-      r.pm2_5==null?"—":Number(r.pm2_5).toLocaleString("pt-BR"),
-      resumoRespiratorio(r)||"—",
-      temDor?"Parado: "+resumirDor(r.pain_rest,r.pain_rest_comparison)+" · Em movimento: "+resumirDor(r.pain_movement,r.pain_movement_comparison):"—",
-      professionalWorkouts===null?"Indisponível":treinos.has(dia)?"Sim":"Sem registro"
-    ])linha.append(el("td",valor));
+    for(const valor of valores)linha.append(el("td",formato(valor)??"Sem dado"));
     corpo.append(linha);
   }
   tabela.append(thead,corpo);
   viewport.append(tabela);
-  painel.append(viewport);
+
+  const baixar=el("button","Baixar tabela (CSV)","btn btn-outline");
+  baixar.type="button";
+  baixar.addEventListener("click",()=>{
+    const campo=valor=>{
+      let texto=String(formato(valor)??"");
+      if(typeof valor==="string"&&/^\s*[=+\-@]/.test(texto))texto="'"+texto;
+      return '"'+texto.replaceAll('"','""')+'"';
+    };
+    const csv=[rotulos,...linhas].map(linha=>linha.map(campo).join(";")).join("\r\n");
+    const url=URL.createObjectURL(new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}));
+    const link=el("a");
+    link.href=url;
+    link.download="registros-por-dia.csv";
+    document.body.append(link);
+    link.click();
+    link.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  });
+  painel.append(viewport,baixar);
   return painel;
 }
 
@@ -1002,27 +1034,7 @@ function renderProfessionalRecords(){
   });
   renderProfessionalMonitoring(windows, periodRecords);
   if (!patientId || professionalWorkouts === undefined) return;
-  const painel = el("div");
-  const root = el("div");
-  root.id = "listaRegistrosProf";
-  painel.append(monitoringTopic("Ver tabela do período",renderLongitudinal(periodRecords,windows)),root);
-  $("graficosRegistrosProf").append(monitoringTopic("Registros por dia", painel));
-  if(!periodRecords.length)root.append(el("p","Nenhum registro no período selecionado.","demo-vazio"));
-  for(const r of periodRecords) {
-    const card=el("div",undefined,"card");
-    card.append(el("h3",date(r.recorded_at),"card-title"));
-    if(r.pain_rest!=null||r.pain_movement!=null||r.pain_rest_comparison||r.pain_movement_comparison)card.append(el("p","Quando ficou parado: "+resumirDor(r.pain_rest,r.pain_rest_comparison)+" | Ao se mexer: "+resumirDor(r.pain_movement,r.pain_movement_comparison),"card-text"));
-    if(r.stiffness!=null||r.fatigue!=null)card.append(el("p","Rigidez: "+r.stiffness+" · Fadiga: "+r.fatigue,"card-text-small"));
-    const respiratorio=resumoRespiratorio(r);
-    if(respiratorio)card.append(el("p",respiratorio,"card-text"));
-    card.append(el("p","Humor: "+(r.mood ?? "Não registrado")+
-      " · Nível de atividade física: "+(r.activity_level ?? "Não registrado"),"card-text-small"));
-    const clima=mapWeather(r);
-    if(clima)card.append(el("p","Clima registrado em "+date(clima.observadoEm)+": "+clima.temperatura+" °C · "+clima.umidade+"% · "+clima.pressao+" hPa ("+clima.cidade+")","card-text-small"));
-    const ar=resumoQualidadeAr(r);
-    if(ar)card.append(el("p",ar,"card-text-small"));
-    root.append(card);
-  }
+  $("graficosRegistrosProf").append(monitoringTopic("Registros por dia",renderLongitudinal(periodRecords,windows)));
 }
 function addExercise(entry){
   if(!isProfessional())return;
@@ -1469,13 +1481,18 @@ async function saveSymptoms(){
   try {
     const [climaResposta, arResposta] = await Promise.allSettled([
       obterClimaBrasilia(),
-      dominio!=="musculoesqueletico"&&environmentalColumnsAvailable ? obterQualidadeAr() : null
+      environmentalColumnsAvailable||extrasAmbienteDisponiveis ? obterQualidadeAr() : null
     ]);
     const clima=climaResposta.status==="fulfilled"?climaResposta.value:null;
     const ar=arResposta.status==="fulfilled"?arResposta.value:null;
     if (user !== paciente) return;
     const associarClima = clima && weatherColumnsAvailable;
-    const dadosDoRegistro={...registro,...ar};
+    const dadosDoRegistro={...registro};
+    for(const campo of camposQualidadeAr){
+      if(ar?.[campo]!=null && (campo==="carbon_dioxide"?extrasAmbienteDisponiveis:environmentalColumnsAvailable))
+        dadosDoRegistro[campo]=ar[campo];
+    }
+    if(associarClima&&!extrasAmbienteDisponiveis)delete clima.weather_uv_index;
     let saved = await supabase.from("symptom_records").insert(associarClima ? {...dadosDoRegistro, ...clima} : dadosDoRegistro);
     if (saved.error && associarClima && isMissingColumnError(saved.error) && /weather_/.test(saved.error.message || "")) {
       if (user !== paciente) return;
@@ -1488,7 +1505,7 @@ async function saveSymptoms(){
     navigate("inicio");
     message(clima&&weatherColumnsAvailable
       ? "Sintomas e condições meteorológicas registrados. O plano permanece inalterado."
-      : "Sintomas registrados. Clima indisponível ou atualização do banco pendente; nenhuma medição foi associada a este registro.", !(clima&&weatherColumnsAvailable));
+      : "Sintomas registrados. Dados meteorológicos indisponíveis no momento.", !(clima&&weatherColumnsAvailable));
     if(respiratorio.dyspnea_rest>=7)alert(avisoFaltaDeAr);
     else if(atipico===1)
       alert("Se os sintomas forem intensos ou inesperados, procure orientação profissional. Este aplicativo não realiza triagem clínica.");

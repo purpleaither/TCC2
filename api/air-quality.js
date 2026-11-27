@@ -13,7 +13,7 @@ export default async function handler(req, res) {
     if (!resposta.ok) return res.status(502).json({error:"Qualidade do ar indisponível"});
     const {current, current_units} = await resposta.json();
     const dados = Object.fromEntries(camposQualidadeAr
-      .filter(campo => ["μg/m³", "µg/m³"].includes(current_units?.[campo]) && Number.isFinite(current?.[campo]) && current[campo] >= 0)
+      .filter(campo => (campo==="carbon_dioxide" ? current_units?.[campo]==="ppm" : ["μg/m³", "µg/m³"].includes(current_units?.[campo])) && Number.isFinite(current?.[campo]) && current[campo] >= 0)
       .map(campo => [campo, current[campo]]));
     if (!Object.keys(dados).length) return res.status(502).json({error:"Dados de qualidade do ar indisponíveis"});
     return res.status(200).json(dados);

@@ -1,11 +1,11 @@
 export const coordenadasBrasilia = {latitude:-15.7801, longitude:-47.9292};
-export const camposQualidadeAr = ["pm2_5", "pm10", "ozone"];
+export const camposQualidadeAr = ["pm2_5", "pm10", "ozone", "carbon_dioxide"];
 
-const rotulos = {pm2_5:"PM₂,₅", pm10:"PM₁₀", ozone:"Ozônio (O₃)"};
+const rotulos = {pm2_5:"PM₂,₅", pm10:"PM₁₀", ozone:"Ozônio (O₃)", carbon_dioxide:"CO₂"};
 
 export function resumoQualidadeAr(registro) {
   return camposQualidadeAr.filter(campo => Number.isFinite(registro[campo]))
-    .map(campo => rotulos[campo] + ": " + registro[campo].toLocaleString("pt-BR") + " µg/m³").join(" · ");
+    .map(campo => rotulos[campo] + ": " + registro[campo].toLocaleString("pt-BR") + (campo==="carbon_dioxide" ? " ppm" : " µg/m³")).join(" · ");
 }
 
 export function dicaAmbiente(registro) {

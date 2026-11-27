@@ -2,7 +2,7 @@ import {coordenadasBrasilia} from "../data/ambiente.js";
 
 // Consulta apenas o clima de Brasília, sem receber dados do paciente.
 const params = new URLSearchParams({...coordenadasBrasilia,
-  current:"temperature_2m,relative_humidity_2m,surface_pressure", timeformat:"unixtime", timezone:"GMT"});
+  current:"temperature_2m,relative_humidity_2m,surface_pressure,uv_index", timeformat:"unixtime", timezone:"GMT"});
 const endpoint = "https://api.open-meteo.com/v1/forecast?" + params;
 
 export default async function handler(req, res) {
@@ -21,6 +21,7 @@ export default async function handler(req, res) {
       weather_temperature:current.temperature_2m,
       weather_humidity:Math.round(current.relative_humidity_2m),
       weather_pressure:current.surface_pressure,
+      weather_uv_index:Number.isFinite(current.uv_index)&&current.uv_index>=0?current.uv_index:null,
       weather_observed_at:new Date(current.time * 1000).toISOString()
     });
   } catch (erro) {

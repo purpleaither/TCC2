@@ -54,6 +54,8 @@ create table if not exists public.symptom_records (
  weather_temperature numeric(5,2),
  weather_humidity smallint check (weather_humidity is null or weather_humidity between 0 and 100),
  weather_pressure numeric(7,2) check (weather_pressure is null or weather_pressure between 800 and 1200),
+ weather_uv_index numeric check (weather_uv_index >= 0 and weather_uv_index < 'Infinity'::numeric),
+ carbon_dioxide numeric check (carbon_dioxide >= 0 and carbon_dioxide < 'Infinity'::numeric),
  weather_observed_at timestamptz
 );
 

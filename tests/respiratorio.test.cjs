@@ -39,15 +39,16 @@ for (const dominio of ["musculoesqueletico", "respiratorio", "misto"]) {
       levels: ["Nenhuma", "Leve"], moods: ["Bem"], humorAtual: 0, atividadeAtual: 0,
       rigidezAtual: muscular ? 1 : null, fadigaAtual: muscular ? 0 : null, atipico: 0,
       medidasAtivas: () => medidasRespiratorias, avisoFaltaDeAr, environmentalColumnsAvailable: true,
+      extrasAmbienteDisponiveis: true, camposQualidadeAr: ["pm2_5", "pm10", "ozone", "carbon_dioxide"],
       obterClimaBrasilia: async () => {
         passos.push("clima");
         if (dominio === "respiratorio") throw Error("API indisponível simulada");
-        return {weather_temperature: 26};
+        return {weather_temperature: 26, weather_uv_index: 0};
       },
       obterQualidadeAr: async () => {
         passos.push("ar");
         if (dominio === "misto") throw Error("HTTP 502 simulado");
-        return {pm2_5: 14, pm10: 18, ozone: 25};
+        return {pm2_5: 14, pm10: 18, ozone: 25, carbon_dioxide: 451};
       },
       weatherColumnsAvailable: true,
       supabase: {from: tabela => {
@@ -58,16 +59,18 @@ for (const dominio of ["musculoesqueletico", "respiratorio", "misto"]) {
       navigate: () => passos.push("início"), message: () => {}, alert: () => passos.push("alerta")
     };
     await vm.runInNewContext(salvar + "\nsaveSymptoms()", contexto);
-    assert.deepEqual(passos, ["clima", ...(respiratorio ? ["ar"] : []), "salvar", "recarregar", "início", ...(respiratorio ? ["alerta"] : [])]);
+    assert.deepEqual(passos, ["clima", "ar", "salvar", "recarregar", "início", ...(respiratorio ? ["alerta"] : [])]);
     assert.equal(registro.pain_rest, undefined);
     assert.equal(registro.stiffness, muscular ? "Leve" : null);
     assert.equal(registro.dyspnea_rest, respiratorio ? 7 : undefined);
     assert.equal(registro.dyspnea_exertion, respiratorio ? 0 : undefined);
     assert.equal(registro.secretion_level, respiratorio ? 0 : undefined);
     assert.equal(registro.airway_dryness, respiratorio ? 0 : undefined);
-    assert.equal(registro.pm2_5, dominio === "respiratorio" ? 14 : undefined);
-    assert.equal(registro.pm10, dominio === "respiratorio" ? 18 : undefined);
-    assert.equal(registro.ozone, dominio === "respiratorio" ? 25 : undefined);
+    assert.equal(registro.pm2_5, dominio === "misto" ? undefined : 14);
+    assert.equal(registro.pm10, dominio === "misto" ? undefined : 18);
+    assert.equal(registro.ozone, dominio === "misto" ? undefined : 25);
+    assert.equal(registro.carbon_dioxide, dominio === "misto" ? undefined : 451);
+    assert.equal(registro.weather_uv_index, dominio === "respiratorio" ? undefined : 0);
     assert.equal(registro.weather_temperature, dominio === "respiratorio" ? undefined : 26);
   });
 }

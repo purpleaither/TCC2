@@ -287,7 +287,7 @@ function abrirClimaSheet(dia, reg, ehAtividade = false) {
   respiratorio.hidden = !reg?.respiratorio;
   respiratorio.textContent = reg?.respiratorio || '';
   const qualidadeAr = document.getElementById('sheetQualidadeAr');
-  qualidadeAr.hidden = !reg?.respiratorio;
+  qualidadeAr.hidden = !reg;
   qualidadeAr.textContent = reg?.qualidadeAr || 'Dados de qualidade do ar indisponíveis no momento.';
   var dor = document.getElementById('sheetDorNivel');
   if (dor) dor.hidden = !!reg?.respiratorio && reg.dorRepouso == null && reg.dorMovimento == null && !reg.comparacaoParado && !reg.comparacaoMovimento;
@@ -314,7 +314,7 @@ function abrirClimaSheet(dia, reg, ehAtividade = false) {
     if (clima && clima.temperatura != null && clima.umidade != null && clima.pressao != null) {
       resumo.textContent = (clima.cidade || 'Brasília') + ': ' +
         clima.temperatura + ' °C, umidade ' + clima.umidade + '% e pressão ' + clima.pressao +
-        ' hPa. Observado em ' + new Date(clima.observadoEm || reg.data).toLocaleString('pt-BR') +
+        ' hPa, índice UV: ' + (clima.uv ?? 'Sem dado') + '. Observado em ' + new Date(clima.observadoEm || reg.data).toLocaleString('pt-BR') +
         ' (Open-Meteo).';
     } else {
       resumo.textContent = 'Não há dados meteorológicos salvos para este registro.';
