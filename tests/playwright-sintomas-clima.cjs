@@ -55,8 +55,18 @@ const read=p.waitForResponse(r=>isSymptoms(r)&&r.request().method()==='GET'&&r.o
 const added=rows.filter(x=>!ids.has(x.id)&&Object.entries(expected).every(([k,v])=>x[k]===v));
 if(added.length!==1)throw Error('Novo registro não identificado univocamente após recarregar');
 await p.locator('#page-inicio.active').waitFor({timeout:30000});
-await p.locator('#btnRegistrarSintomas').click();
+await p.evaluate(()=>window.navegarPara('historico'));
+await p.locator('#page-historico.active').waitFor();
+await p.locator('#historicoSintomasBtn').click();
+const dia=await p.evaluate(iso=>new Date(iso).getDate(),added[0].recorded_at);
+await p.locator('#heatmapGrid').getByRole('button',{name:'Ver sintomas do dia '+dia,exact:true}).click();
 await p.locator('#climaSheet.open').waitFor();
+const indice=await p.evaluate(({id,iso})=>{
+ const d=new Date(iso);
+ return registrosUsuario.filter(r=>{const t=new Date(r.data);return t.getFullYear()===d.getFullYear()&&t.getMonth()===d.getMonth()&&t.getDate()===d.getDate();}).findIndex(r=>r.id===id);
+},{id:added[0].id,iso:added[0].recorded_at});
+if(indice<0)throw Error('Registro salvo ausente no histórico da interface');
+await p.locator('#sheetRegistroHorario').selectOption(String(indice));
 const resumoDor=await p.locator('#sheetDorNivel').innerText();
 if(!resumoDor.includes('4/10') || !resumoDor.includes('6/10'))
   throw Error('Intensidade de dor incorreta no histórico');
