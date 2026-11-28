@@ -1,14 +1,15 @@
 import assert from "node:assert/strict";
 import {test} from "node:test";
 import handler from "../../api/air-quality.js";
-import {coordenadasBrasilia, dicaAmbiente, resumoQualidadeAr} from "../../data/ambiente.js";
+import {dicaAmbiente, resumoQualidadeAr} from "../../data/ambiente.js";
 
 async function consultar(t, respostaExterna) {
   t.mock.method(globalThis, "fetch", async (url, opcoes) => {
     const consulta = new URL(url);
+    if(consulta.hostname.startsWith("geocoding-"))return Response.json({results:[{name:"São Paulo",admin1:"São Paulo",country_code:"BR",latitude:-23.55,longitude:-46.63}]});
     assert.equal(consulta.origin, "https://air-quality-api.open-meteo.com");
-    assert.equal(consulta.searchParams.get("latitude"), String(coordenadasBrasilia.latitude));
-    assert.equal(consulta.searchParams.get("longitude"), String(coordenadasBrasilia.longitude));
+    assert.equal(consulta.searchParams.get("latitude"), "-23.55");
+    assert.equal(consulta.searchParams.get("longitude"), "-46.63");
     assert.equal(consulta.searchParams.get("current"), "pm2_5,pm10,ozone,carbon_dioxide");
     assert.ok(opcoes.signal);
     return respostaExterna();
@@ -18,7 +19,7 @@ async function consultar(t, respostaExterna) {
     status(codigo) { this.codigo = codigo; return this; },
     json(corpo) { return {codigo:this.codigo, corpo}; }
   };
-  return handler({method:"GET"}, res);
+  return handler({method:"GET",query:{cidade:"São Paulo",uf:"SP"}}, res);
 }
 
 test("qualidade do ar conserva valores válidos, inclusive zero", async t => {
