@@ -1461,13 +1461,21 @@ async function saveSymptoms(){
       respiratorio[campo]=nota;
     }
   }
+  const notasDor = ['dorParadoComparacao','dorMovimentoComparacao'].map(id => {
+    const escolha = $(id)?.querySelector('.selected');
+    return escolha ? Number(escolha.value) : null;
+  });
+  if (dominio !== 'respiratorio' && notasDor.some(n => !Number.isInteger(n) || n < 0 || n > 10)) {
+    busy=false;
+    return mostrarErroDiario('Informe a intensidade da dor em repouso e em movimento.');
+  }
   const registro = {
     patient_id: paciente.id,
     ...respiratorio,
     stiffness: levels[rigidezAtual] ?? null,
     fatigue: levels[fadigaAtual] ?? null,
-    pain_rest_comparison: $("dorParadoComparacao").querySelector(".selected")?.value ?? null,
-    pain_movement_comparison: $("dorMovimentoComparacao").querySelector(".selected")?.value ?? null,
+    pain_rest: dominio === "respiratorio" ? null : notasDor[0],
+    pain_movement: dominio === "respiratorio" ? null : notasDor[1],
     mood: moods[humorAtual] ?? null,
     activity_level: levels[atividadeAtual] ?? null
   };
