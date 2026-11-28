@@ -1,12 +1,14 @@
-import {coordenadasBrasilia, camposQualidadeAr} from "../data/ambiente.js";
+import {camposQualidadeAr} from "../data/ambiente.js";
+import {localizarMunicipio} from "../services/municipio.js";
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
   res.setHeader("Allow", "GET");
   if (req.method !== "GET") return res.status(405).json({error:"Método não permitido"});
 
-  const params = new URLSearchParams({...coordenadasBrasilia, current:camposQualidadeAr.join(",")});
   try {
+    const {latitude,longitude}=await localizarMunicipio(req.query);
+    const params = new URLSearchParams({latitude,longitude,current:camposQualidadeAr.join(",")});
     const resposta = await fetch("https://air-quality-api.open-meteo.com/v1/air-quality?" + params, {
       signal:AbortSignal.timeout(8000), headers:{Accept:"application/json"}
     });
@@ -18,7 +20,7 @@ export default async function handler(req, res) {
     if (!Object.keys(dados).length) return res.status(502).json({error:"Dados de qualidade do ar indisponíveis"});
     return res.status(200).json(dados);
   } catch (erro) {
-    return res.status(erro.name === "TimeoutError" || erro.name === "AbortError" ? 504 : 502)
+    return res.status(erro.status || (erro.name === "TimeoutError" || erro.name === "AbortError" ? 504 : 502))
       .json({error:"Qualidade do ar indisponível"});
   }
 }
