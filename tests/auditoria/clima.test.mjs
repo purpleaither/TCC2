@@ -4,15 +4,15 @@ import handler from '../../api/weather.js';
 
 async function consultar(t, fetchSimulado) {
   const headers = {};
-  t.mock.method(globalThis, 'fetch', fetchSimulado);
+  t.mock.method(globalThis, 'fetch', async url => new URL(url).hostname.startsWith("geocoding-") ? Response.json({results:[{name:"São Paulo",admin1:"São Paulo",country_code:"BR",latitude:-23.55,longitude:-46.63}]}) : fetchSimulado(url));
   const resposta = {
     setHeader(nome, valor) { headers[nome] = valor; },
     status(codigo) { this.codigo = codigo; return this; },
     json(corpo) { return { codigo: this.codigo, corpo }; },
   };
-  const resultado = await handler({ method: 'GET' }, resposta);
+  const resultado = await handler({ method: 'GET', query:{cidade:'São Paulo',uf:'SP'} }, resposta);
   assert.equal(headers['Cache-Control'], 'no-store');
-  assert.equal(fetch.mock.callCount(), 1);
+  assert.equal(fetch.mock.callCount(), 2);
   return resultado;
 }
 
@@ -41,3 +41,5 @@ test('preserva índice UV zero quando o provedor retorna clima válido', async t
   assert.equal(codigo,200);
   assert.equal(corpo.weather_uv_index,0);
 });
+
+test("sem localidade não consulta provedor",async t=>{t.mock.method(globalThis,"fetch",()=>{throw Error("consulta indevida")});const r=await handler({method:"GET"},{setHeader(){},status(c){this.c=c;return this},json(){return this.c}});assert.equal(r,400);assert.equal(fetch.mock.callCount(),0)});
