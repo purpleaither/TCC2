@@ -150,24 +150,40 @@
     <section class="card" data-etapa-diario="musculoesqueletico" aria-labelledby="dorParadoComparacaoTitulo">
       <!-- Dor quando você ficou parado -->
       <div class="pain-scale">
-        <h2 class="choices-label" id="dorParadoComparacaoTitulo" tabindex="-1" aria-describedby="diarioEtapa">Quando ficou parado, como foi a dor em relação à de costume?</h2>
-        <div class="choices-options pain-comparison" id="dorParadoComparacao" role="group" aria-labelledby="dorParadoComparacaoTitulo">
-          <button type="button" class="choice-btn" value="Menos dor" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 0)">Menos dor</button>
-          <button type="button" class="choice-btn" value="A mesma dor" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 1)">A mesma dor</button>
-          <button type="button" class="choice-btn" value="Mais dor" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 2)">Mais dor</button>
-          <button type="button" class="choice-btn" value="Não sei comparar" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 3)">Não sei comparar</button>
+        <h2 class="choices-label" id="dorParadoComparacaoTitulo" tabindex="-1" aria-describedby="diarioEtapa">Qual a intensidade da dor em repouso?</h2>
+        <div class="choices-options pain-numeric" id="dorParadoComparacao" style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px" role="group" aria-labelledby="dorParadoComparacaoTitulo">
+          <button type="button" class="choice-btn" value="0" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 0)">0</button>
+          <button type="button" class="choice-btn" value="1" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 1)">1</button>
+          <button type="button" class="choice-btn" value="2" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 2)">2</button>
+          <button type="button" class="choice-btn" value="3" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 3)">3</button>
+          <button type="button" class="choice-btn" value="4" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 4)">4</button>
+          <button type="button" class="choice-btn" value="5" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 5)">5</button>
+          <button type="button" class="choice-btn" value="6" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 6)">6</button>
+          <button type="button" class="choice-btn" value="7" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 7)">7</button>
+          <button type="button" class="choice-btn" value="8" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 8)">8</button>
+          <button type="button" class="choice-btn" value="9" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 9)">9</button>
+          <button type="button" class="choice-btn" value="10" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 10)">10</button>
         </div>
+        <p class="card-text-small">0 = Sem dor · 10 = Pior dor imaginável</p>
       </div>
 
       <!-- Dor ao se mexer -->
       <div class="pain-scale">
-        <p class="choices-label" id="dorMovimentoComparacaoTitulo">Ao se mexer hoje, como foi a dor em relação à de costume?</p>
-        <div class="choices-options pain-comparison" id="dorMovimentoComparacao" role="group" aria-labelledby="dorMovimentoComparacaoTitulo">
-          <button type="button" class="choice-btn" value="Menos dor" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 0)">Menos dor</button>
-          <button type="button" class="choice-btn" value="A mesma dor" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 1)">A mesma dor</button>
-          <button type="button" class="choice-btn" value="Mais dor" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 2)">Mais dor</button>
-          <button type="button" class="choice-btn" value="Não sei comparar" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 3)">Não sei comparar</button>
+        <p class="choices-label" id="dorMovimentoComparacaoTitulo">Qual a intensidade da dor durante o movimento?</p>
+        <div class="choices-options pain-numeric" id="dorMovimentoComparacao" style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px" role="group" aria-labelledby="dorMovimentoComparacaoTitulo">
+          <button type="button" class="choice-btn" value="0" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 0)">0</button>
+          <button type="button" class="choice-btn" value="1" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 1)">1</button>
+          <button type="button" class="choice-btn" value="2" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 2)">2</button>
+          <button type="button" class="choice-btn" value="3" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 3)">3</button>
+          <button type="button" class="choice-btn" value="4" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 4)">4</button>
+          <button type="button" class="choice-btn" value="5" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 5)">5</button>
+          <button type="button" class="choice-btn" value="6" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 6)">6</button>
+          <button type="button" class="choice-btn" value="7" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 7)">7</button>
+          <button type="button" class="choice-btn" value="8" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 8)">8</button>
+          <button type="button" class="choice-btn" value="9" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 9)">9</button>
+          <button type="button" class="choice-btn" value="10" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 10)">10</button>
         </div>
+        <p class="card-text-small">0 = Sem dor · 10 = Pior dor imaginável</p>
       </div>
     </section>
 
