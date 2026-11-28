@@ -35,7 +35,33 @@ if(matches.length!==1)throw Error('Conta ficticia nao identificada univocamente 
 patientId=matches[0];await selectPatient();
 if(await step('CT20-21',async()=>{await prof.locator('#page-planos-prof.active').locator('#createPlanEntry').click();await prof.locator('#nomePlanoProf').fill(title);await prof.getByRole('button',{name:'Próximo',exact:true}).click();if(await prof.locator('#etapaCategoriaPlano').isVisible())await prof.getByRole('button',{name:'Ortopédico',exact:true}).click();await prof.getByRole('button',{name:'Adicionar manualmente',exact:true}).click();const row=prof.locator('#exerciseConfigRow');await row.locator('[name=customName]').fill(exercise);await prof.getByRole('button',{name:'Concluir inserção',exact:true}).click();await prof.locator('#page-exercise-source-prof.active').getByRole('button',{name:'Voltar',exact:true}).click();await prof.locator('#formPlanoProf button[type=submit]').click();await card().getByText(exercise,{exact:true}).waitFor({timeout:20000})})){
 if(!process.env.CT22_ONLY)await step('CT23',async()=>{await prof.reload();await prof.locator('#page-profissional.active').waitFor({timeout:30000});await selectPatient();await card().getByText(exercise,{exact:true}).waitFor()});
-if(!process.env.CT22_ONLY)await step('CT29',async()=>{await selectPatient();await card().getByRole('button',{name:'Editar',exact:true}).click();await prof.locator('#orientacoesPlanoProf').fill('Orientacao ficticia revisada PW');await prof.locator('#formPlanoProf button[type=submit]').click();await card().getByText('Orientacao ficticia revisada PW',{exact:true}).waitFor();await prof.reload();await prof.locator('#page-profissional.active').waitFor({timeout:30000});await selectPatient();await card().getByText('Orientacao ficticia revisada PW',{exact:true}).waitFor()});
+if(!process.env.CT22_ONLY)await step('CT29',async()=>{
+  phase='edicao-plano';
+  const series=patient.locator('.patient-exercise-card .patient-exercise-metric').filter({has:patient.getByText('Séries',{exact:true})}).locator('.patient-exercise-metric-value');
+  await patient.reload();
+  await patient.locator('#page-inicio.active').waitFor({timeout:30000});
+  await showExercise(exercise);
+  await series.waitFor();
+  if((await series.innerText()).trim()!=='2')throw Error('Paciente não visualizou as 2 séries originais');
+  await selectPatient();
+  await card().getByRole('button',{name:'Editar',exact:true}).click();
+  await prof.locator('#orientacoesPlanoProf').fill('Orientacao ficticia revisada PW');
+  await prof.locator('#resumoExerciciosPlano').getByRole('button',{name:'Editar exercício',exact:true}).first().click();
+  await prof.locator('#exerciseConfigRow [name=series]').fill('3');
+  await prof.getByRole('button',{name:'Concluir inserção',exact:true}).click();
+  await prof.locator('#formPlanoProf button[type=submit]').click();
+  await card().getByText('Orientacao ficticia revisada PW',{exact:true}).waitFor();
+  await prof.reload();
+  await prof.locator('#page-profissional.active').waitFor({timeout:30000});
+  await selectPatient();
+  await card().getByText('Orientacao ficticia revisada PW',{exact:true}).waitFor();
+  phase='edicao-paciente';
+  await patient.reload();
+  await patient.locator('#page-inicio.active').waitFor({timeout:30000});
+  await showExercise(exercise);
+  await series.waitFor();
+  if((await series.innerText()).trim()!=='3')throw Error('RF03: paciente não visualizou as 3 séries após a edição do plano');
+});
 if(!process.env.CT22_ONLY && !process.env.TCC_SERIE_DESEMPENHO)await step('CT54',async()=>{
   await patient.reload();
   await patient.locator('#page-inicio.active').waitFor({timeout:30000});
