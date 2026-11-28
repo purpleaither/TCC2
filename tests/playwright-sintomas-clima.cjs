@@ -80,4 +80,40 @@ if(simular){
  const avisoExibido=/Sintomas registrados/i.test(aviso)&&/Dados ambientais indisponíveis/i.test(aviso);
  report.push({id:'CT44-falha-clima',status:simulacoes===2&&semMedicao&&avisoExibido?'passed':'failed',simulacoes,semMedicao,avisoExibido});
 }else report.push({id:'CT26',status:weather?'passed':'failed',weather:weather?{city:x.weather_city,temperature:x.weather_temperature,humidity:x.weather_humidity,pressure:x.weather_pressure,observedAt:x.weather_observed_at}:null});
-}catch(e){report.push({id:'CI05',status:'failed',error:String(e.message),stack:String(e.stack||'')});if(p){fs.mkdirSync('test-results',{recursive:true});await p.screenshot({path:simular?'test-results/ci05-falha-clima.png':'test-results/ci05-falha.png',fullPage:true}).catch(()=>{});}}finally{if(browser)await browser.close();fs.mkdirSync('test-results',{recursive:true});const evidence={report,network,retention:'Registro fictício mantido por autorização'};fs.writeFileSync(simular?'test-results/clima-falha-interface.json':'test-results/ci05-sintomas-clima.json',JSON.stringify(evidence,null,2));console.log(JSON.stringify(evidence));if(report.length!==2||report.some(x=>x.status!=='passed'))process.exitCode=1}})();
+if(!simular){
+ const step=async(id,fn)=>{try{await fn();report.push({id,status:'passed'})}catch(e){report.push({id,status:'failed',error:String(e.message)})}};
+ await step('CT56-sintomas',async()=>{
+  await p.evaluate(()=>window.realizarLogout());
+  await p.locator('#page-login.active').waitFor();
+  await p.locator('#loginEmail').fill(process.env.TEST_PACIENTE_EMAIL);
+  await p.locator('#loginSenha').fill(process.env.TEST_PACIENTE_PASSWORD);
+  await p.locator('#loginSubmit').click();
+  await p.locator('#page-inicio.active').waitFor({timeout:30000});
+  await p.evaluate(()=>window.navegarPara('historico'));
+  await p.locator('#historicoSintomasBtn').click();
+  await p.locator('#heatmapGrid').getByRole('button',{name:'Ver sintomas do dia '+dia,exact:true}).click();
+  await p.locator('#sheetRegistroHorario').selectOption(String(indice));
+  if(!(await p.locator('#sheetDorNivel').innerText()).includes('4/10'))throw Error('Sintoma ausente após nova autenticação');
+ });
+ await step('CT58-paciente',async()=>{
+  await p.locator('#sheetCorrigirRegistro').click();
+  await p.locator('#corrigirRegistroDialog').waitFor();
+  await p.locator('#corrigir-pain_rest').selectOption('5');
+  await p.locator('#corrigirRegistroSalvar').click();
+  await p.locator('#corrigirRegistroDialog').waitFor({state:'hidden'});
+  await p.reload();
+  await p.locator('#page-inicio.active').waitFor({timeout:30000});
+  await p.evaluate(()=>window.navegarPara('historico'));
+  await p.locator('#historicoSintomasBtn').click();
+  await p.locator('#heatmapGrid').getByRole('button',{name:'Ver sintomas do dia '+dia,exact:true}).click();
+  await p.locator('#sheetRegistroHorario').selectOption(String(indice));
+  if(!(await p.locator('#sheetDorNivel').innerText()).includes('5/10'))throw Error('Correção não persistiu');
+ });
+ await step('CT59-conselho',async()=>{
+  await p.evaluate(()=>window.navegarPara('inicio'));
+  await p.locator('#conselhoDiaTitulo').waitFor();
+  const conselho=await p.locator('#conselhoDiaTexto').innerText();
+  if(!conselho.includes('não indica, sozinha, dano aos tecidos')||!conselho.includes('fisioterapeuta'))throw Error('Conselho educativo esperado ausente');
+ });
+}
+}catch(e){report.push({id:'CI05',status:'failed',error:String(e.message),stack:String(e.stack||'')});if(p){fs.mkdirSync('test-results',{recursive:true});await p.screenshot({path:simular?'test-results/ci05-falha-clima.png':'test-results/ci05-falha.png',fullPage:true}).catch(()=>{});}}finally{if(browser)await browser.close();fs.mkdirSync('test-results',{recursive:true});const evidence={report,network,retention:'Registro fictício mantido por autorização'};fs.writeFileSync(simular?'test-results/clima-falha-interface.json':'test-results/ci05-sintomas-clima.json',JSON.stringify(evidence,null,2));console.log(JSON.stringify(evidence));if(report.length!==(simular?2:5)||report.some(x=>x.status!=='passed'))process.exitCode=1}})();
