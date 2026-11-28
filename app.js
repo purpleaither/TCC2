@@ -284,6 +284,12 @@ function abrirClimaSheet(dia, reg, ehAtividade = false) {
   var titulo = document.getElementById('climaSheetTitle');
   if (titulo) titulo.textContent = (ehAtividade ? 'Exercícios do dia ' : 'Sintomas do dia ') + dia + ' de ' + nomesMes[mesAtual.getMonth()];
 
+  const seletor=document.getElementById('sheetRegistroHorario');
+  const lista=registrosUsuario.filter(r=>{const d=new Date(r.data);return d.getFullYear()===mesAtual.getFullYear()&&d.getMonth()===mesAtual.getMonth()&&d.getDate()===dia;});
+  seletor.replaceChildren(...lista.map((r,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=new Date(r.data).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});return o;}));
+  seletor.value=String(Math.max(0,lista.indexOf(reg)));
+  seletor.onchange=()=>abrirClimaSheet(dia,lista[Number(seletor.value)]);
+  document.getElementById('sheetAmbiente').textContent=reg?.ambiente||'Dados ambientais não disponíveis.';
   const respiratorio = document.getElementById('sheetRespiratorio');
   respiratorio.hidden = !reg?.respiratorio;
   respiratorio.textContent = reg?.respiratorio || '';
@@ -319,25 +325,10 @@ function obterRegistroHoje(hoje) {
 
 function verificarRegistroHoje() {
   var botao = document.getElementById('btnRegistrarSintomas');
-  if (botao) {
-    botao.textContent = obterRegistroHoje(new Date())
-      ? 'Ver como me senti hoje'
-      : 'Registrar como me sinto';
-  }
+  if (botao) botao.textContent = obterRegistroHoje(new Date()) ? 'Novo registro de sintomas' : 'Registrar como me sinto';
 }
 
-function abrirRegistroDiario() {
-  var hoje = new Date();
-  var registro = obterRegistroHoje(hoje);
-  if (!registro) {
-    navegarPara('sintomas');
-    return;
-  }
-  mesAtual = hoje;
-  navegarPara('historico');
-  abrirClimaSheet(hoje.getDate(), registro);
-  document.querySelector('#climaSheet .bottom-sheet-close')?.focus();
-}
+function abrirRegistroDiario() { navegarPara('sintomas'); }
 
 atualizarDataAtual();
 gerarHeatmap();
