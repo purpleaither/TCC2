@@ -146,9 +146,9 @@ function mudarEtapaDiario(delta) {
     ];
     const faltando = respostas.filter(([id, valor]) => etapa.contains(document.getElementById(id)) && valor === null)
       .map(([, , rotulo]) => rotulo);
-    const grupos = etapa.parentElement.id === 'etapasRespiratorias' ? [...etapa.querySelectorAll('[role="group"]')] : [];
+    const grupos = [...etapa.querySelectorAll('[role="group"]')].filter(grupo => grupo.querySelector('.choice-btn, .mood-btn'));
     if (grupos.some(grupo => !grupo.querySelector('.selected'))) {
-      mostrarErroDiario(grupos.length > 1 ? 'Responda a todas as perguntas sobre sua respiração para continuar.' : 'Escolha uma opção para continuar.');
+      mostrarErroDiario('Responda a todas as perguntas desta etapa para continuar.');
       return;
     }
     if (faltando.length) {
@@ -161,6 +161,7 @@ function mudarEtapaDiario(delta) {
 
 function limparRegistroDiario() {
   rigidezAtual = fadigaAtual = humorAtual = atividadeAtual = atipico = null;
+  for(const id of ["diarioMunicipio","diarioUF"]){const campo=document.getElementById(id);if(campo)campo.value="";}
   document.querySelectorAll('#page-sintomas .selected').forEach(botao => {
     botao.classList.remove('selected');
     if (botao.hasAttribute('aria-pressed')) botao.setAttribute('aria-pressed', 'false');
@@ -283,6 +284,12 @@ function abrirClimaSheet(dia, reg, ehAtividade = false) {
   var titulo = document.getElementById('climaSheetTitle');
   if (titulo) titulo.textContent = (ehAtividade ? 'Exercícios do dia ' : 'Sintomas do dia ') + dia + ' de ' + nomesMes[mesAtual.getMonth()];
 
+  const seletor=document.getElementById('sheetRegistroHorario');
+  const lista=registrosUsuario.filter(r=>{const d=new Date(r.data);return d.getFullYear()===mesAtual.getFullYear()&&d.getMonth()===mesAtual.getMonth()&&d.getDate()===dia;});
+  seletor.replaceChildren(...lista.map((r,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=new Date(r.data).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});return o;}));
+  seletor.value=String(Math.max(0,lista.indexOf(reg)));
+  seletor.onchange=()=>abrirClimaSheet(dia,lista[Number(seletor.value)]);
+  document.getElementById('sheetAmbiente').textContent=reg?.ambiente||'Dados ambientais não disponíveis.';
   const respiratorio = document.getElementById('sheetRespiratorio');
   respiratorio.hidden = !reg?.respiratorio;
   respiratorio.textContent = reg?.respiratorio || '';
@@ -318,25 +325,10 @@ function obterRegistroHoje(hoje) {
 
 function verificarRegistroHoje() {
   var botao = document.getElementById('btnRegistrarSintomas');
-  if (botao) {
-    botao.textContent = obterRegistroHoje(new Date())
-      ? 'Ver como me senti hoje'
-      : 'Registrar como me sinto';
-  }
+  if (botao) botao.textContent = obterRegistroHoje(new Date()) ? 'Novo registro de sintomas' : 'Registrar como me sinto';
 }
 
-function abrirRegistroDiario() {
-  var hoje = new Date();
-  var registro = obterRegistroHoje(hoje);
-  if (!registro) {
-    navegarPara('sintomas');
-    return;
-  }
-  mesAtual = hoje;
-  navegarPara('historico');
-  abrirClimaSheet(hoje.getDate(), registro);
-  document.querySelector('#climaSheet .bottom-sheet-close')?.focus();
-}
+function abrirRegistroDiario() { navegarPara('sintomas'); }
 
 atualizarDataAtual();
 gerarHeatmap();

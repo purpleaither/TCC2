@@ -150,24 +150,40 @@
     <section class="card" data-etapa-diario="musculoesqueletico" aria-labelledby="dorParadoComparacaoTitulo">
       <!-- Dor quando você ficou parado -->
       <div class="pain-scale">
-        <h2 class="choices-label" id="dorParadoComparacaoTitulo" tabindex="-1" aria-describedby="diarioEtapa">Quando ficou parado, como foi a dor em relação à de costume?</h2>
-        <div class="choices-options pain-comparison" id="dorParadoComparacao" role="group" aria-labelledby="dorParadoComparacaoTitulo">
-          <button type="button" class="choice-btn" value="Menos dor" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 0)">Menos dor</button>
-          <button type="button" class="choice-btn" value="A mesma dor" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 1)">A mesma dor</button>
-          <button type="button" class="choice-btn" value="Mais dor" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 2)">Mais dor</button>
-          <button type="button" class="choice-btn" value="Não sei comparar" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 3)">Não sei comparar</button>
+        <h2 class="choices-label" id="dorParadoComparacaoTitulo" tabindex="-1" aria-describedby="diarioEtapa">Qual a intensidade da dor em repouso?</h2>
+        <div class="choices-options pain-numeric" id="dorParadoComparacao" style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px" role="group" aria-labelledby="dorParadoComparacaoTitulo">
+          <button type="button" class="choice-btn" value="0" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 0)">0</button>
+          <button type="button" class="choice-btn" value="1" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 1)">1</button>
+          <button type="button" class="choice-btn" value="2" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 2)">2</button>
+          <button type="button" class="choice-btn" value="3" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 3)">3</button>
+          <button type="button" class="choice-btn" value="4" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 4)">4</button>
+          <button type="button" class="choice-btn" value="5" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 5)">5</button>
+          <button type="button" class="choice-btn" value="6" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 6)">6</button>
+          <button type="button" class="choice-btn" value="7" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 7)">7</button>
+          <button type="button" class="choice-btn" value="8" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 8)">8</button>
+          <button type="button" class="choice-btn" value="9" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 9)">9</button>
+          <button type="button" class="choice-btn" value="10" aria-pressed="false" onclick="selecionar('dorParadoComparacao', 10)">10</button>
         </div>
+        <p class="card-text-small">0 = Sem dor · 10 = Pior dor imaginável</p>
       </div>
 
       <!-- Dor ao se mexer -->
       <div class="pain-scale">
-        <p class="choices-label" id="dorMovimentoComparacaoTitulo">Ao se mexer hoje, como foi a dor em relação à de costume?</p>
-        <div class="choices-options pain-comparison" id="dorMovimentoComparacao" role="group" aria-labelledby="dorMovimentoComparacaoTitulo">
-          <button type="button" class="choice-btn" value="Menos dor" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 0)">Menos dor</button>
-          <button type="button" class="choice-btn" value="A mesma dor" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 1)">A mesma dor</button>
-          <button type="button" class="choice-btn" value="Mais dor" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 2)">Mais dor</button>
-          <button type="button" class="choice-btn" value="Não sei comparar" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 3)">Não sei comparar</button>
+        <p class="choices-label" id="dorMovimentoComparacaoTitulo">Qual a intensidade da dor durante o movimento?</p>
+        <div class="choices-options pain-numeric" id="dorMovimentoComparacao" style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px" role="group" aria-labelledby="dorMovimentoComparacaoTitulo">
+          <button type="button" class="choice-btn" value="0" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 0)">0</button>
+          <button type="button" class="choice-btn" value="1" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 1)">1</button>
+          <button type="button" class="choice-btn" value="2" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 2)">2</button>
+          <button type="button" class="choice-btn" value="3" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 3)">3</button>
+          <button type="button" class="choice-btn" value="4" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 4)">4</button>
+          <button type="button" class="choice-btn" value="5" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 5)">5</button>
+          <button type="button" class="choice-btn" value="6" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 6)">6</button>
+          <button type="button" class="choice-btn" value="7" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 7)">7</button>
+          <button type="button" class="choice-btn" value="8" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 8)">8</button>
+          <button type="button" class="choice-btn" value="9" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 9)">9</button>
+          <button type="button" class="choice-btn" value="10" aria-pressed="false" onclick="selecionar('dorMovimentoComparacao', 10)">10</button>
         </div>
+        <p class="card-text-small">0 = Sem dor · 10 = Pior dor imaginável</p>
       </div>
     </section>
 
@@ -243,6 +259,14 @@
       </div>
     </section>
 
+    <section class="card" data-etapa-diario aria-labelledby="diarioLocalTitulo" hidden>
+      <h2 class="card-title" id="diarioLocalTitulo" tabindex="-1">Localidade (opcional)</h2>
+      <p class="card-text">Informe o município onde você esteve hoje para contextualizar o clima e a qualidade do ar. Não usamos GPS. Você pode salvar sem informar a localidade.</p>
+      <label class="form-label" for="diarioMunicipio">Município</label>
+      <input class="form-input" id="diarioMunicipio" maxlength="80" autocomplete="off" placeholder="Nome do município">
+      <label class="form-label" for="diarioUF">Estado (UF)</label>
+      <select class="form-input" id="diarioUF"><option value="">Selecione</option><option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option></select>
+    </section>
     <p class="card diario-aviso" id="avisoFaltaDeAr" role="alert"></p>
     <p class="choices-label" id="diarioErro" tabindex="-1" hidden></p>
     <button type="button" class="btn" id="diarioProximo" onclick="mudarEtapaDiario(1)">Próximo</button>
@@ -314,6 +338,9 @@
       <button class="bottom-sheet-close" onclick="fecharClimaSheet()">×</button>
       <h2 class="page-title" id="climaSheetTitle">Dia selecionado</h2>
       <div id="sheetSintomas">
+        <label class="form-label" for="sheetRegistroHorario">Horário do registro</label>
+        <select class="form-input" id="sheetRegistroHorario"></select>
+        <p class="card-text" id="sheetAmbiente"></p>
         <div style="margin-top: 16px; margin-bottom: 12px; background: var(--superficie-neutra, #f9f9f9); padding: 12px; border-radius: 6px; border: 1px solid var(--linha, #eee);">
           <p style="font-size: var(--fonte-minima); font-weight: bold; color: var(--titulo, #003366); margin-bottom: 10px;" id="sheetDorNivel"></p>
           <div style="display: flex; gap: 8px; font-size: var(--fonte-minima); color: var(--texto, #444);">
@@ -629,7 +656,7 @@
           <button type="button" class="btn btn-outline" id="alterarCategoriaPlano" onclick="mostrarCategoriaPlano()" hidden>Alterar categoria</button>
           <div id="resumoExerciciosPlano" class="exercise-plan-summary"></div>
           <div id="itensPlanoProf" hidden></div>
-          <button type="button" class="btn btn-outline" onclick="abrirOpcoesExercicios()">+ Adicionar exercícios</button>
+          <button type="button" class="btn" onclick="abrirOpcoesExercicios()">+ Adicionar exercícios</button>
           <button type="submit" class="btn" id="salvarPlanoBtn" hidden>Salvar plano</button>
           <button type="button" class="btn btn-outline" id="voltarDadosPlano" onclick="mostrarCategoriaPlano()">Voltar</button>
         </div>

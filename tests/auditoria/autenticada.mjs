@@ -123,7 +123,15 @@ try {
           await auditar(pagina, perfil.nome, tela, () => navegar(pagina, tela));
           if (tela === 'sintomas') {
             const avancar = () => pagina.locator('#diarioProximo').click();
-            await auditar(pagina, perfil.nome, 'sintomas-sensacoes', avancar, '#descricaoRigidez');
+            await auditar(pagina, perfil.nome, 'sintomas-sensacoes', async () => {
+              await avancar();
+              await pagina.locator('#diarioErro').waitFor({ state: 'visible' });
+              await pagina.locator('#dorParadoComparacao button[value="0"]').click();
+              await avancar();
+              await pagina.locator('#diarioErro').waitFor({ state: 'visible' });
+              await pagina.locator('#dorMovimentoComparacao button[value="5"]').click();
+              await avancar();
+            }, '#descricaoRigidez');
             await auditar(pagina, perfil.nome, 'sintomas-sinais', async () => {
               await pagina.locator('#rigidezOptions button').first().click();
               await pagina.locator('#fadigaOptions button').first().click();
@@ -146,6 +154,8 @@ try {
             await pagina.getByRole('checkbox', { name: 'Maior espaçamento no texto' }).check();
             await pagina.locator('#abrirAcessibilidade').click();
             const diario = pagina.locator('#page-sintomas.active');
+            await diario.locator('#dorParadoComparacao button[value="0"]').click();
+            await diario.locator('#dorMovimentoComparacao button[value="5"]').click();
             await diario.locator('#diarioProximo').click();
             const rigidez = diario.locator('#descricaoRigidez');
             await rigidez.waitFor({ state: 'visible', timeout: 5000 });
@@ -192,4 +202,5 @@ try {
   if (!modo) await writeFile(pasta + '/csp-navegador' + (tema ? '-' + tema : '') + '.json', JSON.stringify(politica, null, 2));
   await writeFile(pasta + '/' + evidencias + '.json', JSON.stringify(casos, null, 2));
 }
+console.log(JSON.stringify(casos.map(({id, estado, motivo, violacoes}) => ({id, estado, motivo, regras: violacoes?.map(v => v.regra)})), null, 2));
 if (casos.some(caso => caso.estado !== 'aprovado')) process.exitCode = 1;
