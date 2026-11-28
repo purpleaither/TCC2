@@ -290,6 +290,12 @@ function abrirClimaSheet(dia, reg, ehAtividade = false) {
   seletor.value=String(Math.max(0,lista.indexOf(reg)));
   seletor.onchange=()=>abrirClimaSheet(dia,lista[Number(seletor.value)]);
   document.getElementById('sheetAmbiente').textContent=reg?.ambiente||'Dados ambientais não disponíveis.';
+  const corrigir=document.getElementById('sheetCorrigirRegistro');
+  corrigir.hidden=ehAtividade||!reg?.id||!window.AppAuth||window.AppAuth.isProfessional();
+  corrigir.onclick=()=>window.AppAuth?.abrirCorrecaoRegistro(reg?.id);
+  const status=document.getElementById('sheetRegistroCorrigido');
+  status.hidden=!reg?.corrigidoEm;
+  status.textContent=reg?.corrigidoEm?'Corrigido em '+new Date(reg.corrigidoEm).toLocaleString('pt-BR'):'';
   const respiratorio = document.getElementById('sheetRespiratorio');
   respiratorio.hidden = !reg?.respiratorio;
   respiratorio.textContent = reg?.respiratorio || '';
