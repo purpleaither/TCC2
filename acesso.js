@@ -319,25 +319,25 @@ function stopOutdoorUpdates() {
   outdoorChannel = null;
 }
 
-async function consultarClimaBrasilia() {
-  const response = await fetch("/api/weather", {
-    signal: AbortSignal.timeout(12000),
+async function consultarClimaLocal(localidade) {
+  const response = await fetch("/api/weather?" + new URLSearchParams(localidade), {
+    signal: AbortSignal.timeout(15000),
     cache: "no-store"
   });
   if (!response.ok) throw Error("Serviço meteorológico indisponível");
   const clima = await response.json();
   if (!clima || ![clima.weather_temperature, clima.weather_humidity, clima.weather_pressure].every(Number.isFinite) ||
-      clima.weather_city !== "Brasília" || !Number.isFinite(Date.parse(clima.weather_observed_at))) {
+      typeof clima.weather_city !== "string" || !clima.weather_city.endsWith(" - "+localidade.uf) || !Number.isFinite(Date.parse(clima.weather_observed_at))) {
     throw Error("Dados meteorológicos inválidos");
   }
   return clima;
 }
 
 // Tenta novamente se o serviço meteorológico estiver temporariamente indisponível.
-async function obterClimaBrasilia() {
+async function obterClimaLocal(localidade) {
   for (let tentativa = 1; tentativa <= 2; tentativa++) {
     try {
-      return await consultarClimaBrasilia();
+      return await consultarClimaLocal(localidade);
     } catch (erro) {
       if (tentativa === 2) throw erro;
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -345,8 +345,8 @@ async function obterClimaBrasilia() {
   }
 }
 
-async function obterQualidadeAr(){
-  const resposta=await fetch("/api/air-quality",{cache:"no-store",signal:AbortSignal.timeout(10000)});
+async function obterQualidadeAr(localidade){
+  const resposta=await fetch("/api/air-quality?" + new URLSearchParams(localidade),{cache:"no-store",signal:AbortSignal.timeout(15000)});
   if(!resposta.ok)throw Error("Qualidade do ar indisponível");
   const dados=await resposta.json();
   return Object.fromEntries(camposQualidadeAr
@@ -1469,13 +1469,20 @@ async function saveSymptoms(){
     mood: moods[humorAtual] ?? null,
     activity_level: levels[atividadeAtual] ?? null
   };
+  const cidade=$("diarioMunicipio").value.trim();
+  const uf=$("diarioUF").value;
+  if(Boolean(cidade)!==Boolean(uf) || (cidade && !/^[\p{L}][\p{L}\s.'’-]{1,79}$/u.test(cidade))){
+    busy=false;
+    return mostrarErroDiario("Informe município e UF válidos, ou deixe ambos em branco.");
+  }
+  const localidade={cidade,uf};
   try {
     const [climaResposta, arResposta] = await Promise.allSettled([
-      obterClimaBrasilia(),
-      environmentalColumnsAvailable||extrasAmbienteDisponiveis ? obterQualidadeAr() : null
+      cidade && weatherColumnsAvailable ? obterClimaLocal(localidade) : null,
+      cidade && weatherColumnsAvailable && (environmentalColumnsAvailable||extrasAmbienteDisponiveis) ? obterQualidadeAr(localidade) : null
     ]);
     const clima=climaResposta.status==="fulfilled"?climaResposta.value:null;
-    const ar=arResposta.status==="fulfilled"?arResposta.value:null;
+    const ar=clima && arResposta.status==="fulfilled"?arResposta.value:null;
     if (user !== paciente) return;
     const associarClima = clima && weatherColumnsAvailable;
     const dadosDoRegistro={...registro};
@@ -1494,7 +1501,7 @@ async function saveSymptoms(){
     if (user !== paciente) return;
     await loadPatientData();
     navigate("inicio");
-    message("Sintomas registrados.");
+    message(cidade && !associarClima ? "Sintomas registrados. Dados ambientais indisponíveis para a localidade informada." : "Sintomas registrados.");
     if(respiratorio.dyspnea_rest>=7)alert(avisoFaltaDeAr);
     else if(atipico===1)
       alert("Se os sintomas forem intensos ou inesperados, procure orientação profissional. Este aplicativo não realiza triagem clínica.");
