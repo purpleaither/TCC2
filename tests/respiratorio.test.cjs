@@ -34,7 +34,7 @@ for (const dominio of ["musculoesqueletico", "respiratorio", "misto"]) {
       busy: false, user: {id: "paciente-ficticio"}, isAuthenticated: () => true, isProfessional: () => false,
       $: id => ({
         dataset: {dominio}, value: id==="diarioMunicipio"?"São Paulo":id==="diarioUF"?"SP":muscular ? "4" : "",
-        querySelector: () => id in notas ? {value: notas[id]} : null
+        querySelector: () => id in notas ? {value: notas[id]} : id === "dorParadoComparacao" ? {value:"0"} : id === "dorMovimentoComparacao" ? {value:"4"} : null
       }),
       levels: ["Nenhuma", "Leve"], moods: ["Bem"], humorAtual: 0, atividadeAtual: 0,
       rigidezAtual: muscular ? 1 : null, fadigaAtual: muscular ? 0 : null, atipico: 0,
@@ -60,7 +60,8 @@ for (const dominio of ["musculoesqueletico", "respiratorio", "misto"]) {
     };
     await vm.runInNewContext(salvar + "\nsaveSymptoms()", contexto);
     assert.deepEqual(passos, ["clima", "ar", "salvar", "recarregar", "início", ...(respiratorio ? ["alerta"] : [])]);
-    assert.equal(registro.pain_rest, undefined);
+    assert.equal(registro.pain_rest, muscular ? 0 : null);
+    assert.equal(registro.pain_movement, muscular ? 4 : null);
     assert.equal(registro.stiffness, muscular ? "Leve" : null);
     assert.equal(registro.dyspnea_rest, respiratorio ? 7 : undefined);
     assert.equal(registro.dyspnea_exertion, respiratorio ? 0 : undefined);
