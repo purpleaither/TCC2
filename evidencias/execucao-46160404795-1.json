@@ -1,0 +1,337 @@
+{
+  "execucao": "46160404795",
+  "tentativa": "1",
+  "commit": "34728be2795d9084a3a6f8f2847e28bebb37c4f8",
+  "resultado": "failure",
+  "relatorios": [
+    {
+      "arquivo": "ci05-sintomas-clima.json",
+      "casos": [
+        {
+          "id": "CT25",
+          "status": "passed"
+        },
+        {
+          "id": "CT26",
+          "status": "passed"
+        },
+        {
+          "id": "CT56-sintomas",
+          "status": "passed"
+        },
+        {
+          "id": "CT58-paciente",
+          "status": "passed"
+        },
+        {
+          "id": "CT59-conselho",
+          "status": "passed"
+        }
+      ],
+      "cenarios": [],
+      "isolamento": []
+    },
+    {
+      "arquivo": "ci06-chromium.json",
+      "casos": [
+        {
+          "id": "preparacao-plano",
+          "status": "passed"
+        },
+        {
+          "id": "CT27",
+          "status": "passed"
+        },
+        {
+          "id": "CT28",
+          "status": "passed"
+        },
+        {
+          "id": "CT56-treino",
+          "status": "passed"
+        }
+      ],
+      "cenarios": [],
+      "isolamento": []
+    },
+    {
+      "arquivo": "ci07-seguranca.json",
+      "casos": [
+        {
+          "id": "CT31",
+          "status": "passed"
+        },
+        {
+          "id": "CT32",
+          "status": "passed"
+        }
+      ],
+      "cenarios": [],
+      "isolamento": [
+        {
+          "tabela": "care_plans",
+          "direcao": "2 para 1",
+          "http": 200,
+          "aprovado": true
+        },
+        {
+          "tabela": "symptom_records",
+          "direcao": "2 para 1",
+          "http": 200,
+          "aprovado": true
+        },
+        {
+          "tabela": "workout_sessions",
+          "direcao": "2 para 1",
+          "http": 200,
+          "aprovado": true
+        }
+      ]
+    },
+    {
+      "arquivo": "diagnostico-ct22.json",
+      "casos": [
+        {
+          "status": 200
+        },
+        {
+          "status": 201
+        },
+        {
+          "status": 201
+        },
+        {
+          "status": 200
+        },
+        {
+          "status": 200
+        },
+        {
+          "status": 200
+        },
+        {
+          "status": 204
+        },
+        {
+          "status": 204
+        },
+        {
+          "status": 201
+        },
+        {
+          "status": 200
+        },
+        {
+          "status": 200
+        },
+        {
+          "status": 200
+        },
+        {
+          "status": 204
+        },
+        {
+          "status": 204
+        },
+        {
+          "status": 201
+        },
+        {
+          "status": 200
+        },
+        {
+          "status": 204
+        },
+        {
+          "status": 204
+        },
+        {
+          "status": 201
+        },
+        {
+          "status": 200
+        },
+        {},
+        {
+          "status": 200
+        },
+        {
+          "status": 204
+        },
+        {
+          "status": 204
+        },
+        {
+          "status": 201
+        },
+        {
+          "status": 200
+        },
+        {
+          "status": 200
+        },
+        {
+          "status": 204
+        },
+        {
+          "status": 204
+        },
+        {
+          "status": 201
+        },
+        {
+          "status": 200
+        },
+        {
+          "status": 200
+        },
+        {
+          "status": 204
+        },
+        {
+          "status": 200
+        }
+      ],
+      "cenarios": [],
+      "isolamento": []
+    },
+    {
+      "arquivo": "playwright-auth-report.json",
+      "casos": [],
+      "cenarios": [
+        {
+          "nome": "fisioterapeuta",
+          "verificacoes": [
+            {
+              "aprovado": true
+            },
+            {
+              "aprovado": true
+            },
+            {
+              "aprovado": true
+            },
+            {
+              "aprovado": true
+            },
+            {
+              "aprovado": true
+            },
+            {
+              "aprovado": true
+            },
+            {
+              "aprovado": true
+            },
+            {
+              "aprovado": true
+            },
+            {
+              "aprovado": true
+            }
+          ]
+        },
+        {
+          "nome": "paciente",
+          "verificacoes": [
+            {
+              "aprovado": true
+            },
+            {
+              "aprovado": true
+            },
+            {
+              "aprovado": true
+            },
+            {
+              "aprovado": true
+            },
+            {
+              "aprovado": true
+            },
+            {
+              "aprovado": true
+            },
+            {
+              "aprovado": true
+            },
+            {
+              "aprovado": true
+            },
+            {
+              "aprovado": true
+            },
+            {
+              "aprovado": true
+            }
+          ]
+        }
+      ],
+      "isolamento": []
+    },
+    {
+      "arquivo": "playwright-persistence.json",
+      "casos": [
+        {
+          "id": "CT20-21",
+          "status": "passed"
+        },
+        {
+          "id": "CT23",
+          "status": "passed"
+        },
+        {
+          "id": "CT29",
+          "status": "passed"
+        },
+        {
+          "id": "CT57",
+          "status": "passed"
+        },
+        {
+          "id": "CT56-plano",
+          "status": "passed"
+        },
+        {
+          "id": "CT54",
+          "status": "passed"
+        },
+        {
+          "id": "CT22",
+          "status": "passed"
+        },
+        {
+          "id": "CT24",
+          "status": "passed"
+        },
+        {
+          "id": "CT55",
+          "status": "passed"
+        },
+        {
+          "id": "CT30-cleanup",
+          "status": "passed"
+        }
+      ],
+      "cenarios": [],
+      "isolamento": []
+    },
+    {
+      "arquivo": "playwright-report.json",
+      "casos": [],
+      "cenarios": [
+        {
+          "nome": "desktop",
+          "aprovado": true,
+          "verificacoes": []
+        },
+        {
+          "nome": "mobile",
+          "aprovado": true,
+          "verificacoes": []
+        }
+      ],
+      "isolamento": []
+    }
+  ]
+}
