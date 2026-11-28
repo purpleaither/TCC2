@@ -141,6 +141,37 @@ try {
             }, '#diarioSinaisTitulo');
           }
         }
+        if (!modo) {
+          const caso={id:'CT-correcao-versionada',estado:'reprovado'};
+          casos.push(caso);
+          try {
+            await navegar(pagina,'historico');
+            // Use only the dedicated fictional patient account.
+            const dia=pagina.locator('#heatmapGrid button').last();
+            await dia.click({timeout:8000});
+            await pagina.locator('#sheetCorrigirRegistro').click();
+            await pagina.locator('#corrigirRegistroDialog[open]').waitFor();
+            const campo=pagina.locator('#corrigir-pain_rest');
+            const anterior=await campo.inputValue();
+            const novo=anterior==='0'?'1':'0';
+            const resposta=pagina.waitForResponse(r=>r.request().method()==='PATCH'&&r.url().includes('/rest/v1/symptom_records'));
+            await campo.selectOption(novo);
+            await pagina.locator('#corrigirRegistroSalvar').click();
+            const patch=await resposta;
+            if(!patch.ok())throw Error('PATCH rejeitado');
+            const id=(await patch.json())[0]?.id;
+            if(!id)throw Error('ID ausente');
+            await pagina.locator('#corrigirRegistroDialog').waitFor({state:'hidden'});
+            const url=new URL(patch.url());
+            const headers=await patch.request().allHeaders();
+            const historico=await contexto.request.get(url.origin+'/rest/v1/symptom_record_versions?record_id=eq.'+id+'&select=previous_values,corrected_at&order=corrected_at.desc&limit=1',{headers:{apikey:headers.apikey,authorization:headers.authorization}});
+            if(!historico.ok()||String((await historico.json())[0]?.previous_values?.pain_rest)!==anterior)throw Error('Versão anterior não encontrada');
+            const atual=await contexto.request.get(url.origin+'/rest/v1/symptom_records?id=eq.'+id+'&select=pain_rest,corrected_at',{headers:{apikey:headers.apikey,authorization:headers.authorization}});
+            const registro=(await atual.json())[0];
+            if(!atual.ok()||String(registro?.pain_rest)!==novo||!registro.corrected_at)throw Error('Correção não persistida');
+            caso.estado='aprovado';
+          } catch(e) {caso.motivo=e.message.split('\n')[0];}
+        }
         if (!modo && process.env.TCC_BIBLIOTECA === '1') {
           try {
             casos.push({ id: 'CT47-teclado-escala', estado: 'aprovado', ...await verificarTeclado(pagina, pasta) });
