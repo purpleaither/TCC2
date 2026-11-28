@@ -380,7 +380,7 @@ async function loadPatientData() {
     const supportsRespiratory = !isMissingColumnError(planResponse.error);
     if(!supportsRespiratory)planResponse=await queryPlans(planFields+",plan_exercises("+exerciseFields+")");
     const loadedPlans=result(planResponse)||[];
-    const baseFields="id,recorded_at,pain_rest,pain_movement,stiffness,fatigue,mood,activity_level,pain_rest_comparison,pain_movement_comparison"+
+    const baseFields="id,recorded_at,corrected_at,pain_rest,pain_movement,stiffness,fatigue,mood,activity_level,pain_rest_comparison,pain_movement_comparison"+
       (supportsRespiratory?",dyspnea_rest,dyspnea_exertion,cough_level,secretion_level":"");
     const weatherFields=",weather_city,weather_temperature,weather_humidity,weather_pressure,weather_observed_at";
     const environmentalFields=",airway_dryness,pm2_5,pm10,ozone";
@@ -425,6 +425,8 @@ async function loadPatientData() {
       totalTreinos = workoutResponse.count;
       primeiroEventoHistorico = oldestDates.filter(Boolean).sort((a,b)=>Date.parse(a)-Date.parse(b))[0] ?? null;
       registrosUsuario=records.slice().reverse().map(r=>({
+        id:r.id,
+        corrigidoEm:r.corrected_at,
         data:r.recorded_at,
         ambiente:[r.weather_city,r.weather_temperature==null?null:r.weather_temperature+' °C',r.weather_humidity==null?null:r.weather_humidity+'%'].filter(Boolean).join(' · '),
         dorRepouso:r.pain_rest,
@@ -2062,7 +2064,78 @@ async function init(){
   });
 }
 
-window.AppAuth={login,logout,navigate,saveSymptoms,isProfessional,renderWorkoutDay,renderWorkoutProgress};
+
+function abrirCorrecaoRegistro(id){
+  if(!isAuthenticated()||isProfessional()||busy)return;
+  const registro=records.find(r=>r.id===id);
+  if(!registro)return;
+  const dialog=$("corrigirRegistroDialog"), campos=$("corrigirRegistroCampos");
+  campos.replaceChildren();
+  $("corrigirRegistroErro").textContent="";
+  $("corrigirRegistroData").textContent="Registro de "+new Date(registro.recorded_at).toLocaleString("pt-BR");
+  const numeros=max=>Array.from({length:max+1},(_,i)=>[i,String(i)]);
+  const textos=lista=>lista.map(v=>[v,v]);
+  const definicoes=[
+    ["pain_rest","Dor em repouso (0–10)",numeros(10)],
+    ["pain_movement","Dor em movimento (0–10)",numeros(10)],
+    ["pain_rest_comparison","Dor em repouso em relação à habitual",textos(["Menos dor","A mesma dor","Mais dor","Não sei comparar"])],
+    ["pain_movement_comparison","Dor em movimento em relação à habitual",textos(["Menos dor","A mesma dor","Mais dor","Não sei comparar"])],
+    ["stiffness","Rigidez",textos(levels)],["fatigue","Cansaço",textos(levels)],
+    ["mood","Humor",textos(moods)],["activity_level","Atividade física",textos(levels)],
+    ...medidasRespiratorias.map(([campo,rotulo,maximo])=>[campo,rotulo,maximo===10?numeros(10):niveisRespiratorios.map((v,i)=>[i,v])])
+  ];
+  const controles=[];
+  for(const [campo,rotulo,opcoes] of definicoes){
+    if(registro[campo]==null)continue;
+    const label=document.createElement("label");
+    label.className="form-label";
+    label.textContent=rotulo;
+    const select=document.createElement("select");
+    select.className="form-input";
+    select.id="corrigir-"+campo;
+    label.htmlFor=select.id;
+    for(const [valor,nome] of opcoes){
+      const option=document.createElement("option");
+      option.value=String(valor);option.textContent=nome;select.append(option);
+    }
+    if(!opcoes.some(([v])=>String(v)===String(registro[campo])))continue;
+    select.value=String(registro[campo]);
+    campos.append(label,select);
+    controles.push({campo,select,numerico:typeof opcoes[0][0]==="number"});
+  }
+  const salvar=$("corrigirRegistroSalvar");
+  salvar.disabled=!controles.length;
+  if(!controles.length)$("corrigirRegistroErro").textContent="Não há sintomas registrados que possam ser corrigidos.";
+  $("corrigirRegistroForm").onsubmit=async evento=>{
+    evento.preventDefault();
+    if(busy||!isAuthenticated()||isProfessional())return;
+    const alteracoes={};
+    for(const {campo,select,numerico} of controles){
+      const valor=numerico?Number(select.value):select.value;
+      if(valor!==registro[campo])alteracoes[campo]=valor;
+    }
+    if(!Object.keys(alteracoes).length){$("corrigirRegistroErro").textContent="Nenhuma alteração realizada.";return;}
+    const paciente=user;
+    busy=true;salvar.disabled=true;$("corrigirRegistroCancelar").disabled=true;
+    try{
+      let consulta=supabase.from("symptom_records").update(alteracoes).eq("id",id).eq("patient_id",paciente.id);
+      consulta=registro.corrected_at?consulta.eq("corrected_at",registro.corrected_at):consulta.is("corrected_at",null);
+      const resposta=await consulta.select("id").single();
+      if(resposta.error||!resposta.data)throw Error("Correção não confirmada");
+      if(user!==paciente)return;
+      dialog.close();fecharClimaSheet();
+      await loadPatientData();
+      message("Registro corrigido. A versão anterior foi preservada.");
+      if(alteracoes.dyspnea_rest>=7)alert(avisoFaltaDeAr);
+    }catch{
+      $("corrigirRegistroErro").textContent="Não foi possível confirmar a correção. Atualize o histórico e tente novamente.";
+    }finally{busy=false;salvar.disabled=false;$("corrigirRegistroCancelar").disabled=false;}
+  };
+  dialog.oncancel=evento=>{if(busy)evento.preventDefault();};
+  dialog.showModal();
+}
+
+window.AppAuth={login,logout,navigate,saveSymptoms,abrirCorrecaoRegistro,isProfessional,renderWorkoutDay,renderWorkoutProgress};
 window.atualizarPacienteProfissional=()=>selectPatient($("pacienteProf").value);
 window.trocarPacientePlanoProf=()=>selectPatient($("pacientePlanoProf").value);
 window.trocarPacienteRegistrosProf=()=>selectPatient($("pacienteRegistrosProf").value);
