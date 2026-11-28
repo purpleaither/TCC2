@@ -426,6 +426,7 @@ async function loadPatientData() {
       primeiroEventoHistorico = oldestDates.filter(Boolean).sort((a,b)=>Date.parse(a)-Date.parse(b))[0] ?? null;
       registrosUsuario=records.slice().reverse().map(r=>({
         data:r.recorded_at,
+        ambiente:[r.weather_city,r.weather_temperature==null?null:r.weather_temperature+' °C',r.weather_humidity==null?null:r.weather_humidity+'%'].filter(Boolean).join(' · '),
         dorRepouso:r.pain_rest,
         dorMovimento:r.pain_movement,
         comparacaoParado:r.pain_rest_comparison,
@@ -830,13 +831,13 @@ function renderProfessionalMonitoring(windows, periodRecords){
   }
 
   root.append(el("h2", "Acompanhamento do paciente", "card-title"));
-  const shortDate = new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit" });
+  const shortDate = new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit", hour:"2-digit", minute:"2-digit" });
   const latestByDay = new Map();
   for (const record of periodRecords) {
     const day = localDateKey(record.recorded_at);
     if (day && !latestByDay.has(day)) latestByDay.set(day, record);
   }
-  const recent = [...latestByDay.values()].reverse();
+  const recent = [...periodRecords].reverse();
   const workoutCard = el("section", undefined, "card");
   workoutCard.append(el("h3", "Treinos concluídos por semana", "card-title"),
     el("p", "Cada treino conta uma vez no gráfico.", "card-text"));
@@ -918,7 +919,7 @@ function renderProfessionalMonitoring(windows, periodRecords){
       return [{label:shortDate.format(new Date(record.recorded_at)),
         text:valores ? valores[index] : index + "/" + maximo, value:index}];
     });
-    card.append(rows.length ? monitoringBars(rows, maximo, title + " por dia")
+    card.append(rows.length ? monitoringBars(rows, maximo, title + " por registro")
       : el("p", "Nenhum relato disponível.", "card-text-small"));
     sintomas.append(card);
   }
@@ -934,9 +935,9 @@ function renderLongitudinal(recordsDoPeriodo, windows){
   }).map(sessao=>localDateKey(sessao.completed_at)));
   for(const record of recordsDoPeriodo){
     const dia=localDateKey(record.recorded_at);
-    if(!dias.has(dia))dias.set(dia,record);
+    dias.set(record.recorded_at+"|"+record.id,record);
   }
-  for(const dia of treinos)if(!dias.has(dia))dias.set(dia,{});
+  for(const dia of treinos)if(!recordsDoPeriodo.some(r=>localDateKey(r.recorded_at)===dia))dias.set(dia,{});
   if(!dias.size){
     painel.append(el("p","Nenhum registro no período selecionado.","card-text"));
     return painel;
@@ -951,16 +952,17 @@ function renderLongitudinal(recordsDoPeriodo, windows){
     ["Dor parado","pain_rest"], ["Dor ao se mexer","pain_movement"], ["Rigidez","stiffness"],
     ["Cansaço","fatigue"], ["Humor","mood"], ["Atividade física","activity_level"]
   ];
-  const rotulos=["Data",...colunas.map(([rotulo])=>rotulo),"Treino concluído"];
+  const rotulos=["Data e horário","Município",...colunas.map(([rotulo])=>rotulo),"Treino concluído"];
   const linhas=[...dias.keys()].sort().reverse().map(dia=>{
     const r=dias.get(dia);
-    return [new Date(dia+"T12:00:00").toLocaleDateString("pt-BR"), ...colunas.map(([,campo])=>{
+    const dataLocal=r.recorded_at?localDateKey(r.recorded_at):dia;
+    return [r.recorded_at?date(r.recorded_at):new Date(dia+"T12:00:00").toLocaleDateString("pt-BR"),r.weather_city, ...colunas.map(([,campo])=>{
       if(campo==="pain_rest"||campo==="pain_movement"){
         const comparacao=r[campo+"_comparison"];
         return r[campo]!=null||comparacao ? resumirDor(r[campo],comparacao) : null;
       }
       return r[campo];
-    }), professionalWorkouts===null?"Indisponível":treinos.has(dia)?"Sim":"Sem registro"];
+    }), professionalWorkouts===null?"Indisponível":treinos.has(dataLocal)?"Sim":"Sem registro"];
   });
 
   const viewport=el("div",undefined,"tabela-longitudinal");
@@ -968,7 +970,7 @@ function renderLongitudinal(recordsDoPeriodo, windows){
   viewport.setAttribute("role","region");
   viewport.setAttribute("aria-label","Tabela de clima, sintomas e treinos com rolagem horizontal");
   const tabela=el("table");
-  tabela.append(el("caption","Clima, sintomas e treinos do período, com o último relato de cada dia"));
+  tabela.append(el("caption","Clima, sintomas e treinos do período, com todos os relatos e seus horários"));
   const cabecalho=el("tr");
   for(const rotulo of rotulos){
     const celula=el("th",rotulo);
