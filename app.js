@@ -161,6 +161,7 @@ function mudarEtapaDiario(delta) {
 
 function limparRegistroDiario() {
   rigidezAtual = fadigaAtual = humorAtual = atividadeAtual = atipico = null;
+  for(const id of ["diarioMunicipio","diarioUF"]){const campo=document.getElementById(id);if(campo)campo.value="";}
   document.querySelectorAll('#page-sintomas .selected').forEach(botao => {
     botao.classList.remove('selected');
     if (botao.hasAttribute('aria-pressed')) botao.setAttribute('aria-pressed', 'false');
