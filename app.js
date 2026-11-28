@@ -146,9 +146,9 @@ function mudarEtapaDiario(delta) {
     ];
     const faltando = respostas.filter(([id, valor]) => etapa.contains(document.getElementById(id)) && valor === null)
       .map(([, , rotulo]) => rotulo);
-    const grupos = etapa.parentElement.id === 'etapasRespiratorias' ? [...etapa.querySelectorAll('[role="group"]')] : [];
+    const grupos = [...etapa.querySelectorAll('[role="group"]')].filter(grupo => grupo.querySelector('.choice-btn, .mood-btn'));
     if (grupos.some(grupo => !grupo.querySelector('.selected'))) {
-      mostrarErroDiario(grupos.length > 1 ? 'Responda a todas as perguntas sobre sua respiração para continuar.' : 'Escolha uma opção para continuar.');
+      mostrarErroDiario('Responda a todas as perguntas desta etapa para continuar.');
       return;
     }
     if (faltando.length) {
