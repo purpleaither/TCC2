@@ -33,14 +33,14 @@ for (const dominio of ["musculoesqueletico", "respiratorio", "misto"]) {
     const contexto = {
       busy: false, user: {id: "paciente-ficticio"}, isAuthenticated: () => true, isProfessional: () => false,
       $: id => ({
-        dataset: {dominio}, value: muscular ? "4" : "",
+        dataset: {dominio}, value: id==="diarioMunicipio"?"São Paulo":id==="diarioUF"?"SP":muscular ? "4" : "",
         querySelector: () => id in notas ? {value: notas[id]} : null
       }),
       levels: ["Nenhuma", "Leve"], moods: ["Bem"], humorAtual: 0, atividadeAtual: 0,
       rigidezAtual: muscular ? 1 : null, fadigaAtual: muscular ? 0 : null, atipico: 0,
       medidasAtivas: () => medidasRespiratorias, avisoFaltaDeAr, environmentalColumnsAvailable: true,
       extrasAmbienteDisponiveis: true, camposQualidadeAr: ["pm2_5", "pm10", "ozone", "carbon_dioxide"],
-      obterClimaBrasilia: async () => {
+      obterClimaLocal: async () => {
         passos.push("clima");
         if (dominio === "respiratorio") throw Error("API indisponível simulada");
         return {weather_temperature: 26, weather_uv_index: 0};
@@ -66,10 +66,10 @@ for (const dominio of ["musculoesqueletico", "respiratorio", "misto"]) {
     assert.equal(registro.dyspnea_exertion, respiratorio ? 0 : undefined);
     assert.equal(registro.secretion_level, respiratorio ? 0 : undefined);
     assert.equal(registro.airway_dryness, respiratorio ? 0 : undefined);
-    assert.equal(registro.pm2_5, dominio === "misto" ? undefined : 14);
-    assert.equal(registro.pm10, dominio === "misto" ? undefined : 18);
-    assert.equal(registro.ozone, dominio === "misto" ? undefined : 25);
-    assert.equal(registro.carbon_dioxide, dominio === "misto" ? undefined : 451);
+    assert.equal(registro.pm2_5, dominio !== "musculoesqueletico" ? undefined : 14);
+    assert.equal(registro.pm10, dominio !== "musculoesqueletico" ? undefined : 18);
+    assert.equal(registro.ozone, dominio !== "musculoesqueletico" ? undefined : 25);
+    assert.equal(registro.carbon_dioxide, dominio !== "musculoesqueletico" ? undefined : 451);
     assert.equal(registro.weather_uv_index, dominio === "respiratorio" ? undefined : 0);
     assert.equal(registro.weather_temperature, dominio === "respiratorio" ? undefined : 26);
   });
