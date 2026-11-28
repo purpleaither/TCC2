@@ -243,6 +243,14 @@
       </div>
     </section>
 
+    <section class="card" data-etapa-diario aria-labelledby="diarioLocalTitulo" hidden>
+      <h2 class="card-title" id="diarioLocalTitulo" tabindex="-1">Localidade (opcional)</h2>
+      <p class="card-text">Informe o município onde você esteve hoje para contextualizar o clima e a qualidade do ar. Não usamos GPS. Você pode salvar sem informar a localidade.</p>
+      <label class="form-label" for="diarioMunicipio">Município</label>
+      <input class="form-input" id="diarioMunicipio" maxlength="80" autocomplete="off" placeholder="Nome do município">
+      <label class="form-label" for="diarioUF">Estado (UF)</label>
+      <select class="form-input" id="diarioUF"><option value="">Selecione</option><option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option></select>
+    </section>
     <p class="card diario-aviso" id="avisoFaltaDeAr" role="alert"></p>
     <p class="choices-label" id="diarioErro" tabindex="-1" hidden></p>
     <button type="button" class="btn" id="diarioProximo" onclick="mudarEtapaDiario(1)">Próximo</button>
