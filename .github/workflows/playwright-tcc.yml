@@ -80,6 +80,20 @@ jobs:
           TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
         run: node tests/playwright-treino-historico.cjs
       - if: always() && !cancelled() && steps.publicacao.outcome == 'success'
+        name: CI-06 - Firefox
+        env:
+          TCC_BROWSER: firefox
+          TEST_FISIO_EMAIL: ${{ secrets.TEST_FISIO_EMAIL }}
+          TEST_FISIO_PASSWORD: ${{ secrets.TEST_FISIO_PASSWORD }}
+          TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}
+          TEST_PACIENTE_PASSWORD: ${{ secrets.TEST_PACIENTE_PASSWORD }}
+        run: |
+          mv test-results/ci06-treino-historico.json test-results/ci06-chromium.json
+          resultado=0
+          node tests/playwright-treino-historico.cjs || resultado=$?
+          mv test-results/ci06-treino-historico.json test-results/ci06-firefox.json
+          exit "$resultado"
+      - if: always() && !cancelled() && steps.publicacao.outcome == 'success'
         name: CI-07 - Segurança e isolamento de dados
         env:
           TEST_PACIENTE_EMAIL: ${{ secrets.TEST_PACIENTE_EMAIL }}

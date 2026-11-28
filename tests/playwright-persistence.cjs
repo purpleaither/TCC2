@@ -62,6 +62,27 @@ if(!process.env.CT22_ONLY)await step('CT29',async()=>{
   await series.waitFor();
   if((await series.innerText()).trim()!=='3')throw Error('RF03: paciente não visualizou as 3 séries após a edição do plano');
 });
+if(!process.env.CT22_ONLY)await step('CT57',async()=>{
+  await patient.reload();
+  await patient.locator('#page-inicio.active').waitFor({timeout:30000});
+  await showExercise(exercise);
+  await patient.locator('.patient-plan-notes').getByText('Orientacao ficticia revisada PW',{exact:true}).waitFor();
+});
+if(!process.env.CT22_ONLY)await step('CT56-plano',async()=>{
+  await patient.evaluate(()=>window.realizarLogout());
+  await patient.locator('#page-login.active').waitFor();
+  await patient.close();
+  patient=await login('PACIENTE','inicio');
+  await showExercise(exercise);
+  await prof.evaluate(()=>window.realizarLogout());
+  await prof.locator('#page-login.active').waitFor();
+  await prof.locator('#loginEmail').fill(process.env.TEST_FISIO_EMAIL);
+  await prof.locator('#loginSenha').fill(process.env.TEST_FISIO_PASSWORD);
+  await prof.locator('#loginSubmit').click();
+  await prof.locator('#page-profissional.active').waitFor({timeout:30000});
+  await selectPatient();
+  await card().getByText(exercise,{exact:true}).waitFor();
+});
 if(!process.env.CT22_ONLY && !process.env.TCC_SERIE_DESEMPENHO)await step('CT54',async()=>{
   await patient.reload();
   await patient.locator('#page-inicio.active').waitFor({timeout:30000});

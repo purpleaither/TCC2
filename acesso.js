@@ -635,7 +635,7 @@ function renderPatientPlans(animar=false){
     return;
   }
   currentPatientExercise=Math.max(0,Math.min(currentPatientExercise,assigned.length-1));
-  const {exercise}=assigned[currentPatientExercise];
+  const {plan,exercise}=assigned[currentPatientExercise];
   const card=el("div",undefined,"patient-exercise-card");
   if(animar)card.classList.add("patient-exercise-transition");
   const progress=el("p","Exercício "+(currentPatientExercise+1)+" de "+assigned.length,"patient-exercise-progress");
@@ -646,6 +646,7 @@ function renderPatientPlans(animar=false){
     ?translateExerciseName(exercise.exercise_name)
     :exercise.exercise_name;
   card.append(el("h2",name,"patient-exercise-title"));
+  if(plan.notes)card.append(el("p",plan.notes,"patient-plan-notes"));
   const parksButton=el("button","Ver parques próximos","btn btn-outline");
   parksButton.type="button";
   parksButton.id="verParquesProximos";

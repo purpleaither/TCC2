@@ -48,4 +48,13 @@ if(!post.ok()){
 await patient.locator('#finishPatientWorkout').filter({hasText:'✓'}).waitFor({timeout:30000});report.push({id:'CT27',status:'passed',duracaoMs:Math.round(performance.now()-inicioConclusao)});
 const inicioHistorico=performance.now();
 const read=patient.waitForResponse(r=>isWorkout(r)&&r.request().method()==='GET'&&r.ok(),{timeout:30000});await patient.reload();const rows=await (await read).json();const added=rows.filter(x=>!ids.has(x.id)&&x.exercises?.some(e=>e.plan_title===title&&e.exercise_name===exercise));if(added.length!==1)throw Error('Sessão não recuperada univocamente');await patient.locator('#page-inicio.active').waitFor();await nav(patient,'historico');const day=await patient.evaluate(t=>new Date(t).getDate(),added[0].completed_at);await patient.getByRole('button',{name:'Ver atividades do dia '+day,exact:true}).click();const row=patient.locator('#sheetWorkoutHistory .workout-history-exercise').filter({hasText:title});await row.getByText(exercise,{exact:true}).waitFor();report.push({id:'CT28',status:'passed',duracaoMs:Math.round(performance.now()-inicioHistorico)});
+await step('CT56-treino',async()=>{
+  await patient.evaluate(()=>window.realizarLogout());
+  await patient.locator('#page-login.active').waitFor();
+  await patient.close();
+  patient=await login('PACIENTE','inicio');
+  await nav(patient,'historico');
+  await patient.getByRole('button',{name:'Ver atividades do dia '+day,exact:true}).click();
+  await patient.locator('#sheetWorkoutHistory .workout-history-exercise').filter({hasText:title}).getByText(exercise,{exact:true}).waitFor();
+});
 }catch(e){report.push({id:'CI06',status:'failed',error:String(e.message).split('\n')[0]})}finally{await browser.close();fs.mkdirSync('test-results',{recursive:true});const evidence={report,network,retention:'Plano e treino fictícios mantidos'};fs.writeFileSync('test-results/ci06-treino-historico.json',JSON.stringify(evidence,null,2));console.log(JSON.stringify(evidence));if(report.some(x=>x.status!=='passed')||!report.some(x=>x.id==='CT28'))process.exitCode=1}})();
