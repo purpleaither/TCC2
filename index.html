@@ -354,6 +354,8 @@
         </div>
 
         <p class="card-text" id="sheetRespiratorio" hidden></p>
+        <p class="card-text" id="sheetRegistroCorrigido" hidden></p>
+        <button type="button" class="btn" id="sheetCorrigirRegistro" hidden>Corrigir registro</button>
       </div>
       <section id="sheetWorkoutHistory" class="workout-history-details" aria-label="Ficha dos treinos concluídos"></section>
     </div>
@@ -693,5 +695,16 @@
 <script src="preferencias.js"></script>
 <script src="app.js"></script>
 <script type="module" src="acesso.js"></script>
+<dialog id="corrigirRegistroDialog" aria-labelledby="corrigirRegistroTitulo" style="max-width: min(92vw, 480px); max-height: 85vh; overflow: auto;">
+  <form id="corrigirRegistroForm">
+    <h2 id="corrigirRegistroTitulo">Corrigir registro</h2>
+    <p id="corrigirRegistroData"></p>
+    <p>Corrija apenas informações registradas incorretamente. Para informar como se sente agora, faça um novo registro. A versão anterior, o horário original e os dados ambientais serão preservados.</p>
+    <div id="corrigirRegistroCampos"></div>
+    <p id="corrigirRegistroErro" role="alert"></p>
+    <button type="submit" class="btn" id="corrigirRegistroSalvar">Salvar correção</button>
+    <button type="button" class="btn btn-outline" id="corrigirRegistroCancelar" onclick="document.getElementById('corrigirRegistroDialog').close()">Cancelar</button>
+  </form>
+</dialog>
 </body>
 </html>
